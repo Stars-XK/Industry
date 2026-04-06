@@ -3,7 +3,11 @@
 -- 参考: /.trae/rules/Database_Schema_Design.md
 -- ==============================================================
 
+-- 清理旧表以支持重新初始化 (强制同步字段更新)
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel;
+
 -- 公共字段定义宏 (仅做说明，实际在表内展开)
+
 -- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 -- created_by BIGINT,
 -- updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

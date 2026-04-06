@@ -11,13 +11,17 @@
     "start:iot": "nest start iot-bridge",
     "start:all": "concurrently \"npm run start:gateway\" \"npm run start:auth\" \"npm run start:scada\" \"npm run start:data\" \"npm run start:workflow\" \"npm run start:iot\"",
     "start:all:dev": "concurrently \"nest start api-gateway --watch\" \"nest start auth-service --watch\" \"nest start scada-service --watch\" \"nest start data-center --watch\" \"nest start workflow-service --watch\" \"nest start iot-bridge --watch\"",
-    "build": "nest build api-gateway && nest build auth-service && nest build scada-service && nest build data-center && nest build workflow-service && nest build iot-bridge"
+    "build": "nest build api-gateway && nest build auth-service && nest build scada-service && nest build data-center && nest build workflow-service && nest build iot-bridge",
+    "db:init": "ts-node scripts/init-db.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/microservices": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },
@@ -25,7 +29,9 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@types/node": "^20.3.1",
+    "@types/pg": "^8.10.2",
     "concurrently": "^8.2.2",
+    "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }
 }

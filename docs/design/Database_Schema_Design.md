@@ -177,43 +177,83 @@ erDiagram
 
 ---
 
-## 3. 时序数据库设计 (基于 TDengine)
+## 3. 时序数据库设计 (基于 TDengine 3.3.8)
 
-针对高频监控数据（如压力、流量、电表读数），在 TDengine 中采用 **“超级表 (Super Table) + 子表 (Sub Table)”** 模型。
+针对高频监控数据（如压力、流量、电表读数），在 TDengine 中采用 **“超级表 (Super Table) + 子表 (Sub Table)”** 模型，并严格使用 TDengine 3.x 版本的**流计算 (Stream Computing)** 替代旧版的连续查询 (CQ) 来进行降采样与聚合计算。
 
 ### 3.1 超级表定义 (Super Table)
-所有相同物理属性的传感器共用一张超级表，便于做全网维度的聚合查询。
+将原始设备数据与不同聚合维度的数据分层存储，便于全网维度的统计查询。
 
-**超级表: `st_telemetry` (通用遥测超级表)**
-
-| 字段名 (Field) | 类型 (Type) | 说明 (Description) |
+**基础原始超级表: `device_raw`**
+| 字段名 | 类型 | 说明 |
 |---|---|---|
 | `ts` | TIMESTAMP | 数据时间戳 (主键) |
-| `val` | DOUBLE | 采集值 |
-| `status` | INT | 数据质量标识 (0:正常, 1:死值拦截, 2:超限剔除, 3:AI补偿插值) |
+| `raw_value` | DOUBLE | 采集值 |
+| `device_id` (Tag)| VARCHAR(50) | 关联设备编码 |
+| `zone_id` (Tag) | VARCHAR(30) | 所属 DMA 分区 ID |
+| `device_type` (Tag) | TINYINT | 设备类型 (如 1:水表, 2:压力计) |
 
-**标签 (Tags - 用于高效过滤与聚合)**
-| 标签名 (Tag) | 类型 (Type) | 说明 (Description) |
-|---|---|---|
-| `device_code` | NCHAR(64) | 关联 PostgreSQL 中的设备编码 |
-| `tag_name` | NCHAR(64) | 测点标签 (如 `PUMP_01_PRESS`) |
-| `metric_type` | NCHAR(32) | 指标类型 (如 `pressure`, `flow`, `energy`) |
-| `dma_id` | BIGINT | 所属 DMA 分区 ID (用于快速流计算某分区的总供水量) |
+**衍生聚合超级表 (由流计算自动写入)**
+- `device_5m` / `device_daily`: 设备的 5分钟/日 聚合数据。
+- `user_daily`: 用户的日用量统计。
+- `dma_5m` / `dma_daily` / `dma_monthly` / `dma_yearly`: DMA 分区的 5分钟/日/月/年 供售水及产销差平衡值聚合。
 
 ### 3.2 子表自动建表策略
-当边缘网关（MQTT）首次上报一个新的 `tag_name` 时，应用程序（如 NestJS）自动调用 SQL 在 TDengine 中建立子表。
-*子表命名规范*：`t_{device_code}_{metric_type}` (例如：`t_meter001_flow`)。
+当边缘网关首次上报新设备数据时，应用层自动按规则建立子表。子表命名如：`t_{device_id}_raw`。流计算产出的聚合数据同样按规则写入对应的子表中。
 
-### 3.3 流计算降采样 (Continuous Query)
-在 TDengine 内部建立连续查询（CQ），自动生成 5分钟、1小时、1天的聚合数据表，大幅降低前端趋势图查询的延迟。
+### 3.3 流计算降采样与聚合 (Stream Computing)
+在 TDengine 3.3.8+ 中，使用 `CREATE STREAM` 语法实现多级聚合计算，大幅降低前端趋势图与报表查询的延迟。流计算创建后会在后台自动运行。
+
+**示例 1：设备 5 分钟均值降采样**
 ```sql
--- 示例：自动计算每小时的用水量（按DMA分区聚合）
-CREATE TABLE cq_dma_hourly_flow AS 
-SELECT sum(val) AS total_flow 
-FROM st_telemetry 
-WHERE metric_type = 'flow' 
-INTERVAL(1h) 
-PARTITION BY dma_id;
+CREATE STREAM IF NOT EXISTS stream_device_5m
+INTERVAL(5m) SLIDING(5m) FROM device_raw
+PARTITION BY device_id, zone_id, device_type
+STREAM_OPTIONS(WATERMARK(10s) | MAX_DELAY(5s) | IGNORE_DISORDER)
+INTO device_5m
+AS SELECT
+  _wstart AS ts,
+  AVG(raw_value) AS raw_value,
+  CAST(0 AS TINYINT) AS qcode
+FROM device_raw
+PARTITION BY device_id, zone_id, device_type
+INTERVAL(5m);
+```
+
+**示例 2：DMA 日供售水与夜间最小流量 (MNF)**
+利用已聚合的 5 分钟设备数据（`device_5m`），进一步汇聚出 DMA 分区的核心漏损考核指标：
+```sql
+-- DMA 每日夜间最小流量 (MNF: 凌晨 2-4 点)
+CREATE STREAM IF NOT EXISTS stream_dma_night
+INTERVAL(1d) SLIDING(1d) FROM dma_5m
+PARTITION BY zone_id
+STREAM_OPTIONS(WATERMARK(1m) | MAX_DELAY(2m) | IGNORE_DISORDER)
+INTO dma_daily
+AS SELECT
+  _wstart AS ts,
+  CAST(0 AS DOUBLE) AS supply,
+  CAST(0 AS DOUBLE) AS sale,
+  CAST(0 AS DOUBLE) AS balance_value,
+  MIN(supply) AS night_flow
+FROM (
+    -- 子查询过滤出 02:00 到 04:00 的时间段
+    SELECT supply, ts, zone_id
+    FROM dma_5m
+    WHERE CAST(ts AS BIGINT) % 86400000 >= 7200000 AND CAST(ts AS BIGINT) % 86400000 < 14400000
+)
+PARTITION BY zone_id
+INTERVAL(1d);
+```
+
+**示例 3：DMA 产销差平衡值查询**
+流计算分别算出每日供水 (`stream_dma_daily_supply`) 与每日售水 (`stream_dma_daily_sale`) 后，在业务层直接通过以下聚合查询计算每日平衡值与漏损：
+```sql
+SELECT ts, 
+       SUM(supply) as supply, 
+       SUM(sale) as sale, 
+       SUM(supply) - SUM(sale) as balance_value 
+FROM dma_daily 
+GROUP BY ts, zone_id;
 ```
 
 ---

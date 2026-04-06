@@ -23,7 +23,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
       ? (message as any).message 
       : message;
 
-    this.logger.error(`[${request.method}] ${request.url} - ${status} - ${JSON.stringify(errMessage)}`);
+    // 打印真实的错误堆栈，防止 500 错误被吞噬
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(`[${request.method}] ${request.url} - ${status} - ${exception instanceof Error ? exception.stack : exception}`);
+    } else {
+      this.logger.error(`[${request.method}] ${request.url} - ${status} - ${JSON.stringify(errMessage)}`);
+    }
 
     response.status(status).json({
       code: status,

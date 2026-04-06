@@ -20,11 +20,18 @@
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `id` | BIGINT | - | N | 主键 | 唯一标识 (Snowflake) |
-| `username` | VARCHAR | 50 | N | - | 登录名 |
+| `username` | VARCHAR | 50 | N | - | 登录账号 |
 | `password` | VARCHAR | 255 | N | - | 密码 Hash (Bcrypt) |
-| `phone` | VARCHAR | 20 | Y | - | 手机号(脱敏加密存储) |
-| `dept_id` | BIGINT | - | N | - | 所属部门 ID |
+| `nickname` | VARCHAR | 30 | N | '' | 用户昵称 |
+| `email` | VARCHAR | 50 | Y | '' | 用户邮箱 |
+| `phone` | VARCHAR | 20 | Y | '' | 手机号码 |
+| `gender` | SMALLINT | - | Y | 0 | 性别: 0-未知, 1-男, 2-女 |
+| `avatar` | VARCHAR | 255 | Y | '' | 头像地址 |
+| `dept_id` | BIGINT | - | Y | NULL | 所属部门 ID |
 | `status` | SMALLINT | - | N | 1 | 状态: 1-正常, 0-停用, 2-锁定 |
+| `last_login_ip` | VARCHAR | 50 | Y | '' | 最后登录IP |
+| `last_login_time` | DATETIME | - | Y | NULL | 最后登录时间 |
+| `remark` | VARCHAR | 500 | Y | NULL | 备注 |
 
 **2. 角色表 (`sys_role`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
@@ -32,7 +39,10 @@
 | `id` | BIGINT | - | N | 主键 | 唯一标识 |
 | `role_name` | VARCHAR | 100 | N | - | 角色名称 (如：厂长、维修工) |
 | `role_key` | VARCHAR | 100 | N | - | 角色标识 (如：`admin`, `worker`) |
+| `role_sort` | INT | - | N | 0 | 显示顺序 |
 | `data_scope` | SMALLINT | - | N | 2 | 数据范围: 1-全部, 2-本部门, 3-自定义 |
+| `status` | SMALLINT | - | N | 1 | 角色状态: 1-正常, 0-停用 |
+| `remark` | VARCHAR | 500 | Y | NULL | 备注 |
 
 **3. 菜单与权限表 (`sys_menu`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
@@ -40,10 +50,17 @@
 | `id` | BIGINT | - | N | 主键 | 唯一标识 |
 | `parent_id` | BIGINT | - | N | 0 | 父菜单 ID |
 | `menu_name` | VARCHAR | 100 | N | - | 菜单或按钮名称 |
-| `path` | VARCHAR | 200 | Y | - | 路由路径 |
-| `component` | VARCHAR | 255 | Y | - | 前端组件路径 |
-| `perm_code` | VARCHAR | 100 | Y | - | 权限标识 (如 `scada:overview`) |
+| `sort_order` | INT | - | Y | 0 | 显示顺序 |
+| `path` | VARCHAR | 200 | Y | '' | 路由地址 |
+| `component` | VARCHAR | 255 | Y | NULL | 组件路径 |
+| `is_frame` | SMALLINT | - | Y | 0 | 是否外链: 1-是, 0-否 |
+| `is_cache` | SMALLINT | - | Y | 0 | 是否缓存: 1-是, 0-否 |
 | `menu_type` | CHAR | 1 | N | 'C' | 类型: M-目录, C-菜单, F-按钮 |
+| `visible` | SMALLINT | - | Y | 1 | 显示状态: 1-显示, 0-隐藏 |
+| `status` | SMALLINT | - | Y | 1 | 菜单状态: 1-正常, 0-停用 |
+| `perm_code` | VARCHAR | 100 | Y | NULL | 权限标识 |
+| `icon` | VARCHAR | 100 | Y | '#' | 菜单图标 |
+| `remark` | VARCHAR | 500 | Y | '' | 备注 |
 
 ### 2.2 资产、设备与物联网网关元数据 (Assets & IoT)
 

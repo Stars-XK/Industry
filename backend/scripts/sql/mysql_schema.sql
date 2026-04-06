@@ -6,84 +6,100 @@
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
 DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel;
 
--- 公共字段定义宏 (仅做说明，实际在表内展开)
-
--- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
--- created_by BIGINT,
--- updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
--- updated_by BIGINT,
--- is_deleted TIMESTAMP NULL DEFAULT NULL
-
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    parent_id BIGINT NOT NULL DEFAULT 0,
-    dept_name VARCHAR(100) NOT NULL,
+    parent_id BIGINT NOT NULL DEFAULT 0 COMMENT '父部门ID',
+    ancestors VARCHAR(100) DEFAULT '' COMMENT '祖级列表',
+    dept_name VARCHAR(100) NOT NULL COMMENT '部门名称',
+    sort_order INT DEFAULT 0 COMMENT '显示顺序',
+    leader VARCHAR(20) DEFAULT NULL COMMENT '负责人',
+    phone VARCHAR(20) DEFAULT NULL COMMENT '联系电话',
+    email VARCHAR(50) DEFAULT NULL COMMENT '邮箱',
+    status SMALLINT NOT NULL DEFAULT 1 COMMENT '部门状态（1正常 0停用）',
+    remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by BIGINT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by BIGINT,
     is_deleted TIMESTAMP NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='部门表';
 
 -- 2. 用户表
 CREATE TABLE IF NOT EXISTS sys_user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    dept_id BIGINT NOT NULL,
-    status SMALLINT NOT NULL DEFAULT 1,
+    username VARCHAR(50) NOT NULL UNIQUE COMMENT '登录账号',
+    password VARCHAR(255) NOT NULL COMMENT '密码',
+    nickname VARCHAR(30) NOT NULL DEFAULT '' COMMENT '用户昵称',
+    email VARCHAR(50) DEFAULT '' COMMENT '用户邮箱',
+    phone VARCHAR(20) DEFAULT '' COMMENT '手机号码',
+    gender SMALLINT DEFAULT 0 COMMENT '用户性别（0未知 1男 2女）',
+    avatar VARCHAR(255) DEFAULT '' COMMENT '头像地址',
+    dept_id BIGINT DEFAULT NULL COMMENT '部门ID',
+    status SMALLINT NOT NULL DEFAULT 1 COMMENT '帐号状态（1正常 0停用 2锁定）',
+    last_login_ip VARCHAR(50) DEFAULT '' COMMENT '最后登录IP',
+    last_login_time DATETIME DEFAULT NULL COMMENT '最后登录时间',
+    remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by BIGINT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by BIGINT,
     is_deleted TIMESTAMP NULL DEFAULT NULL,
     INDEX idx_sys_user_username (username)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户信息表';
 
 -- 3. 角色表
 CREATE TABLE IF NOT EXISTS sys_role (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(100) NOT NULL,
-    role_key VARCHAR(100) NOT NULL UNIQUE,
-    data_scope SMALLINT NOT NULL DEFAULT 2,
+    role_name VARCHAR(100) NOT NULL COMMENT '角色名称',
+    role_key VARCHAR(100) NOT NULL UNIQUE COMMENT '角色权限字符串',
+    role_sort INT NOT NULL DEFAULT 0 COMMENT '显示顺序',
+    data_scope SMALLINT NOT NULL DEFAULT 2 COMMENT '数据范围（1全部 2本部门 3自定义）',
+    status SMALLINT NOT NULL DEFAULT 1 COMMENT '角色状态（1正常 0停用）',
+    remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by BIGINT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by BIGINT,
     is_deleted TIMESTAMP NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色信息表';
 
 -- 3.1 菜单表
 CREATE TABLE IF NOT EXISTS sys_menu (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    parent_id BIGINT NOT NULL DEFAULT 0,
-    menu_name VARCHAR(100) NOT NULL,
-    path VARCHAR(200),
-    component VARCHAR(255),
-    perm_code VARCHAR(100),
-    menu_type CHAR(1) NOT NULL DEFAULT 'C',
+    parent_id BIGINT NOT NULL DEFAULT 0 COMMENT '父菜单ID',
+    menu_name VARCHAR(100) NOT NULL COMMENT '菜单名称',
+    sort_order INT DEFAULT 0 COMMENT '显示顺序',
+    path VARCHAR(200) DEFAULT '' COMMENT '路由地址',
+    component VARCHAR(255) DEFAULT NULL COMMENT '组件路径',
+    is_frame SMALLINT DEFAULT 0 COMMENT '是否为外链（1是 0否）',
+    is_cache SMALLINT DEFAULT 0 COMMENT '是否缓存（1缓存 0不缓存）',
+    menu_type CHAR(1) NOT NULL DEFAULT 'C' COMMENT '菜单类型（M目录 C菜单 F按钮）',
+    visible SMALLINT DEFAULT 1 COMMENT '菜单状态（1显示 0隐藏）',
+    status SMALLINT DEFAULT 1 COMMENT '菜单状态（1正常 0停用）',
+    perm_code VARCHAR(100) DEFAULT NULL COMMENT '权限标识',
+    icon VARCHAR(100) DEFAULT '#' COMMENT '菜单图标',
+    remark VARCHAR(500) DEFAULT '' COMMENT '备注',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by BIGINT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by BIGINT,
     is_deleted TIMESTAMP NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='菜单权限表';
 
 -- 3.2 用户角色关联表
 CREATE TABLE IF NOT EXISTS sys_user_role (
     user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     PRIMARY KEY (user_id, role_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户和角色关联表';
 
 -- 3.3 角色菜单关联表
 CREATE TABLE IF NOT EXISTS sys_role_menu (
     role_id BIGINT NOT NULL,
     menu_id BIGINT NOT NULL,
     PRIMARY KEY (role_id, menu_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色和菜单关联表';
 
 -- 4. 审计日志表 (全局操作审计)
 CREATE TABLE IF NOT EXISTS sys_audit_log (
@@ -95,7 +111,7 @@ CREATE TABLE IF NOT EXISTS sys_audit_log (
     req_body JSON,
     execution_time INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作审计记录表';
 
 -- 5. 设备台账表
 CREATE TABLE IF NOT EXISTS ast_device (

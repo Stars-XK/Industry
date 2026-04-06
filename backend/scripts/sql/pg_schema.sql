@@ -30,6 +30,17 @@ CREATE TABLE IF NOT EXISTS sys_role (
     data_scope SMALLINT NOT NULL DEFAULT 2
 );
 
+-- 3.1 菜单表
+CREATE TABLE IF NOT EXISTS sys_menu (
+    id BIGSERIAL PRIMARY KEY,
+    parent_id BIGINT NOT NULL DEFAULT 0,
+    menu_name VARCHAR(100) NOT NULL,
+    path VARCHAR(200),
+    component VARCHAR(255),
+    perm_code VARCHAR(100),
+    menu_type CHAR(1) NOT NULL DEFAULT 'C'
+);
+
 -- 4. 设备台账表
 CREATE TABLE IF NOT EXISTS ast_device (
     id BIGSERIAL PRIMARY KEY,

@@ -11,6 +11,15 @@ INSERT INTO sys_user (id, username, password, dept_id, status)
 VALUES (1, 'admin', '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjQGjYp2Xm', 1, 1) 
 ON CONFLICT (username) DO NOTHING;
 
+-- 2.1 角色与菜单测试数据
+INSERT INTO sys_role (id, role_name, role_key, data_scope) VALUES (1, '超级管理员', 'admin', 1) ON CONFLICT DO NOTHING;
+INSERT INTO sys_menu (id, parent_id, menu_name, path, component, perm_code, menu_type) VALUES
+(1, 0, '数字孪生大屏', '/dashboard', 'dashboard/index', 'sys:dashboard', 'C'),
+(2, 0, '综合业务监控台', '/scada', 'Layout', '', 'M'),
+(3, 2, '全局态势感知', 'overview', 'scada/overview', 'scada:overview', 'C'),
+(4, 2, '2D拓扑与分区', 'topology', 'scada/topology', 'scada:topology', 'C')
+ON CONFLICT DO NOTHING;
+
 -- 3. DMA分区测试数据
 INSERT INTO dma_zone (id, parent_id, zone_name, level) VALUES (101, 0, '全市供水一级分区', 1) ON CONFLICT DO NOTHING;
 INSERT INTO dma_zone (id, parent_id, zone_name, level) VALUES (102, 101, '高新工业园区', 2) ON CONFLICT DO NOTHING;

@@ -29,10 +29,16 @@ INSERT INTO ast_device (id, device_code, device_name, device_type) VALUES (201, 
 INSERT INTO ast_device (id, device_code, device_name, device_type) VALUES (202, 'METER_OUT_01', '高新区工业用水分表', 1) ON CONFLICT (device_code) DO NOTHING;
 INSERT INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '高新区末端管网压力计', 2) ON CONFLICT (device_code) DO NOTHING;
 
--- 5. 分区设备绑定关系
--- 进水表 (in_out_type = 1)
-INSERT INTO dma_device_rel (zone_id, device_id, in_out_type) VALUES (102, 201, 1) ON CONFLICT DO NOTHING;
--- 出水表 (in_out_type = -1)
-INSERT INTO dma_device_rel (zone_id, device_id, in_out_type) VALUES (102, 202, -1) ON CONFLICT DO NOTHING;
--- 内部监控表 (in_out_type = 0)
-INSERT INTO dma_device_rel (zone_id, device_id, in_out_type) VALUES (102, 203, 0) ON CONFLICT DO NOTHING;
+-- 6. 数据字典测试数据
+INSERT INTO sys_dict_type (id, dict_name, dict_type, remark) VALUES 
+(1, '设备类型', 'sys_device_type', '物联网传感器的枚举类型'),
+(2, '工单状态', 'wf_order_status', '流程工单的生命周期状态')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort) VALUES 
+('智能水表', '1', 'sys_device_type', 1),
+('压力计', '2', 'sys_device_type', 2),
+('水泵', '3', 'sys_device_type', 3),
+('待接单', '10', 'wf_order_status', 1),
+('处理中', '20', 'wf_order_status', 2),
+('已闭环', '30', 'wf_order_status', 3);

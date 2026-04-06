@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { useUserStore } from '../store/user';
 
+// 定义静态的白名单路由
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
@@ -19,20 +20,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Dashboard',
         component: () => import('../views/dashboard/index.vue'),
         meta: { title: '数字孪生大屏' }
-      },
-      {
-        path: 'scada/overview',
-        name: 'ScadaOverview',
-        component: () => import('../views/scada/overview.vue'),
-        meta: { title: '全局态势感知' }
-      },
-      {
-        path: 'scada/topology',
-        name: 'ScadaTopology',
-        component: () => import('../views/scada/topology.vue'),
-        meta: { title: '2D拓扑与分区导航' }
       }
-      // TODO: 后续的动态路由，此处暂时写死核心页作为示例
     ]
   }
 ];
@@ -42,27 +30,83 @@ const router = createRouter({
   routes
 });
 
+// Vite 环境下动态导入 modules 的黑科技 (匹配 src/views 下所有 vue 文件)
+const modules = import.meta.glob('../views/**/*.vue');
+
+// 将后端树形菜单转换为平铺的 Vue Router 路由对象并注入
+export const generateDynamicRoutes = (menuTree: any[]) => {
+  const addRouteRecursively = (menus: any[], parentPath: string = '') => {
+    menus.forEach(menu => {
+      // 仅当是 C 菜单且有 component 时才挂载路由
+      if (menu.menu_type === 'C' && menu.component) {
+        // 防止后端路径缺少斜杠
+        const routePath = menu.path.startsWith('/') ? menu.path.slice(1) : menu.path;
+        const fullPath = parentPath ? `${parentPath}/${routePath}` : routePath;
+
+        // 匹配真实的 vue 文件组件
+        const componentPath = `../views/${menu.component}.vue`;
+        
+        if (modules[componentPath]) {
+          router.addRoute('Layout', {
+            path: fullPath,
+            name: menu.menu_name,
+            component: modules[componentPath],
+            meta: { title: menu.menu_name, perm_code: menu.perm_code }
+          });
+        } else {
+          console.warn(`[Vue Router]: 找不到组件 ${componentPath}`);
+        }
+      }
+      
+      // 递归处理子菜单
+      if (menu.children && menu.children.length > 0) {
+        const nextParent = parentPath ? `${parentPath}/${menu.path}` : menu.path;
+        addRouteRecursively(menu.children, nextParent);
+      }
+    });
+  };
+
+  addRouteRecursively(menuTree);
+};
+
+// 标记是否已经生成过动态路由
+let isDynamicRoutesGenerated = false;
+
 // 全局前置路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
   const token = userStore.token || localStorage.getItem('token');
   
   if (to.path === '/login') {
     if (token) {
-      next('/'); // 已经登录过，直接跳首页
+      next('/'); 
     } else {
-      next(); // 正常去登录页
+      next(); 
     }
   } else {
     // 访问需要权限的页面
     if (!token) {
-      // 没 token 打回登录页
       next(`/login?redirect=${to.path}`);
     } else {
-      // 有 token，放行
-      next();
+      // 如果有 token，但还未生成动态路由，则拉取菜单并注入
+      if (!isDynamicRoutesGenerated) {
+        try {
+          const menus = await userStore.fetchMenus();
+          generateDynamicRoutes(menus);
+          isDynamicRoutesGenerated = true;
+          // 路由已经动态添加，重新触发本次导航以匹配新路由
+          next({ ...to, replace: true });
+        } catch (error) {
+          console.error('动态路由注入失败:', error);
+          userStore.logout();
+          next('/login');
+        }
+      } else {
+        next();
+      }
     }
   }
 });
 
 export default router;
+

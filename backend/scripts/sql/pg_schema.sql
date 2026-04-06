@@ -70,7 +70,27 @@ CREATE TABLE IF NOT EXISTS dma_device_rel (
     in_out_type SMALLINT NOT NULL DEFAULT 0
 );
 
+-- 7. 字典类型表
+CREATE TABLE IF NOT EXISTS sys_dict_type (
+    id BIGSERIAL PRIMARY KEY,
+    dict_name VARCHAR(100) NOT NULL,
+    dict_type VARCHAR(100) NOT NULL UNIQUE,
+    status SMALLINT NOT NULL DEFAULT 1,
+    remark VARCHAR(500)
+);
+
+-- 8. 字典数据表
+CREATE TABLE IF NOT EXISTS sys_dict_data (
+    id BIGSERIAL PRIMARY KEY,
+    dict_sort INT DEFAULT 0,
+    dict_label VARCHAR(100) NOT NULL,
+    dict_value VARCHAR(100) NOT NULL,
+    dict_type VARCHAR(100) NOT NULL,
+    status SMALLINT NOT NULL DEFAULT 1
+);
+
 -- 创建索引以加速查询
 CREATE INDEX IF NOT EXISTS idx_sys_user_username ON sys_user(username);
 CREATE INDEX IF NOT EXISTS idx_ast_device_code ON ast_device(device_code);
 CREATE INDEX IF NOT EXISTS idx_dma_device_rel_zone ON dma_device_rel(zone_id);
+CREATE INDEX IF NOT EXISTS idx_sys_dict_data_type ON sys_dict_data(dict_type);

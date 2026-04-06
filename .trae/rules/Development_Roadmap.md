@@ -23,7 +23,7 @@
 | **用户与账号管理** | ✅ 用户管理页面 (分配角色、部门归属、重置密码) | ✅ `auth-service` 提供用户分页查询及 CRUD 接口 | ✅ `sys_user_role` 关联表设计支持 | ✅ |
 | **角色与权限分配** | ✅ 角色管理页面 (数据权限范围配置、分配菜单树) | ✅ `auth-service` 提供角色 CRUD 及菜单授权接口 | ✅ `sys_role_menu` 关联表设计支持 | ✅ |
 | **菜单配置管理** | ✅ 菜单管理页面 (图标、路由、权限标识配置) | ✅ `auth-service` 提供菜单资源 CRUD 接口 | ✅ `sys_menu` 表结构支持 | ✅ |
-| **数据字典管理** | ⬜ 字典类型与字典数据页面 (枚举值动态配置) | ⬜ `auth-service` 提供字典的 CRUD 接口 | ⬜ 新增 `sys_dict_type` 与 `sys_dict_data` 结构 | ⬜ |
+| **数据字典管理** | ✅ 字典类型与字典数据页面 (枚举值动态配置) | ✅ `auth-service` 提供字典的 CRUD 接口 | ✅ 新增 `sys_dict_type` 与 `sys_dict_data` 结构 | ✅ |
 
 ---
 

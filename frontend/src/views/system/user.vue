@@ -1,110 +1,175 @@
 <template>
-  <div class="sys-user-container">
-    <h2>用户管理</h2>
+  <div class="page-container">
     <div class="toolbar">
-      <button @click="fetchUsers">刷新数据</button>
-      <button @click="handleAdd">新增用户</button>
+      <el-button type="primary" @click="handleAdd">新增用户</el-button>
     </div>
-    
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>登录名</th>
-          <th>手机号</th>
-          <th>部门ID</th>
-          <th>状态</th>
-          <th>创建时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in userList" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.phone || '-' }}</td>
-          <td>{{ user.dept_id }}</td>
-          <td>
-            <span :class="user.status === 1 ? 'status-active' : 'status-disabled'">
-              {{ user.status === 1 ? '正常' : '禁用' }}
-            </span>
-          </td>
-          <td>{{ new Date(user.created_at).toLocaleString() }}</td>
-          <td>
-            <button class="btn-edit" @click="handleEdit(user)">编辑</button>
-            <button class="btn-del" @click="handleDelete(user.id)">删除</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="userList.length === 0" class="empty">暂无数据</div>
+
+    <el-table :data="tableData" style="width: 100%" v-loading="loading">
+      <el-table-column prop="id" label="ID" width="80" />
+      <el-table-column prop="username" label="登录名" />
+      <el-table-column prop="phone" label="手机号" />
+      <el-table-column prop="dept_id" label="部门ID" />
+      <el-table-column prop="status" label="状态">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+            {{ row.status === 1 ? '正常' : '禁用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="created_at" label="创建时间">
+        <template #default="{ row }">
+          {{ new Date(row.created_at).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200" fixed="right">
+        <template #default="{ row }">
+          <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 新增/编辑弹窗 -->
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
+        <el-form-item label="登录名" prop="username" v-if="!form.id">
+          <el-input v-model="form.username" placeholder="请输入登录名" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入手机号" />
+        </el-form-item>
+        <el-form-item label="部门ID" prop="dept_id">
+          <el-input-number v-model="form.dept_id" :min="1" placeholder="请输入部门ID" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status" v-if="form.id">
+          <el-radio-group v-model="form.status">
+            <el-radio :value="1">正常</el-radio>
+            <el-radio :value="0">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import request from '../../utils/request';
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '@/utils/request'
 
-const userList = ref<any[]>([]);
+const loading = ref(false)
+const tableData = ref([])
 
-const fetchUsers = async () => {
+const dialogVisible = ref(false)
+const dialogTitle = ref('新增用户')
+const formRef = ref()
+
+const form = ref({
+  id: undefined,
+  username: '',
+  phone: '',
+  dept_id: 1,
+  status: 1
+})
+
+const rules = {
+  username: [{ required: true, message: '请输入登录名', trigger: 'blur' }],
+  dept_id: [{ required: true, message: '请输入部门ID', trigger: 'blur' }]
+}
+
+const getList = async () => {
+  loading.value = true
   try {
-    const res = await request.get('/api/system/user/list?page=1&size=50');
-    userList.value = res.list;
+    const res = await request.get('/api/system/user/list?page=1&size=50')
+    tableData.value = res.data?.list || res.list || []
   } catch (error) {
-    console.error('获取用户列表失败', error);
+    console.error(error)
+  } finally {
+    loading.value = false
   }
-};
+}
+
+const resetForm = () => {
+  form.value = {
+    id: undefined,
+    username: '',
+    phone: '',
+    dept_id: 1,
+    status: 1
+  }
+}
 
 const handleAdd = () => {
-  alert('新增用户面板 (待接入UI组件库如 Element Plus)');
-};
+  resetForm()
+  dialogTitle.value = '新增用户'
+  dialogVisible.value = true
+}
 
-const handleEdit = (user: any) => {
-  alert(`编辑用户: ${user.username}`);
-};
-
-const handleDelete = async (id: number) => {
-  if (confirm('确认删除该用户吗？')) {
-    await request.delete(`/api/system/user/delete/${id}`);
-    fetchUsers();
+const handleEdit = (row: any) => {
+  resetForm()
+  form.value = {
+    id: row.id,
+    username: row.username,
+    phone: row.phone,
+    dept_id: row.dept_id,
+    status: row.status
   }
-};
+  dialogTitle.value = '编辑用户'
+  dialogVisible.value = true
+}
+
+const handleDelete = (row: any) => {
+  ElMessageBox.confirm(`确认删除用户 "${row.username}" 吗？`, '警告', {
+    type: 'warning'
+  }).then(async () => {
+    await request.delete(`/api/system/user/delete/${row.id}`)
+    ElMessage.success('删除成功')
+    getList()
+  }).catch(() => {})
+}
+
+const submitForm = async () => {
+  if (!formRef.value) return
+  await formRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      if (form.value.id) {
+        await request.put(`/api/system/user/update/${form.value.id}`, {
+          phone: form.value.phone,
+          dept_id: form.value.dept_id,
+          status: form.value.status
+        })
+        ElMessage.success('更新成功')
+      } else {
+        await request.post('/api/system/user/create', {
+          username: form.value.username,
+          phone: form.value.phone,
+          dept_id: form.value.dept_id
+        })
+        ElMessage.success('新增成功')
+      }
+      dialogVisible.value = false
+      getList()
+    }
+  })
+}
 
 onMounted(() => {
-  fetchUsers();
-});
+  getList()
+})
 </script>
 
 <style scoped>
-.sys-user-container {
+.page-container {
   padding: 20px;
   background: #fff;
+  height: 100%;
   border-radius: 4px;
 }
 .toolbar {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
-.toolbar button {
-  margin-right: 10px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.data-table th, .data-table td {
-  border: 1px solid #f0f0f0;
-  padding: 10px;
-  text-align: left;
-}
-.data-table th {
-  background-color: #fafafa;
-}
-.status-active { color: green; }
-.status-disabled { color: red; }
-.btn-edit { color: #1890ff; border: none; background: none; cursor: pointer; margin-right: 8px; }
-.btn-del { color: #ff4d4f; border: none; background: none; cursor: pointer; }
-.empty { text-align: center; padding: 20px; color: #999; }
 </style>

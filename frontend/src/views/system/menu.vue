@@ -1,122 +1,196 @@
 <template>
-  <div class="sys-menu-container">
-    <h2>菜单与权限配置</h2>
+  <div class="page-container">
     <div class="toolbar">
-      <button @click="fetchMenuTree">刷新树</button>
-      <button @click="handleAddRoot">新增根菜单</button>
+      <el-button type="primary" @click="handleAdd(0)">新增顶级菜单</el-button>
     </div>
-    
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>菜单名称</th>
-          <th>类型</th>
-          <th>路由路径</th>
-          <th>组件路径</th>
-          <th>权限标识</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="menu in menuTree" :key="menu.id">
-          <!-- 一级菜单 -->
-          <tr class="level-1">
-            <td><strong>{{ menu.menu_name }}</strong></td>
-            <td>{{ formatType(menu.menu_type) }}</td>
-            <td>{{ menu.path || '-' }}</td>
-            <td>{{ menu.component || '-' }}</td>
-            <td>{{ menu.perm_code || '-' }}</td>
-            <td>
-              <button class="btn-add" @click="handleAddChild(menu.id)">添加子项</button>
-              <button class="btn-del" @click="handleDelete(menu.id)">删除</button>
-            </td>
-          </tr>
-          <!-- 二级菜单展开显示 (简易实现) -->
-          <tr v-for="child in menu.children" :key="child.id" class="level-2">
-            <td style="padding-left: 30px;">├─ {{ child.menu_name }}</td>
-            <td>{{ formatType(child.menu_type) }}</td>
-            <td>{{ child.path || '-' }}</td>
-            <td>{{ child.component || '-' }}</td>
-            <td>{{ child.perm_code || '-' }}</td>
-            <td>
-              <button class="btn-del" @click="handleDelete(child.id)">删除</button>
-            </td>
-          </tr>
+
+    <el-table
+      :data="tableData"
+      row-key="id"
+      default-expand-all
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      style="width: 100%"
+      v-loading="loading"
+    >
+      <el-table-column prop="menu_name" label="菜单名称" width="200" />
+      <el-table-column prop="menu_type" label="类型" width="80">
+        <template #default="{ row }">
+          <el-tag v-if="row.menu_type === 'M'" type="info">目录</el-tag>
+          <el-tag v-else-if="row.menu_type === 'C'" type="success">菜单</el-tag>
+          <el-tag v-else-if="row.menu_type === 'F'" type="warning">按钮</el-tag>
         </template>
-      </tbody>
-    </table>
-    <div v-if="menuTree.length === 0" class="empty">暂无数据</div>
+      </el-table-column>
+      <el-table-column prop="path" label="路由路径" />
+      <el-table-column prop="component" label="组件路径" />
+      <el-table-column prop="perm_code" label="权限标识" />
+      <el-table-column label="操作" width="250" fixed="right">
+        <template #default="{ row }">
+          <el-button link type="primary" @click="handleAdd(row.id)">新增子项</el-button>
+          <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
+          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 新增/编辑弹窗 -->
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
+        <el-form-item label="上级菜单" prop="parent_id">
+          <el-tree-select
+            v-model="form.parent_id"
+            :data="menuOptions"
+            :props="{ value: 'id', label: 'menu_name', children: 'children' }"
+            check-strictly
+            placeholder="请选择上级菜单"
+            style="width: 100%"
+          />
+        </el-form-item>
+        <el-form-item label="菜单类型" prop="menu_type">
+          <el-radio-group v-model="form.menu_type">
+            <el-radio value="M">目录</el-radio>
+            <el-radio value="C">菜单</el-radio>
+            <el-radio value="F">按钮</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="菜单名称" prop="menu_name">
+          <el-input v-model="form.menu_name" placeholder="请输入菜单名称" />
+        </el-form-item>
+        <el-form-item label="路由路径" prop="path" v-if="form.menu_type !== 'F'">
+          <el-input v-model="form.path" placeholder="请输入路由路径 (如 /system/user)" />
+        </el-form-item>
+        <el-form-item label="组件路径" prop="component" v-if="form.menu_type === 'C'">
+          <el-input v-model="form.component" placeholder="请输入组件路径 (如 system/user/index)" />
+        </el-form-item>
+        <el-form-item label="权限标识" prop="perm_code" v-if="form.menu_type !== 'M'">
+          <el-input v-model="form.perm_code" placeholder="请输入权限标识 (如 sys:user:list)" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import request from '../../utils/request';
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '@/utils/request'
 
-const menuTree = ref<any[]>([]);
+const loading = ref(false)
+const tableData = ref([])
+const menuOptions = ref<any[]>([])
 
-const fetchMenuTree = async () => {
+const dialogVisible = ref(false)
+const dialogTitle = ref('新增菜单')
+const formRef = ref()
+
+const form = ref({
+  id: undefined,
+  parent_id: 0,
+  menu_name: '',
+  menu_type: 'C',
+  path: '',
+  component: '',
+  perm_code: ''
+})
+
+const rules = {
+  menu_name: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+}
+
+const getList = async () => {
+  loading.value = true
   try {
-    const res = await request.get('/api/system/menu/tree');
-    menuTree.value = res;
+    const res = await request.get('/api/system/menu/tree')
+    tableData.value = res.data || res || []
+    menuOptions.value = [{ id: 0, menu_name: '主类目', children: tableData.value }]
   } catch (error) {
-    console.error('获取菜单树失败', error);
+    console.error(error)
+  } finally {
+    loading.value = false
   }
-};
+}
 
-const formatType = (type: string) => {
-  if (type === 'M') return '目录';
-  if (type === 'C') return '菜单';
-  if (type === 'F') return '按钮';
-  return type;
-};
-
-const handleAddRoot = async () => {
-  const name = prompt('请输入新的一级菜单名称:');
-  if (name) {
-    await request.post('/api/system/menu/create', { menu_name: name, parent_id: 0, menu_type: 'M' });
-    fetchMenuTree();
+const resetForm = () => {
+  form.value = {
+    id: undefined,
+    parent_id: 0,
+    menu_name: '',
+    menu_type: 'C',
+    path: '',
+    component: '',
+    perm_code: ''
   }
-};
+}
 
-const handleAddChild = async (parentId: number) => {
-  const name = prompt('请输入子菜单名称:');
-  const path = prompt('请输入路由路径 (如 dashboard):');
-  if (name) {
-    await request.post('/api/system/menu/create', { menu_name: name, path, parent_id: parentId, menu_type: 'C' });
-    fetchMenuTree();
+const handleAdd = (parentId: number) => {
+  resetForm()
+  form.value.parent_id = parentId
+  dialogTitle.value = '新增菜单'
+  dialogVisible.value = true
+}
+
+const handleEdit = (row: any) => {
+  resetForm()
+  form.value = {
+    id: row.id,
+    parent_id: row.parent_id,
+    menu_name: row.menu_name,
+    menu_type: row.menu_type,
+    path: row.path,
+    component: row.component,
+    perm_code: row.perm_code
   }
-};
+  dialogTitle.value = '编辑菜单'
+  dialogVisible.value = true
+}
 
-const handleDelete = async (id: number) => {
-  if (confirm('确认删除该菜单吗？（若有子菜单将不允许删除）')) {
-    try {
-      await request.delete(`/api/system/menu/delete/${id}`);
-      fetchMenuTree();
-    } catch (e: any) {
-      alert(e.message || '删除失败');
+const handleDelete = (row: any) => {
+  if (row.children && row.children.length > 0) {
+    ElMessage.warning('存在子菜单，不允许删除')
+    return
+  }
+  ElMessageBox.confirm(`确认删除菜单 "${row.menu_name}" 吗？`, '警告', {
+    type: 'warning'
+  }).then(async () => {
+    await request.delete(`/api/system/menu/delete/${row.id}`)
+    ElMessage.success('删除成功')
+    getList()
+  }).catch(() => {})
+}
+
+const submitForm = async () => {
+  if (!formRef.value) return
+  await formRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      if (form.value.id) {
+        await request.put(`/api/system/menu/update/${form.value.id}`, form.value)
+        ElMessage.success('更新成功')
+      } else {
+        await request.post('/api/system/menu/create', form.value)
+        ElMessage.success('新增成功')
+      }
+      dialogVisible.value = false
+      getList()
     }
-  }
-};
+  })
+}
 
 onMounted(() => {
-  fetchMenuTree();
-});
+  getList()
+})
 </script>
 
 <style scoped>
-.sys-menu-container {
+.page-container {
   padding: 20px;
   background: #fff;
+  height: 100%;
   border-radius: 4px;
 }
-.toolbar { margin-bottom: 15px; }
-.toolbar button { margin-right: 10px; padding: 6px 12px; cursor: pointer; }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th, .data-table td { border: 1px solid #f0f0f0; padding: 10px; text-align: left; }
-.data-table th { background-color: #fafafa; }
-.level-1 { background-color: #f9f9f9; }
-.btn-add { color: #52c41a; border: none; background: none; cursor: pointer; margin-right: 8px; }
-.btn-del { color: #ff4d4f; border: none; background: none; cursor: pointer; }
-.empty { text-align: center; padding: 20px; color: #999; }
+.toolbar {
+  margin-bottom: 20px;
+}
 </style>

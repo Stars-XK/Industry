@@ -8,13 +8,23 @@
       </div>
       <div class="form-group">
         <label>密 码：</label>
-        <input v-model="form.password" type="password" placeholder="请输入密码 (默认: admin123)" @keyup.enter="handleLogin" />
+        <input v-model="form.password" type="password" placeholder="请输入密码 (默认: admin123)" @keyup.enter="preLogin" />
       </div>
-      <button class="login-btn" :disabled="loading" @click="handleLogin">
+      <button class="login-btn" :disabled="loading" @click="preLogin">
         {{ loading ? '登录中...' : '登 录' }}
       </button>
       <p class="error-msg" v-if="errorMsg">{{ errorMsg }}</p>
     </div>
+
+    <!-- 滑动拼图验证码 -->
+    <Vcode
+      :show="isShowCaptcha"
+      @success="onCaptchaSuccess"
+      @close="onCaptchaClose"
+      successText="验证成功！"
+      failText="验证失败，请重试！"
+      sliderText="向右拖动滑块填充拼图"
+    />
   </div>
 </template>
 
@@ -22,6 +32,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../../store/user';
+import Vcode from 'vue3-puzzle-vcode'; // 引入滑动验证码
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -33,12 +44,41 @@ const form = reactive({
 
 const loading = ref(false);
 const errorMsg = ref('');
+const isShowCaptcha = ref(false);
 
-const handleLogin = async () => {
+// 错误次数记录 (模拟防暴破逻辑)
+const errorCount = ref(0);
+
+// 点击登录按钮或回车，首先进行初步校验，然后弹出验证码
+const preLogin = () => {
   if (!form.username || !form.password) {
     errorMsg.value = '用户名或密码不能为空';
     return;
   }
+  
+  // 如果连续输错 3 次以上，可以加上锁定的逻辑
+  if (errorCount.value >= 5) {
+    errorMsg.value = '错误次数过多，账号已锁定，请稍后再试';
+    return;
+  }
+
+  // 弹出滑动验证码
+  isShowCaptcha.value = true;
+};
+
+// 验证码验证成功回调
+const onCaptchaSuccess = async () => {
+  isShowCaptcha.value = false;
+  await handleLogin();
+};
+
+// 验证码关闭回调
+const onCaptchaClose = () => {
+  isShowCaptcha.value = false;
+};
+
+// 实际发送请求进行登录
+const handleLogin = async () => {
   try {
     loading.value = true;
     errorMsg.value = '';
@@ -46,8 +86,10 @@ const handleLogin = async () => {
     await userStore.login(form);
     
     // 登录成功，跳转至大屏首页
+    errorCount.value = 0; // 成功重置计数
     router.push('/dashboard');
   } catch (error: any) {
+    errorCount.value += 1;
     errorMsg.value = error.message || '登录失败，请检查账号密码';
   } finally {
     loading.value = false;

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "nest-cli",
+  "collection": "@nestjs/schematics",
   "sourceRoot": "apps/api-gateway/src",
   "compilerOptions": {
     "webpack": true,

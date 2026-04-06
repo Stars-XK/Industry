@@ -1,5 +1,6 @@
 # 依赖目录 (Node & Python)
 node_modules/
+**/node_modules/
 __pycache__/
 venv/
 env/
@@ -7,6 +8,7 @@ env/
 
 # 编译产物
 dist/
+**/dist/
 build/
 *.pyc
 

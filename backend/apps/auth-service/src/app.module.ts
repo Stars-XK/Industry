@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './menu/menu.module';
+import { SystemModule } from './system/system.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MenuModule } from './menu/menu.module';
     }),
     AuthModule,
     MenuModule,
+    SystemModule,
   ],
   controllers: [],
   providers: [],

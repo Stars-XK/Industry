@@ -1,4 +1,15 @@
+/// <reference types="vite/client" />
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+
+// 扩展 axios 的类型声明，使其返回的数据类型为 T
+declare module 'axios' {
+  export interface AxiosInstance {
+    get<T = any, R = T>(url: string, config?: AxiosRequestConfig): Promise<R>;
+    post<T = any, R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+    put<T = any, R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+    delete<T = any, R = T>(url: string, config?: AxiosRequestConfig): Promise<R>;
+  }
+}
 
 // 定义接口响应的基础结构
 export interface ApiResponse<T = any> {

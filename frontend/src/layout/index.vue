@@ -49,7 +49,7 @@
             >
               <!-- 图标区 (如果没有配置专属图标，使用通用图标) -->
               <div class="menu-icon-box" :class="{ active: currentPath === child.path }" @click="handleNavigate(child)">
-                <div v-html="child.icon || icons.defaultSub" class="svg-icon"></div>
+                <div v-html="(child as any).icon || icons.defaultSub" class="svg-icon"></div>
               </div>
 
               <!-- 悬浮 Tooltip -->

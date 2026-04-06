@@ -1,24 +1,27 @@
 import { Controller, Post, Body, UnauthorizedException, Get, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { LoginDto } from './dto/auth.dto';
 
+@ApiTags('认证授权')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() body: any) {
-    if (!body.username || !body.password) {
-      throw new UnauthorizedException('请输入用户名和密码');
-    }
+  @ApiOperation({ summary: '用户登录' })
+  async login(@Body() body: LoginDto) {
     const user = await this.authService.validateUser(body.username, body.password);
     return this.authService.login(user);
   }
 
-  // 测试 JWT 是否有效的保护接口
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
+  @ApiOperation({ summary: '获取当前登录用户信息' })
   getProfile(@Request() req) {
-    return { code: 200, data: req.user, message: '获取成功' };
+    // 移除硬编码，依赖全局拦截器包装
+    return req.user;
   }
 }

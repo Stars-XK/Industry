@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Menu } from '../../../../libs/entities/src/menu.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateMenuDto, UpdateMenuDto } from './dto/menu.dto';
 
+@ApiTags('菜单管理')
+@ApiBearerAuth()
 @Controller('api/system/menu')
 @UseGuards(AuthGuard('jwt'))
 export class SystemMenuController {
@@ -13,6 +17,7 @@ export class SystemMenuController {
   ) {}
 
   @Get('tree')
+  @ApiOperation({ summary: '获取菜单树' })
   async getMenuTree() {
     const menus = await this.menuRepository.find({ order: { id: 'ASC' } });
     const buildTree = (data: Menu[], parentId = 0) => {
@@ -23,35 +28,38 @@ export class SystemMenuController {
           children: buildTree(data, node.id),
         }));
     };
-    return { code: 200, data: buildTree(menus, 0), message: 'success' };
+    return buildTree(menus, 0);
   }
 
   @Post('create')
-  async createMenu(@Body() body: any) {
+  @ApiOperation({ summary: '创建菜单' })
+  async createMenu(@Body() body: CreateMenuDto) {
     const menu = new Menu();
     menu.parent_id = body.parent_id || 0;
     menu.menu_name = body.menu_name;
-    menu.path = body.path;
-    menu.component = body.component;
-    menu.perm_code = body.perm_code;
+    if (body.path !== undefined) menu.path = body.path;
+    if (body.component !== undefined) menu.component = body.component;
+    if (body.perm_code !== undefined) menu.perm_code = body.perm_code;
     menu.menu_type = body.menu_type || 'C';
     await this.menuRepository.save(menu);
-    return { code: 200, message: '菜单创建成功' };
+    return null;
   }
 
   @Put('update/:id')
-  async updateMenu(@Param('id') id: number, @Body() body: any) {
+  @ApiOperation({ summary: '更新菜单' })
+  async updateMenu(@Param('id') id: number, @Body() body: UpdateMenuDto) {
     await this.menuRepository.update(id, body);
-    return { code: 200, message: '更新成功' };
+    return null;
   }
 
   @Delete('delete/:id')
+  @ApiOperation({ summary: '删除菜单' })
   async deleteMenu(@Param('id') id: number) {
     const hasChildren = await this.menuRepository.count({ where: { parent_id: id } });
     if (hasChildren > 0) {
-      return { code: 400, message: '存在子菜单，不允许删除' };
+      throw new BadRequestException('存在子菜单，不允许删除');
     }
-    await this.menuRepository.delete(id);
-    return { code: 200, message: '删除成功' };
+    await this.menuRepository.softDelete(id);
+    return null;
   }
 }

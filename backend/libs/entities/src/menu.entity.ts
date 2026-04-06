@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { CoreBaseEntity } from './base.entity';
 
 @Entity('sys_menu')
-export class Menu {
+export class Menu extends CoreBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

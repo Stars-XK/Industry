@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { CoreBaseEntity } from './base.entity';
 
 @Entity('sys_dict_data')
-export class DictData {
+export class DictData extends CoreBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

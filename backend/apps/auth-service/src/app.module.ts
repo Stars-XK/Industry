@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './menu/menu.module';
 import { SystemModule } from './system/system.module';
+import { AuditLogInterceptor } from '@app/common';
 
 @Module({
   imports: [
@@ -14,13 +16,18 @@ import { SystemModule } from './system/system.module';
       password: process.env.DB_PWD || 'nDTe2mNcSMadmY3S',
       database: process.env.DB_NAME || 'Industry',
       autoLoadEntities: true,
-      synchronize: false, // 严格遵循规范：禁用自动同步，依赖 SQL 脚本初始化
+      synchronize: false,
     }),
     AuthModule,
     MenuModule,
     SystemModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditLogInterceptor,
+    },
+  ],
 })
 export class AppModule {}

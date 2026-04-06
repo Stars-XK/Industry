@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { CoreBaseEntity } from './base.entity';
 
 @Entity('sys_dept')
-export class Dept {
+export class Dept extends CoreBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -10,7 +11,4 @@ export class Dept {
 
   @Column({ length: 100 })
   dept_name: string;
-
-  @CreateDateColumn()
-  created_at: Date;
 }

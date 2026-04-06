@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { CoreBaseEntity } from './base.entity';
+import { Role } from './role.entity';
 
 @Entity('sys_user')
-export class User {
+export class User extends CoreBaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -9,7 +11,7 @@ export class User {
   username: string;
 
   @Column({ length: 255 })
-  password?: string; // 密码通常不应直接返回给前端
+  password?: string;
 
   @Column({ length: 20, nullable: true })
   phone: string;
@@ -20,9 +22,11 @@ export class User {
   @Column({ type: 'smallint', default: 1 })
   status: number;
 
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'sys_user_role',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }
+  })
+  roles: Role[];
 }

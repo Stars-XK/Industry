@@ -1,0 +1,13 @@
+{
+  "name": "backend-microservices",
+  "version": "1.0.0",
+  "description": "信创工业综合治理平台后端微服务集群",
+  "scripts": {
+    "start:gateway": "nest start api-gateway",
+    "start:auth": "nest start auth-service",
+    "start:scada": "nest start scada-service",
+    "start:data": "nest start data-center",
+    "start:workflow": "nest start workflow-service",
+    "start:iot": "nest start iot-bridge"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "nest-cli",
+  "sourceRoot": "apps/api-gateway/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "tsconfig.build.json"
+  },
+  "monorepo": true,
+  "root": "apps/api-gateway",
+  "projects": {
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
+    },
+    "auth-service": {
+      "type": "application",
+      "root": "apps/auth-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth-service/tsconfig.app.json"
+      }
+    },
+    "scada-service": {
+      "type": "application",
+      "root": "apps/scada-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/scada-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/scada-service/tsconfig.app.json"
+      }
+    },
+    "data-center": {
+      "type": "application",
+      "root": "apps/data-center",
+      "entryFile": "main",
+      "sourceRoot": "apps/data-center/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/data-center/tsconfig.app.json"
+      }
+    },
+    "workflow-service": {
+      "type": "application",
+      "root": "apps/workflow-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/workflow-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/workflow-service/tsconfig.app.json"
+      }
+    },
+    "iot-bridge": {
+      "type": "application",
+      "root": "apps/iot-bridge",
+      "entryFile": "main",
+      "sourceRoot": "apps/iot-bridge/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/iot-bridge/tsconfig.app.json"
+      }
+    }
+  }
+}

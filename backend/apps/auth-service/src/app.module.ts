@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: false, // 严格遵循规范：禁用自动同步，依赖 SQL 脚本初始化
     }),
+    AuthModule,
+    MenuModule,
   ],
   controllers: [],
   providers: [],

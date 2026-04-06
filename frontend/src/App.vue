@@ -1,8 +1,18 @@
 <template>
-  <div id="app">
-    <h1>信创工业综合治理平台 - 前端工程初始化成功</h1>
-  </div>
+  <router-view />
 </template>
 
 <script setup lang="ts">
 </script>
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+#app {
+  height: 100%;
+}
+</style>

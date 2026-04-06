@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';

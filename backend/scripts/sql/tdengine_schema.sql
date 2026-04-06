@@ -3,9 +3,9 @@
 -- 参考: /.trae/rules/Database_Schema_Design.md
 -- ==============================================================
 
--- 1. 建库
-CREATE DATABASE IF NOT EXISTS water_iot KEEP 365 REPLICA 1;
-USE water_iot;
+-- 1. 建库 (数据库名需与环境变量中的 TDENGINE_DATABASE 一致，默认为 dma)
+CREATE DATABASE IF NOT EXISTS dma KEEP 365 REPLICA 1;
+USE dma;
 
 -- 2. 关系表（仅用于时序辅助，通常不在这里建，但根据用户要求保留）
 CREATE TABLE IF NOT EXISTS device_info (ts TIMESTAMP, device_id VARCHAR(50), device_name VARCHAR(500), device_type TINYINT, install_addr VARCHAR(500), status TINYINT);

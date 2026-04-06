@@ -12,7 +12,9 @@ const PG_CONFIG = {
   port: parseInt(process.env.PG_PORT || '5432'),
 };
 
-const TDENGINE_REST_URL = process.env.TD_REST_URL || 'http://localhost:6041/rest/sql';
+const TD_HOST = process.env.TDENGINE_HOST || '139.224.26.134';
+const TD_PORT = process.env.TDENGINE_PORT || '6041';
+const TDENGINE_REST_URL = `http://${TD_HOST}:${TD_PORT}/rest/sql`;
 const TDENGINE_AUTH = process.env.TD_AUTH || 'Basic cm9vdDp0YW9zZGF0YQ=='; // root:taosdata base64
 
 async function initPostgreSQL() {

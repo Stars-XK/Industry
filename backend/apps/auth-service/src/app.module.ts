@@ -7,12 +7,12 @@ import { SystemModule } from './system/system.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.PG_HOST || 'localhost',
-      port: parseInt(process.env.PG_PORT || '5432', 10),
-      username: process.env.PG_USER || 'postgres',
-      password: process.env.PG_PASSWORD || 'postgres',
-      database: process.env.PG_DATABASE || 'postgres',
+      type: 'mysql',
+      host: process.env.DB_HOST || '139.224.26.134',
+      port: parseInt(process.env.DB_PORT || '3306', 10),
+      username: process.env.DB_USER || 'Industry',
+      password: process.env.DB_PWD || 'nDTe2mNcSMadmY3S',
+      database: process.env.DB_NAME || 'Industry',
       autoLoadEntities: true,
       synchronize: false, // 严格遵循规范：禁用自动同步，依赖 SQL 脚本初始化
     }),

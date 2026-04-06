@@ -1,15 +1,16 @@
-import { Client } from 'pg';
+import mysql from 'mysql2/promise';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // 配置参数 (实际应用中应从 .env 读取)
-const PG_CONFIG = {
-  user: process.env.PG_USER || 'postgres',
-  host: process.env.PG_HOST || 'localhost',
-  database: process.env.PG_DATABASE || 'postgres',
-  password: process.env.PG_PASSWORD || 'postgres',
-  port: parseInt(process.env.PG_PORT || '5432'),
+const MYSQL_CONFIG = {
+  host: process.env.DB_HOST || '139.224.26.134',
+  port: parseInt(process.env.DB_PORT || '3306'),
+  user: process.env.DB_USER || 'Industry',
+  password: process.env.DB_PWD || 'nDTe2mNcSMadmY3S',
+  database: process.env.DB_NAME || 'Industry',
+  multipleStatements: true // 允许一次执行多条 SQL 语句
 };
 
 const TD_HOST = process.env.TDENGINE_HOST || '139.224.26.134';
@@ -17,28 +18,30 @@ const TD_PORT = process.env.TDENGINE_PORT || '6041';
 const TDENGINE_REST_URL = `http://${TD_HOST}:${TD_PORT}/rest/sql`;
 const TDENGINE_AUTH = process.env.TD_AUTH || 'Basic cm9vdDp0YW9zZGF0YQ=='; // root:taosdata base64
 
-async function initPostgreSQL() {
-  console.log('\n--- 正在初始化 PostgreSQL ---');
-  const client = new Client(PG_CONFIG);
+async function initMySQL() {
+  console.log('\n--- 正在初始化 MySQL ---');
+  let connection;
   try {
-    await client.connect();
+    connection = await mysql.createConnection(MYSQL_CONFIG);
     
     // 1. 读取并执行表结构 SQL
-    const schemaSql = fs.readFileSync(path.join(__dirname, 'sql/pg_schema.sql'), 'utf8');
-    console.log('>>> 执行 pg_schema.sql (创建表结构与索引)...');
-    await client.query(schemaSql);
-    console.log('✅ PostgreSQL 表结构与索引创建完成！');
+    const schemaSql = fs.readFileSync(path.join(__dirname, 'sql/mysql_schema.sql'), 'utf8');
+    console.log('>>> 执行 mysql_schema.sql (创建表结构与索引)...');
+    await connection.query(schemaSql);
+    console.log('✅ MySQL 表结构与索引创建完成！');
 
     // 2. 读取并执行测试数据 (Seed) SQL
-    const seedSql = fs.readFileSync(path.join(__dirname, 'sql/pg_seed.sql'), 'utf8');
-    console.log('>>> 执行 pg_seed.sql (插入初始化/测试数据)...');
-    await client.query(seedSql);
-    console.log('✅ PostgreSQL 初始化与测试数据插入完成！');
+    const seedSql = fs.readFileSync(path.join(__dirname, 'sql/mysql_seed.sql'), 'utf8');
+    console.log('>>> 执行 mysql_seed.sql (插入初始化/测试数据)...');
+    await connection.query(seedSql);
+    console.log('✅ MySQL 初始化与测试数据插入完成！');
 
   } catch (error) {
-    console.error('❌ PostgreSQL 初始化失败:', error);
+    console.error('❌ MySQL 初始化失败:', error);
   } finally {
-    await client.end();
+    if (connection) {
+      await connection.end();
+    }
   }
 }
 
@@ -73,7 +76,7 @@ async function run() {
   console.log('🚀 开始执行信创工业综合治理平台 - 数据库初始化脚本');
   console.log('===================================================');
   
-  await initPostgreSQL();
+  await initMySQL();
   await initTDengine();
 
   console.log('\n🎉 所有数据库初始化任务结束！');

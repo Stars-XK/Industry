@@ -1,5 +1,5 @@
 import { ref, Ref } from 'vue'
-import { useDictStore } from '../store/dict'
+import { useDictStore } from '@/store/dict'
 
 export function useDict(...args: string[]) {
   const dictStore = useDictStore()

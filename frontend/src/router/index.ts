@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { useUserStore } from '../store/user';
+import { useUserStore } from '@/store/user';
 
 // 基础静态路由
 export const constantRoutes: Array<RouteRecordRaw> = [

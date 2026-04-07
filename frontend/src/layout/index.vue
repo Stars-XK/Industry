@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '@/store/user';
 
 const router = useRouter();
 const route = useRoute();

@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '@/store/user';
 import Vcode from 'vue3-puzzle-vcode'; // 引入滑动验证码
 
 const router = useRouter();

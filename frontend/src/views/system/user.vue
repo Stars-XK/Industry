@@ -4,7 +4,10 @@
       <el-button type="primary" @click="handleAdd">新增用户</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading"
+      element-loading-text="Thinking..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="登录名" />
       <el-table-column prop="nickname" label="用户昵称" />

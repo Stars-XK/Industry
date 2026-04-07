@@ -11,6 +11,9 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       style="width: 100%"
       v-loading="loading"
+      element-loading-text="Thinking..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
     >
       <el-table-column prop="menu_name" label="菜单名称" width="200" />
       <el-table-column prop="icon" label="图标" width="80" />

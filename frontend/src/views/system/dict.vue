@@ -2,6 +2,7 @@
   <div class="page-container sys-dict-container">
     <!-- 左侧：字典类型列表 -->
     <el-card class="dict-type-panel" shadow="never">
+
       <template #header>
         <div class="card-header">
           <span>字典类型 (DictType)</span>
@@ -30,7 +31,15 @@
         </div>
       </template>
       
-      <el-table :data="dataList" style="width: 100%" v-if="currentType" v-loading="loadingData">
+      <el-table 
+        :data="dataList" 
+        style="width: 100%" 
+        v-if="currentType" 
+        v-loading="loadingData"
+        element-loading-text="Thinking..."
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
         <el-table-column prop="dict_label" label="字典标签 (Label)" />
         <el-table-column prop="dict_value" label="字典键值 (Value)" />
         <el-table-column prop="dict_sort" label="排序" width="80" />

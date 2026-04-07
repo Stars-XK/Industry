@@ -11,7 +11,7 @@
         <input v-model="form.password" type="password" placeholder="请输入密码 (默认: admin123)" @keyup.enter="preLogin" />
       </div>
       <button class="login-btn" :disabled="loading" @click="preLogin">
-        {{ loading ? '登录中...' : '登 录' }}
+        {{ loading ? 'Thinking...' : '登 录' }}
       </button>
       <p class="error-msg" v-if="errorMsg">{{ errorMsg }}</p>
     </div>

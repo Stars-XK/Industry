@@ -61,11 +61,12 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (50, 0, '系统设置与台账权限', 50, '/system', 'Layout', 0, 0, '', 'M', 1, 1, 'Setting', '', 1),
 (51, 50, '资产与设备台账', 1, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1),
 (52, 50, '备品备件与仓储管理', 2, 'inventory', 'system/inventory', 0, 0, 'sys:inventory', 'C', 1, 1, 'ShoppingCart', '', 1),
-(53, 50, '组织架构与人员管理', 3, 'org', 'system/org', 0, 0, 'sys:org', 'C', 1, 1, 'OfficeBuilding', '', 1),
+(53, 50, '组织架构与部门管理', 3, 'org', 'system/org', 0, 0, 'sys:org', 'C', 1, 1, 'OfficeBuilding', '', 1),
 (54, 50, '角色与权限体系', 4, 'rbac', 'system/rbac', 0, 0, 'sys:rbac', 'C', 1, 1, 'Avatar', '', 1),
 (55, 50, '数据字典管理', 5, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
 (56, 50, '安全审计与脱敏日志', 6, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
-(57, 50, '低代码可视化组态工作台', 7, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1);
+(57, 50, '低代码可视化组态工作台', 7, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1),
+(58, 50, '用户与账号管理', 8, 'user', 'system/user', 0, 0, 'sys:user', 'C', 1, 1, 'User', '', 1);
 
 -- 3. DMA分区测试数据
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '全市供水一级分区', 1, 1);

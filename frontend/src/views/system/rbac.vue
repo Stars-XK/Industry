@@ -4,7 +4,10 @@
       <el-button type="primary" @click="handleAdd">新增角色</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading"
+      element-loading-text="Thinking..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="role_name" label="角色名称" />
       <el-table-column prop="role_key" label="角色标识" />
@@ -138,7 +141,7 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/system/role/list')
-    tableData.value = res.data || []
+    tableData.value = res.list || []
   } catch (error) {
     console.error(error)
   } finally {
@@ -149,7 +152,7 @@ const getList = async () => {
 const getMenuTree = async () => {
   try {
     const res = await request.get('/api/system/menu/tree')
-    menuOptions.value = res.data || []
+    menuOptions.value = res || []
   } catch (error) {
     console.error(error)
   }

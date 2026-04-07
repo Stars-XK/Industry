@@ -11,6 +11,9 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       style="width: 100%"
       v-loading="loading"
+      element-loading-text="Thinking..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
     >
       <el-table-column prop="dept_name" label="部门名称" />
       <el-table-column prop="sort_order" label="排序" width="80" />
@@ -144,8 +147,8 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/system/dept/tree')
-    tableData.value = res.data || []
-    deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res.data }]
+    tableData.value = res || []
+    deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
   } catch (error) {
     console.error(error)
   } finally {

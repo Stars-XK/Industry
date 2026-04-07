@@ -8,6 +8,7 @@
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="role_name" label="角色名称" />
       <el-table-column prop="role_key" label="角色标识" />
+      <el-table-column prop="role_sort" label="排序" width="80" />
       <el-table-column prop="data_scope" label="数据范围">
         <template #default="{ row }">
           <el-tag v-if="row.data_scope === 1" type="danger">全部数据</el-tag>
@@ -16,8 +17,19 @@
           <span v-else>未知</span>
         </template>
       </el-table-column>
-      <el-table-column prop="created_at" label="创建时间" />
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column prop="status" label="状态" width="80">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+            {{ row.status === 1 ? '正常' : '停用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="created_at" label="创建时间" width="180">
+        <template #default="{ row }">
+          {{ new Date(row.created_at).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
           <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
@@ -26,16 +38,37 @@
     </el-table>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <el-form-item label="角色名称" prop="role_name">
-          <el-input v-model="form.role_name" placeholder="请输入角色名称" />
-        </el-form-item>
-        <el-form-item label="角色标识" prop="role_key">
-          <el-input v-model="form.role_key" placeholder="请输入角色标识 (如 admin)" />
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="角色名称" prop="role_name">
+              <el-input v-model="form.role_name" placeholder="请输入角色名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色标识" prop="role_key">
+              <el-input v-model="form.role_key" placeholder="请输入角色标识 (如 admin)" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="显示顺序" prop="role_sort">
+              <el-input-number v-model="form.role_sort" :min="0" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色状态" prop="status">
+              <el-radio-group v-model="form.status">
+                <el-radio :value="1">正常</el-radio>
+                <el-radio :value="0">停用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="数据范围" prop="data_scope">
-          <el-select v-model="form.data_scope" placeholder="请选择数据范围">
+          <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%">
             <el-option label="全部数据" :value="1" />
             <el-option label="本部门" :value="2" />
             <el-option label="自定义" :value="3" />
@@ -50,6 +83,9 @@
             :props="{ label: 'menu_name', children: 'children' }"
             style="width: 100%; border: 1px solid #dcdfe6; border-radius: 4px; padding: 10px;"
           />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -78,7 +114,10 @@ const form = ref({
   id: undefined,
   role_name: '',
   role_key: '',
+  role_sort: 0,
   data_scope: 2,
+  status: 1,
+  remark: ''
 })
 
 const rules = {
@@ -112,7 +151,10 @@ const resetForm = () => {
     id: undefined,
     role_name: '',
     role_key: '',
+    role_sort: 0,
     data_scope: 2,
+    status: 1,
+    remark: ''
   }
   if (menuTreeRef.value) {
     menuTreeRef.value.setCheckedKeys([])
@@ -131,7 +173,10 @@ const handleEdit = async (row: any) => {
     id: row.id,
     role_name: row.role_name,
     role_key: row.role_key,
+    role_sort: row.role_sort,
     data_scope: row.data_scope,
+    status: row.status,
+    remark: row.remark
   }
   dialogTitle.value = '编辑角色'
   dialogVisible.value = true
@@ -164,7 +209,10 @@ const submitForm = async () => {
       const payload = {
         role_name: form.value.role_name,
         role_key: form.value.role_key,
+        role_sort: form.value.role_sort,
         data_scope: form.value.data_scope,
+        status: form.value.status,
+        remark: form.value.remark,
         menu_ids
       }
 

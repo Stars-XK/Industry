@@ -13,6 +13,8 @@
       v-loading="loading"
     >
       <el-table-column prop="menu_name" label="菜单名称" width="200" />
+      <el-table-column prop="icon" label="图标" width="80" />
+      <el-table-column prop="sort_order" label="排序" width="80" />
       <el-table-column prop="menu_type" label="类型" width="80">
         <template #default="{ row }">
           <el-tag v-if="row.menu_type === 'M'" type="info">目录</el-tag>
@@ -23,6 +25,20 @@
       <el-table-column prop="path" label="路由路径" />
       <el-table-column prop="component" label="组件路径" />
       <el-table-column prop="perm_code" label="权限标识" />
+      <el-table-column prop="visible" label="显示状态" width="100">
+        <template #default="{ row }">
+          <el-tag :type="row.visible === 1 ? 'success' : 'danger'">
+            {{ row.visible === 1 ? '显示' : '隐藏' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="菜单状态" width="100">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+            {{ row.status === 1 ? '正常' : '停用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="250" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="handleAdd(row.id)">新增子项</el-button>
@@ -35,16 +51,21 @@
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <el-form-item label="上级菜单" prop="parent_id">
-          <el-tree-select
-            v-model="form.parent_id"
-            :data="menuOptions"
-            :props="{ value: 'id', label: 'menu_name', children: 'children' }"
-            check-strictly
-            placeholder="请选择上级菜单"
-            style="width: 100%"
-          />
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="上级菜单" prop="parent_id">
+              <el-tree-select
+                v-model="form.parent_id"
+                :data="menuOptions"
+                :props="{ value: 'id', label: 'menu_name', children: 'children' }"
+                check-strictly
+                placeholder="请选择上级菜单"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
         <el-form-item label="菜单类型" prop="menu_type">
           <el-radio-group v-model="form.menu_type">
             <el-radio value="M">目录</el-radio>
@@ -52,17 +73,85 @@
             <el-radio value="F">按钮</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="菜单名称" prop="menu_name">
-          <el-input v-model="form.menu_name" placeholder="请输入菜单名称" />
-        </el-form-item>
-        <el-form-item label="路由路径" prop="path" v-if="form.menu_type !== 'F'">
-          <el-input v-model="form.path" placeholder="请输入路由路径 (如 /system/user)" />
-        </el-form-item>
-        <el-form-item label="组件路径" prop="component" v-if="form.menu_type === 'C'">
-          <el-input v-model="form.component" placeholder="请输入组件路径 (如 system/user/index)" />
-        </el-form-item>
-        <el-form-item label="权限标识" prop="perm_code" v-if="form.menu_type !== 'M'">
-          <el-input v-model="form.perm_code" placeholder="请输入权限标识 (如 sys:user:list)" />
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="菜单名称" prop="menu_name">
+              <el-input v-model="form.menu_name" placeholder="请输入菜单名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="显示排序" prop="sort_order">
+              <el-input-number v-model="form.sort_order" :min="0" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20" v-if="form.menu_type !== 'F'">
+          <el-col :span="12">
+            <el-form-item label="路由路径" prop="path">
+              <el-input v-model="form.path" placeholder="路由路径 (如 /system/user)" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="菜单图标" prop="icon">
+              <el-input v-model="form.icon" placeholder="请输入图标名" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="form.menu_type === 'C'">
+            <el-form-item label="组件路径" prop="component">
+              <el-input v-model="form.component" placeholder="组件路径" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="form.menu_type !== 'M'">
+            <el-form-item label="权限标识" prop="perm_code">
+              <el-input v-model="form.perm_code" placeholder="权限标识" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20" v-if="form.menu_type !== 'F'">
+          <el-col :span="12">
+            <el-form-item label="显示状态" prop="visible">
+              <el-radio-group v-model="form.visible">
+                <el-radio :value="1">显示</el-radio>
+                <el-radio :value="0">隐藏</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="菜单状态" prop="status">
+              <el-radio-group v-model="form.status">
+                <el-radio :value="1">正常</el-radio>
+                <el-radio :value="0">停用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20" v-if="form.menu_type !== 'F'">
+          <el-col :span="12">
+            <el-form-item label="是否外链" prop="is_frame">
+              <el-radio-group v-model="form.is_frame">
+                <el-radio :value="1">是</el-radio>
+                <el-radio :value="0">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否缓存" prop="is_cache">
+              <el-radio-group v-model="form.is_cache">
+                <el-radio :value="1">缓存</el-radio>
+                <el-radio :value="0">不缓存</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -93,7 +182,14 @@ const form = ref({
   menu_type: 'C',
   path: '',
   component: '',
-  perm_code: ''
+  perm_code: '',
+  icon: '#',
+  sort_order: 0,
+  is_frame: 0,
+  is_cache: 0,
+  visible: 1,
+  status: 1,
+  remark: ''
 })
 
 const rules = {
@@ -121,7 +217,14 @@ const resetForm = () => {
     menu_type: 'C',
     path: '',
     component: '',
-    perm_code: ''
+    perm_code: '',
+    icon: '#',
+    sort_order: 0,
+    is_frame: 0,
+    is_cache: 0,
+    visible: 1,
+    status: 1,
+    remark: ''
   }
 }
 
@@ -141,7 +244,14 @@ const handleEdit = (row: any) => {
     menu_type: row.menu_type,
     path: row.path,
     component: row.component,
-    perm_code: row.perm_code
+    perm_code: row.perm_code,
+    icon: row.icon,
+    sort_order: row.sort_order,
+    is_frame: row.is_frame,
+    is_cache: row.is_cache,
+    visible: row.visible,
+    status: row.status,
+    remark: row.remark
   }
   dialogTitle.value = '编辑菜单'
   dialogVisible.value = true

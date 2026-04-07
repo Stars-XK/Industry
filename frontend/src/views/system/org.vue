@@ -13,8 +13,21 @@
       v-loading="loading"
     >
       <el-table-column prop="dept_name" label="部门名称" />
-      <el-table-column prop="id" label="ID" width="100" />
-      <el-table-column prop="created_at" label="创建时间" />
+      <el-table-column prop="sort_order" label="排序" width="80" />
+      <el-table-column prop="status" label="状态" width="80">
+        <template #default="{ row }">
+          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+            {{ row.status === 1 ? '正常' : '停用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="leader" label="负责人" width="120" />
+      <el-table-column prop="phone" label="联系电话" width="150" />
+      <el-table-column prop="created_at" label="创建时间" width="180">
+        <template #default="{ row }">
+          {{ new Date(row.created_at).toLocaleString() }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="250" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="handleAdd(row.id)">新增子部门</el-button>
@@ -25,20 +38,63 @@
     </el-table>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <el-form-item label="父级部门" prop="parent_id">
-          <el-tree-select
-            v-model="form.parent_id"
-            :data="deptOptions"
-            :props="{ value: 'id', label: 'dept_name', children: 'children' }"
-            check-strictly
-            placeholder="请选择父级部门"
-            style="width: 100%"
-          />
-        </el-form-item>
-        <el-form-item label="部门名称" prop="dept_name">
-          <el-input v-model="form.dept_name" placeholder="请输入部门名称" />
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="上级部门" prop="parent_id">
+              <el-tree-select
+                v-model="form.parent_id"
+                :data="deptOptions"
+                :props="{ value: 'id', label: 'dept_name', children: 'children' }"
+                check-strictly
+                placeholder="请选择上级部门"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="部门名称" prop="dept_name">
+              <el-input v-model="form.dept_name" placeholder="请输入部门名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="显示排序" prop="sort_order">
+              <el-input-number v-model="form.sort_order" :min="0" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="负责人" prop="leader">
+              <el-input v-model="form.leader" placeholder="请输入负责人" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系电话" prop="phone">
+              <el-input v-model="form.phone" placeholder="请输入联系电话" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" placeholder="请输入邮箱" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门状态" prop="status">
+              <el-radio-group v-model="form.status">
+                <el-radio :value="1">正常</el-radio>
+                <el-radio :value="0">停用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -66,6 +122,12 @@ const form = ref({
   id: undefined,
   parent_id: 0,
   dept_name: '',
+  sort_order: 0,
+  leader: '',
+  phone: '',
+  email: '',
+  status: 1,
+  remark: ''
 })
 
 const rules = {
@@ -90,6 +152,12 @@ const resetForm = () => {
     id: undefined,
     parent_id: 0,
     dept_name: '',
+    sort_order: 0,
+    leader: '',
+    phone: '',
+    email: '',
+    status: 1,
+    remark: ''
   }
 }
 
@@ -106,6 +174,12 @@ const handleEdit = (row: any) => {
     id: row.id,
     parent_id: row.parent_id,
     dept_name: row.dept_name,
+    sort_order: row.sort_order,
+    leader: row.leader,
+    phone: row.phone,
+    email: row.email,
+    status: row.status,
+    remark: row.remark
   }
   dialogTitle.value = '编辑部门'
   dialogVisible.value = true

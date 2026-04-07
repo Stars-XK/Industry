@@ -26,10 +26,10 @@ devices = [
 
 # 维护设备状态，用于模拟平滑变化
 device_states = {
-    1: {"flow_rate": 500.0, "pressure": 0.4},
+    1: {"PLC.S7.FlowRate": 500.0, "PLC.S7.Pressure": 0.4, "PLC.S7.Temp": 25.0},
     2: {"Pump.Status": 1, "Pump.Freq": 45.0, "Pump.Power": 15.0},
-    3: {"turbidity": 0.5, "chlorine": 0.6, "ph": 7.2},
-    4: {"temperature": 25.0, "humidity": 60.0, "h2s": 2.0, "co": 5.0, "pm25": 30.0}
+    3: {"WQ.Turbidity": 0.5, "WQ.Chlorine": 0.6, "WQ.PH": 7.2},
+    4: {"ENV.Temp": 25.0, "ENV.Humidity": 60.0, "ENV.H2S": 2.0, "ENV.CO": 5.0, "ENV.PM25": 30.0}
 }
 
 def on_connect(client, userdata, flags, rc, properties=None):
@@ -81,8 +81,9 @@ def main():
                 
                 # 模拟数据波动
                 if dev["type"] == "meter":
-                    state["flow_rate"] = max(0, state["flow_rate"] + random.uniform(-10, 10))
-                    state["pressure"] = max(0, state["pressure"] + random.uniform(-0.02, 0.02))
+                    state["PLC.S7.FlowRate"] = max(0, state["PLC.S7.FlowRate"] + random.uniform(-10, 10))
+                    state["PLC.S7.Pressure"] = max(0, state["PLC.S7.Pressure"] + random.uniform(-0.02, 0.02))
+                    state["PLC.S7.Temp"] = max(-20, min(50, state["PLC.S7.Temp"] + random.uniform(-0.2, 0.2)))
                 elif dev["type"] == "pump":
                     if state["Pump.Status"] == 1:
                         # 运行中，频率和功率有微小波动
@@ -91,15 +92,15 @@ def main():
                         state["Pump.Freq"] = 0.0
                         state["Pump.Power"] = 0.0
                 elif dev["type"] == "water_quality":
-                    state["turbidity"] = max(0, min(5, state["turbidity"] + random.uniform(-0.05, 0.05)))
-                    state["chlorine"] = max(0, min(2, state["chlorine"] + random.uniform(-0.02, 0.02)))
-                    state["ph"] = max(0, min(14, state["ph"] + random.uniform(-0.1, 0.1)))
+                    state["WQ.Turbidity"] = max(0, min(5, state["WQ.Turbidity"] + random.uniform(-0.05, 0.05)))
+                    state["WQ.Chlorine"] = max(0, min(2, state["WQ.Chlorine"] + random.uniform(-0.02, 0.02)))
+                    state["WQ.PH"] = max(0, min(14, state["WQ.PH"] + random.uniform(-0.1, 0.1)))
                 elif dev["type"] == "environment":
-                    state["temperature"] = max(-20, min(50, state["temperature"] + random.uniform(-0.2, 0.2)))
-                    state["humidity"] = max(0, min(100, state["humidity"] + random.uniform(-0.5, 0.5)))
-                    state["h2s"] = max(0, state["h2s"] + random.uniform(-0.2, 0.2))
-                    state["co"] = max(0, state["co"] + random.uniform(-0.5, 0.5))
-                    state["pm25"] = max(0, state["pm25"] + random.uniform(-1, 1))
+                    state["ENV.Temp"] = max(-20, min(50, state["ENV.Temp"] + random.uniform(-0.2, 0.2)))
+                    state["ENV.Humidity"] = max(0, min(100, state["ENV.Humidity"] + random.uniform(-0.5, 0.5)))
+                    state["ENV.H2S"] = max(0, state["ENV.H2S"] + random.uniform(-0.2, 0.2))
+                    state["ENV.CO"] = max(0, state["ENV.CO"] + random.uniform(-0.5, 0.5))
+                    state["ENV.PM25"] = max(0, state["ENV.PM25"] + random.uniform(-1, 1))
 
                 # 构造符合 payload 格式的消息
                 payload = {

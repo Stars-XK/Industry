@@ -14,8 +14,10 @@ VALUES (1, 'admin', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2L
 ON DUPLICATE KEY UPDATE password = VALUES(password);
 
 -- 2.1 角色与菜单测试数据
-INSERT IGNORE INTO sys_role (id, role_name, role_key, role_sort, data_scope, status, remark, created_by) 
+INSERT IGNORE INTO sys_role (id, role_name, role_key, role_sort, data_scope, status, remark, created_by)
 VALUES (1, '超级管理员', 'admin', 1, 1, 1, '拥有所有权限的超级角色', 1);
+
+INSERT IGNORE INTO sys_user_role (user_id, role_id) VALUES (1, 1);
 
 INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
 -- 1. 门户

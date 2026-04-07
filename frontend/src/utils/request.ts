@@ -9,7 +9,7 @@ export interface ApiResponse<T = any> {
 
 // 创建 axios 实例
 const service: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  baseURL: import.meta.env ? import.meta.env.VITE_API_BASE_URL || '' : '',
   timeout: 10000,
 });
 
@@ -56,4 +56,5 @@ service.interceptors.response.use(
   }
 );
 
-export default service;
+// 重写 service 类型以支持直接返回 data
+export default service as any;

@@ -120,10 +120,16 @@ const initWebSocket = () => {
 
 const handleControl = (targetStatus: number) => {
   const actionText = targetStatus === 1 ? '开机' : '停机'
-  ElMessageBox.confirm(`危险操作预警：确定要对 [2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！`, '安全反控确认', {
+  ElMessageBox.prompt(`危险操作预警：确定要对 [2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！\n请输入操作密码：`, '安全反控确认', {
     confirmButtonText: '强制执行',
     cancelButtonText: '取消',
+    inputType: 'password',
     type: 'warning',
+    inputValidator: (value) => {
+      if (!value) return '操作密码不能为空'
+      if (value !== '123456') return '操作密码错误 (默认密码: 123456)'
+      return true
+    }
   }).then(async () => {
     try {
       await request.post('/api/scada/hmi/control', {

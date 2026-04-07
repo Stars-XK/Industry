@@ -1,38 +1,23 @@
 <template>
   <div class="page-container scada-topology">
     <el-row :gutter="20" style="height: 100%;">
-      <!-- 左侧拓扑树 -->
-      <el-col :span="6" style="height: 100%;">
+      <!-- 左侧 2D 拓扑画布 -->
+      <el-col :span="14" style="height: 100%;">
         <el-card class="box-card" shadow="never" style="height: 100%;">
           <template #header>
             <div class="card-header">
-              <span>供水 DMA 拓扑导航</span>
+              <span>供水 DMA 拓扑全景导航 (2D 画布)</span>
+              <el-tag type="info">支持滚轮缩放、拖拽平移</el-tag>
             </div>
           </template>
-          <div class="tree-container" v-loading="loading" element-loading-text="Thinking..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-            <el-tree
-              :data="treeData"
-              :props="defaultProps"
-              node-key="id"
-              default-expand-all
-              @node-click="handleNodeClick"
-              highlight-current
-            >
-              <template #default="{ node, data }">
-                <span class="custom-tree-node">
-                  <el-icon v-if="data.level === 1"><House /></el-icon>
-                  <el-icon v-else-if="data.level === 2"><OfficeBuilding /></el-icon>
-                  <el-icon v-else><Location /></el-icon>
-                  <span style="margin-left: 8px;">{{ node.label }}</span>
-                </span>
-              </template>
-            </el-tree>
+          <div class="canvas-container" v-loading="loading">
+            <v-chart class="chart" :option="chartOption" autoresize @click="handleChartClick" />
           </div>
         </el-card>
       </el-col>
 
       <!-- 右侧详情/设备列表区 -->
-      <el-col :span="18" style="height: 100%;">
+      <el-col :span="10" style="height: 100%;">
         <el-card class="box-card" shadow="never" style="height: 100%;">
           <template #header>
             <div class="card-header">
@@ -41,40 +26,50 @@
             </div>
           </template>
           <div v-if="!currentNode" class="empty-tip">
-            <el-empty description="请从左侧选择一个 DMA 分区" />
+            <el-empty description="请从左侧 2D 画布点击选择一个 DMA 分区节点" />
           </div>
           <div v-else>
-            <el-descriptions title="分区详情" :column="3" border>
+            <el-descriptions title="分区详情" :column="2" border>
               <el-descriptions-item label="分区ID">{{ currentNode.id }}</el-descriptions-item>
               <el-descriptions-item label="分区名称">{{ currentNode.label }}</el-descriptions-item>
               <el-descriptions-item label="层级">
                 <el-tag size="small">{{ currentNode.level }} 级分区</el-tag>
               </el-descriptions-item>
+              <el-descriptions-item label="健康状态">
+                <el-tag :type="currentNode.status === 'alarm' ? 'danger' : 'success'" size="small">
+                  {{ currentNode.status === 'alarm' ? '异常报警' : '正常' }}
+                </el-tag>
+              </el-descriptions-item>
             </el-descriptions>
-            
-            <h3 style="margin-top: 30px;">挂载设备清单</h3>
-            <el-table 
-              :data="deviceList" 
-              style="width: 100%; margin-top: 10px;" 
+
+            <h3 style="margin-top: 20px;">挂载设备清单及实时遥测数据</h3>
+            <el-table
+              :data="deviceList"
+              style="width: 100%; margin-top: 10px;"
               border
               v-loading="deviceLoading"
-              element-loading-text="Thinking..." 
-              element-loading-spinner="el-icon-loading" 
+              element-loading-text="Thinking..."
+              element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)"
             >
-              <el-table-column prop="id" label="内部ID" width="80" />
-              <el-table-column prop="device_code" label="资产编号" width="160" />
+              <el-table-column prop="id" label="内部ID" width="70" />
+              <el-table-column prop="device_code" label="资产编号" width="140" />
               <el-table-column prop="name" label="设备名称" />
-              <el-table-column prop="type_name" label="设备类型" width="120">
-                <template #default="{ row }">
-                  <el-tag type="info">{{ row.type_name }}</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="direction" label="流向(针对流量计)" width="120">
+              <el-table-column prop="direction" label="流向" width="80">
                 <template #default="{ row }">
                   <el-tag v-if="row.direction === '流入'" type="success">流入</el-tag>
                   <el-tag v-else-if="row.direction === '流出'" type="danger">流出</el-tag>
                   <el-tag v-else type="warning">内部</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="实时遥测" min-width="180">
+                <template #default="{ row }">
+                  <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0">
+                    <div v-for="(val, key) in row.telemetry" :key="key" style="margin-bottom: 2px;">
+                      <el-tag size="small" type="primary">{{ key }}</el-tag> : <strong>{{ val }}</strong>
+                    </div>
+                  </div>
+                  <span v-else style="color: #909399;">暂无数据</span>
                 </template>
               </el-table-column>
               <template #empty>
@@ -89,25 +84,144 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { House, OfficeBuilding, Location } from '@element-plus/icons-vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import request from '@/utils/request'
+import { io, Socket } from 'socket.io-client'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { TreeChart } from 'echarts/charts'
+import { TooltipComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([CanvasRenderer, TreeChart, TooltipComponent])
 
 const loading = ref(false)
 const deviceLoading = ref(false)
 const treeData = ref([])
-const deviceList = ref([])
-const defaultProps = {
-  children: 'children',
-  label: 'label',
-}
+const deviceList = ref<any[]>([])
 const currentNode = ref<any>(null)
+let socket: Socket | null = null
+
+const chartOption = ref({
+  tooltip: {
+    trigger: 'item',
+    triggerOn: 'mousemove',
+    formatter: (params: any) => {
+      const data = params.data
+      return `${data.name}<br/>层级: ${data.level}级分区`
+    }
+  },
+  series: [
+    {
+      type: 'tree',
+      data: [],
+      top: '1%',
+      left: '7%',
+      bottom: '1%',
+      right: '20%',
+      symbolSize: 12,
+      roam: true, // 开启鼠标缩放和平移漫游
+      label: {
+        position: 'left',
+        verticalAlign: 'middle',
+        align: 'right',
+        fontSize: 14,
+        color: '#fff'
+      },
+      leaves: {
+        label: {
+          position: 'right',
+          verticalAlign: 'middle',
+          align: 'left'
+        }
+      },
+      emphasis: {
+        focus: 'descendant'
+      },
+      expandAndCollapse: true,
+      animationDuration: 550,
+      animationDurationUpdate: 750,
+      itemStyle: {
+        color: '#409EFF',
+        borderColor: '#fff',
+        borderWidth: 2
+      },
+      lineStyle: {
+        color: '#5a6b7c',
+        width: 2,
+        curveness: 0.5
+      }
+    }
+  ]
+})
+
+const mapTreeDataForEcharts = (nodes: any[]): any[] => {
+  return nodes.map(node => {
+    // 模拟一下报警状态：给 ID=102 的节点设置红圈
+    const isAlarm = node.id === 102;
+    const itemStyle = isAlarm ? {
+      color: '#F56C6C',
+      borderColor: '#ff9999',
+      borderWidth: 3,
+      shadowBlur: 10,
+      shadowColor: '#F56C6C'
+    } : {
+      color: '#67C23A',
+      borderColor: '#a0cfff',
+      borderWidth: 2
+    };
+
+    return {
+      name: node.label,
+      value: node.id,
+      id: node.id,
+      level: node.level,
+      status: isAlarm ? 'alarm' : 'normal',
+      itemStyle: itemStyle,
+      originalData: node,
+      children: node.children ? mapTreeDataForEcharts(node.children) : []
+    }
+  })
+}
+
+const handleChartClick = (params: any) => {
+  if (params.data && params.data.originalData) {
+    currentNode.value = {
+      ...params.data.originalData,
+      status: params.data.status
+    }
+    getDevices(params.data.id)
+  }
+}
+
+const initWebSocket = () => {
+  socket = io('http://localhost:3002/scada', { transports: ['websocket'] })
+
+  socket.on('telemetry_update', (payload: any) => {
+    const { topic, data } = payload
+    const parts = topic.split('/')
+    if (parts.length === 4) {
+      const deviceId = parseInt(parts[2], 10)
+      const targetDevice = deviceList.value.find(d => d.id === deviceId || (deviceId === 1 && d.device_code.includes('METER_IN')))
+
+      if (targetDevice) {
+        if (!targetDevice.telemetry) targetDevice.telemetry = {}
+        if (data.data) {
+          for (const key in data.data) {
+            targetDevice.telemetry[key] = data.data[key]
+          }
+        }
+      }
+    }
+  })
+}
 
 const getTree = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/scada/topology/tree')
     treeData.value = res || []
+    chartOption.value.series[0].data = mapTreeDataForEcharts(treeData.value)
   } catch (error) {
     console.error(error)
   } finally {
@@ -119,7 +233,10 @@ const getDevices = async (zoneId: number) => {
   deviceLoading.value = true
   try {
     const res = await request.get(`/api/scada/topology/devices/${zoneId}`)
-    deviceList.value = res || []
+    deviceList.value = (res || []).map((d: any) => ({ ...d, telemetry: {} }))
+    deviceList.value.forEach(d => {
+      if (d.device_code === 'METER_IN_01') d.id = 1;
+    });
   } catch (error) {
     console.error(error)
   } finally {
@@ -127,13 +244,13 @@ const getDevices = async (zoneId: number) => {
   }
 }
 
-const handleNodeClick = (data: any) => {
-  currentNode.value = data
-  getDevices(data.id)
-}
-
 onMounted(() => {
   getTree()
+  initWebSocket()
+})
+
+onUnmounted(() => {
+  if (socket) socket.disconnect()
 })
 </script>
 
@@ -142,27 +259,52 @@ onMounted(() => {
   padding: 20px;
   height: calc(100vh - 100px);
   box-sizing: border-box;
+  background-color: #0b1a2a;
 }
 .box-card {
   display: flex;
   flex-direction: column;
+  background-color: #112233;
+  border-color: #1a3344;
+  color: #fff;
+}
+:deep(.el-card__header) {
+  border-bottom: 1px solid #1a3344;
 }
 :deep(.el-card__body) {
   flex: 1;
   overflow: auto;
+  padding: 10px;
 }
-.tree-container {
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.canvas-container {
   height: 100%;
 }
-.custom-tree-node {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+.chart {
+  width: 100%;
+  height: 100%;
 }
 .empty-tip {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+:deep(.el-descriptions__body) {
+  background-color: transparent !important;
+}
+:deep(.el-descriptions-item__label) {
+  background-color: #1a2a3a !important;
+  color: #909399;
+  border-color: #2a3a4a !important;
+}
+:deep(.el-descriptions-item__content) {
+  background-color: #112233 !important;
+  color: #fff;
+  border-color: #2a3a4a !important;
 }
 </style>

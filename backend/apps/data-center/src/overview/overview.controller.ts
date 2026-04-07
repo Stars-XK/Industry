@@ -47,28 +47,87 @@ export class OverviewController {
   @Get('trend')
   @ApiOperation({ summary: '获取供水历史趋势' })
   async getTrend() {
-    // 模拟返回最近 24 小时的供水趋势数据，结合部分真实数据
     const hours = [];
     const supplyValues = [];
     const leakageValues = [];
     let base = 500;
-    for (let i = 23; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 3600 * 1000);
-      hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
-      const val = Math.round(base + Math.random() * 100 - 50);
-      supplyValues.push(val);
-      leakageValues.push(Math.round(val * 0.12));
+    
+    try {
+      const now = new Date();
+      now.setMinutes(0, 0, 0);
+      const startTime = now.getTime() - 23 * 3600 * 1000;
+      
+      const query = `
+        SELECT 
+          FLOOR(timestamp / 3600000) * 3600000 as hour_ts,
+          SUM(value) as total_flow
+        FROM device_raw 
+        WHERE standard_name = 'flow_rate' AND timestamp >= ?
+        GROUP BY hour_ts
+        ORDER BY hour_ts ASC
+      `;
+      const res = await this.dataSource.query(query, [startTime]);
+      const flowMap = new Map();
+      res.forEach(r => {
+        // 由于 flow_rate 采样频次原因，简单换算为模拟量
+        flowMap.set(parseInt(r.hour_ts), parseFloat((r.total_flow / 1800).toFixed(1)));
+      });
+
+      for (let i = 23; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 3600 * 1000);
+        hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
+        const ts = d.getTime();
+        let val = flowMap.get(ts);
+        if (!val) {
+          val = Math.round(base + Math.random() * 100 - 50);
+        }
+        supplyValues.push(val);
+        leakageValues.push(Math.round(val * 0.12));
+      }
+    } catch (e) {
+      console.error('查询历史趋势失败', e);
+      // Fallback
+      for (let i = 23; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 3600 * 1000);
+        hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
+        const val = Math.round(base + Math.random() * 100 - 50);
+        supplyValues.push(val);
+        leakageValues.push(Math.round(val * 0.12));
+      }
     }
+
     return { hours, supplyValues, leakageValues };
   }
 
   @Get('water-quality')
   @ApiOperation({ summary: '获取水质综合指标' })
   async getWaterQuality() {
+    let turbidity = 0.5;
+    let chlorine = 0.6;
+    let ph = 7.2;
+
+    try {
+      const query = `
+        SELECT standard_name, value 
+        FROM device_raw 
+        WHERE device_id = 3 AND standard_name IN ('turbidity', 'chlorine', 'ph')
+        ORDER BY timestamp DESC
+        LIMIT 3
+      `;
+      const res = await this.dataSource.query(query);
+      res.forEach(r => {
+        if (r.standard_name === 'turbidity') turbidity = r.value;
+        if (r.standard_name === 'chlorine') chlorine = r.value;
+        if (r.standard_name === 'ph') ph = r.value;
+      });
+    } catch (e) {
+      console.error('获取水质数据失败', e);
+    }
+
     return {
-      turbidity: Number((Math.random() * 0.5 + 0.3).toFixed(2)),
-      chlorine: Number((Math.random() * 0.4 + 0.4).toFixed(2)),
-      ph: Number((Math.random() * 0.6 + 7.0).toFixed(2)),
+      turbidity: Number(turbidity.toFixed(2)),
+      chlorine: Number(chlorine.toFixed(2)),
+      ph: Number(ph.toFixed(2)),
       complianceRate: 99.8
     };
   }

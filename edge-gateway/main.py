@@ -16,16 +16,20 @@ MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
 CLIENT_ID = "edge_gateway_01"
 
-# 模拟设备配置 (1: METER_IN_01 进水表, 2: PUMP_01 变频泵)
+# 模拟设备配置 (1: METER_IN_01 进水表, 2: PUMP_01 变频泵, 3: WQ_01 水质仪, 4: ENV_01 环境传感器)
 devices = [
     {"id": 1, "type": "meter"},
-    {"id": 2, "type": "pump"}
+    {"id": 2, "type": "pump"},
+    {"id": 3, "type": "water_quality"},
+    {"id": 4, "type": "environment"}
 ]
 
 # 维护设备状态，用于模拟平滑变化
 device_states = {
     1: {"flow_rate": 500.0, "pressure": 0.4},
-    2: {"Pump.Status": 1, "Pump.Freq": 45.0, "Pump.Power": 15.0}
+    2: {"Pump.Status": 1, "Pump.Freq": 45.0, "Pump.Power": 15.0},
+    3: {"turbidity": 0.5, "chlorine": 0.6, "ph": 7.2},
+    4: {"temperature": 25.0, "humidity": 60.0, "h2s": 2.0, "co": 5.0, "pm25": 30.0}
 }
 
 def on_connect(client, userdata, flags, rc, properties=None):
@@ -82,11 +86,20 @@ def main():
                 elif dev["type"] == "pump":
                     if state["Pump.Status"] == 1:
                         # 运行中，频率和功率有微小波动
-                        # state["Pump.Freq"] keeps its target but wobbles
                         state["Pump.Power"] = (state["Pump.Freq"] / 50.0) * 15.0 + random.uniform(-0.5, 0.5)
                     else:
                         state["Pump.Freq"] = 0.0
                         state["Pump.Power"] = 0.0
+                elif dev["type"] == "water_quality":
+                    state["turbidity"] = max(0, min(5, state["turbidity"] + random.uniform(-0.05, 0.05)))
+                    state["chlorine"] = max(0, min(2, state["chlorine"] + random.uniform(-0.02, 0.02)))
+                    state["ph"] = max(0, min(14, state["ph"] + random.uniform(-0.1, 0.1)))
+                elif dev["type"] == "environment":
+                    state["temperature"] = max(-20, min(50, state["temperature"] + random.uniform(-0.2, 0.2)))
+                    state["humidity"] = max(0, min(100, state["humidity"] + random.uniform(-0.5, 0.5)))
+                    state["h2s"] = max(0, state["h2s"] + random.uniform(-0.2, 0.2))
+                    state["co"] = max(0, state["co"] + random.uniform(-0.5, 0.5))
+                    state["pm25"] = max(0, state["pm25"] + random.uniform(-1, 1))
 
                 # 构造符合 payload 格式的消息
                 payload = {

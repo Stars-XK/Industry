@@ -9,11 +9,20 @@ export class IotTagMapping {
   @Column({ comment: '关联的资产设备ID' })
   device_id: number;
 
+  @Column({ nullable: true, comment: '关联的边缘网关ID' })
+  gateway_id: number;
+
   @Column({ length: 100, comment: '原始测点标签名 (如 PLC.S7.Temp)' })
   tag_name: string;
 
+  @Column({ length: 100, default: '', comment: 'PLC寄存器地址' })
+  plc_address: string;
+
   @Column({ length: 100, comment: '标准化属性名 (如 temperature)' })
   standard_name: string;
+
+  @Column({ type: 'float', default: 0.0, comment: '死区过滤阈值' })
+  deadband: number;
 
   @Column({ length: 50, default: 'float', comment: '数据类型' })
   data_type: string;

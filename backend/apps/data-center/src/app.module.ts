@@ -6,6 +6,7 @@ import { TransformInterceptor, JwtStrategy } from '@app/common';
 import { EdgeTagController } from './edge-tag/edge-tag.controller';
 import { OverviewController } from './overview/overview.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
+import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity
       autoLoadEntities: true,
       synchronize: false,
     }),
-    TypeOrmModule.forFeature([IotTagMapping])
+    TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],
   controllers: [EdgeTagController, OverviewController],
   providers: [

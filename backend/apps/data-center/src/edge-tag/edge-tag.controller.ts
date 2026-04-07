@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { IotTagMapping } from '../../../../libs/entities/src/iot-tag-mapping.entity';
+import { IotGateway } from '../../../../libs/entities/src/iot-gateway.entity';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('边缘测点标签映射')
@@ -14,7 +16,40 @@ export class EdgeTagController {
   constructor(
     @InjectRepository(IotTagMapping)
     private readonly tagMappingRepo: Repository<IotTagMapping>,
+    @InjectRepository(IotGateway)
+    private readonly gatewayRepo: Repository<IotGateway>,
   ) {}
+
+  @Get('gateways')
+  @ApiOperation({ summary: '获取边缘网关列表及状态' })
+  @RequirePermissions('gov:edge:list')
+  async getGateways() {
+    return this.gatewayRepo.find({ order: { id: 'ASC' } });
+  }
+
+  @Post('gateways/:id/protection-policy')
+  @ApiOperation({ summary: '下发断网本地保护策略' })
+  @RequirePermissions('gov:edge:control')
+  async sendProtectionPolicy(@Param('id') id: number) {
+    const gateway = await this.gatewayRepo.findOne({ where: { id } });
+    if (!gateway || gateway.is_online === 0) {
+      throw new HttpException('网关离线或不存在', HttpStatus.BAD_REQUEST);
+    }
+    // 模拟下发逻辑
+    return { success: true, message: '策略已下发' };
+  }
+
+  @Post('import')
+  @ApiOperation({ summary: '批量导入标签映射' })
+  @RequirePermissions('gov:edge:add')
+  @UseInterceptors(FileInterceptor('file'))
+  async importTags(@UploadedFile() file: any) {
+    // 模拟导入逻辑，实际应该解析 excel
+    if (!file) {
+      throw new HttpException('没有接收到文件', HttpStatus.BAD_REQUEST);
+    }
+    return { success: true, message: '批量导入成功', count: 10 };
+  }
 
   @Get('list')
   @ApiOperation({ summary: '获取标签映射列表' })

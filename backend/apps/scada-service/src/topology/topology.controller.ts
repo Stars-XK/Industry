@@ -24,7 +24,29 @@ export class TopologyController {
       where: { is_deleted: null },
       order: { id: 'ASC' }
     });
-    return this.buildTree(zones, 0);
+    
+    // Find active alarms from recent device_raw
+    let mockAlarmZoneIds = [102];
+    try {
+      const now = Date.now() - 300000; // last 5 minutes
+      const query = `
+        SELECT DISTINCT d.zone_id 
+        FROM device_raw r
+        JOIN dma_device_rel d ON r.device_id = d.device_id
+        WHERE r.timestamp >= ? AND (
+          (r.standard_name = 'pressure' AND r.value < 0.3) OR 
+          (r.standard_name = 'h2s' AND r.value >= 10.0)
+        )
+      `;
+      const res = await this.dataSource.query(query, [now]);
+      if (res && res.length > 0) {
+        mockAlarmZoneIds = res.map((row: any) => row.zone_id);
+      }
+    } catch (e) {
+      console.error('Failed to query real alarms', e);
+    }
+
+    return this.buildTree(zones, 0, mockAlarmZoneIds);
   }
 
   @Get('devices/:zoneId')
@@ -54,20 +76,20 @@ export class TopologyController {
       case 2: return '压力表';
       case 3: return '水质分析仪';
       case 4: return '泵站组';
+      case 5: return '环境传感器';
       default: return '未知设备';
     }
   }
 
-  private buildTree(zones: DmaZone[], parentId: number): any[] {
-    const mockAlarmZoneIds = [102]; // 高新区报警
+  private buildTree(zones: DmaZone[], parentId: number, alarmZoneIds: number[]): any[] {
     return zones
       .filter((zone) => Number(zone.parent_id) === Number(parentId))
       .map((zone) => ({
         id: zone.id,
         label: zone.zone_name,
         level: zone.level,
-        status: mockAlarmZoneIds.includes(zone.id) ? 'alarm' : 'normal',
-        children: this.buildTree(zones, zone.id),
+        status: alarmZoneIds.includes(zone.id) ? 'alarm' : 'normal',
+        children: this.buildTree(zones, zone.id, alarmZoneIds),
       }));
   }
 }

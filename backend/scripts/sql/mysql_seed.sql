@@ -81,21 +81,33 @@ INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `pl
 (1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '1号厂瞬时流量'),
 (2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '2号泵站运行状态(1=开,0=关)'),
 (2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '2号泵站变频器频率'),
-(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '2号泵站功率');
+(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '2号泵站功率'),
+(3, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 'float', 'NTU', 1.0, 1, '水质浊度'),
+(3, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 'float', 'mg/L', 1.0, 1, '余氯'),
+(3, 1, 'WQ.PH', '40024', 'ph', 0.05, 'float', '', 1.0, 1, 'pH值'),
+(4, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 'float', '°C', 1.0, 1, '环境温度'),
+(4, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 'float', '%', 1.0, 1, '环境湿度'),
+(4, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 'float', 'ppm', 1.0, 1, '硫化氢浓度'),
+(4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '一氧化碳浓度'),
+(4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, 'PM2.5');
 -- 3. DMA分区测试数据
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '全市供水一级分区', 1, 1);
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (102, 101, '高新工业园区', 2, 1);
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (103, 102, '科技软件园DMA', 3, 1);
 
 -- 4. 设备资产测试数据 (模拟进出水表)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (201, 'METER_IN_01', '高新区总进水管表', 1, 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (202, 'METER_OUT_01', '高新区工业用水分表', 1, 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (1, 'METER_IN_01', '高新区总进水管表', 1, 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (2, 'PUMP_01', '高新区变频主泵', 4, 1);
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (203, 'PRESS_01', '高新区末端管网压力计', 2, 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (3, 'WQ_01', '高新区水质监测仪', 3, 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (4, 'ENV_01', '地下泵站环境传感器', 5, 1);
 
 -- 5. DMA 与 设备资产 绑定关系
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 102, 201, 1);
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 202, -1);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 102, 1, 1);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1);
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 102, 203, 0);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 102, 3, 0);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 102, 4, 0);
 
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 

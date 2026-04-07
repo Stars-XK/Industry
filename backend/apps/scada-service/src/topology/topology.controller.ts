@@ -26,27 +26,27 @@ export class TopologyController {
     });
     
     // Find active alarms from recent device_raw
-    let mockAlarmZoneIds = [102];
+    let alarmZoneIds: number[] = [];
     try {
       const now = Date.now() - 300000; // last 5 minutes
       const query = `
-        SELECT DISTINCT d.zone_id 
+        SELECT DISTINCT d.zone_id
         FROM device_raw r
         JOIN dma_device_rel d ON r.device_id = d.device_id
         WHERE r.timestamp >= ? AND (
-          (r.standard_name = 'pressure' AND r.value < 0.3) OR 
+          (r.standard_name = 'pressure' AND r.value < 0.3) OR
           (r.standard_name = 'h2s' AND r.value >= 10.0)
         )
       `;
       const res = await this.dataSource.query(query, [now]);
       if (res && res.length > 0) {
-        mockAlarmZoneIds = res.map((row: any) => row.zone_id);
+        alarmZoneIds = res.map((row: any) => row.zone_id);
       }
     } catch (e) {
       console.error('Failed to query real alarms', e);
     }
 
-    return this.buildTree(zones, 0, mockAlarmZoneIds);
+    return this.buildTree(zones, 0, alarmZoneIds);
   }
 
   @Get('devices/:zoneId')

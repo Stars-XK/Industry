@@ -22,8 +22,8 @@ export class OverviewController {
       todayStart.setHours(0, 0, 0, 0);
       
       const query = `
-        SELECT SUM(value) as total 
-        FROM device_raw 
+        SELECT SUM(value) as total
+        FROM device_raw
         WHERE standard_name = 'flow_rate' AND timestamp >= ?
       `;
       const res = await this.dataSource.query(query, [todayStart.getTime()]);
@@ -103,7 +103,8 @@ export class OverviewController {
 
   @Get('water-quality')
   @ApiOperation({ summary: '获取水质综合指标' })
-  async getWaterQuality() {
+  async getWaterQuality(@Query('deviceId') deviceId?: number) {
+    const targetDeviceId = deviceId || 3; // 默认挂载的滴水湖水质仪
     let turbidity = 0.5;
     let chlorine = 0.6;
     let ph = 7.2;
@@ -112,11 +113,11 @@ export class OverviewController {
       const query = `
         SELECT standard_name, value 
         FROM device_raw 
-        WHERE device_id = 3 AND standard_name IN ('turbidity', 'chlorine', 'ph')
+        WHERE device_id = ? AND standard_name IN ('turbidity', 'chlorine', 'ph')
         ORDER BY timestamp DESC
         LIMIT 3
       `;
-      const res = await this.dataSource.query(query);
+      const res = await this.dataSource.query(query, [targetDeviceId]);
       res.forEach(r => {
         if (r.standard_name === 'turbidity') turbidity = r.value;
         if (r.standard_name === 'chlorine') chlorine = r.value;
@@ -169,13 +170,14 @@ export class OverviewController {
       const now = Date.now();
       const timeLimit = now - 24 * 3600 * 1000; // last 24h
       const query = `
-        SELECT standard_name, value, timestamp 
-        FROM device_raw 
-        WHERE timestamp >= ? AND (
-          (standard_name = 'pressure' AND value < 0.3) OR 
-          (standard_name = 'h2s' AND value >= 10.0)
+        SELECT r.standard_name, r.value, r.timestamp, a.device_name
+        FROM device_raw r
+        JOIN ast_device a ON r.device_id = a.id
+        WHERE r.timestamp >= ? AND (
+          (r.standard_name = 'pressure' AND r.value < 0.3) OR 
+          (r.standard_name = 'h2s' AND r.value >= 10.0)
         )
-        ORDER BY timestamp DESC
+        ORDER BY r.timestamp DESC
         LIMIT 5
       `;
       const res = await this.dataSource.query(query, [timeLimit]);
@@ -185,9 +187,9 @@ export class OverviewController {
           const timeStr = timeDiff < 60 ? `${timeDiff}分钟前` : `${Math.floor(timeDiff/60)}小时前`;
           
           if (r.standard_name === 'pressure') {
-            return { content: `张江园区末端出水压力过低 (${r.value.toFixed(2)} MPa)`, timestamp: timeStr, type: 'danger', size: 'large' };
+            return { content: `[${r.device_name}] 管道压力异常偏低 (${r.value.toFixed(2)} MPa)`, timestamp: timeStr, type: 'danger', size: 'large' };
           } else {
-            return { content: `徐汇地下泵站 H₂S 浓度超标 (${r.value.toFixed(1)} ppm)`, timestamp: timeStr, type: 'danger', size: 'large' };
+            return { content: `[${r.device_name}] 密闭空间 H₂S 超标 (${r.value.toFixed(1)} ppm)`, timestamp: timeStr, type: 'danger', size: 'large' };
           }
         });
       }
@@ -197,8 +199,8 @@ export class OverviewController {
     
     // Default fallback if no real alarms or DB fails
     return [
-      { content: '浦东2号泵站主泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
-      { content: '滴水湖水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
+      { content: '[浦东2号泵站主泵] 变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
+      { content: '[滴水湖水质监测仪] 浊度数值异常突增', timestamp: '3小时前', type: 'info' }
     ];
   }
 }

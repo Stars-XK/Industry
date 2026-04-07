@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
@@ -26,16 +26,17 @@ export class SecurityController {
   @Get('environment')
   @ApiOperation({ summary: '获取密闭空间环境指标与联锁状态' })
   @RequirePermissions('scada:security')
-  async getEnvironmentMetrics() {
+  async getEnvironmentMetrics(@Query('deviceId') deviceId?: number) {
+    const targetDeviceId = deviceId || 4; // 默认使用设备 4 (徐汇地下泵站环境传感器)
     try {
       const query = `
         SELECT standard_name, value 
         FROM device_raw 
-        WHERE device_id = 4 AND standard_name IN ('temperature', 'humidity', 'h2s', 'co', 'pm25')
+        WHERE device_id = ? AND standard_name IN ('temperature', 'humidity', 'h2s', 'co', 'pm25')
         ORDER BY timestamp DESC
         LIMIT 5
       `;
-      const res = await this.dataSource.query(query);
+      const res = await this.dataSource.query(query, [targetDeviceId]);
       res.forEach(r => {
         if (r.standard_name === 'temperature') this.interlockState.temperature = r.value;
         if (r.standard_name === 'humidity') this.interlockState.humidity = r.value;

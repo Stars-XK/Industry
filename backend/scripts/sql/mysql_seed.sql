@@ -3,12 +3,24 @@
 -- ==============================================================
 
 -- 1. 基础部门
-INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, leader, phone, email, status, remark, created_by)
-VALUES (1, 0, '0', '上海城投水务集团', 1, '张总', '13800138000', 'hq@shwater.com', 1, '集团最高组织架构', 1);
-INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, leader, phone, email, status, remark, created_by)
-VALUES (2, 1, '0,1', '浦东威立雅自管公司', 1, '李厂长', '13900139000', 'factory1@shwater.com', 1, '主要生产部门', 1);
-INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, leader, phone, email, status, remark, created_by)
-VALUES (3, 1, '0,1', '闵行水务局', 2, '王局长', '13900139001', 'factory2@shwater.com', 1, '分支生产部门', 1);
+INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, leader, phone, email, status, remark, created_by) VALUES
+(1, 0, '0', '上海城投水务集团', 1, '张总', '13800138000', 'hq@shwater.com', 1, '集团最高组织架构', 1),
+(2, 1, '0,1', '浦东威立雅供水公司', 1, '李厂长', '13900139001', 'pd@shwater.com', 1, '浦东新区业务', 1),
+(3, 1, '0,1', '黄浦区供水分公司', 2, '王局', '13900139002', 'hp@shwater.com', 1, '黄浦区业务', 1),
+(4, 1, '0,1', '徐汇区供水分公司', 3, '赵局', '13900139003', 'xh@shwater.com', 1, '徐汇区业务', 1),
+(5, 1, '0,1', '长宁区供水分公司', 4, '钱局', '13900139004', 'cn@shwater.com', 1, '长宁区业务', 1),
+(6, 1, '0,1', '静安区供水分公司', 5, '孙局', '13900139005', 'ja@shwater.com', 1, '静安区业务', 1),
+(7, 1, '0,1', '普陀区供水分公司', 6, '周局', '13900139006', 'pt@shwater.com', 1, '普陀区业务', 1),
+(8, 1, '0,1', '虹口区供水分公司', 7, '吴局', '13900139007', 'hk@shwater.com', 1, '虹口区业务', 1),
+(9, 1, '0,1', '杨浦区供水分公司', 8, '郑局', '13900139008', 'yp@shwater.com', 1, '杨浦区业务', 1),
+(10, 1, '0,1', '闵行区供水分公司', 9, '陈局', '13900139009', 'mh@shwater.com', 1, '闵行区业务', 1),
+(11, 1, '0,1', '宝山区供水分公司', 10, '褚局', '13900139010', 'bs@shwater.com', 1, '宝山区业务', 1),
+(12, 1, '0,1', '嘉定区供水分公司', 11, '卫局', '13900139011', 'jd@shwater.com', 1, '嘉定区业务', 1),
+(13, 1, '0,1', '金山区供水分公司', 12, '蒋局', '13900139012', 'js@shwater.com', 1, '金山区业务', 1),
+(14, 1, '0,1', '松江区供水分公司', 13, '沈局', '13900139013', 'sj@shwater.com', 1, '松江区业务', 1),
+(15, 1, '0,1', '青浦区供水分公司', 14, '韩局', '13900139014', 'qp@shwater.com', 1, '青浦区业务', 1),
+(16, 1, '0,1', '奉贤区供水分公司', 15, '杨局', '13900139015', 'fx@shwater.com', 1, '奉贤区业务', 1),
+(17, 1, '0,1', '崇明区供水分公司', 16, '朱局', '13900139016', 'cm@shwater.com', 1, '崇明区业务', 1);
 
 -- 2. 管理员账号 (密码: admin123 经过 bcrypt 处理的 hash)
 INSERT INTO sys_user (id, username, password, nickname, email, phone, gender, avatar, dept_id, status, remark, created_by) 
@@ -95,12 +107,31 @@ INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `pl
 (4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '徐汇地下泵站一氧化碳浓度'),
 (4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, '徐汇地下泵站PM2.5');
 -- 3. DMA分区测试数据 (以上海市进行设计分区)
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '上海市供水总管网', 1, 1);
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (102, 101, '浦东新区', 2, 1);
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (103, 102, '张江高科技园区DMA', 3, 1);
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (104, 102, '临港新片区DMA', 3, 1);
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (105, 101, '徐汇区', 2, 1);
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (106, 105, '漕河泾开发区DMA', 3, 1);
+INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
+(101, 0, '上海市供水总管网', 1, 1),
+(102, 101, '浦东新区', 2, 1),
+(103, 101, '黄浦区', 2, 1),
+(104, 101, '徐汇区', 2, 1),
+(105, 101, '长宁区', 2, 1),
+(106, 101, '静安区', 2, 1),
+(107, 101, '普陀区', 2, 1),
+(108, 101, '虹口区', 2, 1),
+(109, 101, '杨浦区', 2, 1),
+(110, 101, '闵行区', 2, 1),
+(111, 101, '宝山区', 2, 1),
+(112, 101, '嘉定区', 2, 1),
+(113, 101, '金山区', 2, 1),
+(114, 101, '松江区', 2, 1),
+(115, 101, '青浦区', 2, 1),
+(116, 101, '奉贤区', 2, 1),
+(117, 101, '崇明区', 2, 1),
+-- 增加一些三级 DMA 分区作为底层挂载节点
+(201, 102, '张江高科技园区DMA', 3, 1),
+(202, 102, '临港新片区DMA', 3, 1),
+(203, 102, '陆家嘴金融区DMA', 3, 1),
+(204, 104, '漕河泾开发区DMA', 3, 1),
+(205, 110, '紫竹高新区DMA', 3, 1),
+(206, 112, '嘉定汽车城DMA', 3, 1);
 
 -- 4. 设备资产测试数据 (匹配上海市DMA)
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (1, 'METER_IN_01', '张江园区总进水管表', 1, 1);
@@ -110,11 +141,11 @@ INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, create
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (4, 'ENV_01', '徐汇地下泵站环境传感器', 5, 1);
 
 -- 5. DMA 与 设备资产 绑定关系
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 103, 1, 1); -- 张江
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 张江
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 浦东
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 103, 203, 0); -- 张江
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 104, 3, 0); -- 临港滴水湖
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 106, 4, 0); -- 漕河泾
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 张江
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 202, 3, 0); -- 临港
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 204, 4, 0); -- 漕河泾
 
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 

@@ -32,7 +32,7 @@
 
 | 模块/任务 | 前端任务 (Vue3) | 后端任务 (NestJS/Python) | 数据库与基建 | 状态 |
 |---|---|---|---|---|
-| **设备与测点映射** | ⬜ 测点与标签管理页面 UI (列表增删改查) | ⬜ `data-center` 提供标签映射的 CRUD 接口 | ⬜ `iot_tag_mapping` 结构设计 | ⬜ |
+| **设备与测点映射** | ✅ 测点与标签管理页面 UI (列表增删改查) | ✅ `data-center` 提供标签映射的 CRUD 接口 | ✅ `iot_tag_mapping` 结构设计 | ✅ |
 | **边缘端数据接入** | ⬜ 无 (纯后端/边缘端工作) | ⬜ `edge-gateway` 编写 MQTT 模拟上报脚本 | ⬜ MQTT Broker (如 EMQX) 搭建 | ⬜ |
 | **物联网桥接写入** | ⬜ 无 (纯后端/边缘端工作) | ⬜ `iot-bridge` 订阅 MQTT，解析标签并高速写入 TDengine | ⬜ TDengine `device_raw` 超级表自动建子表逻辑 | ⬜ |
 | **DMA 拓扑与关联** | ⬜ 2D 拓扑树可视化组件 (无限极展开折叠) | ⬜ `scada-service` 提供 DMA 树及挂载设备查询接口 | ⬜ `dma_zone`, `dma_device_rel` 数据初始化 | ⬜ |

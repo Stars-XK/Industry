@@ -14,12 +14,17 @@ export default defineConfig({
     port: 5173, // 前端默认开发端口
     open: true,
     proxy: {
+      '/api/data-center': {
+        target: 'http://localhost:3003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/data-center/, '/api/data-center')
+      },
       '/auth': {
-        target: 'http://localhost:3001', // auth-service 所在的端口
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
       '/api': {
-        target: 'http://localhost:3001', // 后端微服务或网关所在的端口
+        target: 'http://localhost:3001',
         changeOrigin: true,
       }
     }

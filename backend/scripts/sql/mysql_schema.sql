@@ -146,13 +146,32 @@ CREATE TABLE IF NOT EXISTS dma_zone (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 7. 分区与设备关联表
-CREATE TABLE IF NOT EXISTS dma_device_rel (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    zone_id BIGINT NOT NULL,
-    device_id BIGINT NOT NULL,
-    in_out_type SMALLINT NOT NULL DEFAULT 0,
-    INDEX idx_dma_device_rel_zone (zone_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `dma_device_rel` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `zone_id` INT NOT NULL COMMENT '分区ID',
+  `device_id` INT NOT NULL COMMENT '设备ID',
+  `direction` TINYINT(1) DEFAULT 1 COMMENT '1-流入, -1-流出, 0-内部',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='DMA与设备关联表';
+
+-- ----------------------------
+-- 9. 物联网测点标签映射表 (Phase 2)
+-- ----------------------------
+DROP TABLE IF EXISTS `iot_tag_mapping`;
+CREATE TABLE `iot_tag_mapping` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `device_id` INT NOT NULL COMMENT '关联的资产设备ID',
+  `tag_name` VARCHAR(100) NOT NULL COMMENT '原始测点标签名 (如 PLC.S7.Temp)',
+  `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名 (如 temperature)',
+  `data_type` VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
+  `unit` VARCHAR(50) DEFAULT '' COMMENT '单位 (如 °C, MPa)',
+  `scaling_factor` FLOAT DEFAULT 1.0 COMMENT '缩放因子',
+  `is_active` TINYINT(1) DEFAULT 1 COMMENT '是否启用',
+  `remark` VARCHAR(255) DEFAULT '' COMMENT '备注说明',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uk_tag_device` (`device_id`, `tag_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='物联网测点与标准属性映射表';
 
 -- 8. 字典类型表
 CREATE TABLE IF NOT EXISTS sys_dict_type (

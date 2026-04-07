@@ -2,6 +2,7 @@
  * 工业边缘网关模拟器 (Edge Gateway Simulator)
  * 1. 启动一个本地轻量级 MQTT Broker (使用 aedes)
  * 2. 定时向 Broker 发布虚拟 PLC / 传感器的遥测数据 (JSON 格式)
+ * 3. 订阅下行控制指令，改变本地状态
  */
 const aedes = require('aedes')();
 const server = require('net').createServer(aedes.handle);
@@ -25,6 +26,13 @@ aedes.on('clientDisconnect', function (client) {
   console.log(`[MQTT Broker] 客户端已断开: ${client ? client.id : client}`);
 });
 
+// 全局模拟状态
+const deviceState = {
+  pumpStatus: 0,
+  pumpFreq: 0,
+  pumpPower: 0,
+};
+
 // 2. 模拟边缘设备数据上报
 function startSimulatedDevices() {
   const client = mqtt.connect(`mqtt://localhost:${PORT}`, {
@@ -33,10 +41,15 @@ function startSimulatedDevices() {
   });
 
   client.on('connect', () => {
-    console.log('[Edge Gateway] 模拟网关已连接至 Broker，开始定时上报数据...');
+    console.log('[Edge Gateway] 模拟网关已连接至 Broker，开始定时上报数据并订阅反控指令...');
+    
+    // 订阅反控指令 topic: command/devices/+/set
+    client.subscribe('command/devices/+/set', (err) => {
+      if (err) console.error('订阅反控指令失败', err);
+    });
 
     setInterval(() => {
-      // 模拟 1号水厂的数据 (对应我们在 iot_tag_mapping 里可能配置的 tag)
+      // 模拟 1号水厂的数据
       const device1Data = {
         device_id: 1,
         timestamp: Date.now(),
@@ -47,14 +60,22 @@ function startSimulatedDevices() {
         }
       };
 
-      // 模拟 2号泵站的数据
+      // 根据控制状态模拟 2号泵站的数据
+      if (deviceState.pumpStatus === 1) {
+        // 如果开启，允许频次有微小波动
+        deviceState.pumpPower = deviceState.pumpFreq * 0.65 + (Math.random() * 2);
+      } else {
+        deviceState.pumpFreq = 0;
+        deviceState.pumpPower = 0;
+      }
+
       const device2Data = {
         device_id: 2,
         timestamp: Date.now(),
         data: {
-          'Pump.Status': Math.random() > 0.1 ? 1 : 0,                // 90% 概率运行
-          'Pump.Freq': (45 + Math.random() * 5).toFixed(1),          // 频率 45~50 Hz
-          'Pump.Power': (30 + Math.random() * 2).toFixed(1),         // 功率 30~32 kW
+          'Pump.Status': deviceState.pumpStatus,
+          'Pump.Freq': deviceState.pumpFreq.toFixed(1),
+          'Pump.Power': deviceState.pumpPower.toFixed(1),
         }
       };
 
@@ -62,11 +83,33 @@ function startSimulatedDevices() {
       client.publish(`telemetry/devices/1/data`, JSON.stringify(device1Data));
       client.publish(`telemetry/devices/2/data`, JSON.stringify(device2Data));
 
-      console.log(`[Edge Gateway] 已上报数据 (Device 1 & 2) - ${new Date().toISOString()}`);
-    }, 5000); // 每 5 秒上报一次
+      // console.log(`[Edge Gateway] 已上报数据 (Device 1 & 2) - ${new Date().toISOString()}`);
+    }, 2000); // 每 2 秒上报一次，加快前端视觉刷新
+  });
+
+  client.on('message', (topic, payload) => {
+    // 收到下发的反控指令
+    if (topic.startsWith('command/devices/')) {
+      try {
+        const cmd = JSON.parse(payload.toString());
+        console.log(`[Edge Gateway] 收到反控指令: Topic=${topic}, 指令=${payload.toString()}`);
+        
+        if (cmd.tag === 'Pump.Status') {
+          deviceState.pumpStatus = cmd.value;
+          if (cmd.value === 1 && deviceState.pumpFreq === 0) {
+            deviceState.pumpFreq = 45; // 默认开机频率
+          }
+        } else if (cmd.tag === 'Pump.Freq') {
+          deviceState.pumpFreq = parseFloat(cmd.value);
+        }
+      } catch (e) {
+        console.error('反控指令解析失败', e.message);
+      }
+    }
   });
 
   client.on('error', (err) => {
     console.error('[Edge Gateway] 模拟网关连接错误:', err);
   });
 }
+

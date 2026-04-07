@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TransformInterceptor, JwtStrategy, AuditLogInterceptor } from '@app/common';
 import { TopologyController } from './topology/topology.controller';
 import { HmiController } from './hmi/hmi.controller';
+import { HmiGateway } from './hmi/hmi.gateway';
 import { DmaZone } from '../../../libs/entities/src/dma-zone.entity';
 import { DmaDeviceRel } from '../../../libs/entities/src/dma-device-rel.entity';
 import { AstDevice } from '../../../libs/entities/src/ast-device.entity';
@@ -28,6 +29,7 @@ import { AuditLog } from '../../../libs/entities/src/audit-log.entity';
   controllers: [TopologyController, HmiController],
   providers: [
     JwtStrategy,
+    HmiGateway,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,

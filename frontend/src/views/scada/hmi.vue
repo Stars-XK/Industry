@@ -3,10 +3,11 @@
     <el-card class="box-card" shadow="never" style="height: 100%;">
       <template #header>
         <div class="card-header">
-          <span>工业 SCADA 工艺组态监控 (2号泵站模拟)</span>
+          <span>工业 SCADA 工艺组态监控 (2号泵站)</span>
           <div>
-            <el-tag type="success" effect="dark" style="margin-right: 10px;">
-              <el-icon class="is-loading"><Loading /></el-icon> MQTT 数据实时连接中
+            <el-tag :type="isConnected ? 'success' : 'danger'" effect="dark" style="margin-right: 10px;">
+              <el-icon :class="{ 'is-loading': isConnected }"><Loading v-if="isConnected" /><CircleClose v-else /></el-icon> 
+              {{ isConnected ? 'MQTT 实时推流中' : 'WebSocket 连接断开' }}
             </el-tag>
           </div>
         </div>
@@ -22,7 +23,7 @@
         </div>
 
         <div class="pipe-horizontal">
-          <div class="flow-animation"></div>
+          <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
         </div>
 
         <!-- 泵组件 -->
@@ -43,15 +44,16 @@
               :type="pumpStatus === 1 ? 'danger' : 'success'" 
               @click="handleControl(pumpStatus === 1 ? 0 : 1)"
               :icon="SwitchButton"
+              :disabled="!isConnected"
             >
               {{ pumpStatus === 1 ? '远程停机' : '远程开机' }}
             </el-button>
-            <el-button type="primary" @click="handleSetFreq" :icon="Operation">调节频率</el-button>
+            <el-button type="primary" @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
           </div>
         </div>
         
         <div class="pipe-horizontal">
-          <div class="flow-animation"></div>
+          <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
         </div>
         
         <div class="valve">
@@ -65,29 +67,55 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Setting, SwitchButton, Operation, Loading, Filter } from '@element-plus/icons-vue'
+import { Setting, SwitchButton, Operation, Loading, Filter, CircleClose } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { io, Socket } from 'socket.io-client'
 
-// 模拟绑定变量
+// 绑定变量
 const tankLevel = ref(65.5)
-const pumpStatus = ref(1)
-const pumpFreq = ref(48.2)
-const pumpPower = ref(31.5)
-let timer: any = null
+const pumpStatus = ref(0)
+const pumpFreq = ref(0.0)
+const pumpPower = ref(0.0)
+const isConnected = ref(false)
 
-// 模拟前端定时接收 MQTT 数据更新 (真实环境应使用 WebSocket 订阅后端推流)
-const simulateRealtimeData = () => {
-  timer = setInterval(() => {
-    if (pumpStatus.value === 1) {
-      pumpFreq.value = parseFloat((45 + Math.random() * 5).toFixed(1))
-      pumpPower.value = parseFloat((30 + Math.random() * 2).toFixed(1))
-      tankLevel.value = Math.max(10, Math.min(90, tankLevel.value + (Math.random() > 0.5 ? 0.5 : -0.5)))
-    } else {
-      pumpFreq.value = 0
-      pumpPower.value = 0
+let socket: Socket | null = null
+
+const initWebSocket = () => {
+  // 连接 SCADA Service 的 WebSocket 命名空间
+  socket = io('http://localhost:3002/scada', {
+    transports: ['websocket']
+  })
+
+  socket.on('connect', () => {
+    isConnected.value = true
+  })
+
+  socket.on('disconnect', () => {
+    isConnected.value = false
+  })
+
+  socket.on('telemetry_update', (payload: any) => {
+    const { topic, data } = payload
+    // 过滤出 2 号设备的数据
+    if (topic === 'telemetry/devices/2/data' && data.data) {
+      if (data.data['Pump.Status'] !== undefined) {
+        pumpStatus.value = data.data['Pump.Status']
+      }
+      if (data.data['Pump.Freq'] !== undefined) {
+        pumpFreq.value = data.data['Pump.Freq']
+      }
+      if (data.data['Pump.Power'] !== undefined) {
+        pumpPower.value = data.data['Pump.Power']
+      }
+      // 简单模拟一下水池液位变化（真实环境应由另一传感器提供）
+      if (pumpStatus.value === 1) {
+        tankLevel.value = Math.max(10, Math.min(90, tankLevel.value - 0.1))
+      } else {
+        tankLevel.value = Math.max(10, Math.min(90, tankLevel.value + 0.1))
+      }
     }
-  }, 2000)
+  })
 }
 
 const handleControl = (targetStatus: number) => {
@@ -103,8 +131,7 @@ const handleControl = (targetStatus: number) => {
         tag: 'Pump.Status',
         value: targetStatus
       })
-      ElMessage.success(`指令下发成功！`)
-      pumpStatus.value = targetStatus // 模拟状态改变
+      ElMessage.success(`指令下发成功！等待设备响应...`)
     } catch (e) {
       console.error(e)
     }
@@ -124,7 +151,7 @@ const handleSetFreq = () => {
         tag: 'Pump.Freq',
         value: parseFloat(value)
       })
-      ElMessage.success(`变频指令 [${value} Hz] 下发成功！`)
+      ElMessage.success(`变频指令 [${value} Hz] 下发成功！等待设备响应...`)
     } catch (e) {
       console.error(e)
     }
@@ -132,11 +159,13 @@ const handleSetFreq = () => {
 }
 
 onMounted(() => {
-  simulateRealtimeData()
+  initWebSocket()
 })
 
 onUnmounted(() => {
-  if (timer) clearInterval(timer)
+  if (socket) {
+    socket.disconnect()
+  }
 })
 </script>
 
@@ -145,7 +174,7 @@ onUnmounted(() => {
   padding: 20px;
   height: calc(100vh - 100px);
   box-sizing: border-box;
-  background-color: #0b1a2a; /* 工业暗黑风格背景 */
+  background-color: #0b1a2a;
 }
 
 .box-card {
@@ -155,6 +184,11 @@ onUnmounted(() => {
 }
 :deep(.el-card__header) {
   border-bottom: 1px solid #1a3344;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .hmi-canvas {

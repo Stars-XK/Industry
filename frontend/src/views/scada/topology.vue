@@ -1,12 +1,132 @@
 <template>
-  <div class="page-container">
-    <h2>模块: scada/topology</h2>
-    <p>当前页面路径: /scada/topology</p>
+  <div class="page-container scada-topology">
+    <el-row :gutter="20" style="height: 100%;">
+      <!-- 左侧拓扑树 -->
+      <el-col :span="6" style="height: 100%;">
+        <el-card class="box-card" shadow="never" style="height: 100%;">
+          <template #header>
+            <div class="card-header">
+              <span>供水 DMA 拓扑导航</span>
+            </div>
+          </template>
+          <div class="tree-container" v-loading="loading" element-loading-text="Thinking..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+            <el-tree
+              :data="treeData"
+              :props="defaultProps"
+              node-key="id"
+              default-expand-all
+              @node-click="handleNodeClick"
+              highlight-current
+            >
+              <template #default="{ node, data }">
+                <span class="custom-tree-node">
+                  <el-icon v-if="data.level === 1"><House /></el-icon>
+                  <el-icon v-else-if="data.level === 2"><OfficeBuilding /></el-icon>
+                  <el-icon v-else><Location /></el-icon>
+                  <span style="margin-left: 8px;">{{ node.label }}</span>
+                </span>
+              </template>
+            </el-tree>
+          </div>
+        </el-card>
+      </el-col>
+
+      <!-- 右侧详情/设备列表区 -->
+      <el-col :span="18" style="height: 100%;">
+        <el-card class="box-card" shadow="never" style="height: 100%;">
+          <template #header>
+            <div class="card-header">
+              <span>分区设备关联信息</span>
+              <el-tag v-if="currentNode" type="success">{{ currentNode.label }}</el-tag>
+            </div>
+          </template>
+          <div v-if="!currentNode" class="empty-tip">
+            <el-empty description="请从左侧选择一个 DMA 分区" />
+          </div>
+          <div v-else>
+            <!-- 占位：未来此处展示当前分区挂载的设备和实时遥测数据 -->
+            <el-descriptions title="分区详情" :column="2" border>
+              <el-descriptions-item label="分区ID">{{ currentNode.id }}</el-descriptions-item>
+              <el-descriptions-item label="分区名称">{{ currentNode.label }}</el-descriptions-item>
+              <el-descriptions-item label="层级">{{ currentNode.level }} 级</el-descriptions-item>
+            </el-descriptions>
+            
+            <h3 style="margin-top: 30px;">挂载设备清单</h3>
+            <el-table :data="[]" style="width: 100%; margin-top: 10px;" border>
+              <el-table-column prop="id" label="设备ID" width="100" />
+              <el-table-column prop="name" label="设备名称" />
+              <el-table-column prop="type" label="进出类型" />
+              <template #empty>
+                <div style="padding: 30px;">暂无挂载设备</div>
+              </template>
+            </el-table>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { House, OfficeBuilding, Location } from '@element-plus/icons-vue'
+import request from '@/utils/request'
+
+const loading = ref(false)
+const treeData = ref([])
+const defaultProps = {
+  children: 'children',
+  label: 'label',
+}
+const currentNode = ref<any>(null)
+
+const getTree = async () => {
+  loading.value = true
+  try {
+    const res = await request.get('/api/scada/topology/tree')
+    treeData.value = res || []
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleNodeClick = (data: any) => {
+  currentNode.value = data
+}
+
+onMounted(() => {
+  getTree()
+})
+</script>
 
 <style scoped>
-.page-container { padding: 20px; background: #fff; height: 100%; border-radius: 4px; }
+.page-container {
+  padding: 20px;
+  height: calc(100vh - 100px);
+  box-sizing: border-box;
+}
+.box-card {
+  display: flex;
+  flex-direction: column;
+}
+:deep(.el-card__body) {
+  flex: 1;
+  overflow: auto;
+}
+.tree-container {
+  height: 100%;
+}
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+.empty-tip {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>

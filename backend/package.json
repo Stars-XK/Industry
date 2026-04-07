@@ -11,8 +11,7 @@
     "start:iot": "nest start iot-bridge",
     "start:all": "concurrently \"npm run start:gateway\" \"npm run start:auth\" \"npm run start:scada\" \"npm run start:data\" \"npm run start:workflow\" \"npm run start:iot\"",
     "start:all:dev": "concurrently \"nest start api-gateway --watch\" \"nest start auth-service --watch\" \"nest start scada-service --watch\" \"nest start data-center --watch\" \"nest start workflow-service --watch\" \"nest start iot-bridge --watch\"",
-    "build": "nest build api-gateway && nest build auth-service && nest build scada-service && nest build data-center && nest build workflow-service && nest build iot-bridge",
-    "db:init": "ts-node scripts/init-db.ts"
+    "build": "nest build api-gateway && nest build auth-service && nest build scada-service && nest build data-center && nest build workflow-service && nest build iot-bridge"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

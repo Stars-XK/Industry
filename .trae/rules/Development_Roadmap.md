@@ -14,9 +14,9 @@
 
 | 模块/任务 | 前端任务 (Vue3) | 后端任务 (NestJS/Python) | 数据库与基建 | 状态 |
 |---|---|---|---|---|
-| **架构与规范** | ✅ 定义工程目录结构规范 | ✅ 定义微服务目录架构规范 | ✅ 设计 PG 与 TDengine 双底座 ER 图及初始化脚本 | ✅ |
+| **架构与规范** | ✅ 定义工程目录结构规范 | ✅ 定义微服务目录架构规范 | ✅ 设计 MySQL 与 TDengine 双底座 ER 图及初始化脚本 | ✅ |
 | **物理工程初始化** | ✅ Vite + Vue3 + TS 脚手架创建，补充基础配置 | ✅ NestJS Monorepo 创建，配置 `concurrently` 批量启动 | ✅ PM2 `ecosystem.config.js` 部署脚本编写 | ✅ |
-| **基础设施打通** | ✅ Axios 拦截器封装 (全局 Loading 与 Error 提示) | ✅ `auth-service` 对接 PostgreSQL (TypeORM/Prisma) | ✅ `init-db.ts` 脚本在开发环境执行完毕 | ✅ |
+| **基础设施打通** | ✅ Axios 拦截器封装 (全局 Loading 与 Error 提示) | ✅ `auth-service` 对接 MySQL (TypeORM) | ✅ SQL 脚本手动执行完成数据库初始化 | ✅ |
 | **认证与权限体系** | ✅ 登录页面 UI、滑动验证码、Token 存储 (Pinia) | ✅ 登录校验接口 (Bcrypt 验证)、JWT Token 签发 | ✅ 初始化 `sys_user` 与 `sys_role` 数据 | ✅ |
 | **动态路由与菜单** | ✅ Layout 布局开发 (侧边栏、顶栏)、路由守卫拦截 | ✅ 获取当前用户动态菜单树接口 (`/api/menus`) | ✅ 初始化 `sys_menu` 测试数据 | ✅ |
 | **部门组织架构管理** | ✅ 部门管理页面 (树形表格增删改查) | ✅ `auth-service` 提供部门树形结构 CRUD 接口 | ✅ `sys_dept` 表结构支持 | ✅ |

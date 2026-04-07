@@ -14,7 +14,7 @@
 *   **前端工程 (`/frontend`)**: Vue 3 + Vite + TypeScript + Pinia + Vue Router (基于角色的动态路由与动态组件加载)。
 *   **后端微服务 (`/backend`)**: 基于 NestJS (Monorepo) 搭建的 6 大核心微服务 (包含 `api-gateway`, `auth-service`, `scada-service`, `data-center`, `workflow-service`, `iot-bridge`)，支持并发协同启动。
 *   **边缘计算 (`/edge-gateway`)**: Python 编写的轻量级边缘网关，用于处理工业现场的协议解析 (MQTT/Modbus/OPC)、死区过滤及断网缓存。
-*   **关系型数据库底座**: PostgreSQL 14+，用于存储组织架构、角色权限、设备台账及工单状态。
+*   **关系型数据库底座**: MySQL 8.0+，用于存储组织架构、角色权限、设备台账及工单状态。
 *   **时序数据库底座**: TDengine 3.3.8+，专职存储海量高频传感数据，并利用 `CREATE STREAM` 实现 5 分钟、日、月、年及夜间最小流量 (MNF) 的流式降采样计算。
 
 ## 📂 项目结构
@@ -36,18 +36,17 @@
 
 ### 1. 环境准备
 *   Node.js >= 18
-*   PostgreSQL >= 14 (需在本地或远端启动)
+*   MySQL >= 8.0 (需在本地或远端启动)
 *   TDengine >= 3.3.8 (确保 RESTful 服务端口 6041 已开放)
 *   MQTT Broker (如 EMQX / Mosquitto，用于阶段二测试)
 
-### 2. 数据库一键初始化
-后端内置了自动化脚本，会为您建好 PostgreSQL 基础表结构、插入初始管理员账号与测试设备，并在 TDengine 中创建超级表与流计算脚本。
-```bash
-cd backend
-npm install
-# 执行初始化脚本 (确保 PG 和 TDengine 已启动)
-npm run db:init
-```
+### 2. 数据库初始化
+后端提供了自动化建表脚本和种子数据。请在您的数据库客户端（如 Navicat 或 DataGrip）中，连接您的 MySQL (>= 8.0) 并依次执行以下 SQL 脚本：
+1. `backend/scripts/sql/mysql_schema.sql` (创建基础表结构)
+2. `backend/scripts/sql/mysql_seed.sql` (插入初始管理员账号与测试数据)
+
+TDengine (>= 3.3.8) 请使用 RESTful API 或 TAOS Shell 执行所需的时序数据库初始化脚本（见后续阶段）。
+
 *(注：默认超管账号: `admin`，密码: `admin123`)*
 
 ### 3. 启动后端微服务集群

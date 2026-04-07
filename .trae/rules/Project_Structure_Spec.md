@@ -64,7 +64,7 @@
 │   └── /iot-bridge                 # 物联网内部桥接服务 (MQTT 报文解析、标签映射写入)
 ├── /libs                           # 微服务间共享库 (Shared Libraries)
 │   ├── /common                     # 公共拦截器、异常过滤器、通用 DTO 与装饰器
-│   ├── /database                   # 数据库连接模块 (PostgreSQL/TypeORM & TDengine SDK)
+│   ├── /database                   # 数据库连接模块 (MySQL/TypeORM & TDengine SDK)
 │   ├── /redis                      # Redis 缓存与微服务心跳注册模块
 │   └── /entities                   # 跨服务共享的 ORM 实体类 (严格遵循 DB Schema)
 ├── nest-cli.json                   # NestJS 工作区配置
@@ -73,9 +73,9 @@
 
 ### 微服务核心职责边界：
 1. **`api-gateway`**: 直接面向前端，处理 HTTP/WebSocket 接入，拦截无效请求并分发给后端。不直接连数据库。
-2. **`auth-service`**: 连接 PG 的 `sys_*` 表，处理登录、Token 签发、权限范围校验。
-3. **`data-center`**: 重度依赖 TDengine，处理报表、产销差计算、聚合查询；同时也读取 PG 中的大户档案 (`bil_*`)。
-4. **`workflow-service`**: 连接 PG 的 `wf_*` 和 `alm_*` 表，驱动工单状态机。
+2. **`auth-service`**: 连接 MySQL 的 `sys_*` 表，处理登录、Token 签发、权限范围校验。
+3. **`data-center`**: 重度依赖 TDengine，处理报表、产销差计算、聚合查询；同时也读取 MySQL 中的大户档案 (`bil_*`)。
+4. **`workflow-service`**: 连接 MySQL 的 `wf_*` 和 `alm_*` 表，驱动工单状态机。
 5. **`iot-bridge`**: 作为一个“翻译官”，订阅 MQTT Broker 的原始报文，查询 `iot_tag_mapping`，然后批量高速写入 TDengine 的子表。
 
 ---

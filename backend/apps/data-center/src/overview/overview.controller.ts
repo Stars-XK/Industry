@@ -185,9 +185,9 @@ export class OverviewController {
           const timeStr = timeDiff < 60 ? `${timeDiff}分钟前` : `${Math.floor(timeDiff/60)}小时前`;
           
           if (r.standard_name === 'pressure') {
-            return { content: `1号水厂出水压力过低 (${r.value.toFixed(2)} MPa)`, timestamp: timeStr, type: 'danger', size: 'large' };
+            return { content: `张江园区末端出水压力过低 (${r.value.toFixed(2)} MPa)`, timestamp: timeStr, type: 'danger', size: 'large' };
           } else {
-            return { content: `地下泵站 H₂S 浓度超标 (${r.value.toFixed(1)} ppm)`, timestamp: timeStr, type: 'danger', size: 'large' };
+            return { content: `徐汇地下泵站 H₂S 浓度超标 (${r.value.toFixed(1)} ppm)`, timestamp: timeStr, type: 'danger', size: 'large' };
           }
         });
       }
@@ -197,8 +197,8 @@ export class OverviewController {
     
     // Default fallback if no real alarms or DB fails
     return [
-      { content: '2号泵站2#泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
-      { content: '水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
+      { content: '浦东2号泵站主泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
+      { content: '滴水湖水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
     ];
   }
 }

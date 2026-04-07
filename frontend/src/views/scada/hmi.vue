@@ -3,7 +3,7 @@
     <el-card class="box-card" shadow="never" style="height: 100%;">
       <template #header>
         <div class="card-header">
-          <span>工业 SCADA 工艺组态监控 (2号泵站)</span>
+          <span>工业 SCADA 工艺组态监控 (浦东2号泵站)</span>
           <div>
             <el-tag :type="isConnected ? 'success' : 'danger'" effect="dark" style="margin-right: 10px;">
               <el-icon :class="{ 'is-loading': isConnected }"><Loading v-if="isConnected" /><CircleClose v-else /></el-icon> 
@@ -120,7 +120,7 @@ const initWebSocket = () => {
 
 const handleControl = (targetStatus: number) => {
   const actionText = targetStatus === 1 ? '开机' : '停机'
-  ElMessageBox.prompt(`危险操作预警：确定要对 [2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！\n请输入操作密码：`, '安全反控确认', {
+  ElMessageBox.prompt(`危险操作预警：确定要对 [浦东2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！\n请输入操作密码：`, '安全反控确认', {
     confirmButtonText: '强制执行',
     cancelButtonText: '取消',
     inputType: 'password',

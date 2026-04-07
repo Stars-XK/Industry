@@ -1,5 +1,6 @@
 <template>
   <div class="page-container scada-overview">
+    <!-- 核心 KPI 概览 -->
     <el-row :gutter="20">
       <el-col :span="6" v-for="(item, index) in metrics" :key="index">
         <el-card class="metric-card" shadow="hover">
@@ -19,6 +20,40 @@
       </el-col>
     </el-row>
 
+    <!-- 水质综合看板与能耗趋势 -->
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <el-col :span="12">
+        <el-card shadow="hover" class="chart-card">
+          <template #header>
+            <div class="card-header">
+              <span>水质综合看板 (全网关键节点)</span>
+              <el-tag type="success">历史达标率: {{ complianceRate }}%</el-tag>
+            </div>
+          </template>
+          <div class="chart-container" v-loading="loading">
+            <v-chart class="chart" :option="waterQualityOption" autoresize />
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="hover" class="chart-card">
+          <template #header>
+            <div class="card-header">
+              <span>近 7 天水电气能耗折标煤趋势</span>
+              <el-radio-group v-model="energyTrendRange" size="small" @change="fetchEnergyTrend">
+                <el-radio-button label="7days">近 7 天</el-radio-button>
+                <el-radio-button label="30days">近 30 天</el-radio-button>
+              </el-radio-group>
+            </div>
+          </template>
+          <div class="chart-container" v-loading="loading">
+            <v-chart class="chart" :option="energyTrendOption" autoresize />
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- 供水漏损趋势与报警列表 -->
     <el-row :gutter="20" style="margin-top: 20px;">
       <el-col :span="16">
         <el-card shadow="hover" class="chart-card">
@@ -68,13 +103,15 @@ import { DataLine, WarnTriangleFilled, Opportunity, Odometer } from '@element-pl
 import request from '@/utils/request'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { LineChart, BarChart } from 'echarts/charts'
+import { LineChart, BarChart, GaugeChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent, TitleComponent, DataZoomComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
 
-use([CanvasRenderer, LineChart, BarChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent, DataZoomComponent])
+use([CanvasRenderer, LineChart, BarChart, GaugeChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent, DataZoomComponent])
 
 const loading = ref(false)
+const energyTrendRange = ref('7days')
+const complianceRate = ref(99.8)
 
 const metrics = ref([
   { title: '今日总供水量', value: 0, unit: 'm³', icon: Odometer, color: '#409EFF' },
@@ -108,12 +145,79 @@ const trendOption = ref({
   ]
 })
 
+const waterQualityOption = ref({
+  tooltip: { formatter: '{a} <br/>{b} : {c}' },
+  series: [
+    {
+      name: '浊度 (NTU)',
+      type: 'gauge',
+      center: ['20%', '50%'],
+      radius: '75%',
+      min: 0,
+      max: 5,
+      axisLine: { lineStyle: { width: 10, color: [[0.2, '#67C23A'], [0.8, '#E6A23C'], [1, '#F56C6C']] } },
+      pointer: { itemStyle: { color: 'auto' } },
+      detail: { fontSize: 14, formatter: '{value} NTU' },
+      data: [{ value: 0, name: '浊度' }]
+    },
+    {
+      name: '余氯 (mg/L)',
+      type: 'gauge',
+      center: ['50%', '50%'],
+      radius: '75%',
+      min: 0,
+      max: 2,
+      axisLine: { lineStyle: { width: 10, color: [[0.15, '#F56C6C'], [0.8, '#67C23A'], [1, '#E6A23C']] } },
+      pointer: { itemStyle: { color: 'auto' } },
+      detail: { fontSize: 14, formatter: '{value} mg/L' },
+      data: [{ value: 0, name: '余氯' }]
+    },
+    {
+      name: 'pH值',
+      type: 'gauge',
+      center: ['80%', '50%'],
+      radius: '75%',
+      min: 0,
+      max: 14,
+      axisLine: { lineStyle: { width: 10, color: [[0.45, '#F56C6C'], [0.6, '#67C23A'], [1, '#F56C6C']] } },
+      pointer: { itemStyle: { color: 'auto' } },
+      detail: { fontSize: 14, formatter: '{value}' },
+      data: [{ value: 0, name: 'pH值' }]
+    }
+  ]
+})
+
+const energyTrendOption = ref({
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'] },
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  xAxis: { type: 'category', data: [] },
+  yAxis: { type: 'value', name: 'kgce' },
+  series: [
+    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [] },
+    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [] },
+    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [] }
+  ]
+})
+
 const alarms = ref([
   { content: '1号水厂出水压力过低 (0.28 MPa)', timestamp: '10分钟前', type: 'danger', size: 'large' },
   { content: '2号泵站2#泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
   { content: '高新区DMA夜间最小流量突增', timestamp: '2小时前', type: 'warning' },
   { content: '水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
 ])
+
+const fetchEnergyTrend = async () => {
+  try {
+    const res = await request.get('/api/data-center/overview/energy-trend', { params: { range: energyTrendRange.value } })
+    energyTrendOption.value.xAxis.data = res.dates
+    energyTrendOption.value.series[0].data = res.waterEnergy
+    energyTrendOption.value.series[1].data = res.elecEnergy
+    energyTrendOption.value.series[2].data = res.gasEnergy
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const fetchData = async () => {
   loading.value = true
@@ -126,8 +230,16 @@ const fetchData = async () => {
 
     const resTrend = await request.get('/api/data-center/overview/trend')
     trendOption.value.xAxis.data = resTrend.hours
-    trendOption.value.series[0].data = resTrend.values
-    trendOption.value.series[1].data = resTrend.values.map(v => Math.round(v * 0.12)) // 模拟漏水趋势
+    trendOption.value.series[0].data = resTrend.supplyValues
+    trendOption.value.series[1].data = resTrend.leakageValues
+
+    const resWater = await request.get('/api/data-center/overview/water-quality')
+    waterQualityOption.value.series[0].data[0].value = resWater.turbidity
+    waterQualityOption.value.series[1].data[0].value = resWater.chlorine
+    waterQualityOption.value.series[2].data[0].value = resWater.ph
+    complianceRate.value = resWater.complianceRate
+    
+    await fetchEnergyTrend()
   } catch (error) {
     console.error(error)
   } finally {
@@ -186,7 +298,7 @@ onMounted(() => {
 .chart-card {
   border: none;
   border-radius: 8px;
-  height: 450px;
+  height: 400px;
 }
 .card-header {
   display: flex;
@@ -194,14 +306,14 @@ onMounted(() => {
   align-items: center;
 }
 .chart-container {
-  height: 350px;
+  height: 300px;
 }
 .chart {
   width: 100%;
   height: 100%;
 }
 .alarm-list {
-  height: 350px;
+  height: 300px;
   overflow-y: auto;
   padding: 10px;
 }

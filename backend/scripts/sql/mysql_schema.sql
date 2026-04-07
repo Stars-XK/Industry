@@ -168,12 +168,28 @@ CREATE TABLE `device_raw` (
   INDEX `idx_device_time` (`device_id`, `timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='设备原始遥测数据表(降级使用)';
 -- ----------------------------
+DROP TABLE IF EXISTS `iot_gateway`;
+CREATE TABLE `iot_gateway` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `gateway_sn` VARCHAR(50) NOT NULL UNIQUE COMMENT '网关序列号(SN)',
+  `protocol` VARCHAR(50) DEFAULT 'MQTT' COMMENT '通信协议(MQTT, Modbus等)',
+  `is_online` TINYINT(1) DEFAULT 0 COMMENT '在线状态: 1-在线 0-离线',
+  `cpu_load` FLOAT DEFAULT 0.0 COMMENT 'CPU负载(%)',
+  `latency` INT DEFAULT 0 COMMENT '网络延迟(ms)',
+  `remark` VARCHAR(255) DEFAULT '' COMMENT '备注说明',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='边缘网关设备表';
+
 DROP TABLE IF EXISTS `iot_tag_mapping`;
 CREATE TABLE `iot_tag_mapping` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `device_id` INT NOT NULL COMMENT '关联的资产设备ID',
+  `gateway_id` INT DEFAULT NULL COMMENT '关联的边缘网关ID',
   `tag_name` VARCHAR(100) NOT NULL COMMENT '原始测点标签名 (如 PLC.S7.Temp)',
+  `plc_address` VARCHAR(100) DEFAULT '' COMMENT 'PLC寄存器地址',
   `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名 (如 temperature)',
+  `deadband` FLOAT DEFAULT 0.0 COMMENT '死区过滤阈值',
   `data_type` VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
   `unit` VARCHAR(50) DEFAULT '' COMMENT '单位 (如 °C, MPa)',
   `scaling_factor` FLOAT DEFAULT 1.0 COMMENT '缩放因子',
@@ -181,7 +197,8 @@ CREATE TABLE `iot_tag_mapping` (
   `remark` VARCHAR(255) DEFAULT '' COMMENT '备注说明',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `uk_tag_device` (`device_id`, `tag_name`)
+  UNIQUE KEY `uk_tag_device` (`device_id`, `tag_name`),
+  CONSTRAINT `fk_tag_gateway` FOREIGN KEY (`gateway_id`) REFERENCES `iot_gateway` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='物联网测点与标准属性映射表';
 
 -- 8. 字典类型表

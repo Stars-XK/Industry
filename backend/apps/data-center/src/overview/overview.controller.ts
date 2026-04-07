@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '@app/common';
@@ -49,13 +49,52 @@ export class OverviewController {
   async getTrend() {
     // 模拟返回最近 24 小时的供水趋势数据，结合部分真实数据
     const hours = [];
-    const values = [];
+    const supplyValues = [];
+    const leakageValues = [];
     let base = 500;
     for (let i = 23; i >= 0; i--) {
       const d = new Date(Date.now() - i * 3600 * 1000);
       hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
-      values.push(Math.round(base + Math.random() * 100 - 50));
+      const val = Math.round(base + Math.random() * 100 - 50);
+      supplyValues.push(val);
+      leakageValues.push(Math.round(val * 0.12));
     }
-    return { hours, values };
+    return { hours, supplyValues, leakageValues };
+  }
+
+  @Get('water-quality')
+  @ApiOperation({ summary: '获取水质综合指标' })
+  async getWaterQuality() {
+    return {
+      turbidity: Number((Math.random() * 0.5 + 0.3).toFixed(2)),
+      chlorine: Number((Math.random() * 0.4 + 0.4).toFixed(2)),
+      ph: Number((Math.random() * 0.6 + 7.0).toFixed(2)),
+      complianceRate: 99.8
+    };
+  }
+
+  @Get('energy-trend')
+  @ApiOperation({ summary: '获取能耗折标煤趋势' })
+  async getEnergyTrend(@Query('range') range: string = '7days') {
+    const daysCount = range === '7days' ? 7 : 30;
+    const dates = [];
+    const waterEnergy = [];
+    const elecEnergy = [];
+    const gasEnergy = [];
+    
+    for (let i = daysCount - 1; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400 * 1000);
+      dates.push(`${d.getMonth() + 1}-${d.getDate()}`);
+      waterEnergy.push(Math.round(100 + Math.random() * 50));
+      elecEnergy.push(Math.round(200 + Math.random() * 100));
+      gasEnergy.push(Math.round(150 + Math.random() * 80));
+    }
+
+    return {
+      dates,
+      waterEnergy,
+      elecEnergy,
+      gasEnergy
+    };
   }
 }

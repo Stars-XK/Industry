@@ -59,12 +59,14 @@ export class TopologyController {
   }
 
   private buildTree(zones: DmaZone[], parentId: number): any[] {
+    const mockAlarmZoneIds = [102]; // 高新区报警
     return zones
       .filter((zone) => Number(zone.parent_id) === Number(parentId))
       .map((zone) => ({
         id: zone.id,
         label: zone.zone_name,
         level: zone.level,
+        status: mockAlarmZoneIds.includes(zone.id) ? 'alarm' : 'normal',
         children: this.buildTree(zones, zone.id),
       }));
   }

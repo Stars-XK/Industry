@@ -48,9 +48,6 @@
               style="width: 100%; margin-top: 10px;"
               border
               v-loading="deviceLoading"
-              element-loading-text="Thinking..."
-              element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.8)"
             >
               <el-table-column prop="id" label="内部ID" width="70" />
               <el-table-column prop="device_code" label="资产编号" width="140" />
@@ -119,8 +116,8 @@ const chartOption = ref({
       left: '7%',
       bottom: '1%',
       right: '20%',
-      symbolSize: 12,
-      roam: true, // 开启鼠标缩放和平移漫游
+      symbolSize: 16,
+      roam: true,
       label: {
         position: 'left',
         verticalAlign: 'middle',
@@ -135,9 +132,7 @@ const chartOption = ref({
           align: 'left'
         }
       },
-      emphasis: {
-        focus: 'descendant'
-      },
+      emphasis: { focus: 'descendant' },
       expandAndCollapse: true,
       animationDuration: 550,
       animationDurationUpdate: 750,
@@ -157,8 +152,7 @@ const chartOption = ref({
 
 const mapTreeDataForEcharts = (nodes: any[]): any[] => {
   return nodes.map(node => {
-    // 模拟一下报警状态：给 ID=102 的节点设置红圈
-    const isAlarm = node.id === 102;
+    const isAlarm = node.status === 'alarm';
     const itemStyle = isAlarm ? {
       color: '#F56C6C',
       borderColor: '#ff9999',
@@ -196,14 +190,12 @@ const handleChartClick = (params: any) => {
 
 const initWebSocket = () => {
   socket = io('http://localhost:3002/scada', { transports: ['websocket'] })
-
   socket.on('telemetry_update', (payload: any) => {
     const { topic, data } = payload
     const parts = topic.split('/')
     if (parts.length === 4) {
       const deviceId = parseInt(parts[2], 10)
-      const targetDevice = deviceList.value.find(d => d.id === deviceId || (deviceId === 1 && d.device_code.includes('METER_IN')))
-
+      const targetDevice = deviceList.value.find(d => d.id === deviceId)
       if (targetDevice) {
         if (!targetDevice.telemetry) targetDevice.telemetry = {}
         if (data.data) {
@@ -234,9 +226,6 @@ const getDevices = async (zoneId: number) => {
   try {
     const res = await request.get(`/api/scada/topology/devices/${zoneId}`)
     deviceList.value = (res || []).map((d: any) => ({ ...d, telemetry: {} }))
-    deviceList.value.forEach(d => {
-      if (d.device_code === 'METER_IN_01') d.id = 1;
-    });
   } catch (error) {
     console.error(error)
   } finally {

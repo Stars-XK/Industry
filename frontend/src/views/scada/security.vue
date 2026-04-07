@@ -64,11 +64,11 @@
           <div class="metrics-grid">
             <div class="metric-item">
               <div class="label">温度</div>
-              <div class="value">26.5 <span class="unit">°C</span></div>
+              <div class="value">{{ temperature }} <span class="unit">°C</span></div>
             </div>
             <div class="metric-item">
               <div class="label">湿度</div>
-              <div class="value">58 <span class="unit">%</span></div>
+              <div class="value">{{ humidity }} <span class="unit">%</span></div>
             </div>
             <div class="metric-item" :class="{ 'alert-text': envStatus !== 'normal' }">
               <div class="label">H₂S 浓度</div>
@@ -76,7 +76,7 @@
             </div>
             <div class="metric-item">
               <div class="label">PM2.5</div>
-              <div class="value">35 <span class="unit">µg/m³</span></div>
+              <div class="value">{{ pm25 }} <span class="unit">µg/m³</span></div>
             </div>
           </div>
         </el-card>
@@ -124,6 +124,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import request from '@/utils/request'
 import { VideoCamera, Warning, Location, WarningFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { use } from 'echarts/core'
@@ -137,8 +138,12 @@ use([CanvasRenderer, LineChart, GridComponent, TooltipComponent, LegendComponent
 const gridSize = ref(4)
 const envStatus = ref('normal')
 const h2sValue = ref(5.2)
+const coValue = ref(12.0)
 const fanStatus = ref(false)
 const doorLocked = ref(false)
+const temperature = ref(26.5)
+const humidity = ref(58)
+const pm25 = ref(35)
 
 const alertVisible = ref(false)
 const alertType = ref('')
@@ -149,20 +154,20 @@ const envChartOption = ref({
   tooltip: { trigger: 'axis' },
   legend: { data: ['H₂S (ppm)', 'CO (ppm)'] },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', boundaryGap: false, data: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'] },
+  xAxis: { type: 'category', boundaryGap: false, data: [] },
   yAxis: { type: 'value' },
   series: [
     {
       name: 'H₂S (ppm)',
       type: 'line',
-      data: [4.1, 4.5, 4.8, 5.0, 5.2, 5.1, 5.2],
+      data: [],
       itemStyle: { color: '#E6A23C' },
       smooth: true
     },
     {
       name: 'CO (ppm)',
       type: 'line',
-      data: [12, 13, 11, 14, 15, 13, 12],
+      data: [],
       itemStyle: { color: '#909399' },
       smooth: true
     }
@@ -179,45 +184,51 @@ const createWorkOrder = () => {
   ElMessage.success(`已成功将【${alertType}】报警转化为应急工单！`)
 }
 
-// 模拟 H2S 浓度变化与联锁触发
-const startSimulation = () => {
-  simInterval = setInterval(() => {
-    // 随机增加 H2S 浓度
-    if (envStatus.value === 'normal') {
-      h2sValue.value = Number((h2sValue.value + Math.random() * 2).toFixed(1))
-      
-      // 更新图表数据
-      const seriesData = envChartOption.value.series[0].data as number[]
-      seriesData.shift()
-      seriesData.push(h2sValue.value)
-      
-      // 当超过 10ppm 触发报警联锁
-      if (h2sValue.value >= 10.0) {
-        envStatus.value = 'alert'
-        fanStatus.value = true
-        doorLocked.value = true
-        ElMessage.error('危险！H₂S 浓度超标，已触发联锁：开启排风扇并锁死门禁！')
-      }
-    } else {
-      // 报警状态下，排风扇运行，浓度下降
-      h2sValue.value = Number((h2sValue.value - Math.random() * 1.5).toFixed(1))
-      
-      const seriesData = envChartOption.value.series[0].data as number[]
-      seriesData.shift()
-      seriesData.push(h2sValue.value)
-
-      if (h2sValue.value < 5.0) {
-        envStatus.value = 'normal'
-        fanStatus.value = false
-        doorLocked.value = false
-        ElMessage.success('H₂S 浓度恢复正常，已解除联锁状态。')
-      }
+const fetchEnvironmentData = async () => {
+  try {
+    const res = await request.get('/api/scada/security/environment')
+    
+    // Check if status changed to alert
+    if (res.envStatus === 'alert' && envStatus.value !== 'alert') {
+      ElMessage.error('危险！H₂S 浓度超标，已触发联锁：开启排风扇并锁死门禁！')
+    } else if (res.envStatus === 'normal' && envStatus.value === 'alert') {
+      ElMessage.success('H₂S 浓度恢复正常，已解除联锁状态。')
     }
-  }, 3000)
+
+    envStatus.value = res.envStatus
+    h2sValue.value = res.h2sValue
+    coValue.value = res.coValue
+    fanStatus.value = res.fanStatus
+    doorLocked.value = res.doorLocked
+    temperature.value = res.temperature
+    humidity.value = res.humidity
+    pm25.value = res.pm25
+    
+    const now = new Date()
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+
+    const xAxisData = envChartOption.value.xAxis.data as string[]
+    const h2sData = envChartOption.value.series[0].data as number[]
+    const coData = envChartOption.value.series[1].data as number[]
+
+    if (xAxisData.length > 20) {
+      xAxisData.shift()
+      h2sData.shift()
+      coData.shift()
+    }
+
+    xAxisData.push(timeStr)
+    h2sData.push(res.h2sValue)
+    coData.push(res.coValue)
+
+  } catch (error) {
+    console.error('获取环境数据失败:', error)
+  }
 }
 
 onMounted(() => {
-  startSimulation()
+  fetchEnvironmentData()
+  simInterval = setInterval(fetchEnvironmentData, 3000)
 })
 
 onUnmounted(() => {

@@ -69,15 +69,19 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (57, 50, '低代码可视化组态工作台', 8, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1);
 
 -- ----------------------------
--- 9. 初始化物联网测点映射规则
+-- 9. 初始化边缘网关和测点映射规则
 -- ----------------------------
-INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `tag_name`, `standard_name`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
-(1, 'PLC.S7.Temp', 'temperature', 'float', '°C', 1.0, 1, '1号厂温度监控'),
-(1, 'PLC.S7.Pressure', 'pressure', 'float', 'MPa', 1.0, 1, '1号厂水压'),
-(1, 'PLC.S7.FlowRate', 'flow_rate', 'float', 'm³/h', 1.0, 1, '1号厂瞬时流量'),
-(2, 'Pump.Status', 'status', 'int', '', 1.0, 1, '2号泵站运行状态(1=开,0=关)'),
-(2, 'Pump.Freq', 'frequency', 'float', 'Hz', 1.0, 1, '2号泵站变频器频率'),
-(2, 'Pump.Power', 'power', 'float', 'kW', 1.0, 1, '2号泵站功率');
+INSERT IGNORE INTO `iot_gateway` (`id`, `gateway_sn`, `protocol`, `is_online`, `cpu_load`, `latency`, `remark`) VALUES
+(1, 'GW-EDGE-001', 'MQTT', 1, 15.2, 12, '1号水厂主网关'),
+(2, 'GW-EDGE-002', 'Modbus', 0, 0, 0, '2号泵站备用网关');
+
+INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
+(1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 'float', '°C', 1.0, 1, '1号厂温度监控'),
+(1, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 'float', 'MPa', 1.0, 1, '1号厂水压'),
+(1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '1号厂瞬时流量'),
+(2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '2号泵站运行状态(1=开,0=关)'),
+(2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '2号泵站变频器频率'),
+(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '2号泵站功率');
 -- 3. DMA分区测试数据
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '全市供水一级分区', 1, 1);
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (102, 101, '高新工业园区', 2, 1);

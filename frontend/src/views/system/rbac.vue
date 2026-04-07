@@ -59,19 +59,25 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色状态" prop="status">
-              <el-radio-group v-model="form.status">
-                <el-radio :value="1">正常</el-radio>
-                <el-radio :value="0">停用</el-radio>
-              </el-radio-group>
-            </el-form-item>
+            <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio 
+              v-for="dict in sys_normal_disable" 
+              :key="dict.dict_value" 
+              :value="parseInt(dict.dict_value)"
+            >{{ dict.dict_label }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="数据范围" prop="data_scope">
           <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%">
-            <el-option label="全部数据" :value="1" />
-            <el-option label="本部门" :value="2" />
-            <el-option label="自定义" :value="3" />
+            <el-option 
+              v-for="dict in sys_data_scope" 
+              :key="dict.dict_value" 
+              :label="dict.dict_label" 
+              :value="parseInt(dict.dict_value)" 
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="菜单权限">
@@ -100,6 +106,9 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { useDict } from '@/hooks/useDict'
+
+const { sys_normal_disable, sys_data_scope } = useDict('sys_normal_disable', 'sys_data_scope')
 
 const loading = ref(false)
 const tableData = ref([])

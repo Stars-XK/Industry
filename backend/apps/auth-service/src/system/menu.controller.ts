@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException, Request } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Menu } from '../../../../libs/entities/src/menu.entity';
@@ -33,7 +33,7 @@ export class SystemMenuController {
 
   @Post('create')
   @ApiOperation({ summary: '创建菜单' })
-  async createMenu(@Body() body: CreateMenuDto) {
+  async createMenu(@Request() req, @Body() body: CreateMenuDto) {
     const menu = new Menu();
     menu.parent_id = body.parent_id || 0;
     menu.menu_name = body.menu_name;
@@ -41,14 +41,15 @@ export class SystemMenuController {
     if (body.component !== undefined) menu.component = body.component;
     if (body.perm_code !== undefined) menu.perm_code = body.perm_code;
     menu.menu_type = body.menu_type || 'C';
+    menu.created_by = req.user.userId;
     await this.menuRepository.save(menu);
     return null;
   }
 
   @Put('update/:id')
   @ApiOperation({ summary: '更新菜单' })
-  async updateMenu(@Param('id') id: number, @Body() body: UpdateMenuDto) {
-    await this.menuRepository.update(id, body);
+  async updateMenu(@Request() req, @Param('id') id: number, @Body() body: UpdateMenuDto) {
+    await this.menuRepository.update(id, { ...body, updated_by: req.user.userId });
     return null;
   }
 

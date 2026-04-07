@@ -86,11 +86,14 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门状态" prop="status">
-              <el-radio-group v-model="form.status">
-                <el-radio :value="1">正常</el-radio>
-                <el-radio :value="0">停用</el-radio>
-              </el-radio-group>
-            </el-form-item>
+          <el-radio-group v-model="form.status">
+            <el-radio 
+              v-for="dict in sys_normal_disable" 
+              :key="dict.dict_value" 
+              :value="parseInt(dict.dict_value)"
+            >{{ dict.dict_label }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="备注" prop="remark">
@@ -109,6 +112,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { useDict } from '@/hooks/useDict'
+
+const { sys_normal_disable } = useDict('sys_normal_disable')
 
 const loading = ref(false)
 const tableData = ref([])

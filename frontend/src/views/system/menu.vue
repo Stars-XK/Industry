@@ -68,9 +68,11 @@
         
         <el-form-item label="菜单类型" prop="menu_type">
           <el-radio-group v-model="form.menu_type">
-            <el-radio value="M">目录</el-radio>
-            <el-radio value="C">菜单</el-radio>
-            <el-radio value="F">按钮</el-radio>
+            <el-radio 
+              v-for="dict in sys_menu_type" 
+              :key="dict.dict_value" 
+              :value="dict.dict_value"
+            >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -117,16 +119,22 @@
           <el-col :span="12">
             <el-form-item label="显示状态" prop="visible">
               <el-radio-group v-model="form.visible">
-                <el-radio :value="1">显示</el-radio>
-                <el-radio :value="0">隐藏</el-radio>
+                <el-radio 
+                  v-for="dict in sys_show_hide" 
+                  :key="dict.dict_value" 
+                  :value="parseInt(dict.dict_value)"
+                >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="菜单状态" prop="status">
               <el-radio-group v-model="form.status">
-                <el-radio :value="1">正常</el-radio>
-                <el-radio :value="0">停用</el-radio>
+                <el-radio 
+                  v-for="dict in sys_normal_disable" 
+                  :key="dict.dict_value" 
+                  :value="parseInt(dict.dict_value)"
+                >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -136,16 +144,22 @@
           <el-col :span="12">
             <el-form-item label="是否外链" prop="is_frame">
               <el-radio-group v-model="form.is_frame">
-                <el-radio :value="1">是</el-radio>
-                <el-radio :value="0">否</el-radio>
+                <el-radio 
+                  v-for="dict in sys_yes_no" 
+                  :key="dict.dict_value" 
+                  :value="parseInt(dict.dict_value)"
+                >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="是否缓存" prop="is_cache">
               <el-radio-group v-model="form.is_cache">
-                <el-radio :value="1">缓存</el-radio>
-                <el-radio :value="0">不缓存</el-radio>
+                <el-radio 
+                  v-for="dict in sys_yes_no" 
+                  :key="dict.dict_value" 
+                  :value="parseInt(dict.dict_value)"
+                >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -166,6 +180,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { useDict } from '@/hooks/useDict'
+
+const { sys_show_hide, sys_normal_disable, sys_menu_type, sys_yes_no } = useDict('sys_show_hide', 'sys_normal_disable', 'sys_menu_type', 'sys_yes_no')
 
 const loading = ref(false)
 const tableData = ref([])

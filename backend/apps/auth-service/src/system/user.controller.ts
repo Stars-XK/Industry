@@ -41,13 +41,14 @@ export class UserController {
   @Post('create')
   @ApiOperation({ summary: '创建用户' })
   @RequirePermissions('sys:user:add')
-  async createUser(@Body() body: CreateUserDto) {
+  async createUser(@Request() req, @Body() body: CreateUserDto) {
     const user = new User();
     user.username = body.username;
     // 默认密码 123456 加密
     user.password = await bcrypt.hash('123456', 10);
     user.phone = body.phone;
     user.dept_id = body.dept_id;
+    user.created_by = req.user.userId;
     await this.userRepository.save(user);
     return null;
   }
@@ -55,12 +56,13 @@ export class UserController {
   @Put('update/:id')
   @ApiOperation({ summary: '更新用户' })
   @RequirePermissions('sys:user:edit')
-  async updateUser(@Param('id') id: number, @Body() body: UpdateUserDto) {
+  async updateUser(@Request() req, @Param('id') id: number, @Body() body: UpdateUserDto) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (user) {
       if (body.phone !== undefined) user.phone = body.phone;
       if (body.dept_id !== undefined) user.dept_id = body.dept_id;
       if (body.status !== undefined) user.status = body.status;
+      user.updated_by = req.user.userId;
       await this.userRepository.save(user);
     }
     return null;

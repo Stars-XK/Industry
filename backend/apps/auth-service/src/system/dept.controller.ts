@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException, Request } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dept } from '../../../../libs/entities/src/dept.entity';
@@ -33,18 +33,19 @@ export class DeptController {
 
   @Post('create')
   @ApiOperation({ summary: '创建部门' })
-  async createDept(@Body() body: CreateDeptDto) {
+  async createDept(@Request() req, @Body() body: CreateDeptDto) {
     const dept = new Dept();
     dept.dept_name = body.dept_name;
     dept.parent_id = body.parent_id || 0;
+    dept.created_by = req.user.userId;
     await this.deptRepository.save(dept);
     return null;
   }
 
   @Put('update/:id')
   @ApiOperation({ summary: '更新部门' })
-  async updateDept(@Param('id') id: number, @Body() body: UpdateDeptDto) {
-    await this.deptRepository.update(id, body);
+  async updateDept(@Request() req, @Param('id') id: number, @Body() body: UpdateDeptDto) {
+    await this.deptRepository.update(id, { ...body, updated_by: req.user.userId });
     return null;
   }
 

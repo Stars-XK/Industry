@@ -78,7 +78,13 @@ INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, create
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 
 (1, '设备类型', 'sys_device_type', '物联网传感器的枚举类型', 1),
-(2, '工单状态', 'wf_order_status', '流程工单的生命周期状态', 1);
+(2, '工单状态', 'wf_order_status', '流程工单的生命周期状态', 1),
+(3, '用户性别', 'sys_user_sex', '用户性别列表', 1),
+(4, '系统状态', 'sys_normal_disable', '系统开关状态列表', 1),
+(5, '显示隐藏', 'sys_show_hide', '菜单是否显示状态', 1),
+(6, '菜单类型', 'sys_menu_type', '菜单类型列表', 1),
+(7, '数据范围', 'sys_data_scope', '角色数据权限范围', 1),
+(8, '系统是否', 'sys_yes_no', '系统是否列表', 1);
 
 INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, created_by) VALUES 
 ('智能水表', '1', 'sys_device_type', 1, 1),
@@ -86,4 +92,19 @@ INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, 
 ('水泵', '3', 'sys_device_type', 3, 1),
 ('待接单', '10', 'wf_order_status', 1, 1),
 ('处理中', '20', 'wf_order_status', 2, 1),
-('已闭环', '30', 'wf_order_status', 3, 1);
+('已闭环', '30', 'wf_order_status', 3, 1),
+('未知', '0', 'sys_user_sex', 1, 1),
+('男', '1', 'sys_user_sex', 2, 1),
+('女', '2', 'sys_user_sex', 3, 1),
+('正常', '1', 'sys_normal_disable', 1, 1),
+('停用', '0', 'sys_normal_disable', 2, 1),
+('显示', '1', 'sys_show_hide', 1, 1),
+('隐藏', '0', 'sys_show_hide', 2, 1),
+('目录', 'M', 'sys_menu_type', 1, 1),
+('菜单', 'C', 'sys_menu_type', 2, 1),
+('按钮', 'F', 'sys_menu_type', 3, 1),
+('全部数据', '1', 'sys_data_scope', 1, 1),
+('本部门及以下', '2', 'sys_data_scope', 2, 1),
+('自定义', '3', 'sys_data_scope', 3, 1),
+('是', '1', 'sys_yes_no', 1, 1),
+('否', '0', 'sys_yes_no', 2, 1);

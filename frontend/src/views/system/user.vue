@@ -74,11 +74,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="用户性别" prop="gender">
+            <el-form-item label="性别" prop="gender">
               <el-select v-model="form.gender" placeholder="请选择性别" style="width: 100%">
-                <el-option label="未知" :value="0" />
-                <el-option label="男" :value="1" />
-                <el-option label="女" :value="2" />
+                <el-option
+                  v-for="dict in sys_user_sex"
+                  :key="dict.dict_value"
+                  :label="dict.dict_label"
+                  :value="parseInt(dict.dict_value)"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -86,8 +89,11 @@
 
         <el-form-item label="状态" prop="status" v-if="form.id">
           <el-radio-group v-model="form.status">
-            <el-radio :value="1">正常</el-radio>
-            <el-radio :value="0">禁用</el-radio>
+            <el-radio 
+              v-for="dict in sys_normal_disable" 
+              :key="dict.dict_value" 
+              :value="parseInt(dict.dict_value)"
+            >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
         </el-form-item>
         
@@ -107,6 +113,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { useDict } from '@/hooks/useDict'
+
+const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
 
 const loading = ref(false)
 const tableData = ref([])

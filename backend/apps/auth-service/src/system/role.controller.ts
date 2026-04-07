@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Role } from '../../../../libs/entities/src/role.entity';
@@ -28,12 +28,13 @@ export class RoleController {
 
   @Post('create')
   @ApiOperation({ summary: '创建角色' })
-  async createRole(@Body() body: CreateRoleDto) {
+  async createRole(@Request() req, @Body() body: CreateRoleDto) {
     const role = new Role();
     role.role_name = body.role_name;
     role.role_key = body.role_key;
     role.data_scope = body.data_scope || 2;
-    
+    role.created_by = req.user.userId;
+
     if (body.menu_ids && body.menu_ids.length > 0) {
       const menus = await this.menuRepository.find({ where: { id: In(body.menu_ids) } });
       role.menus = menus;
@@ -45,13 +46,14 @@ export class RoleController {
 
   @Put('update/:id')
   @ApiOperation({ summary: '更新角色' })
-  async updateRole(@Param('id') id: number, @Body() body: UpdateRoleDto) {
+  async updateRole(@Request() req, @Param('id') id: number, @Body() body: UpdateRoleDto) {
     const role = await this.roleRepository.findOne({ where: { id }, relations: ['menus'] });
     if (role) {
       if (body.role_name !== undefined) role.role_name = body.role_name;
       if (body.role_key !== undefined) role.role_key = body.role_key;
       if (body.data_scope !== undefined) role.data_scope = body.data_scope;
-      
+      role.updated_by = req.user.userId;
+
       if (body.menu_ids !== undefined) {
         if (body.menu_ids.length > 0) {
           const menus = await this.menuRepository.find({ where: { id: In(body.menu_ids) } });

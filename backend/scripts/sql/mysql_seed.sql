@@ -9,8 +9,9 @@ INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, le
 VALUES (2, 1, '0,1', '第一水厂', 1, '李厂长', '13900139000', 'factory1@example.com', 1, '主要生产部门', 1);
 
 -- 2. 管理员账号 (密码: admin123 经过 bcrypt 处理的 hash)
-INSERT IGNORE INTO sys_user (id, username, password, nickname, email, phone, gender, avatar, dept_id, status, remark, created_by) 
-VALUES (1, 'admin', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2LO', '超级管理员', 'admin@trae.ai', '18888888888', 1, '', 1, 1, '系统内置超级管理员', 1);
+INSERT INTO sys_user (id, username, password, nickname, email, phone, gender, avatar, dept_id, status, remark, created_by) 
+VALUES (1, 'admin', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2LO', '超级管理员', 'admin@trae.ai', '18888888888', 1, '', 1, 1, '系统内置超级管理员', 1)
+ON DUPLICATE KEY UPDATE password = VALUES(password);
 
 -- 2.1 角色与菜单测试数据
 INSERT IGNORE INTO sys_role (id, role_name, role_key, role_sort, data_scope, status, remark, created_by) 

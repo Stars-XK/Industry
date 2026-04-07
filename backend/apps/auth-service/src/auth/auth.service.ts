@@ -36,12 +36,8 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.username, sub: user.id, dept_id: user.dept_id };
     return {
-      code: 200,
-      message: '登录成功',
-      data: {
-        access_token: this.jwtService.sign(payload),
-        user: payload,
-      }
+      access_token: this.jwtService.sign(payload),
+      user: payload,
     };
   }
 }

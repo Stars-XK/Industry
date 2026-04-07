@@ -30,10 +30,6 @@ export class MenuService {
     });
     
     const tree = this.buildMenuTree(menus, 0);
-    return {
-      code: 200,
-      message: '获取菜单成功',
-      data: tree
-    };
+    return tree;
   }
 }

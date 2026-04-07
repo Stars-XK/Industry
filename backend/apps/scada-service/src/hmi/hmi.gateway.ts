@@ -32,10 +32,19 @@ export class HmiGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   private connectMqtt() {
-    this.mqttClient = mqtt.connect('mqtt://localhost:1883', {
-      clientId: 'scada_service_hmi_' + Math.random().toString(16).substring(2, 8),
+    const host = process.env.MQTT_HOST || 'localhost';
+    const port = process.env.MQTT_PORT || '1883';
+    const username = process.env.MQTT_USERNAME;
+    const password = process.env.MQTT_PASSWORD;
+
+    const mqttUrl = `mqtt://${host}:${port}`;
+    
+    this.mqttClient = mqtt.connect(mqttUrl, {
+      clientId: 'scada_hmi_server_' + Math.random().toString(16).substring(2, 8),
       clean: true,
       reconnectPeriod: 5000,
+      username: username || undefined,
+      password: password || undefined,
     });
 
     this.mqttClient.on('connect', () => {

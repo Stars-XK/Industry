@@ -12,8 +12,14 @@ import paho.mqtt.client as mqtt
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('EdgeGateway')
 
-MQTT_BROKER = "localhost"
-MQTT_PORT = 1883
+import os
+
+# MQTT Broker 配置 (支持通过环境变量覆盖)
+MQTT_BROKER = os.getenv("MQTT_HOST", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "admin")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "admin123")
+
 CLIENT_ID = "edge_gateway_01"
 
 # 模拟设备配置 (1: METER_IN_01 进水表, 2: PUMP_01 变频泵, 3: WQ_01 水质仪, 4: ENV_01 环境传感器)
@@ -61,6 +67,9 @@ def main():
     logger.info("Initializing Edge Gateway...")
     
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, CLIENT_ID)
+    if MQTT_USERNAME and MQTT_PASSWORD:
+        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+    
     client.on_connect = on_connect
     client.on_message = on_message
 

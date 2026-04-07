@@ -8,7 +8,26 @@ async function bootstrap() {
     // Start built-in Aedes MQTT Broker using the new factory function approach
     const broker = (aedes as any).createBroker ? (aedes as any).createBroker() : (aedes as any)();
     const server = net.createServer(broker.handle);
-    const MQTT_PORT = 1883;
+    const MQTT_PORT = process.env.MQTT_PORT ? parseInt(process.env.MQTT_PORT, 10) : 1883;
+
+    // 添加 Broker 的基础认证逻辑
+    broker.authenticate = (client, username, password, callback) => {
+      const envUser = process.env.MQTT_USERNAME;
+      const envPass = process.env.MQTT_PASSWORD;
+      
+      // 如果没有配置用户名密码，则允许匿名接入
+      if (!envUser) {
+        return callback(null, true);
+      }
+      
+      if (username === envUser && password && password.toString() === envPass) {
+        callback(null, true);
+      } else {
+        const error = new Error('Auth error');
+        (error as any).returnCode = 4;
+        callback(error, null);
+      }
+    };
 
     server.listen(MQTT_PORT, function () {
       console.log(`[MQTT Broker] Aedes is running and listening on port: ${MQTT_PORT}`);

@@ -46,10 +46,19 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   }
 
   private connectMqtt() {
-    this.client = mqtt.connect('mqtt://localhost:1883', {
+    const host = process.env.MQTT_HOST || 'localhost';
+    const port = process.env.MQTT_PORT || '1883';
+    const username = process.env.MQTT_USERNAME;
+    const password = process.env.MQTT_PASSWORD;
+
+    const mqttUrl = `mqtt://${host}:${port}`;
+    
+    this.client = mqtt.connect(mqttUrl, {
       clientId: 'iot_bridge_consumer_' + Math.random().toString(16).substring(2, 8),
       clean: true,
       reconnectPeriod: 5000,
+      username: username || undefined,
+      password: password || undefined,
     });
 
     this.client.on('connect', () => {

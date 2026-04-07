@@ -11,8 +11,9 @@ export default defineConfig({
     }
   },
   server: {
+    host: '0.0.0.0',
     port: 5173, // 前端默认开发端口
-    open: true,
+    open: false,
     proxy: {
       '/api/data-center': {
         target: 'http://localhost:3003',

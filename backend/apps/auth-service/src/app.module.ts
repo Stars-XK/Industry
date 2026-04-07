@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './menu/menu.module';
 import { SystemModule } from './system/system.module';
 import { AuditLogInterceptor } from '@app/common';
+import { AuditLog } from '@app/entities/audit-log.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuditLogInterceptor } from '@app/common';
       autoLoadEntities: true,
       synchronize: false,
     }),
+    TypeOrmModule.forFeature([AuditLog]),
     AuthModule,
     MenuModule,
     SystemModule,

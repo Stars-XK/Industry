@@ -23,7 +23,11 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     await this.loadTagMappings();
-    this.connectMqtt();
+    if (process.env.MQTT_ENABLED === '1') {
+      this.connectMqtt();
+    } else {
+      this.logger.warn('MQTT 客户端连接已根据环境变量 MQTT_ENABLED 被禁用');
+    }
   }
 
   onModuleDestroy() {

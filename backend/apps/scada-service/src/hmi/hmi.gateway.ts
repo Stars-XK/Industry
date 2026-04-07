@@ -16,7 +16,11 @@ export class HmiGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   afterInit(server: Server) {
     this.logger.log('SCADA WebSocket Gateway 初始化成功');
-    this.connectMqtt();
+    if (process.env.MQTT_ENABLED === '1') {
+      this.connectMqtt();
+    } else {
+      this.logger.warn('MQTT 客户端连接已根据环境变量 MQTT_ENABLED 被禁用，WebSocket 将无法收到设备实时推送');
+    }
   }
 
   handleConnection(client: Socket, ...args: any[]) {
@@ -61,15 +65,18 @@ export class HmiGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   publishCommand(deviceId: number, tag: string, value: any) {
     if (this.mqttClient && this.mqttClient.connected) {
       const topic = `command/devices/${deviceId}/set`;
-      const payload = JSON.stringify({
-        tag,
-        value,
-        timestamp: Date.now()
+      const payload = JSON.stringify({ tag, value, timestamp: Date.now() });
+      this.mqttClient.publish(topic, payload, { qos: 1 }, (err) => {
+        if (err) {
+          this.logger.error(`向设备 ${deviceId} 下发指令失败: ${err.message}`);
+        } else {
+          this.logger.log(`成功下发反控指令到 ${topic} -> ${payload}`);
+        }
       });
-      this.mqttClient.publish(topic, payload);
-      this.logger.log(`已向 MQTT 发布反控指令: ${topic} -> ${payload}`);
       return true;
+    } else {
+      this.logger.warn('MQTT 未连接或被禁用，无法下发反控指令');
+      return false;
     }
-    return false;
   }
 }

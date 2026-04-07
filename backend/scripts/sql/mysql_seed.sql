@@ -78,13 +78,20 @@ INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `tag_name`, `standard_name`, 
 (2, 'Pump.Status', 'status', 'int', '', 1.0, 1, '2号泵站运行状态(1=开,0=关)'),
 (2, 'Pump.Freq', 'frequency', 'float', 'Hz', 1.0, 1, '2号泵站变频器频率'),
 (2, 'Pump.Power', 'power', 'float', 'kW', 1.0, 1, '2号泵站功率');
+-- 3. DMA分区测试数据
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '全市供水一级分区', 1, 1);
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (102, 101, '高新工业园区', 2, 1);
+INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (103, 102, '科技软件园DMA', 3, 1);
 
 -- 4. 设备资产测试数据 (模拟进出水表)
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (201, 'METER_IN_01', '高新区总进水管表', 1, 1);
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (202, 'METER_OUT_01', '高新区工业用水分表', 1, 1);
 INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (203, 'PRESS_01', '高新区末端管网压力计', 2, 1);
+
+-- 5. DMA 与 设备资产 绑定关系
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 102, 201, 1);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 202, -1);
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 102, 203, 0);
 
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 

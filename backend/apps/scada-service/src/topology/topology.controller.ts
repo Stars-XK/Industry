@@ -1,6 +1,6 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '@app/common';
 import { DmaZone } from '../../../../libs/entities/src/dma-zone.entity';
@@ -14,6 +14,7 @@ export class TopologyController {
   constructor(
     @InjectRepository(DmaZone)
     private readonly dmaZoneRepo: Repository<DmaZone>,
+    private dataSource: DataSource
   ) {}
 
   @Get('tree')
@@ -24,6 +25,37 @@ export class TopologyController {
       order: { id: 'ASC' }
     });
     return this.buildTree(zones, 0);
+  }
+
+  @Get('devices/:zoneId')
+  @ApiOperation({ summary: '获取分区下挂载的设备' })
+  async getZoneDevices(@Param('zoneId') zoneId: number) {
+    const query = `
+      SELECT a.id, a.device_code, a.device_name, a.device_type, r.direction 
+      FROM dma_device_rel r
+      JOIN ast_device a ON r.device_id = a.id
+      WHERE r.zone_id = ? AND a.status = 1
+    `;
+    const devices = await this.dataSource.query(query, [zoneId]);
+    
+    return devices.map(d => ({
+      id: d.id,
+      device_code: d.device_code,
+      name: d.device_name,
+      type_code: d.device_type,
+      type_name: this.getDeviceTypeName(d.device_type),
+      direction: d.direction === 1 ? '流入' : (d.direction === -1 ? '流出' : '内部')
+    }));
+  }
+
+  private getDeviceTypeName(type: number): string {
+    switch(type) {
+      case 1: return '流量计';
+      case 2: return '压力表';
+      case 3: return '水质分析仪';
+      case 4: return '泵站组';
+      default: return '未知设备';
+    }
   }
 
   private buildTree(zones: DmaZone[], parentId: number): any[] {

@@ -6,6 +6,8 @@ import { TransformInterceptor, JwtStrategy, AuditLogInterceptor } from '@app/com
 import { TopologyController } from './topology/topology.controller';
 import { HmiController } from './hmi/hmi.controller';
 import { DmaZone } from '../../../libs/entities/src/dma-zone.entity';
+import { DmaDeviceRel } from '../../../libs/entities/src/dma-device-rel.entity';
+import { AstDevice } from '../../../libs/entities/src/ast-device.entity';
 import { AuditLog } from '../../../libs/entities/src/audit-log.entity';
 
 @Module({
@@ -21,7 +23,7 @@ import { AuditLog } from '../../../libs/entities/src/audit-log.entity';
       autoLoadEntities: true,
       synchronize: false,
     }),
-    TypeOrmModule.forFeature([DmaZone, AuditLog])
+    TypeOrmModule.forFeature([DmaZone, DmaDeviceRel, AstDevice, AuditLog])
   ],
   controllers: [TopologyController, HmiController],
   providers: [

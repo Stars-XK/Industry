@@ -40,13 +40,14 @@
 *   TDengine >= 3.3.8 (确保 RESTful 服务端口 6041 已开放)
 *   MQTT Broker (如 EMQX / Mosquitto，用于阶段二测试)
 
-### 2. 数据库初始化
-后端提供了自动化建表脚本和种子数据。请在您的数据库客户端（如 Navicat 或 DataGrip）中，连接您的 MySQL (>= 8.0) 并依次执行以下 SQL 脚本：
-1. `backend/scripts/sql/mysql_schema.sql` (创建基础表结构)
-2. `backend/scripts/sql/mysql_seed.sql` (插入初始管理员账号与测试数据)
-
-TDengine (>= 3.3.8) 请使用 RESTful API 或 TAOS Shell 执行所需的时序数据库初始化脚本（见后续阶段）。
-
+### 2. 数据库一键初始化
+后端内置了自动化脚本，会为您建好 MySQL 基础表结构、插入初始管理员账号与测试设备，并在 TDengine 中创建超级表与流计算脚本。
+```bash
+cd backend
+npm install
+# 执行初始化脚本 (确保 MySQL 和 TDengine 均已启动)
+npm run db:init
+```
 *(注：默认超管账号: `admin`，密码: `admin123`)*
 
 ### 3. 启动后端微服务集群

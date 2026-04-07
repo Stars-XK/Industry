@@ -155,7 +155,18 @@ CREATE TABLE IF NOT EXISTS `dma_device_rel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='DMA与设备关联表';
 
 -- ----------------------------
--- 9. 物联网测点标签映射表 (Phase 2)
+-- 10. 设备原始遥测数据表 (Phase 2, 临时替代 TDengine)
+-- ----------------------------
+DROP TABLE IF EXISTS `device_raw`;
+CREATE TABLE `device_raw` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `device_id` INT NOT NULL COMMENT '资产设备ID',
+  `tag_name` VARCHAR(100) NOT NULL COMMENT '测点标签名 (如 PLC.S7.Temp)',
+  `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名',
+  `value` FLOAT NOT NULL COMMENT '处理后的数值',
+  `timestamp` BIGINT NOT NULL COMMENT '毫秒级时间戳',
+  INDEX `idx_device_time` (`device_id`, `timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='设备原始遥测数据表(降级使用)';
 -- ----------------------------
 DROP TABLE IF EXISTS `iot_tag_mapping`;
 CREATE TABLE `iot_tag_mapping` (

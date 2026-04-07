@@ -33,8 +33,8 @@
 | 模块/任务 | 前端任务 (Vue3) | 后端任务 (NestJS/Python) | 数据库与基建 | 状态 |
 |---|---|---|---|---|
 | **设备与测点映射** | ✅ 测点与标签管理页面 UI (列表增删改查) | ✅ `data-center` 提供标签映射的 CRUD 接口 | ✅ `iot_tag_mapping` 结构设计 | ✅ |
-| **边缘端数据接入** | ⬜ 无 (纯后端/边缘端工作) | ⬜ `edge-gateway` 编写 MQTT 模拟上报脚本 | ⬜ MQTT Broker (如 EMQX) 搭建 | ⬜ |
-| **物联网桥接写入** | ⬜ 无 (纯后端/边缘端工作) | ⬜ `iot-bridge` 订阅 MQTT，解析标签并高速写入 TDengine | ⬜ TDengine `device_raw` 超级表自动建子表逻辑 | ⬜ |
+| **边缘端数据接入** | ✅ 无 (纯后端/边缘端工作) | ✅ `edge-gateway` 编写 MQTT 模拟上报脚本 | ✅ MQTT Broker (基于 aedes 搭建) | ✅ |
+| **物联网桥接写入** | ✅ 无 (纯后端/边缘端工作) | ✅ `iot-bridge` 订阅 MQTT，解析标签并高速写入 TDengine | ✅ TDengine `device_raw` 超级表自动建子表逻辑 | ✅ |
 | **DMA 拓扑与关联** | ⬜ 2D 拓扑树可视化组件 (无限极展开折叠) | ⬜ `scada-service` 提供 DMA 树及挂载设备查询接口 | ⬜ `dma_zone`, `dma_device_rel` 数据初始化 | ⬜ |
 | **全局态势感知** | ⬜ `/scada/overview` 看板 UI，Echarts 折线图集成 | ⬜ `data-center` 提供历史趋势查询 API (聚合查询) | ⬜ TDengine 流计算 (5分钟降采样) 验证 | ⬜ |
 | **组态监控与反控** | ⬜ 动态组态图元绑定变量渲染，反控二次确认弹窗 | ⬜ `scada-service` 下发反控指令至 MQTT | ⬜ 操作日志写入 `sys_audit_log` | ⬜ |

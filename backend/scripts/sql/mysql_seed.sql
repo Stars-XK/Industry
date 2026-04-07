@@ -68,7 +68,16 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
 (57, 50, '低代码可视化组态工作台', 8, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1);
 
--- 3. DMA分区测试数据
+-- ----------------------------
+-- 9. 初始化物联网测点映射规则
+-- ----------------------------
+INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `tag_name`, `standard_name`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
+(1, 'PLC.S7.Temp', 'temperature', 'float', '°C', 1.0, 1, '1号厂温度监控'),
+(1, 'PLC.S7.Pressure', 'pressure', 'float', 'MPa', 1.0, 1, '1号厂水压'),
+(1, 'PLC.S7.FlowRate', 'flow_rate', 'float', 'm³/h', 1.0, 1, '1号厂瞬时流量'),
+(2, 'Pump.Status', 'status', 'int', '', 1.0, 1, '2号泵站运行状态(1=开,0=关)'),
+(2, 'Pump.Freq', 'frequency', 'float', 'Hz', 1.0, 1, '2号泵站变频器频率'),
+(2, 'Pump.Power', 'power', 'float', 'kW', 1.0, 1, '2号泵站功率');
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (101, 0, '全市供水一级分区', 1, 1);
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES (102, 101, '高新工业园区', 2, 1);
 

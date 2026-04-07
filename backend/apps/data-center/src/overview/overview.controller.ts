@@ -79,7 +79,8 @@ export class OverviewController {
         const ts = d.getTime();
         let val = flowMap.get(ts);
         if (!val) {
-          val = Math.round(base + Math.random() * 100 - 50);
+          const hourHash = d.getHours();
+          val = Math.round(base + (hourHash * 17 % 100) - 50);
         }
         supplyValues.push(val);
         leakageValues.push(Math.round(val * 0.12));
@@ -90,7 +91,8 @@ export class OverviewController {
       for (let i = 23; i >= 0; i--) {
         const d = new Date(Date.now() - i * 3600 * 1000);
         hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
-        const val = Math.round(base + Math.random() * 100 - 50);
+        const hourHash = d.getHours();
+        const val = Math.round(base + (hourHash * 17 % 100) - 50);
         supplyValues.push(val);
         leakageValues.push(Math.round(val * 0.12));
       }
@@ -140,13 +142,16 @@ export class OverviewController {
     const waterEnergy = [];
     const elecEnergy = [];
     const gasEnergy = [];
-    
+
+    // 使用确定性算法生成趋势，消除 Math.random 的不确定性
     for (let i = daysCount - 1; i >= 0; i--) {
       const d = new Date(Date.now() - i * 86400 * 1000);
       dates.push(`${d.getMonth() + 1}-${d.getDate()}`);
-      waterEnergy.push(Math.round(100 + Math.random() * 50));
-      elecEnergy.push(Math.round(200 + Math.random() * 100));
-      gasEnergy.push(Math.round(150 + Math.random() * 80));
+      
+      const seed = d.getDate();
+      waterEnergy.push(100 + (seed * 7 % 50));
+      elecEnergy.push(200 + (seed * 11 % 100));
+      gasEnergy.push(150 + (seed * 13 % 80));
     }
 
     return {
@@ -155,5 +160,45 @@ export class OverviewController {
       elecEnergy,
       gasEnergy
     };
+  }
+
+  @Get('alarms')
+  @ApiOperation({ summary: '获取最近活动报警' })
+  async getAlarms() {
+    try {
+      const now = Date.now();
+      const timeLimit = now - 24 * 3600 * 1000; // last 24h
+      const query = `
+        SELECT standard_name, value, timestamp 
+        FROM device_raw 
+        WHERE timestamp >= ? AND (
+          (standard_name = 'pressure' AND value < 0.3) OR 
+          (standard_name = 'h2s' AND value >= 10.0)
+        )
+        ORDER BY timestamp DESC
+        LIMIT 5
+      `;
+      const res = await this.dataSource.query(query, [timeLimit]);
+      if (res && res.length > 0) {
+        return res.map(r => {
+          const timeDiff = Math.floor((now - r.timestamp) / 60000);
+          const timeStr = timeDiff < 60 ? `${timeDiff}分钟前` : `${Math.floor(timeDiff/60)}小时前`;
+          
+          if (r.standard_name === 'pressure') {
+            return { content: `1号水厂出水压力过低 (${r.value.toFixed(2)} MPa)`, timestamp: timeStr, type: 'danger', size: 'large' };
+          } else {
+            return { content: `地下泵站 H₂S 浓度超标 (${r.value.toFixed(1)} ppm)`, timestamp: timeStr, type: 'danger', size: 'large' };
+          }
+        });
+      }
+    } catch (e) {
+      console.error('获取报警数据失败', e);
+    }
+    
+    // Default fallback if no real alarms or DB fails
+    return [
+      { content: '2号泵站2#泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
+      { content: '水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
+    ];
   }
 }

@@ -36,21 +36,21 @@ def on_connect(client, userdata, flags, rc, properties=None):
     if rc == 0:
         logger.info(f"Connected to MQTT Broker at {MQTT_BROKER}:{MQTT_PORT}")
         # 订阅反控指令主题
-        client.subscribe("control/devices/#")
+        client.subscribe("command/devices/+/set")
     else:
         logger.error(f"Failed to connect, return code {rc}")
 
 def on_message(client, userdata, msg):
     logger.info(f"Received control message on topic {msg.topic}: {msg.payload.decode()}")
     try:
-        # topic: control/devices/{deviceId}/tag
+        # topic: command/devices/{deviceId}/set
         parts = msg.topic.split("/")
-        if len(parts) == 4:
+        if len(parts) == 4 and parts[0] == "command" and parts[3] == "set":
             device_id = int(parts[2])
-            tag = parts[3]
             payload = json.loads(msg.payload.decode())
+            tag = payload.get("tag")
             new_value = payload.get("value")
-            
+
             if device_id in device_states and tag in device_states[device_id]:
                 device_states[device_id][tag] = new_value
                 logger.info(f"Updated Device {device_id} Tag {tag} to {new_value}")

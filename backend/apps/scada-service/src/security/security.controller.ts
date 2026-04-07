@@ -62,10 +62,11 @@ export class SecurityController {
       }
     } catch (e) {
       console.error('获取环境数据失败', e);
-      // Fallback 模拟
+      // Fallback 模拟 (无依赖 Math.random 的确定性平滑波动)
+      const sec = new Date().getSeconds();
       if (this.interlockState.envStatus === 'normal') {
-        this.interlockState.h2sValue = Number((this.interlockState.h2sValue + (Math.random() * 2 - 0.5)).toFixed(1));
-        this.interlockState.coValue = Number((this.interlockState.coValue + (Math.random() * 3 - 1)).toFixed(1));
+        this.interlockState.h2sValue = Number((this.interlockState.h2sValue + (sec % 2 === 0 ? 0.2 : -0.1)).toFixed(1));
+        this.interlockState.coValue = Number((this.interlockState.coValue + (sec % 3 === 0 ? 0.3 : -0.2)).toFixed(1));
         
         // 触发规则引擎联锁
         if (this.interlockState.h2sValue >= 10.0) {
@@ -75,7 +76,7 @@ export class SecurityController {
         }
       } else {
         // 报警状态下，排风扇运行，浓度下降
-        this.interlockState.h2sValue = Number((this.interlockState.h2sValue - Math.random() * 1.5).toFixed(1));
+        this.interlockState.h2sValue = Number((this.interlockState.h2sValue - 0.8).toFixed(1));
         
         if (this.interlockState.h2sValue < 5.0) {
           this.interlockState.envStatus = 'normal';

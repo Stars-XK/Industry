@@ -200,12 +200,16 @@ const energyTrendOption = ref({
   ]
 })
 
-const alarms = ref([
-  { content: '1号水厂出水压力过低 (0.28 MPa)', timestamp: '10分钟前', type: 'danger', size: 'large' },
-  { content: '2号泵站2#泵变频器通讯中断', timestamp: '45分钟前', type: 'warning' },
-  { content: '高新区DMA夜间最小流量突增', timestamp: '2小时前', type: 'warning' },
-  { content: '水质浊度传感器数值异常', timestamp: '3小时前', type: 'info' }
-])
+const alarms = ref([])
+
+const fetchAlarms = async () => {
+  try {
+    const res = await request.get('/api/data-center/overview/alarms')
+    alarms.value = res || []
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const fetchEnergyTrend = async () => {
   try {
@@ -239,7 +243,10 @@ const fetchData = async () => {
     waterQualityOption.value.series[2].data[0].value = resWater.ph
     complianceRate.value = resWater.complianceRate
     
-    await fetchEnergyTrend()
+    await Promise.all([
+      fetchEnergyTrend(),
+      fetchAlarms()
+    ])
   } catch (error) {
     console.error(error)
   } finally {

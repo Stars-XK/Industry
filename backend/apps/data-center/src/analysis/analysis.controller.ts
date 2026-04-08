@@ -154,4 +154,23 @@ export class AnalysisController {
     
     return { nodes, links };
   }
+
+  @Get('nrw/trend')
+  @ApiOperation({ summary: '获取产销差率历史趋势及同环比折线图' })
+  @RequirePermissions('analytics:nrw')
+  async getNrwTrend(@Query('zoneId') zoneId: string) {
+    if (!zoneId) return { months: [], ratios: [] };
+    const query = `
+      SELECT report_month, nrw_ratio 
+      FROM biz_nrw_report 
+      WHERE zone_id = ? 
+      ORDER BY report_month ASC 
+      LIMIT 12
+    `;
+    const rows = await this.dataSource.query(query, [zoneId]);
+    return {
+      months: rows.map(r => r.report_month),
+      ratios: rows.map(r => parseFloat(r.nrw_ratio))
+    };
+  }
 }

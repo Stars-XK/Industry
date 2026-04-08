@@ -229,3 +229,12 @@ INSERT IGNORE INTO biz_interpolate_rule (id, device_id, tag_name, method, max_ga
 (1, 1, 'flow_rate', 'pchip', 120, 1),
 (2, 2, 'frequency', 'linear', 60, 1),
 (3, 3, 'turbidity', 'previous', 30, 1);
+
+-- 7. 抄表底度记录表
+INSERT IGNORE INTO biz_meter_reading (id, account_id, device_id, reading_period, reading_value) VALUES
+(1, 1, 1, '2026-02', 100000.00),
+(2, 1, 1, '2026-03', 112500.50),
+(3, 1, 1, '2026-04', 125700.50),
+(4, 2, 3, '2026-02', 500000.00),
+(5, 2, 3, '2026-03', 545000.00),
+(6, 2, 3, '2026-04', 591500.00);

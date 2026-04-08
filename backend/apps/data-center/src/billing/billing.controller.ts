@@ -127,36 +127,96 @@ export class BillingController {
     return await this.dataSource.query(query, params);
   }
 
+  @Post('records/meter-reading')
+  @ApiOperation({ summary: '录入大户水表当期抄表底度' })
+  @RequirePermissions('analytics:billing')
+  async addMeterReading(@Body() body: { account_id: number, device_id: number, period: string, value: number }) {
+    await this.dataSource.query(
+      `INSERT INTO biz_meter_reading (account_id, device_id, reading_period, reading_value) VALUES (?, ?, ?, ?)`,
+      [body.account_id, body.device_id, body.period, body.value]
+    );
+    return { success: true };
+  }
+
+  @Get('records/meter-reading')
+  @ApiOperation({ summary: '查询大户抄表底度列表' })
+  @RequirePermissions('analytics:billing')
+  async getMeterReadings() {
+    const query = `
+      SELECT r.*, a.account_name 
+      FROM biz_meter_reading r
+      JOIN biz_key_account a ON r.account_id = a.id
+      ORDER BY r.id DESC
+      LIMIT 100
+    `;
+    return await this.dataSource.query(query);
+  }
+
   @Post('records/generate')
-  @ApiOperation({ summary: '生成新账期账单' })
+  @ApiOperation({ summary: '生成新账期账单(真实抄表底度计算)' })
   @RequirePermissions('analytics:billing')
   async generateBilling(@Body() body: { period: string }) {
-    // 简化逻辑：为所有大用户按其绑定的电表用水量计算（如果没有表，给一个模拟量）
+    // 工业级真实计费逻辑：当期底数 - 上期底数 = 用水量 -> 乘以费率 -> 出账单
     const accounts = await this.dataSource.query(`
       SELECT a.id, a.meter_device_id, t.price_per_m3 
       FROM biz_key_account a 
       JOIN biz_tariff t ON a.tariff_id = t.id 
-      WHERE a.status = 1
+      WHERE a.status = 1 AND a.meter_device_id IS NOT NULL
     `);
     
     let generated = 0;
+    const errors = [];
+
+    // 计算上个账期 (如 2026-04 -> 2026-03)
+    const [year, month] = body.period.split('-');
+    let prevYear = parseInt(year);
+    let prevMonth = parseInt(month) - 1;
+    if (prevMonth === 0) {
+      prevMonth = 12;
+      prevYear -= 1;
+    }
+    const prevPeriod = `${prevYear}-${prevMonth.toString().padStart(2, '0')}`;
+
     for (const acc of accounts) {
-      // 检查当期是否已生成
       const exist = await this.dataSource.query(`SELECT id FROM biz_billing WHERE account_id = ? AND billing_period = ?`, [acc.id, body.period]);
       if (exist.length > 0) continue;
       
-      // 模拟当期用水量: 1000 - 50000 之间的随机数
-      const usage = Math.floor(Math.random() * 49000) + 1000;
+      // 查询当期抄表
+      const currReading = await this.dataSource.query(
+        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
+        [acc.id, body.period]
+      );
+      
+      // 查询上期抄表
+      const prevReading = await this.dataSource.query(
+        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
+        [acc.id, prevPeriod]
+      );
+
+      if (currReading.length === 0 || prevReading.length === 0) {
+        errors.push(`账户ID ${acc.id} 缺乏 ${body.period} 或 ${prevPeriod} 的抄表底数`);
+        continue;
+      }
+
+      const currVal = parseFloat(currReading[0].reading_value);
+      const prevVal = parseFloat(prevReading[0].reading_value);
+      const usage = currVal - prevVal;
+
+      if (usage < 0) {
+        errors.push(`账户ID ${acc.id} 底数倒转(表计异常)`);
+        continue;
+      }
+
       const amount = usage * parseFloat(acc.price_per_m3);
       
       await this.dataSource.query(
         `INSERT INTO biz_billing (account_id, billing_period, usage_m3, total_amount, status) VALUES (?, ?, ?, ?, 'unpaid')`,
-        [acc.id, body.period, usage, amount]
+        [acc.id, body.period, usage, amount.toFixed(2)]
       );
       generated++;
     }
     
-    return { success: true, message: `成功生成 ${generated} 条新账单` };
+    return { success: true, message: `成功生成 ${generated} 条真实账单`, errors };
   }
 
   @Put('records/:id/pay')

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TransformInterceptor, JwtStrategy } from '@app/common';
 import { EdgeTagController } from './edge-tag/edge-tag.controller';
 import { OverviewController } from './overview/overview.controller';
@@ -10,10 +11,12 @@ import { AnalysisController } from './analysis/analysis.controller';
 import { GovernanceController } from './governance/governance.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
+import { GovernanceTaskService } from './tasks/governance.task';
 
 @Module({
   imports: [
     PassportModule,
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || '139.224.26.134',
@@ -29,6 +32,7 @@ import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
   controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController, GovernanceController],
   providers: [
     JwtStrategy,
+    GovernanceTaskService,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,

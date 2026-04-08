@@ -11,9 +11,9 @@
         </div>
       </template>
 
-      <el-row :gutter="20">
+      <el-row :gutter="20" style="margin-bottom: 20px;">
         <el-col :span="10">
-          <el-table :data="tableData" style="width: 100%" v-loading="loading" @row-click="handleRowClick" highlight-current-row>
+          <el-table :data="tableData" style="width: 100%" v-loading="loading" @row-click="handleRowClick" highlight-current-row height="500">
             <el-table-column prop="zone_name" label="DMA分区名称" />
             <el-table-column prop="nrw_ratio" label="产销差率 (NRW %)">
               <template #default="scope">
@@ -40,6 +40,15 @@
           </div>
         </el-col>
       </el-row>
+
+      <el-row>
+        <el-col :span="24">
+          <div class="chart-container" v-loading="trendLoading" style="height: 350px;">
+            <div class="chart-title">产销差率 (NRW %) 历史趋势及同环比分析</div>
+            <div ref="trendChartRef" class="trend-chart"></div>
+          </div>
+        </el-col>
+      </el-row>
     </el-card>
   </div>
 </template>
@@ -48,20 +57,23 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import request from '@/utils/request'
 import * as echarts from 'echarts/core'
-import { SankeyChart } from 'echarts/charts'
-import { TooltipComponent, TitleComponent } from 'echarts/components'
+import { SankeyChart, LineChart, BarChart } from 'echarts/charts'
+import { TooltipComponent, TitleComponent, GridComponent, LegendComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 
-echarts.use([SankeyChart, TooltipComponent, TitleComponent, CanvasRenderer])
+echarts.use([SankeyChart, LineChart, BarChart, TooltipComponent, TitleComponent, GridComponent, LegendComponent, CanvasRenderer])
 
 const tableData = ref([])
 const loading = ref(false)
 const sankeyLoading = ref(false)
+const trendLoading = ref(false)
 const month = ref('2026-03')
 const currentZoneName = ref('')
 
 const sankeyChartRef = ref<HTMLElement | null>(null)
-let chartInstance: echarts.ECharts | null = null
+const trendChartRef = ref<HTMLElement | null>(null)
+let sankeyInstance: echarts.ECharts | null = null
+let trendInstance: echarts.ECharts | null = null
 
 const customColors = [
   { color: '#67C23A', percentage: 10 },
@@ -89,25 +101,36 @@ const fetchData = async () => {
 const handleRowClick = async (row: any) => {
   currentZoneName.value = row.zone_name
   sankeyLoading.value = true
+  trendLoading.value = true
   try {
-    const res = await request.get('/api/data-center/analysis/nrw/sankey', { 
+    // 1. 渲染桑基图
+    const sankeyRes = await request.get('/api/data-center/analysis/nrw/sankey', { 
       params: { month: row.report_month, zoneId: row.zone_id } 
     })
-    if (res && res.nodes) {
-      renderSankey(res.nodes, res.links)
+    if (sankeyRes && sankeyRes.nodes) {
+      renderSankey(sankeyRes.nodes, sankeyRes.links)
+    }
+
+    // 2. 渲染同环比折线图
+    const trendRes: any = await request.get('/api/data-center/analysis/nrw/trend', {
+      params: { zoneId: row.zone_id }
+    })
+    if (trendRes && trendRes.months) {
+      renderTrend(trendRes.months, trendRes.ratios)
     }
   } catch (error) {
     console.error(error)
   } finally {
     sankeyLoading.value = false
+    trendLoading.value = false
   }
 }
 
 const renderSankey = (nodes: any[], links: any[]) => {
-  if (!chartInstance && sankeyChartRef.value) {
-    chartInstance = echarts.init(sankeyChartRef.value)
+  if (!sankeyInstance && sankeyChartRef.value) {
+    sankeyInstance = echarts.init(sankeyChartRef.value)
   }
-  if (!chartInstance) return
+  if (!sankeyInstance) return
 
   const option = {
     tooltip: { trigger: 'item', triggerOn: 'mousemove' },
@@ -125,11 +148,42 @@ const renderSankey = (nodes: any[], links: any[]) => {
       }
     ]
   }
-  chartInstance.setOption(option)
+  sankeyInstance.setOption(option)
+}
+
+const renderTrend = (months: string[], ratios: number[]) => {
+  if (!trendInstance && trendChartRef.value) {
+    trendInstance = echarts.init(trendChartRef.value)
+  }
+  if (!trendInstance) return
+
+  const option = {
+    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%' },
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: { type: 'category', data: months, boundaryGap: false },
+    yAxis: { type: 'value', name: 'NRW (%)', axisLabel: { formatter: '{value} %' } },
+    series: [
+      {
+        name: '产销差率',
+        type: 'line',
+        data: ratios,
+        smooth: true,
+        itemStyle: { color: '#E6A23C' },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(230,162,60,0.5)' },
+            { offset: 1, color: 'rgba(230,162,60,0.1)' }
+          ])
+        }
+      }
+    ]
+  }
+  trendInstance.setOption(option)
 }
 
 const handleResize = () => {
-  if (chartInstance) chartInstance.resize()
+  if (sankeyInstance) sankeyInstance.resize()
+  if (trendInstance) trendInstance.resize()
 }
 
 onMounted(() => {
@@ -138,7 +192,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  if (chartInstance) chartInstance.dispose()
+  if (sankeyInstance) sankeyInstance.dispose()
+  if (trendInstance) trendInstance.dispose()
   window.removeEventListener('resize', handleResize)
 })
 </script>
@@ -162,5 +217,9 @@ onBeforeUnmount(() => {
 .sankey-chart {
   width: 100%;
   height: 450px;
+}
+.trend-chart {
+  width: 100%;
+  height: 300px;
 }
 </style>

@@ -243,6 +243,18 @@ CREATE TABLE IF NOT EXISTS biz_tariff (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 16. 抄表底度记录表 (真实的抄表流水)
+CREATE TABLE IF NOT EXISTS biz_meter_reading (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT NOT NULL,
+    device_id BIGINT NOT NULL,
+    reading_period VARCHAR(20) NOT NULL COMMENT '归属账期 YYYY-MM',
+    reading_value DECIMAL(14, 2) NOT NULL COMMENT '当期抄表底数(m3)',
+    status SMALLINT DEFAULT 1 COMMENT '1-有效, 0-无效(清洗后)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_id) REFERENCES biz_key_account(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

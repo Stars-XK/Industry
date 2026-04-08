@@ -1,18 +1,15 @@
 <template>
-  <div class="page-container sys-dict-container">
+  <div class="premium-container sys-dict-container">
     <!-- 左侧：字典类型列表 -->
-    <el-card class="dict-type-panel" shadow="never">
-
-      <template #header>
-        <div class="card-header">
-          <span>字典类型 (DictType)</span>
-          <el-button type="primary" size="small" @click="handleAddType">新增</el-button>
-        </div>
-      </template>
+    <div class="glass-panel dict-type-panel">
+      <div class="panel-header">
+        <span class="panel-title">字典类型 (DictType)</span>
+        <el-button type="primary" size="small" class="neon-btn" @click="handleAddType">新增</el-button>
+      </div>
       <ul class="type-list">
-        <li 
-          v-for="type in typeList" 
-          :key="type.id" 
+        <li
+          v-for="type in typeList"
+          :key="type.id"
           :class="{ active: currentType === type.dict_type }"
           @click="handleSelectType(type.dict_type)"
         >
@@ -20,21 +17,20 @@
           <el-button link type="danger" @click.stop="handleDeleteType(type)">删除</el-button>
         </li>
       </ul>
-    </el-card>
+    </div>
 
     <!-- 右侧：字典数据列表 -->
-    <el-card class="dict-data-panel" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>字典数据 (DictData) <span v-if="currentType"> - {{ currentType }}</span></span>
-          <el-button type="primary" size="small" v-if="currentType" @click="handleAddData">新增字典项</el-button>
-        </div>
-      </template>
-      
-      <el-table 
-        :data="dataList" 
-        style="width: 100%" 
-        v-if="currentType" 
+    <div class="glass-panel dict-data-panel">
+      <div class="panel-header">
+        <span class="panel-title">字典数据 (DictData) <span v-if="currentType" class="highlight-text"> - {{ currentType }}</span></span>
+        <el-button type="primary" size="small" class="neon-btn" v-if="currentType" @click="handleAddData">新增字典项</el-button>
+      </div>
+
+      <el-table
+        :data="dataList"
+        style="width: 100%"
+        class="dark-table"
+        v-if="currentType"
         v-loading="loadingData"
         element-loading-text="Thinking..."
         element-loading-spinner="el-icon-loading"
@@ -45,9 +41,8 @@
         <el-table-column prop="dict_sort" label="排序" width="80" />
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ row.status === 1 ? '正常' : '禁用' }}
-            </el-tag>
+            <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
+            {{ row.status === 1 ? '正常' : '禁用' }}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120" fixed="right">
@@ -56,11 +51,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-empty v-else description="请在左侧选择一个字典类型以查看详情" />
-    </el-card>
+      <el-empty v-else description="请在左侧选择一个字典类型以查看详情" :image-size="100" />
+    </div>
 
     <!-- 新增字典类型弹窗 -->
-    <el-dialog title="新增字典类型" v-model="typeDialogVisible" width="400px">
+    <el-dialog title="新增字典类型" v-model="typeDialogVisible" width="400px" custom-class="glass-dialog">
       <el-form :model="typeForm" :rules="typeRules" ref="typeFormRef" label-width="100px">
         <el-form-item label="字典名称" prop="dict_name">
           <el-input v-model="typeForm.dict_name" placeholder="请输入字典名称 (如: 设备类型)" />
@@ -73,13 +68,13 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="typeDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitTypeForm">确定</el-button>
+        <el-button @click="typeDialogVisible = false" class="glass-btn">取消</el-button>
+        <el-button type="primary" @click="submitTypeForm" class="neon-btn">确定</el-button>
       </template>
     </el-dialog>
 
     <!-- 新增字典数据弹窗 -->
-    <el-dialog title="新增字典项" v-model="dataDialogVisible" width="400px">
+    <el-dialog title="新增字典项" v-model="dataDialogVisible" width="400px" custom-class="glass-dialog">
       <el-form :model="dataForm" :rules="dataRules" ref="dataFormRef" label-width="100px">
         <el-form-item label="字典标签" prop="dict_label">
           <el-input v-model="dataForm.dict_label" placeholder="请输入字典标签 (如: 智能水表)" />
@@ -92,8 +87,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dataDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitDataForm">确定</el-button>
+        <el-button @click="dataDialogVisible = false" class="glass-btn">取消</el-button>
+        <el-button type="primary" @click="submitDataForm" class="neon-btn">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -230,9 +225,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  height: 100%;
-}
 .sys-dict-container {
   display: flex;
   gap: 20px;
@@ -242,26 +234,40 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
 .dict-data-panel {
   flex: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
 }
 .type-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow-y: auto;
+  flex: 1;
 }
 .type-list li {
-  padding: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -269,18 +275,24 @@ onMounted(() => {
   transition: all 0.3s;
 }
 .type-list li:hover {
-  background-color: #fafafa;
+  background: rgba(255, 255, 255, 0.05);
 }
 .type-list li.active {
-  background-color: #e6f7ff;
-  border-right: 3px solid #1890ff;
+  background: rgba(0, 216, 255, 0.1);
+  border-right: 3px solid #00d8ff;
 }
 .type-name {
-  color: #333;
+  color: #e2e8f0;
   font-size: 14px;
+  font-weight: 500;
 }
 .type-key {
-  color: #999;
+  color: #94a3b8;
   font-size: 12px;
+  font-family: 'SF Mono', Consolas, monospace;
+}
+.highlight-text {
+  color: #00d8ff;
+  font-family: 'SF Mono', Consolas, monospace;
 }
 </style>

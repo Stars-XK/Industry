@@ -1,43 +1,46 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>阶梯水价与营收费率配置</span>
-          <el-button type="primary" @click="handleAdd">新增费率</el-button>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
+          <div class="header-title">阶梯水价与营收费率配置</div>
+          <div class="header-subtitle">Tariff & Pricing Configuration</div>
         </div>
-      </template>
+        <el-button class="neon-btn" @click="handleAdd">新增费率</el-button>
+      </div>
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tariff_code" label="费率编码" width="180">
-          <template #default="scope">
-            <el-tag type="info">{{ scope.row.tariff_code }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="tariff_name" label="费率名称" width="200" />
-        <el-table-column prop="price_per_m3" label="单价 (元/m³)" width="150">
-          <template #default="scope">
-            <span style="color: #f56c6c; font-weight: bold;">￥{{ scope.row.price_per_m3 }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="description" label="适用说明" />
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right">
-          <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <div class="table-container">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="tariff_code" label="费率编码" width="180">
+            <template #default="scope">
+              <span class="logic-text">{{ scope.row.tariff_code }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tariff_name" label="费率名称" width="200" />
+          <el-table-column prop="price_per_m3" label="单价 (元/m³)" width="150" align="right">
+            <template #default="scope">
+              <span class="money-text">￥{{ scope.row.price_per_m3 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="适用说明" />
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="scope">
+              <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" class="industrial-switch" />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" align="center">
+            <template #default="scope">
+              <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" @close="resetForm">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" @close="resetForm" custom-class="industrial-dialog">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="industrial-form">
         <el-form-item label="费率编码" prop="tariff_code">
           <el-input v-model="form.tariff_code" :disabled="!!form.id" placeholder="如 T_NEW" />
         </el-form-item>
@@ -45,16 +48,16 @@
           <el-input v-model="form.tariff_name" placeholder="如 新工业用水" />
         </el-form-item>
         <el-form-item label="单价(元/m³)" prop="price_per_m3">
-          <el-input-number v-model="form.price_per_m3" :precision="4" :step="0.1" :min="0" style="width: 100%" />
+          <el-input-number v-model="form.price_per_m3" :precision="4" :step="0.1" :min="0" style="width: 100%" class="industrial-input-number" />
         </el-form-item>
         <el-form-item label="适用说明" prop="description">
-          <el-input type="textarea" v-model="form.description" :rows="3" />
+          <el-input type="textarea" v-model="form.description" :rows="3" class="industrial-textarea" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">确定</el-button>
+          <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button class="neon-btn" @click="submitForm">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -123,7 +126,8 @@ const handleDelete = (row: any) => {
   ElMessageBox.confirm('确定要删除该费率配置吗？如果已有企业档案绑定将无法删除。', '高危操作确认', {
     confirmButtonText: '强制删除',
     cancelButtonText: '取消',
-    type: 'warning'
+    type: 'warning',
+    customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
       await request.delete(`/api/data-center/billing/tariffs/${row.id}`)
@@ -164,6 +168,161 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.table-container {
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(2, 6, 23, 0.3);
+  flex: 1;
+}
+
+.industrial-table {
+  background: transparent !important;
+  --el-table-border-color: rgba(148, 163, 184, 0.05);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
+  --el-table-header-text-color: #cbd5e1;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
+  --el-table-text-color: #94a3b8;
+}
+
+:deep(.el-table th.el-table__cell) {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+.logic-text {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.money-text {
+  font-family: "SF Mono", Consolas, monospace;
+  font-weight: 600;
+  color: #00d8ff;
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+.text-neon { color: #00d8ff; }
+.text-danger { color: #F56C6C; }
+
+.industrial-form :deep(.el-form-item__label) {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+:deep(.el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: none !important;
+}
+
+:deep(.el-input__inner) {
+  color: #e2e8f0 !important;
+}
+
+:deep(.el-input.is-disabled .el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+:deep(.el-input.is-disabled .el-input__inner) {
+  color: #64748b !important;
+}
+
+:deep(.el-switch__core) {
+  background-color: rgba(148, 163, 184, 0.2) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+:deep(.el-switch.is-checked .el-switch__core) {
+  background-color: #00d8ff !important;
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
+}
+
+:deep(.el-textarea__inner) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  color: #e2e8f0 !important;
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+:deep(.el-textarea__inner:focus) {
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
+}
 </style>

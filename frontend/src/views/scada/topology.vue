@@ -1,80 +1,83 @@
 <template>
-  <div class="page-container scada-topology">
-    <el-row :gutter="20" style="height: 100%;">
+  <div class="premium-container scada-topology">
+    <el-row :gutter="24" style="height: 100%;">
       <!-- 左侧 2D 拓扑画布 -->
       <el-col :span="14" style="height: 100%;">
-        <el-card class="box-card" shadow="never" style="height: 100%;">
-          <template #header>
-            <div class="card-header">
-              <span>供水 DMA 拓扑全景导航 (2D 画布)</span>
-              <el-tag type="info">支持滚轮缩放、拖拽平移</el-tag>
+        <div class="glass-panel" style="height: 100%;">
+          <div class="panel-header">
+            <div>
+              <div class="header-title">供水 DMA 拓扑全景导航</div>
+              <div class="header-subtitle">2D Topology Canvas (Scroll to zoom, drag to pan)</div>
             </div>
-          </template>
+          </div>
           <div class="canvas-container" v-loading="loading">
             <v-chart class="chart" :option="chartOption" autoresize @click="handleChartClick" />
           </div>
-        </el-card>
+        </div>
       </el-col>
 
       <!-- 右侧详情/设备列表区 -->
       <el-col :span="10" style="height: 100%;">
-        <el-card class="box-card" shadow="never" style="height: 100%;">
-          <template #header>
-            <div class="card-header">
-              <span>分区设备关联信息</span>
-              <el-tag v-if="currentNode" type="success">{{ currentNode.label }}</el-tag>
+        <div class="glass-panel" style="height: 100%;">
+          <div class="panel-header">
+            <div>
+              <div class="header-title">分区设备关联信息</div>
+              <div class="header-subtitle">Zone Details & Telemetry</div>
             </div>
-          </template>
+            <el-tag v-if="currentNode" type="success" effect="dark" class="industrial-tag">{{ currentNode.label }}</el-tag>
+          </div>
+          
           <div v-if="!currentNode" class="empty-tip">
             <el-empty description="请从左侧 2D 画布点击选择一个 DMA 分区节点" />
           </div>
-          <div v-else>
-            <el-descriptions title="分区详情" :column="2" border>
+          <div v-else class="detail-content">
+            <el-descriptions title="分区详情" :column="2" border class="industrial-descriptions">
               <el-descriptions-item label="分区ID">{{ currentNode.id }}</el-descriptions-item>
               <el-descriptions-item label="分区名称">{{ currentNode.label }}</el-descriptions-item>
               <el-descriptions-item label="层级">
-                <el-tag size="small">{{ currentNode.level }} 级分区</el-tag>
+                <el-tag size="small" class="industrial-tag">{{ currentNode.level }} 级分区</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="健康状态">
-                <el-tag :type="currentNode.status === 'alarm' ? 'danger' : 'success'" size="small">
+                <el-tag :type="currentNode.status === 'alarm' ? 'danger' : 'success'" size="small" effect="dark" class="industrial-tag">
                   {{ currentNode.status === 'alarm' ? '异常报警' : '正常' }}
                 </el-tag>
               </el-descriptions-item>
             </el-descriptions>
 
-            <h3 style="margin-top: 20px;">挂载设备清单及实时遥测数据</h3>
+            <div class="section-title" style="margin-top: 24px; margin-bottom: 12px; color: #e2e8f0; font-weight: 600;">挂载设备清单及实时遥测数据</div>
             <el-table
               :data="deviceList"
-              style="width: 100%; margin-top: 10px;"
-              border
+              style="width: 100%;"
+              class="industrial-table"
               v-loading="deviceLoading"
             >
               <el-table-column prop="id" label="内部ID" width="70" />
               <el-table-column prop="device_code" label="资产编号" width="140" />
               <el-table-column prop="name" label="设备名称" />
-              <el-table-column prop="direction" label="流向" width="80">
+              <el-table-column prop="direction" label="流向" width="80" align="center">
                 <template #default="{ row }">
-                  <el-tag v-if="row.direction === '流入'" type="success">流入</el-tag>
-                  <el-tag v-else-if="row.direction === '流出'" type="danger">流出</el-tag>
-                  <el-tag v-else type="warning">内部</el-tag>
+                  <el-tag v-if="row.direction === '流入'" type="success" effect="dark" class="industrial-tag">流入</el-tag>
+                  <el-tag v-else-if="row.direction === '流出'" type="danger" effect="dark" class="industrial-tag">流出</el-tag>
+                  <el-tag v-else type="warning" effect="dark" class="industrial-tag">内部</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="实时遥测" min-width="180">
                 <template #default="{ row }">
-                  <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0">
-                    <div v-for="(val, key) in row.telemetry" :key="key" style="margin-bottom: 2px;">
-                      <el-tag size="small" type="primary">{{ key }}</el-tag> : <strong>{{ val }}</strong>
+                  <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0" class="telemetry-box">
+                    <div v-for="(val, key) in row.telemetry" :key="key" class="telemetry-item">
+                      <span class="t-key">{{ key }}</span>
+                      <span class="t-val">{{ val }}</span>
                     </div>
                   </div>
-                  <span v-else style="color: #909399;">暂无数据</span>
+                  <span v-else style="color: #64748b; font-size: 12px;">暂无数据</span>
                 </template>
               </el-table-column>
               <template #empty>
-                <div style="padding: 30px;">该分区暂无挂载设备</div>
+                <div style="padding: 30px; color: #64748b;">该分区暂无挂载设备</div>
               </template>
             </el-table>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -100,12 +103,16 @@ const currentNode = ref<any>(null)
 let socket: Socket | null = null
 
 const chartOption = ref({
+  backgroundColor: 'transparent',
   tooltip: {
     trigger: 'item',
     triggerOn: 'mousemove',
+    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+    borderColor: 'rgba(0, 216, 255, 0.2)',
+    textStyle: { color: '#e2e8f0' },
     formatter: (params: any) => {
       const data = params.data
-      return `${data.name}<br/>层级: ${data.level}级分区`
+      return `${data.name}<br/><span style="color:#94a3b8;font-size:12px;">层级: ${data.level}级分区</span>`
     }
   },
   series: [
@@ -123,7 +130,8 @@ const chartOption = ref({
         verticalAlign: 'middle',
         align: 'right',
         fontSize: 14,
-        color: '#fff'
+        color: '#e2e8f0',
+        fontFamily: 'SF Pro Display'
       },
       leaves: {
         label: {
@@ -137,12 +145,12 @@ const chartOption = ref({
       animationDuration: 550,
       animationDurationUpdate: 750,
       itemStyle: {
-        color: '#409EFF',
-        borderColor: '#fff',
+        color: '#00d8ff',
+        borderColor: '#020617',
         borderWidth: 2
       },
       lineStyle: {
-        color: '#5a6b7c',
+        color: 'rgba(148, 163, 184, 0.3)',
         width: 2,
         curveness: 0.5
       }
@@ -155,14 +163,16 @@ const mapTreeDataForEcharts = (nodes: any[]): any[] => {
     const isAlarm = node.status === 'alarm';
     const itemStyle = isAlarm ? {
       color: '#F56C6C',
-      borderColor: '#ff9999',
-      borderWidth: 3,
-      shadowBlur: 10,
-      shadowColor: '#F56C6C'
+      borderColor: '#020617',
+      borderWidth: 2,
+      shadowBlur: 15,
+      shadowColor: 'rgba(245, 108, 108, 0.8)'
     } : {
-      color: '#67C23A',
-      borderColor: '#a0cfff',
-      borderWidth: 2
+      color: '#00d8ff',
+      borderColor: '#020617',
+      borderWidth: 2,
+      shadowBlur: 10,
+      shadowColor: 'rgba(0, 216, 255, 0.5)'
     };
 
     return {
@@ -244,51 +254,59 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  height: calc(100vh - 84px);
-  box-sizing: border-box;
-  background-color: #050a15;
-  background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.box-card {
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
-  background: rgba(8, 15, 30, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 216, 255, 0.15);
+}
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  color: #fff;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  height: 100%;
-}
-
-:deep(.el-card__header) {
-  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
-  padding: 16px 24px;
-}
-
-:deep(.el-card__body) {
-  flex: 1;
-  overflow: auto;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 500;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .canvas-container {
-  height: 100%;
+  flex: 1;
   width: 100%;
   position: relative;
+  background: rgba(2, 6, 23, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.05);
 }
 
 .chart {
@@ -300,60 +318,87 @@ onUnmounted(() => {
 }
 
 .empty-tip {
-  height: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-:deep(.el-descriptions) {
-  border-radius: 8px;
-  overflow: hidden;
+.detail-content {
+  flex: 1;
+  overflow: auto;
 }
 
-:deep(.el-descriptions__body) {
+:deep(.industrial-descriptions) {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.1) !important;
+}
+
+:deep(.industrial-descriptions .el-descriptions__body) {
   background-color: transparent !important;
 }
 
-:deep(.el-descriptions-item__label) {
-  background-color: rgba(0, 216, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.6);
-  border-color: rgba(0, 216, 255, 0.1) !important;
+:deep(.industrial-descriptions .el-descriptions-item__label) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.1) !important;
   font-weight: 500;
 }
 
-:deep(.el-descriptions-item__content) {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  color: #fff;
-  border-color: rgba(0, 216, 255, 0.1) !important;
+:deep(.industrial-descriptions .el-descriptions-item__content) {
+  background-color: rgba(2, 6, 23, 0.3) !important;
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.1) !important;
 }
 
-:deep(.el-table) {
-  background-color: transparent;
-  color: #fff;
-  border: 1px solid rgba(0, 216, 255, 0.1);
+.industrial-table {
+  background: transparent !important;
+  --el-table-border-color: rgba(148, 163, 184, 0.05);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
+  --el-table-header-text-color: #cbd5e1;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
+  --el-table-text-color: #e2e8f0;
 }
 
 :deep(.el-table th.el-table__cell) {
-  background-color: rgba(0, 216, 255, 0.05);
-  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
-  color: #00d8ff;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 :deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
 }
 
-:deep(.el-table--border .el-table__inner-wrapper::after),
-:deep(.el-table--border::after),
-:deep(.el-table--border::before),
-:deep(.el-table__inner-wrapper::before) {
-  background-color: rgba(0, 216, 255, 0.1);
+.telemetry-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
-  background-color: rgba(0, 216, 255, 0.05);
+.telemetry-item {
+  display: flex;
+  justify-content: space-between;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.telemetry-item .t-key {
+  color: #94a3b8;
+}
+
+.telemetry-item .t-val {
+  color: #00d8ff;
+  font-weight: 600;
+}
+
+.industrial-tag {
+  border: none;
 }
 </style>

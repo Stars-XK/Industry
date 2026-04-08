@@ -1,30 +1,27 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>边缘计算与物联网网关台账 (IoT Gateways)</span>
-          <el-button type="primary" @click="handleAdd">新增网关</el-button>
-        </div>
-      </template>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <span class="panel-title">边缘计算与物联网网关台账 (IoT Gateways)</span>
+        <el-button type="primary" class="neon-btn" @click="handleAdd">新增网关</el-button>
+      </div>
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
+      <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="gateway_sn" label="网关序列号 (SN)" width="250">
           <template #default="scope">
-            <span style="font-weight: bold; color: #409EFF">{{ scope.row.gateway_sn }}</span>
+            <span class="highlight-text">{{ scope.row.gateway_sn }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="protocol" label="通信协议" width="150">
           <template #default="scope">
-            <el-tag type="warning" effect="plain">{{ scope.row.protocol }}</el-tag>
+            <el-tag type="warning" effect="plain" class="custom-tag">{{ scope.row.protocol }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="is_online" label="在线状态" width="150">
           <template #default="scope">
-            <el-tag :type="scope.row.is_online === 1 ? 'success' : 'danger'" effect="dark">
-              {{ scope.row.is_online === 1 ? '在线 (Connected)' : '离线 (Offline)' }}
-            </el-tag>
+            <span :class="scope.row.is_online === 1 ? 'status-dot success' : 'status-dot danger'"></span>
+            {{ scope.row.is_online === 1 ? '在线 (Connected)' : '离线 (Offline)' }}
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注说明" />
@@ -35,15 +32,15 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" @close="resetForm">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" custom-class="glass-dialog" @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="网关SN码" prop="gateway_sn">
           <el-input v-model="form.gateway_sn" :disabled="!!form.id" placeholder="如 GW-MAC-AABBCC" />
         </el-form-item>
         <el-form-item label="通信协议" prop="protocol">
-          <el-select v-model="form.protocol" style="width: 100%">
+          <el-select v-model="form.protocol" style="width: 100%" class="dark-input">
             <el-option label="MQTT" value="MQTT" />
             <el-option label="Modbus TCP" value="Modbus TCP" />
             <el-option label="OPC UA" value="OPC UA" />
@@ -61,8 +58,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">确定</el-button>
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -157,6 +154,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.highlight-text {
+  color: #00d8ff;
+  font-family: 'SF Mono', Consolas, monospace;
+}
+.custom-tag {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #eab308;
+}
 </style>

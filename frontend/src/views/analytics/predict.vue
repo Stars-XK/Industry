@@ -1,17 +1,18 @@
 <template>
-  <div class="page-container">
-    <el-card shadow="never" class="box-card">
-      <template #header>
-        <div class="card-header">
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
           <div class="header-title">AI 用水趋势预测分析 (ARIMA / LSTM)</div>
-          <div class="header-actions">
-            <el-select v-model="listQuery.zoneId" @change="fetchData" style="width: 240px" placeholder="选择预测区域">
-              <el-option label="张江高科园区" value="201" />
-              <el-option label="漕河泾开发区" value="202" />
-            </el-select>
-          </div>
+          <div class="header-subtitle">Predictive Analytics & Forecasting</div>
         </div>
-      </template>
+        <div class="header-actions">
+          <el-select v-model="listQuery.zoneId" @change="fetchData" class="industrial-select" style="width: 240px" placeholder="选择预测区域">
+            <el-option label="张江高科园区" value="201" />
+            <el-option label="漕河泾开发区" value="202" />
+          </el-select>
+        </div>
+      </div>
 
       <div class="model-info" v-if="predictData" v-loading="loading">
         <el-row :gutter="24">
@@ -30,11 +31,11 @@
           <el-col :span="6">
             <div class="stat-item">
               <div class="stat-label">预测时间跨度</div>
-              <div class="stat-value">7 天</div>
+              <div class="stat-value text-white">7 天</div>
             </div>
           </el-col>
           <el-col :span="6" class="action-col">
-            <el-button type="primary" size="large" :loading="loading" @click="fetchData">
+            <el-button class="neon-btn" :loading="loading" @click="fetchData">
               重新训练预测模型
             </el-button>
           </el-col>
@@ -44,7 +45,7 @@
       <div class="chart-container" v-loading="loading">
         <div id="predict-chart" class="predict-chart"></div>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -70,25 +71,41 @@ const initChart = () => {
     const { dates, actualData, predictData: predData, upperBounds, lowerBounds } = predictData.value
 
     const option = {
-      title: { text: '未来 7 天供水预测量 (m³)', left: 'center' },
+      backgroundColor: 'transparent',
+      title: { 
+        text: '未来 7 天供水预测量 (m³)', 
+        left: 'center',
+        textStyle: { color: '#e2e8f0', fontSize: 16, fontWeight: 'normal', fontFamily: 'SF Pro Display' }
+      },
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'cross' }
+        axisPointer: { type: 'cross', label: { backgroundColor: '#1e293b' } },
+        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        borderColor: 'rgba(0, 216, 255, 0.2)',
+        textStyle: { color: '#e2e8f0' }
       },
       legend: {
         data: ['实际用量', 'AI 预测曲线', '置信区间'],
-        bottom: 10
+        bottom: 0,
+        textStyle: { color: '#94a3b8' }
       },
-      grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+      grid: { left: '3%', right: '4%', bottom: '10%', top: '15%', containLabel: true },
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: dates
+        data: dates,
+        axisLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.2)' } },
+        axisLabel: { color: '#94a3b8' },
+        splitLine: { show: false }
       },
       yAxis: {
         type: 'value',
         name: '水量 (m³)',
-        scale: true
+        nameTextStyle: { color: '#94a3b8' },
+        scale: true,
+        axisLine: { show: false },
+        axisLabel: { color: '#94a3b8' },
+        splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.05)', type: 'dashed' } }
       },
       series: [
         {
@@ -104,7 +121,7 @@ const initChart = () => {
           type: 'line',
           data: lowerBounds,
           lineStyle: { opacity: 0 },
-          areaStyle: { color: '#ccc', opacity: 0.3 },
+          areaStyle: { color: 'rgba(0, 216, 255, 0.1)' },
           stack: 'confidence-band',
           symbol: 'none'
         },
@@ -113,15 +130,15 @@ const initChart = () => {
           type: 'line',
           data: actualData,
           itemStyle: { color: '#67C23A' },
-          lineStyle: { width: 3 },
+          lineStyle: { width: 3, shadowColor: 'rgba(103, 194, 58, 0.3)', shadowBlur: 10 },
           symbolSize: 8
         },
         {
           name: 'AI 预测曲线',
           type: 'line',
           data: predData,
-          itemStyle: { color: '#409EFF' },
-          lineStyle: { type: 'dashed', width: 2 },
+          itemStyle: { color: '#00d8ff' },
+          lineStyle: { type: 'dashed', width: 2, shadowColor: 'rgba(0, 216, 255, 0.3)', shadowBlur: 10 },
           symbol: 'emptyCircle',
           symbolSize: 6
         }
@@ -155,42 +172,59 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-.box-card {
-  border: none;
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-:deep(.el-card__header) {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
 }
 
 .header-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  color: #1f2d3d;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .model-info {
-  background: linear-gradient(to right, #ffffff, #f8f9fa);
+  background: rgba(2, 6, 23, 0.3);
   padding: 24px;
   border-radius: 8px;
   margin-bottom: 24px;
-  border: 1px solid #ebeef5;
+  border: 1px solid rgba(148, 163, 184, 0.05);
 }
 
 .stat-item {
@@ -200,7 +234,7 @@ onMounted(() => {
 
 .stat-label {
   font-size: 13px;
-  color: #909399;
+  color: #94a3b8;
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -210,12 +244,18 @@ onMounted(() => {
 .stat-value {
   font-size: 28px;
   font-weight: 600;
-  color: #303133;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
+  font-family: "SF Mono", Consolas, monospace;
 }
 
-.text-blue { color: #409EFF; }
-.text-green { color: #67C23A; }
+.text-white { color: #e2e8f0; }
+.text-blue { 
+  color: #00d8ff; 
+  text-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+}
+.text-green { 
+  color: #67C23A; 
+  text-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+}
 
 .action-col {
   display: flex;
@@ -226,14 +266,47 @@ onMounted(() => {
 .chart-container {
   height: 500px;
   padding: 20px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(148, 163, 184, 0.05);
   border-radius: 8px;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  background: rgba(2, 6, 23, 0.3);
+  flex: 1;
 }
 
 .predict-chart {
   width: 100%;
   height: 100%;
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 10px 24px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+:deep(.el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: none !important;
+}
+
+:deep(.el-input__inner) {
+  color: #e2e8f0 !important;
+}
+
+:deep(.el-select .el-input__wrapper.is-focus) {
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
 }
 </style>

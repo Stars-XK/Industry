@@ -1,17 +1,18 @@
 <template>
-  <div class="page-container hmi-container">
-    <el-card class="box-card" shadow="never" style="height: 100%;">
-      <template #header>
-        <div class="card-header">
-          <span>工业 SCADA 工艺组态监控 (浦东2号泵站)</span>
-          <div>
-            <el-tag :type="isConnected ? 'success' : 'danger'" effect="dark" style="margin-right: 10px;">
-              <el-icon :class="{ 'is-loading': isConnected }"><Loading v-if="isConnected" /><CircleClose v-else /></el-icon> 
-              {{ isConnected ? 'MQTT 实时推流中' : 'WebSocket 连接断开' }}
-            </el-tag>
-          </div>
+  <div class="premium-container hmi-container">
+    <div class="glass-panel" style="height: 100%;">
+      <div class="panel-header">
+        <div>
+          <div class="header-title">工业 SCADA 工艺组态监控 (浦东2号泵站)</div>
+          <div class="header-subtitle">Industrial SCADA HMI</div>
         </div>
-      </template>
+        <div>
+          <el-tag :type="isConnected ? 'success' : 'danger'" effect="dark" class="industrial-tag">
+            <el-icon :class="{ 'is-loading': isConnected }"><Loading v-if="isConnected" /><CircleClose v-else /></el-icon> 
+            {{ isConnected ? 'MQTT 实时推流中' : 'WebSocket 连接断开' }}
+          </el-tag>
+        </div>
+      </div>
       
       <div class="hmi-canvas">
         <!-- 模拟组态背景图 -->
@@ -34,21 +35,21 @@
           </div>
           
           <div class="data-panel">
-            <div class="data-row">状态: <el-tag :type="pumpStatus === 1 ? 'success' : 'danger'" size="small">{{ pumpStatus === 1 ? '运行中' : '已停机' }}</el-tag></div>
+            <div class="data-row">状态: <el-tag :type="pumpStatus === 1 ? 'success' : 'danger'" size="small" class="industrial-tag">{{ pumpStatus === 1 ? '运行中' : '已停机' }}</el-tag></div>
             <div class="data-row">频率: <span class="val">{{ pumpFreq }}</span> Hz</div>
             <div class="data-row">功率: <span class="val">{{ pumpPower }}</span> kW</div>
           </div>
 
           <div class="control-panel">
             <el-button 
-              :type="pumpStatus === 1 ? 'danger' : 'success'" 
+              :class="pumpStatus === 1 ? 'neon-btn-danger' : 'neon-btn'" 
               @click="handleControl(pumpStatus === 1 ? 0 : 1)"
               :icon="SwitchButton"
               :disabled="!isConnected"
             >
               {{ pumpStatus === 1 ? '远程停机' : '远程开机' }}
             </el-button>
-            <el-button type="primary" @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
+            <el-button class="neon-btn" @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
           </div>
         </div>
         
@@ -61,7 +62,7 @@
           <div style="font-size: 12px; margin-top: 5px;">出水总阀</div>
         </div>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -82,7 +83,6 @@ const isConnected = ref(false)
 let socket: Socket | null = null
 
 const initWebSocket = () => {
-  // 连接 SCADA Service 的 WebSocket 命名空间
   socket = io('http://localhost:3002/scada', {
     transports: ['websocket']
   })
@@ -97,18 +97,10 @@ const initWebSocket = () => {
 
   socket.on('telemetry_update', (payload: any) => {
     const { topic, data } = payload
-    // 过滤出 2 号设备的数据
     if (topic === 'telemetry/devices/2/data' && data.data) {
-      if (data.data['Pump.Status'] !== undefined) {
-        pumpStatus.value = data.data['Pump.Status']
-      }
-      if (data.data['Pump.Freq'] !== undefined) {
-        pumpFreq.value = data.data['Pump.Freq']
-      }
-      if (data.data['Pump.Power'] !== undefined) {
-        pumpPower.value = data.data['Pump.Power']
-      }
-      // 简单模拟一下水池液位变化（真实环境应由另一传感器提供）
+      if (data.data['Pump.Status'] !== undefined) pumpStatus.value = data.data['Pump.Status']
+      if (data.data['Pump.Freq'] !== undefined) pumpFreq.value = data.data['Pump.Freq']
+      if (data.data['Pump.Power'] !== undefined) pumpPower.value = data.data['Pump.Power']
       if (pumpStatus.value === 1) {
         tankLevel.value = Math.max(10, Math.min(90, tankLevel.value - 0.1))
       } else {
@@ -125,6 +117,7 @@ const handleControl = (targetStatus: number) => {
     cancelButtonText: '取消',
     inputType: 'password',
     type: 'warning',
+    customClass: 'industrial-msg-box',
     inputValidator: (value) => {
       if (!value) return '操作密码不能为空'
       if (value !== '123456') return '操作密码错误 (默认密码: 123456)'
@@ -150,6 +143,7 @@ const handleSetFreq = () => {
     cancelButtonText: '取消',
     inputPattern: /^(2[5-9]|[3-4][0-9]|50)(\.[0-9])?$/,
     inputErrorMessage: '频率格式不正确',
+    customClass: 'industrial-msg-box'
   }).then(async ({ value }) => {
     try {
       await request.post('/api/scada/hmi/control', {
@@ -176,44 +170,50 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  height: calc(100vh - 84px);
-  box-sizing: border-box;
-  background-color: #050a15;
-  background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.box-card {
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
   display: flex;
   flex-direction: column;
-  background: rgba(8, 15, 30, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 216, 255, 0.15);
+}
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  color: #fff;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  height: 100%;
-}
-
-:deep(.el-card__header) {
-  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
-  padding: 16px 24px;
-}
-
-:deep(.el-card__body) {
-  flex: 1;
-  overflow: auto;
   padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 500;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
@@ -223,6 +223,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   position: relative;
+  background: rgba(2, 6, 23, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.05);
 }
 
 /* 模拟水池 */
@@ -355,5 +358,43 @@ onUnmounted(() => {
 }
 .valve .el-icon {
   filter: drop-shadow(0 0 8px rgba(230, 162, 60, 0.4));
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.neon-btn:hover:not(:disabled) {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+.neon-btn-danger {
+  background: transparent;
+  border: 1px solid rgba(245, 108, 108, 0.5);
+  color: #F56C6C;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.neon-btn-danger:hover:not(:disabled) {
+  background: rgba(245, 108, 108, 0.1);
+  box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
+  border-color: #F56C6C;
+}
+
+.industrial-tag {
+  border: none;
 }
 </style>

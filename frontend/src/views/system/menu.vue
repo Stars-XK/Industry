@@ -1,58 +1,58 @@
 <template>
-  <div class="page-container">
-    <div class="toolbar">
-      <el-button type="primary" @click="handleAdd(0)">新增顶级菜单</el-button>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="toolbar">
+        <el-button type="primary" class="neon-btn" @click="handleAdd(0)">新增顶级菜单</el-button>
+      </div>
+
+      <el-table
+        :data="tableData"
+        row-key="id"
+        default-expand-all
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        style="width: 100%"
+        class="dark-table"
+        v-loading="loading"
+        element-loading-text="Thinking..."
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
+        <el-table-column prop="menu_name" label="菜单名称" width="200" />
+        <el-table-column prop="icon" label="图标" width="80" />
+        <el-table-column prop="sort_order" label="排序" width="80" />
+        <el-table-column prop="menu_type" label="类型" width="80">
+          <template #default="{ row }">
+            <span :class="'status-dot ' + (row.menu_type === 'M' ? 'info' : (row.menu_type === 'C' ? 'success' : 'warning'))"></span>
+            {{ row.menu_type === 'M' ? '目录' : (row.menu_type === 'C' ? '菜单' : '按钮') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="path" label="路由路径" />
+        <el-table-column prop="component" label="组件路径" />
+        <el-table-column prop="perm_code" label="权限标识" />
+        <el-table-column prop="visible" label="显示状态" width="100">
+          <template #default="{ row }">
+            <span :class="row.visible === 1 ? 'status-dot success' : 'status-dot danger'"></span>
+            {{ row.visible === 1 ? '显示' : '隐藏' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="菜单状态" width="100">
+          <template #default="{ row }">
+            <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
+            {{ row.status === 1 ? '正常' : '停用' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="250" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="handleAdd(row.id)">新增子项</el-button>
+            <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
+            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
-    <el-table
-      :data="tableData"
-      row-key="id"
-      default-expand-all
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-      style="width: 100%"
-      v-loading="loading"
-      element-loading-text="Thinking..."
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.8)"
-    >
-      <el-table-column prop="menu_name" label="菜单名称" width="200" />
-      <el-table-column prop="icon" label="图标" width="80" />
-      <el-table-column prop="sort_order" label="排序" width="80" />
-      <el-table-column prop="menu_type" label="类型" width="80">
-        <template #default="{ row }">
-          <el-tag v-if="row.menu_type === 'M'" type="info">目录</el-tag>
-          <el-tag v-else-if="row.menu_type === 'C'" type="success">菜单</el-tag>
-          <el-tag v-else-if="row.menu_type === 'F'" type="warning">按钮</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="path" label="路由路径" />
-      <el-table-column prop="component" label="组件路径" />
-      <el-table-column prop="perm_code" label="权限标识" />
-      <el-table-column prop="visible" label="显示状态" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.visible === 1 ? 'success' : 'danger'">
-            {{ row.visible === 1 ? '显示' : '隐藏' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="菜单状态" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-            {{ row.status === 1 ? '正常' : '停用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="250" fixed="right">
-        <template #default="{ row }">
-          <el-button link type="primary" @click="handleAdd(row.id)">新增子项</el-button>
-          <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" custom-class="glass-dialog">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-row :gutter="20">
           <el-col :span="24">
@@ -64,16 +64,17 @@
                 check-strictly
                 placeholder="请选择上级菜单"
                 style="width: 100%"
+                class="dark-input"
               />
             </el-form-item>
           </el-col>
         </el-row>
-        
+
         <el-form-item label="菜单类型" prop="menu_type">
           <el-radio-group v-model="form.menu_type">
-            <el-radio 
-              v-for="dict in sys_menu_type" 
-              :key="dict.dict_value" 
+            <el-radio
+              v-for="dict in sys_menu_type"
+              :key="dict.dict_value"
               :value="dict.dict_value"
             >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
@@ -122,9 +123,9 @@
           <el-col :span="12">
             <el-form-item label="显示状态" prop="visible">
               <el-radio-group v-model="form.visible">
-                <el-radio 
-                  v-for="dict in sys_show_hide" 
-                  :key="dict.dict_value" 
+                <el-radio
+                  v-for="dict in sys_show_hide"
+                  :key="dict.dict_value"
                   :value="parseInt(dict.dict_value)"
                 >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
@@ -133,9 +134,9 @@
           <el-col :span="12">
             <el-form-item label="菜单状态" prop="status">
               <el-radio-group v-model="form.status">
-                <el-radio 
-                  v-for="dict in sys_normal_disable" 
-                  :key="dict.dict_value" 
+                <el-radio
+                  v-for="dict in sys_normal_disable"
+                  :key="dict.dict_value"
                   :value="parseInt(dict.dict_value)"
                 >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
@@ -147,9 +148,9 @@
           <el-col :span="12">
             <el-form-item label="是否外链" prop="is_frame">
               <el-radio-group v-model="form.is_frame">
-                <el-radio 
-                  v-for="dict in sys_yes_no" 
-                  :key="dict.dict_value" 
+                <el-radio
+                  v-for="dict in sys_yes_no"
+                  :key="dict.dict_value"
                   :value="parseInt(dict.dict_value)"
                 >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
@@ -158,9 +159,9 @@
           <el-col :span="12">
             <el-form-item label="是否缓存" prop="is_cache">
               <el-radio-group v-model="form.is_cache">
-                <el-radio 
-                  v-for="dict in sys_yes_no" 
-                  :key="dict.dict_value" 
+                <el-radio
+                  v-for="dict in sys_yes_no"
+                  :key="dict.dict_value"
                   :value="parseInt(dict.dict_value)"
                 >{{ dict.dict_label }}</el-radio>
               </el-radio-group>
@@ -172,8 +173,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+        <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -314,12 +315,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 20px;
-  background: #fff;
-  height: 100%;
-  border-radius: 4px;
-}
 .toolbar {
   margin-bottom: 20px;
 }

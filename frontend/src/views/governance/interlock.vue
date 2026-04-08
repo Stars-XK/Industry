@@ -1,58 +1,55 @@
 <template>
-  <div class="page-container">
-    <el-card shadow="never" class="box-card">
-      <template #header>
-        <div class="card-header">
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
           <div class="header-title">SCADA 报警联锁与因果矩阵引擎</div>
-          <el-button type="primary" size="default">新增联锁策略</el-button>
+          <div class="header-subtitle">Interlock & Rule Engine (Cause & Effect)</div>
         </div>
-      </template>
-      <el-row :gutter="24">
-        <el-col :span="24">
-          <div class="table-container">
-            <el-table :data="matrix" style="width: 100%">
-              <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
-                <template #default="{ row }">
-                  <span class="logic-text cause-text">{{ row.cause }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="联动" width="60" align="center">
-                <template #default>
-                  <el-icon class="link-icon"><Right /></el-icon>
-                </template>
-              </el-table-column>
-              <el-table-column prop="effect" label="执行动作 (Effect)" min-width="280">
-                <template #default="{ row }">
-                  <span class="logic-text effect-text">{{ row.effect }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="delay" label="延迟执行 (秒)" width="120" align="center">
-                <template #default="{ row }">
-                  <el-tag size="small" type="info" effect="plain">{{ row.delay }}s</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="status" label="策略状态" width="100" align="center">
-                <template #default="{ row }">
-                  <el-switch v-model="row.status" :disabled="row.bypass" />
-                </template>
-              </el-table-column>
-              <el-table-column label="高级运维" width="180" align="center">
-                <template #default="{ row }">
-                  <el-button 
-                    :type="row.bypass ? 'danger' : 'default'" 
-                    size="small" 
-                    :plain="!row.bypass" 
-                    @click="toggleBypass(row)"
-                  >
-                    {{ row.bypass ? '解除旁路 (Bypass)' : '开启强制旁路' }}
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-col>
-      </el-row>
-    </el-card>
+        <el-button type="primary" class="neon-btn">新增联锁策略</el-button>
+      </div>
+      
+      <div class="table-container">
+        <el-table :data="matrix" style="width: 100%" class="industrial-table">
+          <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
+            <template #default="{ row }">
+              <span class="logic-text cause-text">{{ row.cause }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="联动" width="60" align="center">
+            <template #default>
+              <el-icon class="link-icon"><Right /></el-icon>
+            </template>
+          </el-table-column>
+          <el-table-column prop="effect" label="执行动作 (Effect)" min-width="280">
+            <template #default="{ row }">
+              <span class="logic-text effect-text">{{ row.effect }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="delay" label="延迟执行" width="120" align="center">
+            <template #default="{ row }">
+              <span class="delay-tag">{{ row.delay }}s</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="策略状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-switch v-model="row.status" :disabled="row.bypass" class="industrial-switch" />
+            </template>
+          </el-table-column>
+          <el-table-column label="高级运维" width="180" align="center">
+            <template #default="{ row }">
+              <el-button 
+                :class="row.bypass ? 'neon-btn-danger' : 'neon-btn'" 
+                size="small" 
+                @click="toggleBypass(row)"
+              >
+                {{ row.bypass ? '解除旁路 (Bypass)' : '开启强制旁路' }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -65,9 +62,15 @@ const matrix = ref([
   { cause: '加药车间 硫化氢浓度 > 10ppm', effect: '开启 [顶置排风扇] 并锁定 [区域门禁]', delay: 0, status: true, bypass: false },
   { cause: '管网节点 P02 压力 < 0.15MPa', effect: '联动 [二供变频泵] 频率上调 5Hz', delay: 30, status: false, bypass: false }
 ])
+
 const toggleBypass = (row: any) => {
   if (!row.bypass) {
-    ElMessageBox.confirm('开启 Bypass 将跳过自动化联锁保护，仅限维修期使用。此操作将记入高级审计库，是否继续？', '危险权限', { type: 'error' }).then(() => {
+    ElMessageBox.confirm('开启 Bypass 将跳过自动化联锁保护，仅限维修期使用。此操作将记入高级审计库，是否继续？', '危险权限', {
+      confirmButtonText: '确认旁路',
+      cancelButtonText: '取消',
+      type: 'error',
+      customClass: 'industrial-msg-box'
+    }).then(() => {
       row.bypass = true; ElMessage.warning('旁路已激活')
     })
   } else {
@@ -76,73 +79,162 @@ const toggleBypass = (row: any) => {
 }
 </script>
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-.box-card {
-  border: none;
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-:deep(.el-card__header) {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
 }
 
 .header-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  color: #1f2d3d;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .table-container {
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  background: rgba(2, 6, 23, 0.3);
+}
+
+.industrial-table {
+  background: transparent !important;
+  --el-table-border-color: rgba(148, 163, 184, 0.05);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
+  --el-table-header-text-color: #cbd5e1;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
+  --el-table-text-color: #94a3b8;
 }
 
 :deep(.el-table th.el-table__cell) {
-  background-color: #f8f9fa;
-  color: #606266;
   font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
 }
 
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
   display: inline-block;
   word-break: break-all;
+  letter-spacing: 0.5px;
 }
 
 .cause-text {
-  background: rgba(230, 162, 60, 0.1);
+  background: rgba(230, 162, 60, 0.05);
   color: #E6A23C;
   border: 1px solid rgba(230, 162, 60, 0.2);
+  box-shadow: inset 0 0 10px rgba(230, 162, 60, 0.05);
 }
 
 .effect-text {
-  background: rgba(103, 194, 58, 0.1);
+  background: rgba(103, 194, 58, 0.05);
   color: #67C23A;
   border: 1px solid rgba(103, 194, 58, 0.2);
+  box-shadow: inset 0 0 10px rgba(103, 194, 58, 0.05);
+}
+
+.delay-tag {
+  font-family: "SF Mono", Consolas, monospace;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  font-size: 12px;
 }
 
 .link-icon {
   font-size: 16px;
-  color: #909399;
+  color: #475569;
   vertical-align: middle;
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+.neon-btn-danger {
+  background: transparent;
+  border: 1px solid rgba(245, 108, 108, 0.5);
+  color: #F56C6C;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.neon-btn-danger:hover {
+  background: rgba(245, 108, 108, 0.1);
+  box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
+  border-color: #F56C6C;
+}
+
+:deep(.el-switch__core) {
+  background-color: rgba(148, 163, 184, 0.2) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+:deep(.el-switch.is-checked .el-switch__core) {
+  background-color: #00d8ff !important;
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
 }
 </style>

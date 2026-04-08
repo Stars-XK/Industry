@@ -1,30 +1,28 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>测点与时序标签映射管理 (IoT Tag Mapping)</span>
-          <el-button type="primary" @click="handleAdd">新增映射</el-button>
-        </div>
-      </template>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <span class="panel-title">测点与时序标签映射管理 (IoT Tag Mapping)</span>
+        <el-button type="primary" class="neon-btn" @click="handleAdd">新增映射</el-button>
+      </div>
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
+      <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="device_name" label="关联物理设备">
           <template #default="scope">
-            <span style="font-weight: bold;">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
+            <span class="highlight-text">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="gateway_sn" label="归属网关SN">
           <template #default="scope">
-            <el-tag type="info" v-if="scope.row.gateway_sn">{{ scope.row.gateway_sn }}</el-tag>
+            <el-tag type="info" v-if="scope.row.gateway_sn" class="custom-tag">{{ scope.row.gateway_sn }}</el-tag>
             <span v-else class="text-gray-400">未绑定网关</span>
           </template>
         </el-table-column>
         <el-table-column prop="plc_address" label="PLC/寄存器地址" width="150" />
         <el-table-column prop="ts_tag_name" label="时序库全局标签" width="200">
           <template #default="scope">
-            <el-tag type="warning" effect="plain">{{ scope.row.ts_tag_name }}</el-tag>
+            <el-tag type="warning" effect="plain" class="custom-tag-warning">{{ scope.row.ts_tag_name }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="deadband" label="死区过滤阈值" width="150" />
@@ -35,17 +33,17 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" @close="resetForm">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" custom-class="glass-dialog" @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="绑定物理设备" prop="device_id">
-          <el-select v-model="form.device_id" filterable placeholder="选择台账设备" style="width: 100%">
+          <el-select v-model="form.device_id" filterable placeholder="选择台账设备" style="width: 100%" class="dark-input">
             <el-option v-for="item in deviceOptions" :key="item.id" :label="`[${item.device_code}] ${item.device_name}`" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="归属边缘网关" prop="gateway_id">
-          <el-select v-model="form.gateway_id" filterable clearable placeholder="可选：选择归属网关" style="width: 100%">
+          <el-select v-model="form.gateway_id" filterable clearable placeholder="可选：选择归属网关" style="width: 100%" class="dark-input">
             <el-option v-for="item in gatewayOptions" :key="item.id" :label="item.gateway_sn" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -61,8 +59,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">确定</el-button>
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -167,6 +165,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.highlight-text {
+  color: #00d8ff;
+  font-weight: 600;
+}
+.custom-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+}
+.custom-tag-warning {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #eab308;
+}
 </style>

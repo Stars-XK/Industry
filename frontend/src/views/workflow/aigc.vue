@@ -1,12 +1,10 @@
 <template>
-  <div class="page-container">
-    <el-card shadow="never" class="box-card">
-      <template #header>
-        <div class="card-header">
-          <div class="header-title">AI 大模型智能调度与指挥中枢</div>
-        </div>
-      </template>
-      <el-row :gutter="24">
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <span class="panel-title">AI 大模型智能调度与指挥中枢</span>
+      </div>
+      <el-row :gutter="24" style="padding: 20px;">
         <el-col :span="16">
           <div class="chat-container">
             <div class="chat-history">
@@ -31,44 +29,47 @@
                     <li>检查 100 只防汛沙袋库存是否充足</li>
                     <li>安排夜班 A 组（张三、李四）定点巡逻</li>
                   </ol>
-                  <el-button type="primary" size="default" class="bubble-btn">一键派发工单</el-button>
+                  <el-button type="primary" size="default" class="neon-btn bubble-btn">一键派发工单</el-button>
                 </div>
               </div>
             </div>
             <div class="chat-input">
-              <el-input v-model="question" type="textarea" :rows="3" placeholder="输入您的调度指令..." resize="none" />
+              <el-input v-model="question" type="textarea" :rows="3" placeholder="输入您的调度指令..." resize="none" class="dark-input" />
               <div class="input-actions">
-                <el-button type="primary" @click="ask" :disabled="!question">发送指令</el-button>
+                <el-button type="primary" class="neon-btn" @click="ask" :disabled="!question">发送指令</el-button>
               </div>
             </div>
           </div>
         </el-col>
         <el-col :span="8">
-          <el-card header="外勤人员与车辆实时 GIS 定位" shadow="never" class="side-card">
-            <div class="map-placeholder">
-              <span class="placeholder-text">(室内外融合定位地图)</span>
+          <div class="side-card">
+            <div class="side-header">外勤人员与车辆实时 GIS 定位</div>
+            <div class="side-content">
+              <div class="map-placeholder">
+                <span class="placeholder-text">(室内外融合定位地图)</span>
+              </div>
+              <ul class="location-list">
+                <li class="location-item">
+                  <el-icon class="loc-icon" color="#00ffaa"><Location /></el-icon>
+                  <span class="loc-name">张三 (维修工)</span>
+                  <span class="loc-dist">距离 50m</span>
+                </li>
+                <li class="location-item">
+                  <el-icon class="loc-icon" color="#ffb800"><Location /></el-icon>
+                  <span class="loc-name">李四 (听漏工)</span>
+                  <span class="loc-dist">距离 1.2km</span>
+                </li>
+                <li class="location-item">
+                  <el-icon class="loc-icon" color="#00d8ff"><Van /></el-icon>
+                  <span class="loc-name">抢修车沪A123</span>
+                  <span class="loc-dist">距离 300m</span>
+                </li>
+              </ul>
             </div>
-            <ul class="location-list">
-              <li class="location-item">
-                <el-icon class="loc-icon" color="#67C23A"><Location /></el-icon> 
-                <span class="loc-name">张三 (维修工)</span>
-                <span class="loc-dist">距离 50m</span>
-              </li>
-              <li class="location-item">
-                <el-icon class="loc-icon" color="#E6A23C"><Location /></el-icon> 
-                <span class="loc-name">李四 (听漏工)</span>
-                <span class="loc-dist">距离 1.2km</span>
-              </li>
-              <li class="location-item">
-                <el-icon class="loc-icon" color="#409EFF"><Van /></el-icon> 
-                <span class="loc-name">抢修车沪A123</span>
-                <span class="loc-dist">距离 300m</span>
-              </li>
-            </ul>
-          </el-card>
+          </div>
         </el-col>
       </el-row>
-    </el-card>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -92,44 +93,29 @@ const ask = () => {
 }
 </script>
 <style scoped>
-.page-container {
-  padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.box-card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-
-:deep(.el-card__header) {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.header-title {
+.panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1f2d3d;
+  color: #e2e8f0;
 }
 
 .chat-container {
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   height: 600px;
-  background: #fff;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  background: rgba(8, 15, 30, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(0, 216, 255, 0.05);
   overflow: hidden;
 }
 
@@ -137,13 +123,13 @@ const ask = () => {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
-  background-color: #fafbfc;
+  background-color: transparent;
 }
 
 .chat-input {
   padding: 20px;
-  background: #fff;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .input-actions {
@@ -165,20 +151,20 @@ const ask = () => {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #409EFF, #3a8ee6);
+  background: linear-gradient(135deg, #00d8ff, #0088ff);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(64,158,255,0.3);
+  box-shadow: 0 4px 12px rgba(0, 216, 255, 0.3);
 }
 
 .message.user .avatar {
-  background: linear-gradient(135deg, #67C23A, #5daf34);
+  background: linear-gradient(135deg, #00ffaa, #00aa66);
   margin-left: 16px;
-  box-shadow: 0 4px 12px rgba(103,194,58,0.3);
+  box-shadow: 0 4px 12px rgba(0, 255, 170, 0.3);
 }
 
 .message.system .avatar {
@@ -190,35 +176,36 @@ const ask = () => {
   padding: 14px 18px;
   border-radius: 12px;
   border-top-left-radius: 4px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   line-height: 1.6;
   font-size: 14px;
-  color: #303133;
-  border: 1px solid rgba(0,0,0,0.02);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .message.user .bubble {
   border-top-left-radius: 12px;
   border-top-right-radius: 4px;
-  background: #f0f9eb;
-  border: 1px solid #e1f3d8;
-  color: #274c17;
+  background: rgba(0, 255, 170, 0.1);
+  border: 1px solid rgba(0, 255, 170, 0.2);
+  color: #e2e8f0;
 }
 
 .typing-bubble {
-  color: #909399;
+  color: #94a3b8;
   font-style: italic;
 }
 
 .action-bubble {
-  background: #fdf6ec;
-  border: 1px solid #faecd8;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.2);
 }
 
 .bubble-title {
   font-weight: 600;
-  color: #E6A23C;
+  color: #ffb800;
   margin-bottom: 12px;
   font-size: 15px;
 }
@@ -226,7 +213,7 @@ const ask = () => {
 .action-list {
   padding-left: 20px;
   margin-bottom: 16px;
-  color: #606266;
+  color: #e2e8f0;
 }
 
 .action-list li {
@@ -238,29 +225,42 @@ const ask = () => {
 }
 
 .side-card {
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
+  background: rgba(8, 15, 30, 0.4);
+  height: 600px;
+  display: flex;
+  flex-direction: column;
 }
 
-:deep(.side-card .el-card__header) {
+.side-header {
   padding: 16px 20px;
   font-weight: 600;
   font-size: 14px;
-  color: #606266;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.side-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-placeholder {
   height: 300px;
-  background: #f0f2f5;
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px dashed #dcdfe6;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
 }
 
 .placeholder-text {
-  color: #909399;
+  color: #64748b;
   font-size: 13px;
   letter-spacing: 1px;
 }
@@ -275,7 +275,7 @@ const ask = () => {
   display: flex;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 14px;
 }
 
@@ -290,12 +290,12 @@ const ask = () => {
 
 .loc-name {
   flex: 1;
-  color: #303133;
+  color: #e2e8f0;
   font-weight: 500;
 }
 
 .loc-dist {
-  color: #909399;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
+  color: #94a3b8;
+  font-family: "SF Mono", Consolas, monospace;
 }
 </style>

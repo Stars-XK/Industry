@@ -1,56 +1,58 @@
 <template>
-  <div class="page-container">
-    <div class="toolbar">
-      <el-button type="primary" @click="handleAdd">新增用户</el-button>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="toolbar">
+        <el-button type="primary" class="neon-btn" @click="handleAdd">新增用户</el-button>
+      </div>
+
+      <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading"
+        element-loading-text="Thinking..."
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)">
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="username" label="登录名" />
+        <el-table-column prop="nickname" label="用户昵称" />
+        <el-table-column prop="gender" label="性别" width="80">
+          <template #default="{ row }">
+            <span v-if="row.gender === 1" class="status-dot info"></span>
+            <span v-else-if="row.gender === 2" class="status-dot danger"></span>
+            <span v-else class="status-dot warning"></span>
+            {{ row.gender === 1 ? '男' : (row.gender === 2 ? '女' : '未知') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="dept_id" label="部门ID" width="80" />
+        <el-table-column label="分配角色" width="180">
+          <template #default="scope">
+            <el-tag v-for="role in scope.row.roles" :key="role.id" size="small" class="mr-1 custom-tag" style="margin-right:4px;">
+              {{ role.role_name }}
+            </el-tag>
+            <span v-if="!scope.row.roles || scope.row.roles.length === 0" class="text-gray-400">未分配</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="80">
+          <template #default="{ row }">
+            <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
+            {{ row.status === 1 ? '正常' : '禁用' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="created_at" label="创建时间" width="180">
+          <template #default="{ row }">
+            {{ new Date(row.created_at).toLocaleString() }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
+            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading"
-      element-loading-text="Thinking..."
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.8)">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="username" label="登录名" />
-      <el-table-column prop="nickname" label="用户昵称" />
-      <el-table-column prop="gender" label="性别" width="80">
-        <template #default="{ row }">
-          <el-tag v-if="row.gender === 1">男</el-tag>
-          <el-tag v-else-if="row.gender === 2" type="danger">女</el-tag>
-          <el-tag v-else type="info">未知</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="phone" label="手机号" />
-      <el-table-column prop="email" label="邮箱" />
-      <el-table-column prop="dept_id" label="部门ID" width="80" />
-      <el-table-column label="分配角色" width="180">
-        <template #default="scope">
-          <el-tag v-for="role in scope.row.roles" :key="role.id" size="small" class="mr-1" style="margin-right:4px;">
-            {{ role.role_name }}
-          </el-tag>
-          <span v-if="!scope.row.roles || scope.row.roles.length === 0" class="text-gray-400">未分配</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="状态" width="80">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-            {{ row.status === 1 ? '正常' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="创建时间" width="180">
-        <template #default="{ row }">
-          {{ new Date(row.created_at).toLocaleString() }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
-        <template #default="{ row }">
-          <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" custom-class="glass-dialog">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -64,7 +66,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
+
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="手机号" prop="phone">
@@ -86,7 +88,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="性别" prop="gender">
-              <el-select v-model="form.gender" placeholder="请选择性别" style="width: 100%">
+              <el-select v-model="form.gender" placeholder="请选择性别" style="width: 100%" class="dark-input">
                 <el-option
                   v-for="dict in sys_user_sex"
                   :key="dict.dict_value"
@@ -99,28 +101,28 @@
         </el-row>
 
         <el-form-item label="分配角色" prop="roleIds">
-          <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
+          <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%" class="dark-input">
             <el-option v-for="item in roleOptions" :key="item.id" :label="item.role_name" :value="item.id" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="状态" prop="status" v-if="form.id">
           <el-radio-group v-model="form.status">
-            <el-radio 
-              v-for="dict in sys_normal_disable" 
-              :key="dict.dict_value" 
+            <el-radio
+              v-for="dict in sys_normal_disable"
+              :key="dict.dict_value"
               :value="parseInt(dict.dict_value)"
             >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注信息" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+        <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -275,13 +277,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 20px;
-  background: #fff;
-  height: 100%;
-  border-radius: 4px;
-}
 .toolbar {
   margin-bottom: 20px;
+}
+.custom-tag {
+  background: rgba(0, 216, 255, 0.1);
+  border: 1px solid rgba(0, 216, 255, 0.3);
+  color: #00d8ff;
 }
 </style>

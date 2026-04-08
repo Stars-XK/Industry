@@ -1,46 +1,48 @@
 <template>
-  <div class="page-container">
+  <div class="premium-container">
     <!-- 边缘网关状态面板 -->
-    <el-row :gutter="20" style="margin-bottom: 20px;">
+    <el-row :gutter="20" style="margin-bottom: 24px;">
       <el-col :span="24">
-        <el-card shadow="never" class="gateway-status-card">
-          <template #header>
-            <div class="card-header">
-              <span>边缘网关状态监控与策略下发</span>
-            </div>
-          </template>
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="header-title">边缘网关状态监控与策略下发</div>
+            <div class="header-subtitle">Edge Gateway Monitoring & Policy Deployment</div>
+          </div>
           <div class="gateway-list" v-loading="gatewayLoading">
             <el-row :gutter="20">
               <el-col :span="8" v-for="gw in gatewayList" :key="gw.id">
-                <el-card shadow="hover" :class="{'offline-card': gw.is_online === 0}">
+                <div class="industrial-card" :class="{'offline-card': gw.is_online === 0}">
                   <div class="gw-header">
                     <span class="gw-title"><el-icon><Cpu /></el-icon> {{ gw.gateway_sn }}</span>
-                    <el-tag :type="gw.is_online === 1 ? 'success' : 'danger'" size="small">
+                    <el-tag :type="gw.is_online === 1 ? 'success' : 'danger'" size="small" effect="dark" class="industrial-tag">
                       {{ gw.is_online === 1 ? '在线' : '离线' }}
                     </el-tag>
                   </div>
                   <div class="gw-metrics">
-                    <div class="metric"><span class="label">协议:</span> {{ gw.protocol }}</div>
-                    <div class="metric"><span class="label">CPU 负载:</span> {{ gw.cpu_load || 'N/A' }} %</div>
-                    <div class="metric"><span class="label">网络延迟:</span> <span :class="{'high-latency': gw.latency > 100}">{{ gw.latency || 'N/A' }} ms</span></div>
+                    <div class="metric"><span class="label">协议:</span> <span class="value">{{ gw.protocol }}</span></div>
+                    <div class="metric"><span class="label">CPU 负载:</span> <span class="value">{{ gw.cpu_load || 'N/A' }} %</span></div>
+                    <div class="metric"><span class="label">网络延迟:</span> <span class="value" :class="{'high-latency': gw.latency > 100}">{{ gw.latency || 'N/A' }} ms</span></div>
                   </div>
                   <div class="gw-actions">
-                    <el-button type="warning" size="small" plain @click="handleSendProtection(gw)" :disabled="gw.is_online === 0">下发本地断网保护策略</el-button>
+                    <el-button class="neon-btn neon-btn-warning" size="small" @click="handleSendProtection(gw)" :disabled="gw.is_online === 0">下发本地保护策略</el-button>
                   </div>
-                </el-card>
+                </div>
               </el-col>
             </el-row>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
 
     <!-- 测点与标签映射管理 -->
-    <el-card shadow="never" class="mapping-card">
+    <div class="glass-panel" style="flex: 1;">
       <div class="toolbar">
-        <h2>测点与标签映射配置</h2>
         <div>
-          <el-button type="primary" @click="handleAdd" :icon="Plus">新增标签映射</el-button>
+          <div class="header-title">测点与标签映射配置</div>
+          <div class="header-subtitle">Point / Tag Mapping Configuration</div>
+        </div>
+        <div class="toolbar-actions">
+          <el-button class="neon-btn" @click="handleAdd" :icon="Plus">新增映射</el-button>
           <el-upload
             class="upload-demo"
             action="/api/data-center/edge-tag/import"
@@ -51,14 +53,14 @@
             accept=".xlsx,.xls"
             style="display: inline-block; margin: 0 10px;"
           >
-            <el-button type="success" :icon="Upload">批量导入 (Excel)</el-button>
+            <el-button class="neon-btn neon-btn-success" :icon="Upload">批量导入</el-button>
           </el-upload>
-          <el-button @click="getList" :icon="Refresh">刷新</el-button>
+          <el-button class="neon-btn" @click="getList" :icon="Refresh">刷新</el-button>
         </div>
       </div>
 
       <div class="search-bar">
-        <el-form :inline="true" :model="searchForm">
+        <el-form :inline="true" :model="searchForm" class="industrial-form">
           <el-form-item label="原始标签名">
             <el-input v-model="searchForm.keyword" placeholder="如 PLC.S7.Temp" clearable />
           </el-form-item>
@@ -66,43 +68,39 @@
             <el-input v-model="searchForm.device_id" placeholder="关联的设备ID" clearable />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="getList" :icon="Search">搜索</el-button>
+            <el-button class="neon-btn" @click="getList" :icon="Search">搜索</el-button>
           </el-form-item>
         </el-form>
       </div>
 
-      <el-table
-        :data="tableData"
-        border
-        stripe
-        style="width: 100%"
-        v-loading="loading"
-        element-loading-text="Thinking..."
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-      >
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="device_id" label="资产设备ID" width="100" />
-        <el-table-column prop="tag_name" label="原始测点标签名" />
-        <el-table-column prop="standard_name" label="标准化属性名" />
-        <el-table-column prop="data_type" label="数据类型" width="100" />
-        <el-table-column prop="unit" label="单位" width="80" />
-        <el-table-column prop="scaling_factor" label="缩放因子" width="100" />
-        <el-table-column prop="is_active" label="状态" width="80">
-          <template #default="{ row }">
-            <el-tag :type="row.is_active === 1 ? 'success' : 'danger'">
-              {{ row.is_active === 1 ? '启用' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remark" label="备注" show-overflow-tooltip />
-        <el-table-column label="操作" width="150" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="table-container">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          class="industrial-table"
+          v-loading="loading"
+        >
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="device_id" label="设备ID" width="100" />
+          <el-table-column prop="tag_name" label="原始测点标签名" />
+          <el-table-column prop="standard_name" label="标准化属性名" />
+          <el-table-column prop="data_type" label="数据类型" width="100" />
+          <el-table-column prop="unit" label="单位" width="80" />
+          <el-table-column prop="scaling_factor" label="缩放因子" width="100" />
+          <el-table-column prop="is_active" label="状态" width="80" align="center">
+            <template #default="{ row }">
+              <el-switch v-model="row.is_active" :active-value="1" :inactive-value="0" class="industrial-switch" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" label="备注" show-overflow-tooltip />
+          <el-table-column label="操作" width="150" align="center">
+            <template #default="{ row }">
+              <el-button link class="text-neon" @click="handleEdit(row)">编辑</el-button>
+              <el-button link class="text-danger" @click="handleDelete(row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
       <div class="pagination">
         <el-pagination
@@ -111,13 +109,14 @@
           :total="total"
           layout="total, prev, pager, next"
           @current-change="getList"
+          class="industrial-pagination"
         />
       </div>
-    </el-card>
+    </div>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" custom-class="industrial-dialog">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="120px" class="industrial-form">
         <el-form-item label="设备ID" prop="device_id">
           <el-input-number v-model="form.device_id" :min="1" placeholder="输入关联设备ID" style="width: 100%;" />
         </el-form-item>
@@ -164,8 +163,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+        <el-button class="neon-btn" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -238,6 +237,7 @@ const handleSendProtection = (gw: any) => {
     confirmButtonText: '确定下发',
     cancelButtonText: '取消',
     type: 'warning',
+    customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
       await request.post(`/api/data-center/edge-tag/gateways/${gw.id}/protection-policy`)
@@ -316,7 +316,8 @@ const handleEdit = (row: any) => {
 
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除测点 [${row.tag_name}] 的映射记录吗？`, '提示', {
-    type: 'warning'
+    type: 'warning',
+    customClass: 'industrial-msg-box'
   }).then(async () => {
     await request.delete(`/api/data-center/edge-tag/delete/${row.id}`)
     ElMessage.success('删除成功')
@@ -348,77 +349,262 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 20px;
-  background: #f0f2f5;
-  min-height: calc(100vh - 100px);
-}
-.gateway-status-card, .mapping-card {
-  border: none;
-  border-radius: 8px;
-}
-.card-header {
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
+  flex-direction: column;
 }
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.industrial-card {
+  background: rgba(2, 6, 23, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.industrial-card:hover {
+  border-color: rgba(0, 216, 255, 0.3);
+  box-shadow: inset 0 0 20px rgba(0, 216, 255, 0.05);
+}
+
+.offline-card {
+  opacity: 0.6;
+  border-color: rgba(245, 108, 108, 0.2);
+}
+
 .gw-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 10px;
 }
+
 .gw-title {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 16px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  color: #e2e8f0;
 }
+
 .gw-metrics {
   margin-bottom: 15px;
-  font-size: 14px;
-  color: #606266;
+  font-size: 13px;
+  font-family: "SF Mono", Consolas, monospace;
+  flex: 1;
 }
+
 .metric {
   margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
 }
+
 .metric .label {
-  color: #909399;
-  display: inline-block;
-  width: 80px;
+  color: #94a3b8;
 }
+
+.metric .value {
+  color: #00d8ff;
+}
+
 .high-latency {
-  color: #F56C6C;
-  font-weight: bold;
+  color: #F56C6C !important;
+  text-shadow: 0 0 10px rgba(245, 108, 108, 0.5);
 }
-.offline-card {
-  opacity: 0.7;
-  background-color: #fcfcfc;
-}
+
 .gw-actions {
   text-align: right;
+  margin-top: auto;
 }
+
 .toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
 }
+
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
 .search-bar {
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
+
+.table-container {
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(2, 6, 23, 0.3);
+  flex: 1;
+}
+
+.industrial-table {
+  background: transparent !important;
+  --el-table-border-color: rgba(148, 163, 184, 0.05);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
+  --el-table-header-text-color: #cbd5e1;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
+  --el-table-text-color: #94a3b8;
+}
+
+:deep(.el-table th.el-table__cell) {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+.neon-btn:hover:not(:disabled) {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+.neon-btn-warning {
+  border-color: rgba(230, 162, 60, 0.5);
+  color: #E6A23C;
+}
+
+.neon-btn-warning:hover:not(:disabled) {
+  background: rgba(230, 162, 60, 0.1);
+  box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
+  border-color: #E6A23C;
+}
+
+.neon-btn-success {
+  border-color: rgba(103, 194, 58, 0.5);
+  color: #67C23A;
+}
+
+.neon-btn-success:hover:not(:disabled) {
+  background: rgba(103, 194, 58, 0.1);
+  box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  border-color: #67C23A;
+}
+
+.text-neon {
+  color: #00d8ff;
+}
+.text-danger {
+  color: #F56C6C;
+}
+
+.industrial-form :deep(.el-form-item__label) {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+:deep(.el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: none !important;
+}
+
+:deep(.el-input__inner) {
+  color: #e2e8f0 !important;
+}
+
+:deep(.el-select .el-input__wrapper.is-focus) {
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
+}
+
+:deep(.el-switch__core) {
+  background-color: rgba(148, 163, 184, 0.2) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+:deep(.el-switch.is-checked .el-switch__core) {
+  background-color: #00d8ff !important;
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
+}
+
 .pagination {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
+
+:deep(.el-pagination) {
+  --el-pagination-bg-color: transparent;
+  --el-pagination-text-color: #94a3b8;
+  --el-pagination-button-disabled-bg-color: transparent;
+  --el-pagination-hover-color: #00d8ff;
+}
+
+:deep(.el-pager li.is-active) {
+  color: #00d8ff;
+  font-weight: bold;
+}
+
 .form-tip {
   font-size: 12px;
-  color: #909399;
+  color: #94a3b8;
   margin-top: 5px;
   line-height: 1.4;
 }

@@ -1,51 +1,62 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>营收计费与出账对账管理</span>
-          <div>
-            <el-button type="success" plain @click="handleInputReading">录入抄表底度</el-button>
-            <el-button type="primary" @click="handleGenerate">根据抄表生成新账单</el-button>
-          </div>
+  <div class="premium-container">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
+          <div class="header-title">营收计费与出账对账管理</div>
+          <div class="header-subtitle">Billing & Reconciliation Management</div>
         </div>
-      </template>
+        <div class="toolbar-actions">
+          <el-button class="neon-btn neon-btn-success" @click="handleInputReading">录入抄表底度</el-button>
+          <el-button class="neon-btn" @click="handleGenerate">根据抄表生成新账单</el-button>
+        </div>
+      </div>
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="id" label="账单编号" width="100" />
-        <el-table-column prop="account_no" label="大用户号" width="150" />
-        <el-table-column prop="account_name" label="用户名称" />
-        <el-table-column prop="billing_period" label="账期" width="120" />
-        <el-table-column prop="usage_m3" label="核算用水量(m³)" width="150" />
-        <el-table-column prop="tariff_name" label="适用费率" width="150" />
-        <el-table-column prop="total_amount" label="总金额 (元)" width="150">
-          <template #default="scope">
-            <span style="color: #f56c6c; font-weight: bold;">￥{{ scope.row.total_amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 'paid' ? 'success' : 'danger'">
-              {{ scope.row.status === 'paid' ? '已缴费' : '未缴费' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150">
-          <template #default="scope">
-            <el-button 
-              v-if="scope.row.status === 'unpaid'" 
-              size="small" 
-              type="success" 
-              @click="handlePay(scope.row)">
-              确认销账
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <div class="table-container">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
+          <el-table-column prop="id" label="账单编号" width="100" />
+          <el-table-column prop="account_no" label="大用户号" width="150" />
+          <el-table-column prop="account_name" label="用户名称" />
+          <el-table-column prop="billing_period" label="账期" width="120" align="center">
+            <template #default="{ row }">
+              <span class="logic-text">{{ row.billing_period }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="usage_m3" label="核算用水量(m³)" width="150" align="right">
+            <template #default="{ row }">
+              <span class="value-text">{{ row.usage_m3 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tariff_name" label="适用费率" width="150" align="center" />
+          <el-table-column prop="total_amount" label="总金额 (元)" width="150" align="right">
+            <template #default="scope">
+              <span class="money-text">￥{{ scope.row.total_amount }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="scope">
+              <el-tag :type="scope.row.status === 'paid' ? 'success' : 'danger'" effect="dark" class="industrial-tag">
+                {{ scope.row.status === 'paid' ? '已缴费' : '未缴费' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" align="center">
+            <template #default="scope">
+              <el-button 
+                v-if="scope.row.status === 'unpaid'" 
+                size="small" 
+                class="neon-btn neon-btn-success" 
+                @click="handlePay(scope.row)">
+                确认销账
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
 
-    <el-dialog title="手工录入/补录大户抄表底度" v-model="dialogVisible" width="450px" @close="resetForm">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+    <el-dialog title="手工录入/补录大户抄表底度" v-model="dialogVisible" width="450px" @close="resetForm" custom-class="industrial-dialog">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="industrial-form">
         <el-form-item label="企业用户" prop="account_id">
           <el-select v-model="form.account_id" placeholder="请选择企业" style="width: 100%" @change="onAccountChange">
             <el-option v-for="item in accountList" :key="item.id" :label="item.account_name" :value="item.id" />
@@ -63,8 +74,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">保存底度</el-button>
+          <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button class="neon-btn" @click="submitForm">保存底度</el-button>
         </span>
       </template>
     </el-dialog>
@@ -144,12 +155,13 @@ const handleGenerate = () => {
     confirmButtonText: '执行出账',
     cancelButtonText: '取消',
     inputPattern: /^\d{4}-\d{2}$/,
-    inputErrorMessage: '格式不正确，需为 YYYY-MM'
+    inputErrorMessage: '格式不正确，需为 YYYY-MM',
+    customClass: 'industrial-msg-box'
   }).then(async ({ value }) => {
     try {
       const res: any = await request.post('/api/data-center/billing/records/generate', { period: value })
       if (res.errors && res.errors.length > 0) {
-        ElMessageBox.alert(res.errors.join('<br/>'), '部分账单生成失败(缺乏底度)', { dangerouslyUseHTMLString: true, type: 'warning' })
+        ElMessageBox.alert(res.errors.join('<br/>'), '部分账单生成失败(缺乏底度)', { dangerouslyUseHTMLString: true, type: 'warning', customClass: 'industrial-msg-box' })
       } else {
         ElMessage.success(res.message || '生成成功')
       }
@@ -172,6 +184,162 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; }
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-panel {
+  background: rgba(10, 25, 47, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 16px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  font-family: "SF Mono", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.table-container {
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(2, 6, 23, 0.3);
+  flex: 1;
+}
+
+.industrial-table {
+  background: transparent !important;
+  --el-table-border-color: rgba(148, 163, 184, 0.05);
+  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
+  --el-table-header-text-color: #cbd5e1;
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
+  --el-table-text-color: #94a3b8;
+}
+
+:deep(.el-table th.el-table__cell) {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
+}
+
+.logic-text {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.value-text {
+  font-family: "SF Mono", Consolas, monospace;
+  font-weight: 600;
+  color: #00d8ff;
+}
+
+.money-text {
+  font-family: "SF Mono", Consolas, monospace;
+  font-weight: 600;
+  color: #F56C6C;
+  text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 216, 255, 0.5);
+  color: #00d8ff;
+  transition: all 0.3s ease;
+  font-family: "SF Pro Display", sans-serif;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  border-color: #00d8ff;
+}
+
+.neon-btn-success {
+  border-color: rgba(103, 194, 58, 0.5);
+  color: #67C23A;
+}
+
+.neon-btn-success:hover {
+  background: rgba(103, 194, 58, 0.1);
+  box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  border-color: #67C23A;
+}
+
+.industrial-form :deep(.el-form-item__label) {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+:deep(.el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: none !important;
+}
+
+:deep(.el-input__inner) {
+  color: #e2e8f0 !important;
+}
+
+:deep(.el-input.is-disabled .el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+:deep(.el-input.is-disabled .el-input__inner) {
+  color: #64748b !important;
+}
+
+:deep(.el-select .el-input__wrapper.is-focus) {
+  border-color: #00d8ff !important;
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
+}
 </style>

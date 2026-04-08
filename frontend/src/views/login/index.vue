@@ -1,19 +1,23 @@
 <template>
   <div class="login-container">
-    <div class="login-box">
-      <h2>信创工业综合治理平台</h2>
-      <div class="form-group">
-        <label>用户名：</label>
-        <input v-model="form.username" type="text" placeholder="请输入用户名 (默认: admin)" />
+    <div class="login-box glass-panel">
+      <div class="logo-area">
+        <div class="brand-ring"></div>
+        <h2>信创工业综合治理平台</h2>
+        <p class="subtitle">Industrial Digital Twin & SCADA System</p>
       </div>
       <div class="form-group">
-        <label>密 码：</label>
-        <input v-model="form.password" type="password" placeholder="请输入密码 (默认: admin123)" @keyup.enter="preLogin" />
+        <label>用户名</label>
+        <input v-model="form.username" type="text" class="dark-input" placeholder="请输入用户名 (默认: admin)" />
       </div>
-      <button class="login-btn" :disabled="loading" @click="preLogin">
-        {{ loading ? 'Thinking...' : '登 录' }}
+      <div class="form-group">
+        <label>密 码</label>
+        <input v-model="form.password" type="password" class="dark-input" placeholder="请输入密码 (默认: admin123)" @keyup.enter="preLogin" />
+      </div>
+      <button class="login-btn neon-btn" :disabled="loading" @click="preLogin">
+        {{ loading ? 'Authenticating...' : '进入系统 (Enter)' }}
       </button>
-      <p class="error-msg" v-if="errorMsg">{{ errorMsg }}</p>
+      <p class="error-msg" v-if="errorMsg"><el-icon><Warning /></el-icon> {{ errorMsg }}</p>
     </div>
 
     <!-- 滑动拼图验证码 -->
@@ -21,9 +25,9 @@
       :show="isShowCaptcha"
       @success="onCaptchaSuccess"
       @close="onCaptchaClose"
-      successText="验证成功！"
-      failText="验证失败，请重试！"
-      sliderText="向右拖动滑块填充拼图"
+      successText="Security Check Passed"
+      failText="Verification Failed"
+      sliderText="Slide to verify"
     />
   </div>
 </template>
@@ -33,6 +37,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import Vcode from 'vue3-puzzle-vcode'; // 引入滑动验证码
+import { Warning } from '@element-plus/icons-vue';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -103,51 +108,119 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1d2b64 0%, #f8cdda 100%);
+  background-image: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+}
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
 }
 .login-box {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  width: 360px;
+  position: relative;
+  z-index: 1;
+  padding: 48px 40px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(8, 15, 30, 0.6);
+  border: 1px solid rgba(0, 216, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 32px rgba(0, 216, 255, 0.05);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+}
+.logo-area {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+.brand-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 216, 255, 0.3);
+  border-top-color: #00d8ff;
+  margin: 0 auto 20px;
+  animation: spin 4s linear infinite;
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.2);
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
 h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+}
+.subtitle {
+  color: #00d8ff;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+  opacity: 0.8;
+  font-family: "SF Mono", Consolas, monospace;
 }
 .form-group {
-  margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 24px;
 }
 label {
   display: block;
-  margin-bottom: 5px;
-  color: #666;
+  margin-bottom: 8px;
+  color: #94a3b8;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
-input {
+.dark-input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+}
+.dark-input:focus {
+  outline: none;
+  border-color: #00d8ff;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 2px rgba(0, 216, 255, 0.1);
+}
+.dark-input::placeholder {
+  color: #475569;
 }
 .login-btn {
   width: 100%;
-  padding: 12px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  margin-top: 10px;
+  padding: 14px;
   font-size: 16px;
-}
-.login-btn:disabled {
-  background-color: #9E9E9E;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 6px;
 }
 .error-msg {
-  color: red;
+  color: #ff3366;
   text-align: center;
-  margin-top: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 </style>

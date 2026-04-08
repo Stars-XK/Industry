@@ -24,10 +24,10 @@ export class BillingController {
   @RequirePermissions('analytics:account')
   async getAccounts() {
     const query = `
-      SELECT a.*, t.tariff_name, t.price_per_m3 
+      SELECT a.*, t.tariff_name, t.price_per_m3, d.device_name as meter_device_name
       FROM biz_key_account a 
       LEFT JOIN biz_tariff t ON a.tariff_id = t.id 
-      WHERE a.status = 1 
+      LEFT JOIN ast_device d ON a.meter_device_id = d.id
       ORDER BY a.id
     `;
     return await this.dataSource.query(query);

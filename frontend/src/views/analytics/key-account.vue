@@ -26,7 +26,12 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="meter_device_id" label="绑定水表ID" width="120" />
+        <el-table-column prop="meter_device_name" label="绑定水表" width="180">
+          <template #default="scope">
+            <el-tag type="success" v-if="scope.row.meter_device_id">{{ scope.row.meter_device_name || '已绑定' }}</el-tag>
+            <el-tag type="info" v-else>未绑定</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
@@ -62,11 +67,25 @@
         <el-form-item label="企业地址" prop="address">
           <el-input v-model="form.address" />
         </el-form-item>
-        <el-form-item label="绑定水表ID" prop="meter_device_id">
-          <el-input-number v-model="form.meter_device_id" :min="1" style="width: 100%" placeholder="填写 ast_device 的 ID" />
+        <el-form-item label="绑定水表" prop="meter_device_id">
+          <el-select v-model="form.meter_device_id" filterable clearable placeholder="请搜索并选择挂载的物理水表" style="width: 100%">
+            <el-option
+              v-for="item in deviceOptions"
+              :key="item.id"
+              :label="`[${item.device_code}] ${item.device_name}`"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="适用费率ID" prop="tariff_id">
-          <el-input-number v-model="form.tariff_id" :min="1" style="width: 100%" placeholder="填写 biz_tariff 的 ID" />
+        <el-form-item label="适用费率" prop="tariff_id">
+          <el-select v-model="form.tariff_id" placeholder="请选择适用费率" style="width: 100%">
+            <el-option
+              v-for="item in tariffOptions"
+              :key="item.id"
+              :label="`${item.tariff_name} (￥${item.price_per_m3}/m³)`"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="状态" v-if="form.id">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" active-text="正常" inactive-text="停用" />
@@ -92,6 +111,8 @@ const loading = ref(false)
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增档案')
+const tariffOptions = ref<any[]>([])
+const deviceOptions = ref<any[]>([])
 const formRef = ref()
 const form = ref({
   id: '',
@@ -121,6 +142,21 @@ const fetchData = async () => {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const fetchOptions = async () => {
+  try {
+    // 加载全部有效费率
+    const tRes = await request.get('/api/data-center/billing/tariffs')
+    tariffOptions.value = (tRes || []).filter((t: any) => t.status === 1)
+    
+    // 加载全部水表类型的资产设备
+    const aRes = await request.get('/api/data-center/governance/assets')
+    // device_type: 1 为水表
+    deviceOptions.value = (aRes || []).filter((a: any) => a.device_type === 1 && a.status === 1)
+  } catch (e) {
+    console.error(e)
   }
 }
 
@@ -177,6 +213,7 @@ const resetForm = () => {
 
 onMounted(() => {
   fetchData()
+  fetchOptions()
 })
 </script>
 

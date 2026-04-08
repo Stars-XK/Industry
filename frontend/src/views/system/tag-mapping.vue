@@ -108,15 +108,15 @@ const rules = {
 
 const fetchOptions = async () => {
   try {
-    deviceOptions.value = await request.get('/api/data-center/governance/assets') || []
-    gatewayOptions.value = await request.get('/api/data-center/governance/gateways') || []
+    deviceOptions.value = await request.get('/api/v1/data-center/governance/assets') || []
+    gatewayOptions.value = await request.get('/api/v1/data-center/governance/gateways') || []
   } catch (e) { /* fallback */ }
 }
 
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/governance/tags')
+    const res = await request.get('/api/v1/data-center/governance/tags')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -139,7 +139,7 @@ const handleDelete = (row: any) => {
     type: 'error'
   }).then(async () => {
     try {
-      await request.delete(`/api/data-center/governance/tags/${row.id}`)
+      await request.delete(`/api/v1/data-center/governance/tags/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) { /* fallback */ }
@@ -152,9 +152,9 @@ const submitForm = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await request.put(`/api/data-center/governance/tags/${form.value.id}`, form.value)
+          await request.put(`/api/v1/data-center/governance/tags/${form.value.id}`, form.value)
         } else {
-          await request.post('/api/data-center/governance/tags', form.value)
+          await request.post('/api/v1/data-center/governance/tags', form.value)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

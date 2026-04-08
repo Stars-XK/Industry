@@ -190,11 +190,11 @@ const submitOrderForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       try {
-        await request.post('/api/workflow/order', form.value)
+        await request.post('/api/v1/workflow/order', form.value)
         ElMessage.success('抢修工单下发成功')
         dialogVisible.value = false
         // 自动确认报警
-        await request.put(`/api/workflow/alarm/events/${form.value.alarm_id}/confirm`)
+        await request.put(`/api/v1/workflow/alarm/events/${form.value.alarm_id}/confirm`)
         fetchData()
       } catch (e) { /* fallback */ }
     }

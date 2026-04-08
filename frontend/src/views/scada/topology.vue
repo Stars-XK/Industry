@@ -222,7 +222,7 @@ const initWebSocket = () => {
 const getTree = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/scada/topology/tree')
+    const res = await request.get('/api/v1/scada/topology/tree')
     treeData.value = res || []
     chartOption.value.series[0].data = mapTreeDataForEcharts(treeData.value)
   } catch (e) { /* fallback */ } finally {
@@ -233,7 +233,7 @@ const getTree = async () => {
 const getDevices = async (zoneId: number) => {
   deviceLoading.value = true
   try {
-    const res = await request.get(`/api/scada/topology/devices/${zoneId}`)
+    const res = await request.get(`/api/v1/scada/topology/devices/${zoneId}`)
     deviceList.value = (res || []).map((d: any) => ({ ...d, telemetry: {} }))
   } catch (e) { /* fallback */ } finally {
     deviceLoading.value = false

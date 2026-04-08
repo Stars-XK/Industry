@@ -105,7 +105,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/recipe/list')
+    const res = await request.get('/api/v1/data-center/recipe/list')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -129,7 +129,7 @@ const handleDelete = (row: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.delete(`/api/data-center/recipe/${row.id}`)
+      await request.delete(`/api/v1/data-center/recipe/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) { /* fallback */ }
@@ -138,7 +138,7 @@ const handleDelete = (row: any) => {
 
 const handleStatusChange = async (row: any) => {
   try {
-    await request.put(`/api/data-center/recipe/${row.id}`, { ...row })
+    await request.put(`/api/v1/data-center/recipe/${row.id}`, { ...row })
     ElMessage.success('状态已更新')
   } catch (e) { /* fallback */ }
 }
@@ -167,9 +167,9 @@ const submitForm = async () => {
         const payload = { ...form.value, parameters_json: parsedParams }
 
         if (form.value.id) {
-          await request.put(`/api/data-center/recipe/${form.value.id}`, payload)
+          await request.put(`/api/v1/data-center/recipe/${form.value.id}`, payload)
         } else {
-          await request.post('/api/data-center/recipe', payload)
+          await request.post('/api/v1/data-center/recipe', payload)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

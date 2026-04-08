@@ -148,10 +148,10 @@ const roleOptions = ref<any[]>([])
 
 const fetchOptions = async () => {
   try {
-    const res = await request.get('/api/system/dept/tree')
+    const res = await request.get('/api/v1/system/dept/tree')
     deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
     
-    const roleRes = await request.get('/api/system/role/list')
+    const roleRes = await request.get('/api/v1/system/role/list')
     roleOptions.value = roleRes || []
   } catch (e) { /* fallback */ }
 }
@@ -178,7 +178,7 @@ const rules = {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/system/user/list?page=1&size=50')
+    const res = await request.get('/api/v1/system/user/list?page=1&size=50')
     tableData.value = Array.isArray(res) ? res : (res.data ? res.data : (res.list || []))?.list || res.list || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -230,7 +230,7 @@ const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除用户 "${row.username}" 吗？`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/user/delete/${row.id}`)
+    await request.delete(`/api/v1/system/user/delete/${row.id}`)
     ElMessage.success('删除成功')
     getList()
   }).catch(() => {})
@@ -241,7 +241,7 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       if (form.value.id) {
-        await request.put(`/api/system/user/update/${form.value.id}`, {
+        await request.put(`/api/v1/system/user/update/${form.value.id}`, {
           nickname: form.value.nickname,
           phone: form.value.phone,
           email: form.value.email,
@@ -252,7 +252,7 @@ const submitForm = async () => {
         })
         ElMessage.success('更新成功')
       } else {
-        await request.post('/api/system/user/create', {
+        await request.post('/api/v1/system/user/create', {
           username: form.value.username,
           nickname: form.value.nickname,
           phone: form.value.phone,

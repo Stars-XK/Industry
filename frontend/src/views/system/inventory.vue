@@ -317,14 +317,14 @@ const saveData = async () => {
   try {
     if (dialogStatus.value === 'create') {
       await request({
-        url: '/api/workflow/inventory',
+        url: '/api/v1/workflow/inventory',
         method: 'post',
         data: temp
       })
       ElMessage.success('创建成功')
     } else {
       await request({
-        url: `/api/workflow/inventory/${temp.id}`,
+        url: `/api/v1/workflow/inventory/${temp.id}`,
         method: 'put',
         data: temp
       })
@@ -338,7 +338,7 @@ const saveData = async () => {
 const handleDelete = (row: any) => {
   ElMessageBox.confirm('确认删除该备件?', '提示', { type: 'warning' }).then(async () => {
     await request({
-      url: `/api/workflow/inventory/${row.id}`,
+      url: `/api/v1/workflow/inventory/${row.id}`,
       method: 'delete'
     })
     ElMessage.success('删除成功')
@@ -358,7 +358,7 @@ const handleStock = (row: any, action: number) => {
 const saveStock = async () => {
   try {
     await request({
-      url: `/api/workflow/inventory/${currentPart.value.id}/stock`,
+      url: `/api/v1/workflow/inventory/${currentPart.value.id}/stock`,
       method: 'post',
       data: {
         change_type: stockAction.value,
@@ -379,7 +379,7 @@ const handleLogs = async (row: any) => {
   logsDialogVisible.value = true
   try {
     const { data } = await request({
-      url: `/api/workflow/inventory/${row.id}/logs`,
+      url: `/api/v1/workflow/inventory/${row.id}/logs`,
       method: 'get'
     })
     logs.value = data

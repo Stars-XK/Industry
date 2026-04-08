@@ -104,7 +104,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/billing/tariffs')
+    const res = await request.get('/api/v1/data-center/billing/tariffs')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -124,7 +124,7 @@ const handleEdit = (row: any) => {
 
 const handleStatusChange = async (row: any) => {
   try {
-    await request.put(`/api/data-center/billing/tariffs/${row.id}`, row)
+    await request.put(`/api/v1/data-center/billing/tariffs/${row.id}`, row)
     ElMessage.success('状态已更新')
   } catch (error) {
     row.status = row.status === 1 ? 0 : 1 // revert
@@ -139,7 +139,7 @@ const handleDelete = (row: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.delete(`/api/data-center/billing/tariffs/${row.id}`)
+      await request.delete(`/api/v1/data-center/billing/tariffs/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) {
@@ -154,9 +154,9 @@ const submitForm = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await request.put(`/api/data-center/billing/tariffs/${form.value.id}`, form.value)
+          await request.put(`/api/v1/data-center/billing/tariffs/${form.value.id}`, form.value)
         } else {
-          await request.post('/api/data-center/billing/tariffs', form.value)
+          await request.post('/api/v1/data-center/billing/tariffs', form.value)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

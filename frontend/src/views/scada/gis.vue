@@ -105,7 +105,7 @@ const pipelines = ref([
 
 const fetchGisData = async () => {
   try {
-    const res = await request.get('/api/system/asset/list')
+    const res = await request.get('/api/v1/system/asset/list')
     const list = Array.isArray(res) ? res : (res.data ? res.data : (res.list || []))
     // 假设后端返回数据里有经纬度或者根据特定名称进行模拟
     // 为了演示我们在前端附加基于泉州市的模拟经纬度，实际应取后端返回的 lng/lat

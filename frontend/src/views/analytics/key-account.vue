@@ -163,7 +163,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/billing/accounts')
+    const res = await request.get('/api/v1/data-center/billing/accounts')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -173,11 +173,11 @@ const fetchData = async () => {
 const fetchOptions = async () => {
   try {
     // 加载全部有效费率
-    const tRes = await request.get('/api/data-center/billing/tariffs')
+    const tRes = await request.get('/api/v1/data-center/billing/tariffs')
     tariffOptions.value = (tRes || []).filter((t: any) => t.status === 1)
     
     // 加载全部水表类型的资产设备
-    const aRes = await request.get('/api/data-center/governance/assets')
+    const aRes = await request.get('/api/v1/data-center/governance/assets')
     // device_type: 1 为水表
     deviceOptions.value = (aRes || []).filter((a: any) => a.device_type === 1 && a.status === 1)
   } catch (e) { /* fallback */ }
@@ -202,7 +202,7 @@ const handleDelete = (row: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.delete(`/api/data-center/billing/accounts/${row.id}`)
+      await request.delete(`/api/v1/data-center/billing/accounts/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) {
@@ -217,9 +217,9 @@ const submitForm = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await request.put(`/api/data-center/billing/accounts/${form.value.id}`, form.value)
+          await request.put(`/api/v1/data-center/billing/accounts/${form.value.id}`, form.value)
         } else {
-          await request.post('/api/data-center/billing/accounts', form.value)
+          await request.post('/api/v1/data-center/billing/accounts', form.value)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

@@ -126,7 +126,7 @@ const closeResultDesc = ref('')
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/workflow/order/list')
+    const res = await request.get('/api/v1/workflow/order/list')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -135,7 +135,7 @@ const fetchData = async () => {
 
 const fetchOptions = async () => {
   try {
-    usersOptions.value = await request.get('/api/workflow/order/options/users') || []
+    usersOptions.value = await request.get('/api/v1/workflow/order/options/users') || []
   } catch (e) { /* fallback */ }
 }
 
@@ -170,7 +170,7 @@ const submitAssign = async () => {
     return
   }
   try {
-    await request.put(`/api/workflow/order/${currentOrder.value.id}/accept`, { handler_id: assignHandlerId.value })
+    await request.put(`/api/v1/workflow/order/${currentOrder.value.id}/accept`, { handler_id: assignHandlerId.value })
     ElMessage.success('指派成功，工单已流转至处理中状态')
     assignDialogVisible.value = false
     fetchData()
@@ -189,7 +189,7 @@ const submitClose = async () => {
     return
   }
   try {
-    await request.put(`/api/workflow/order/${currentOrder.value.id}/close`, { result_desc: closeResultDesc.value })
+    await request.put(`/api/v1/workflow/order/${currentOrder.value.id}/close`, { result_desc: closeResultDesc.value })
     ElMessage.success('工单已成功闭环')
     closeDialogVisible.value = false
     fetchData()

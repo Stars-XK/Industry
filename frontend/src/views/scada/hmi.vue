@@ -124,7 +124,7 @@ const handleControl = (targetStatus: number) => {
     }
   }).then(async () => {
     try {
-      await request.post('/api/scada/hmi/control', {
+      await request.post('/api/v1/scada/hmi/control', {
         deviceId: 2,
         tag: 'Pump.Status',
         value: targetStatus
@@ -143,7 +143,7 @@ const handleSetFreq = () => {
     customClass: 'industrial-msg-box'
   }).then(async ({ value }) => {
     try {
-      await request.post('/api/scada/hmi/control', {
+      await request.post('/api/v1/scada/hmi/control', {
         deviceId: 2,
         tag: 'Pump.Freq',
         value: parseFloat(value)

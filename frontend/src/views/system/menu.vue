@@ -220,7 +220,7 @@ const rules = {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/system/menu/tree')
+    const res = await request.get('/api/v1/system/menu/tree')
     tableData.value = Array.isArray(res) ? res : (res.data ? res.data : (res.list || [])) || res || []
     menuOptions.value = [{ id: 0, menu_name: '主类目', children: tableData.value }]
   } catch (e) { /* fallback */ } finally {
@@ -284,7 +284,7 @@ const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除菜单 "${row.menu_name}" 吗？`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/menu/delete/${row.id}`)
+    await request.delete(`/api/v1/system/menu/delete/${row.id}`)
     ElMessage.success('删除成功')
     getList()
   }).catch(() => {})
@@ -295,10 +295,10 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       if (form.value.id) {
-        await request.put(`/api/system/menu/update/${form.value.id}`, form.value)
+        await request.put(`/api/v1/system/menu/update/${form.value.id}`, form.value)
         ElMessage.success('更新成功')
       } else {
-        await request.post('/api/system/menu/create', form.value)
+        await request.post('/api/v1/system/menu/create', form.value)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false

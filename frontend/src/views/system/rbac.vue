@@ -172,7 +172,7 @@ const rules = {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/system/role/list')
+    const res = await request.get('/api/v1/system/role/list')
     tableData.value = Array.isArray(res) ? res : (res.list || []) || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -181,7 +181,7 @@ const getList = async () => {
 
 const getMenuTree = async () => {
   try {
-    const res = await request.get('/api/system/menu/tree')
+    const res = await request.get('/api/v1/system/menu/tree')
     menuOptions.value = res || []
   } catch (e) { /* fallback */ }
 }
@@ -232,7 +232,7 @@ const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除角色 "${row.role_name}" 吗？`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/role/delete/${row.id}`)
+    await request.delete(`/api/v1/system/role/delete/${row.id}`)
     ElMessage.success('删除成功')
     getList()
   }).catch(() => {})
@@ -257,10 +257,10 @@ const submitForm = async () => {
       }
 
       if (form.value.id) {
-        await request.put(`/api/system/role/update/${form.value.id}`, payload)
+        await request.put(`/api/v1/system/role/update/${form.value.id}`, payload)
         ElMessage.success('更新成功')
       } else {
-        await request.post('/api/system/role/create', payload)
+        await request.post('/api/v1/system/role/create', payload)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false

@@ -113,7 +113,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/energy/list')
+    const res = await request.get('/api/v1/data-center/energy/list')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -122,7 +122,7 @@ const fetchData = async () => {
 
 const fetchOptions = async () => {
   try {
-    deviceOptions.value = await request.get('/api/data-center/governance/assets') || []
+    deviceOptions.value = await request.get('/api/v1/data-center/governance/assets') || []
   } catch (e) { /* fallback */ }
 }
 
@@ -133,7 +133,7 @@ const handleAdd = () => {
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除该日期的能耗记录吗？`, '警告', { type: 'error' }).then(async () => {
     try {
-      await request.delete(`/api/data-center/energy/record/${row.id}`)
+      await request.delete(`/api/v1/data-center/energy/record/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) { /* fallback */ }
@@ -145,7 +145,7 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       try {
-        await request.post('/api/data-center/energy/record', form.value)
+        await request.post('/api/v1/data-center/energy/record', form.value)
         ElMessage.success('能耗数据录入成功，指标已重新核算')
         dialogVisible.value = false
         fetchData()

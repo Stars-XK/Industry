@@ -223,7 +223,7 @@ const rules = {
 const getGatewayList = async () => {
   gatewayLoading.value = true
   try {
-    const res = await request.get('/api/data-center/edge-tag/gateways')
+    const res = await request.get('/api/v1/data-center/edge-tag/gateways')
     gatewayList.value = res || []
   } catch (e) { /* fallback */ } finally {
     gatewayLoading.value = false
@@ -238,7 +238,7 @@ const handleSendProtection = (gw: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.post(`/api/data-center/edge-tag/gateways/${gw.id}/protection-policy`)
+      await request.post(`/api/v1/data-center/edge-tag/gateways/${gw.id}/protection-policy`)
       ElMessage.success('策略已成功推送到边缘网关队列')
     } catch (e) { /* fallback */ }
   }).catch(() => {})
@@ -247,7 +247,7 @@ const handleSendProtection = (gw: any) => {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/edge-tag/list', {
+    const res = await request.get('/api/v1/data-center/edge-tag/list', {
       params: {
         page: page.value,
         size: size.value,
@@ -313,7 +313,7 @@ const handleDelete = (row: any) => {
     type: 'warning',
     customClass: 'industrial-msg-box'
   }).then(async () => {
-    await request.delete(`/api/data-center/edge-tag/delete/${row.id}`)
+    await request.delete(`/api/v1/data-center/edge-tag/delete/${row.id}`)
     ElMessage.success('删除成功')
     getList()
   }).catch(() => {})
@@ -324,10 +324,10 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       if (form.value.id) {
-        await request.put(`/api/data-center/edge-tag/update/${form.value.id}`, form.value)
+        await request.put(`/api/v1/data-center/edge-tag/update/${form.value.id}`, form.value)
         ElMessage.success('更新成功')
       } else {
-        await request.post('/api/data-center/edge-tag/create', form.value)
+        await request.post('/api/v1/data-center/edge-tag/create', form.value)
         ElMessage.success('创建成功')
       }
       dialogVisible.value = false

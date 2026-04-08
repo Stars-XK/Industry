@@ -107,7 +107,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/workflow/sop/list')
+    const res = await request.get('/api/v1/workflow/sop/list')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -128,7 +128,7 @@ const handleEdit = (row: any) => {
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除 SOP 预案 [${row.sop_name}] 吗？`, '提示', { type: 'warning' }).then(async () => {
     try {
-      await request.delete(`/api/workflow/sop/${row.id}`)
+      await request.delete(`/api/v1/workflow/sop/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) { /* fallback */ }
@@ -137,7 +137,7 @@ const handleDelete = (row: any) => {
 
 const handleStatusChange = async (row: any) => {
   try {
-    await request.put(`/api/workflow/sop/${row.id}`, { ...row, steps_json: typeof row.steps_json === 'string' ? JSON.parse(row.steps_json) : row.steps_json })
+    await request.put(`/api/v1/workflow/sop/${row.id}`, { ...row, steps_json: typeof row.steps_json === 'string' ? JSON.parse(row.steps_json) : row.steps_json })
     ElMessage.success('状态更新成功')
   } catch (e) { /* fallback */ }
 }
@@ -165,9 +165,9 @@ const submitForm = async () => {
         const payload = { ...form.value, steps_json: parsedSteps }
 
         if (form.value.id) {
-          await request.put(`/api/workflow/sop/${form.value.id}`, payload)
+          await request.put(`/api/v1/workflow/sop/${form.value.id}`, payload)
         } else {
-          await request.post('/api/workflow/sop', payload)
+          await request.post('/api/v1/workflow/sop', payload)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

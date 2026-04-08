@@ -153,7 +153,7 @@ const currentZone = ref<any>(null)
 const fetchTree = async () => {
   loadingTree.value = true
   try {
-    const res = await request.get('/api/scada/topology/tree')
+    const res = await request.get('/api/v1/scada/topology/tree')
     treeData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loadingTree.value = false
@@ -194,9 +194,9 @@ const submitZoneForm = async () => {
     if (valid) {
       try {
         if (zoneForm.value.id) {
-          await request.put(`/api/scada/topology/zone/${zoneForm.value.id}`, zoneForm.value)
+          await request.put(`/api/v1/scada/topology/zone/${zoneForm.value.id}`, zoneForm.value)
         } else {
-          await request.post('/api/scada/topology/zone', zoneForm.value)
+          await request.post('/api/v1/scada/topology/zone', zoneForm.value)
         }
         ElMessage.success('保存成功')
         zoneDialogVisible.value = false
@@ -215,7 +215,7 @@ const handleDeleteZone = (data: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.delete(`/api/scada/topology/zone/${data.id}`)
+      await request.delete(`/api/v1/scada/topology/zone/${data.id}`)
       ElMessage.success('删除成功')
       if (currentZone.value && currentZone.value.id === data.id) {
         currentZone.value = null
@@ -254,7 +254,7 @@ const fetchDevices = async () => {
   if (!currentZone.value) return
   loadingDevices.value = true
   try {
-    const res = await request.get(`/api/scada/topology/devices/${currentZone.value.id}`)
+    const res = await request.get(`/api/v1/scada/topology/devices/${currentZone.value.id}`)
     deviceData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loadingDevices.value = false
@@ -263,7 +263,7 @@ const fetchDevices = async () => {
 
 const fetchAvailableAssets = async () => {
   try {
-    const res = await request.get('/api/scada/topology/assets/available')
+    const res = await request.get('/api/v1/scada/topology/assets/available')
     availableAssets.value = res || []
   } catch (e) { /* fallback */ }
 }
@@ -278,7 +278,7 @@ const submitBindForm = async () => {
   await bindFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       try {
-        await request.post(`/api/scada/topology/devices/${currentZone.value.id}/bind`, bindForm.value)
+        await request.post(`/api/v1/scada/topology/devices/${currentZone.value.id}/bind`, bindForm.value)
         ElMessage.success('挂载成功')
         bindDialogVisible.value = false
         fetchDevices()
@@ -293,7 +293,7 @@ const handleUnbindDevice = (row: any) => {
     customClass: 'industrial-msg-box'
   }).then(async () => {
     try {
-      await request.delete(`/api/scada/topology/devices/unbind/${row.rel_id}`)
+      await request.delete(`/api/v1/scada/topology/devices/unbind/${row.rel_id}`)
       ElMessage.success('解绑成功')
       fetchDevices()
     } catch (e) { /* fallback */ }

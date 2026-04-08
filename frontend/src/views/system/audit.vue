@@ -97,7 +97,7 @@ const getList = async () => {
   loading.value = true
   try {
     const { data } = await request({
-      url: '/api/system/audit/list',
+      url: '/api/v1/system/audit/list',
       method: 'get',
       params: listQuery
     })

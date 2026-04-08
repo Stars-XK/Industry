@@ -103,7 +103,7 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/governance/gateways')
+    const res = await request.get('/api/v1/data-center/governance/gateways')
     tableData.value = res || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -128,7 +128,7 @@ const handleDelete = (row: any) => {
     type: 'warning'
   }).then(async () => {
     try {
-      await request.delete(`/api/data-center/governance/gateways/${row.id}`)
+      await request.delete(`/api/v1/data-center/governance/gateways/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (e) { /* fallback */ }
@@ -141,9 +141,9 @@ const submitForm = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await request.put(`/api/data-center/governance/gateways/${form.value.id}`, form.value)
+          await request.put(`/api/v1/data-center/governance/gateways/${form.value.id}`, form.value)
         } else {
-          await request.post('/api/data-center/governance/gateways', form.value)
+          await request.post('/api/v1/data-center/governance/gateways', form.value)
         }
         ElMessage.success('保存成功')
         dialogVisible.value = false

@@ -477,8 +477,6 @@ CREATE TABLE IF NOT EXISTS biz_nrw_report (
     FOREIGN KEY (evaluated_by) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 15. 数据清洗与插值规则表
 CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -486,7 +484,10 @@ CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
     tag_name VARCHAR(100) NOT NULL,
     method VARCHAR(50) NOT NULL COMMENT '插值算法：linear, pchip, zero, previous',
     max_gap_minutes INT NOT NULL DEFAULT 60 COMMENT '允许插值的最大断点间隙',
-    status SMALLINT DEFAULT 1,
+    status SMALLINT DEFAULT 1 COMMENT '1-启用 0-停用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;

@@ -30,13 +30,19 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/scada/, '/api/scada')
       },
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
       '/auth': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/auth/, '/api/v1/auth')
       },
-      '/api': {
+      '/api/menus': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/menus/, '/api/v1/menus')
       }
     }
   },

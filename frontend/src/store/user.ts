@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async login(loginForm: any) {
-      const res = await request.post('/auth/login', loginForm);
+      const res = await request.post('/api/v1/auth/login', loginForm);
       if (res.access_token) {
         this.token = res.access_token;
         localStorage.setItem('token', res.access_token);

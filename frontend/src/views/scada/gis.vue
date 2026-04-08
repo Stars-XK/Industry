@@ -75,6 +75,7 @@ import { ref, onMounted, onUnmounted, computed, shallowRef } from 'vue';
 import { Location, Refresh, Search, Connection, Odometer, Warning } from '@element-plus/icons-vue';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import request from '@/utils/request';
 
 // Layer state
 const layers = ref({
@@ -93,21 +94,46 @@ const pressureGroup = shallowRef<L.LayerGroup | null>(null);
 const pipeGroup = shallowRef<L.LayerGroup | null>(null);
 const alarmGroup = shallowRef<L.LayerGroup | null>(null);
 
-// Dummy Data
-const assets = ref([
-  { id: 'P01', name: '东海主泵站', type: 'pump', lat: 31.213, lng: 121.595, status: 'normal', statusText: '在线 • 320 kPa' },
-  { id: 'P02', name: '金桥增压站', type: 'pump', lat: 31.250, lng: 121.610, status: 'normal', statusText: '在线 • 280 kPa' },
-  { id: 'N01', name: '节点 A - 川沙', type: 'pressure', lat: 31.190, lng: 121.650, status: 'normal', statusText: '稳定 • 0.3 MPa' },
-  { id: 'N02', name: '节点 B - 浦西', type: 'pressure', lat: 31.235, lng: 121.505, status: 'normal', statusText: '稳定 • 0.35 MPa' },
-  { id: 'A01', name: '疑似管道泄漏', type: 'alarm', lat: 31.220, lng: 121.540, status: 'critical', statusText: '压力骤降 -15%' },
-  { id: 'A02', name: '阀门 V-34 离线', type: 'alarm', lat: 31.205, lng: 121.580, status: 'warning', statusText: '遥测信号丢失' },
+// Assets Data
+const assets = ref<any[]>([]);
+
+const pipelines = ref([
+  [[24.873, 118.675], [24.865, 118.660], [24.850, 118.650]], // Route 1
+  [[24.873, 118.675], [24.880, 118.640], [24.895, 118.605]], // Route 2
+  [[24.895, 118.605], [24.910, 118.610]] // Route 3
 ]);
 
-const pipelines = [
-  [[31.213, 121.595], [31.205, 121.580], [31.190, 121.650]], // Route 1
-  [[31.213, 121.595], [31.220, 121.540], [31.235, 121.505]], // Route 2
-  [[31.235, 121.505], [31.250, 121.610]] // Route 3
-];
+const fetchGisData = async () => {
+  try {
+    const res = await request.get('/api/system/asset/list')
+    const list = Array.isArray(res) ? res : (res.data ? res.data : (res.list || []))
+    // 假设后端返回数据里有经纬度或者根据特定名称进行模拟
+    // 为了演示我们在前端附加基于泉州市的模拟经纬度，实际应取后端返回的 lng/lat
+    const mappedAssets = list.map((item: any, index: number) => {
+      let type = 'pressure'
+      if (item.device_type === 4) type = 'pump'
+      
+      return {
+        id: item.device_code,
+        name: item.device_name,
+        type: type,
+        lat: 24.873 + (Math.random() - 0.5) * 0.1, // 泉州市中心维度附近随机
+        lng: 118.675 + (Math.random() - 0.5) * 0.1, // 泉州市中心经度附近随机
+        status: item.status === 1 ? 'normal' : 'warning',
+        statusText: item.status === 1 ? '在线 • 正常' : '信号异常'
+      }
+    })
+    
+    // 追加两个异常报警点
+    mappedAssets.push({ id: 'A01', name: '疑似管道泄漏', type: 'alarm', lat: 24.880, lng: 118.640, status: 'critical', statusText: '压力骤降 -15%' })
+    mappedAssets.push({ id: 'A02', name: '阀门 V-34 离线', type: 'alarm', lat: 24.865, lng: 118.680, status: 'warning', statusText: '遥测信号丢失' })
+    
+    assets.value = mappedAssets
+    renderLayers()
+  } catch (e) {
+    console.error('Failed to fetch GIS data:', e)
+  }
+}
 
 const filteredAssets = computed(() => {
   return assets.value.filter(a => {
@@ -118,9 +144,9 @@ const filteredAssets = computed(() => {
 });
 
 const initMap = () => {
-  // Initialize map centered at Shanghai Pudong area
+  // Initialize map centered at Shanghai Pudong area -> Quanzhou
   map.value = L.map('map', {
-    center: [31.220, 121.580],
+    center: [24.873, 118.675],
     zoom: 13,
     zoomControl: false,
     attributionControl: false
@@ -234,12 +260,13 @@ const focusAsset = (asset: any) => {
 
 const resetView = () => {
   if (map.value) {
-    map.value.flyTo([31.220, 121.580], 13);
+    map.value.flyTo([24.873, 118.675], 13);
   }
 };
 
 onMounted(() => {
   initMap();
+  fetchGisData();
 });
 
 onUnmounted(() => {

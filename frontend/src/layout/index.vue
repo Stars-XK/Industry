@@ -30,6 +30,10 @@
       </nav>
 
       <div class="user-info">
+        <button class="tutorial-btn" @click="startTutorial()">
+          <el-icon><QuestionFilled /></el-icon>
+          页面向导
+        </button>
         <span>欢迎，{{ userStore.userInfo?.username || '本地开发模式' }}</span>
         <button class="logout-btn" @click="handleLogout">退出登录</button>
       </div>
@@ -81,6 +85,10 @@ import { ref, watch, onMounted, computed } from 'vue';
 
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
+import { QuestionFilled } from '@element-plus/icons-vue';
+import { useTutorial } from '@/hooks/useTutorial';
+
+const { startTutorial } = useTutorial();
 
 const router = useRouter();
 const route = useRoute();
@@ -160,28 +168,43 @@ const dynamicMenuTree = computed(() => {
           let childIcon = icons.defaultSub;
           
           // Map some common icons
-          if (child.path === 'scada/overview') childIcon = icons.overview;
-          if (child.path === 'scada/topology') childIcon = icons.topology;
-          if (child.path === 'scada/hmi') childIcon = icons.hmi;
-          if (child.path === 'scada/security') childIcon = icons.security;
-          if (child.path === 'scada/gis') childIcon = icons.location;
-          if (child.path === 'scada/dma-config') childIcon = icons.share;
-          if (child.path === 'analytics/nrw') childIcon = icons.pieChart;
-          if (child.path === 'analytics/mnf') childIcon = icons.trend;
-          if (child.path === 'analytics/key-account') childIcon = icons.userAvatar;
-          if (child.path === 'analytics/billing') childIcon = icons.money;
-          if (child.path === 'analytics/energy') childIcon = icons.lightning;
-          if (child.path === 'analytics/predict') childIcon = icons.cpu;
-          if (child.path === 'analytics/hydraulic') childIcon = icons.opportunity;
-          if (child.path === 'workflow/alarm') childIcon = icons.bell;
-          if (child.path === 'workflow/work-order') childIcon = icons.document;
-          if (child.path === 'workflow/aigc') childIcon = icons.guide;
-          if (child.path === 'workflow/duty') childIcon = icons.message;
-          if (child.path === 'workflow/sop') childIcon = icons.documentChecked;
+          const fullPath = `${menu.path}/${child.path}`.replace(/\/\//g, '/').replace(/^\//, '');
+          if (fullPath === 'scada/overview') childIcon = icons.overview;
+          if (fullPath === 'scada/topology') childIcon = icons.topology;
+          if (fullPath === 'scada/hmi') childIcon = icons.hmi;
+          if (fullPath === 'scada/security') childIcon = icons.security;
+          if (fullPath === 'scada/gis') childIcon = icons.location;
+          if (fullPath === 'scada/dma-config') childIcon = icons.share;
+          if (fullPath === 'analytics/nrw') childIcon = icons.pieChart;
+          if (fullPath === 'analytics/mnf') childIcon = icons.trend;
+          if (fullPath === 'analytics/key-account') childIcon = icons.userAvatar;
+          if (fullPath === 'analytics/billing') childIcon = icons.money;
+          if (fullPath === 'analytics/energy') childIcon = icons.lightning;
+          if (fullPath === 'analytics/predict') childIcon = icons.cpu;
+          if (fullPath === 'analytics/hydraulic') childIcon = icons.opportunity;
+          if (fullPath === 'workflow/alarm') childIcon = icons.bell;
+          if (fullPath === 'workflow/work-order') childIcon = icons.document;
+          if (fullPath === 'workflow/aigc') childIcon = icons.guide;
+          if (fullPath === 'workflow/duty') childIcon = icons.message;
+          if (fullPath === 'workflow/sop') childIcon = icons.documentChecked;
+          if (fullPath === 'system/org') childIcon = icons.connection;
+          if (fullPath === 'system/rbac') childIcon = icons.avatar;
+          if (fullPath === 'system/audit') childIcon = icons.documentChecked;
+          if (fullPath === 'system/dict') childIcon = icons.collection;
+          if (fullPath === 'system/asset') childIcon = icons.briefcase;
+          if (fullPath === 'system/gateway') childIcon = icons.connection;
+          if (fullPath === 'system/tag-mapping') childIcon = icons.cpu;
+          if (fullPath === 'governance/integration') childIcon = icons.link;
+          if (fullPath === 'governance/revenue') childIcon = icons.filter;
+          if (fullPath === 'governance/interpolate') childIcon = icons.operation;
+          if (fullPath === 'governance/interlock') childIcon = icons.setting;
+          if (fullPath === 'governance/edge-tag') childIcon = icons.cpu;
+          if (fullPath === 'governance/recipe') childIcon = icons.tickets;
+          if (fullPath === 'governance/sensor') childIcon = icons.firstAidKit;
 
           return {
             name: child.menu_name,
-            path: `${menu.path}/${child.path}`.replace(/\/\//g, '/'),
+            path: `/${fullPath}`,
             icon: childIcon
           };
         }) || []
@@ -367,6 +390,30 @@ onMounted(() => {
 .user-info {
   display: flex;
   align-items: center;
+  gap: 16px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.tutorial-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 216, 255, 0.1);
+  border: 1px solid rgba(0, 216, 255, 0.3);
+  color: #00d8ff;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tutorial-btn:hover {
+  background: rgba(0, 216, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 216, 255, 0.2);
 }
 .logout-btn {
   margin-left: 15px;

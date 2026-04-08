@@ -221,7 +221,7 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/system/menu/tree')
-    tableData.value = res.data || res || []
+    tableData.value = Array.isArray(res) ? res : (res.data ? res.data : (res.list || [])) || res || []
     menuOptions.value = [{ id: 0, menu_name: '主类目', children: tableData.value }]
   } catch (e) { /* fallback */ } finally {
     loading.value = false

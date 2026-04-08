@@ -173,7 +173,7 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/system/role/list')
-    tableData.value = res.list || []
+    tableData.value = Array.isArray(res) ? res : (res.list || []) || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
   }

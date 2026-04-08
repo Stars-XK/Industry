@@ -179,7 +179,7 @@ const getList = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/system/user/list?page=1&size=50')
-    tableData.value = res.data?.list || res.list || []
+    tableData.value = Array.isArray(res) ? res : (res.data ? res.data : (res.list || []))?.list || res.list || []
   } catch (e) { /* fallback */ } finally {
     loading.value = false
   }

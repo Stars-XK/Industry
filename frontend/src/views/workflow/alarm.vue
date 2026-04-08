@@ -121,7 +121,7 @@ const fetchData = async () => {
   try {
     const res: any = await request.get('/api/v1/workflow/alarm/events')
     if (res && res.code === 200 && res.data) {
-      tableData.value = res.data
+      tableData.value = Array.isArray(res) ? res : (res.data ? res.data : (res.list || []))
     } else if (Array.isArray(res)) {
       tableData.value = res
     } else {

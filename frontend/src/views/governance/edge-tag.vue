@@ -255,7 +255,7 @@ const getList = async () => {
         device_id: searchForm.value.device_id
       }
     })
-    tableData.value = res.list || []
+    tableData.value = Array.isArray(res) ? res : (res.list || []) || []
     total.value = res.total || 0
   } catch (e) { /* fallback */ } finally {
     loading.value = false

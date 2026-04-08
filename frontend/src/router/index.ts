@@ -100,8 +100,8 @@ router.beforeEach(async (to, from, next) => {
         router.addRoute('Layout', route);
       });
 
-      // 挂载完毕后，触发重新导航 (replace 确保不会进入死循环)
-      next({ ...to, replace: true });
+      // 挂载完毕后，触发重新导航。必须去掉 to.name，否则 Vue Router 4 依然会跳转到一开始匹配到的 NotFound 路由
+      next({ path: to.fullPath, replace: true, query: to.query, hash: to.hash });
     } catch (error) {
       console.error('动态路由挂载失败', error);
       userStore.logout();

@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
       return res;
     },
     async fetchMenus() {
-      const res = await request.get('/api/menus/my-menus');
+      const res = await request.get('/api/v1/menus/my-menus');
       this.menus = res;
       return res;
     },

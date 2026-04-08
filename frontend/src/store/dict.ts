@@ -11,7 +11,7 @@ export const useDictStore = defineStore('dict', {
         return this.dictMap.get(dictType)
       }
       try {
-        const res = await request.get(`/api/system/dict/data/list/${dictType}`)
+        const res = await request.get(`/api/v1/system/dict/data/list/${dictType}`)
         // res.data is the array if backend returns { code: 200, data: [...] }
         const dictData = res || []
         this.dictMap.set(dictType, dictData)

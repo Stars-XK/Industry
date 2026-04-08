@@ -55,6 +55,7 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (26, 20, '数据清洗与插值规则', 6, 'interpolate', 'governance/interpolate', 0, 0, 'gov:interpolate', 'C', 1, 1, 'Filter', '', 1),
 (27, 12, '物理资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Briefcase', '', 1),
 (29, 12, '边缘网关设备管理', 6, 'gateway', 'system/gateway', 0, 0, 'sys:asset', 'C', 1, 1, 'Connection', '', 1),
+(31, 12, '测点与时序标签映射', 7, 'tag-mapping', 'system/tag-mapping', 0, 0, 'sys:asset', 'C', 1, 1, 'Cpu', '', 1),
 (28, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
 (25, 20, '综合能效优化与动态成本核算', 5, 'energy', 'analytics/energy', 0, 0, 'analytics:energy', 'C', 1, 1, 'Lightning', '', 1),
 (26, 20, '用量与能耗AI预测分析', 6, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'Cpu', '', 1),

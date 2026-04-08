@@ -1,63 +1,69 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException, Request } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Dept } from '../../../../libs/entities/src/dept.entity';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateDeptDto, UpdateDeptDto } from './dto/dept.dto';
 
-@ApiTags('部门管理')
+@ApiTags('组织架构管理')
 @ApiBearerAuth()
 @Controller('api/system/dept')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class DeptController {
-  constructor(
-    @InjectRepository(Dept)
-    private readonly deptRepository: Repository<Dept>,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   @Get('tree')
-  @ApiOperation({ summary: '获取部门树' })
+  @ApiOperation({ summary: '获取组织架构树' })
+  @RequirePermissions('sys:org')
   async getDeptTree() {
-    const depts = await this.deptRepository.find({ order: { id: 'ASC' } });
-    const buildTree = (data: Dept[], parentId = 0) => {
-      return data
-        .filter((node) => node.parent_id === parentId)
-        .map((node) => ({
-          ...node,
-          children: buildTree(data, node.id),
-        }));
-    };
-    return buildTree(depts, 0);
+    const depts = await this.dataSource.query(`SELECT * FROM sys_dept WHERE is_deleted IS NULL ORDER BY order_num ASC`);
+    return this.buildTree(depts, 0);
   }
 
-  @Post('create')
-  @ApiOperation({ summary: '创建部门' })
-  async createDept(@Request() req, @Body() body: CreateDeptDto) {
-    const dept = new Dept();
-    dept.dept_name = body.dept_name;
-    dept.parent_id = body.parent_id || 0;
-    dept.created_by = req.user.userId;
-    await this.deptRepository.save(dept);
-    return null;
+  @Post()
+  @ApiOperation({ summary: '新增部门' })
+  @RequirePermissions('sys:org')
+  async createDept(@Body() body: any) {
+    const { parent_id, dept_name, order_num, leader, phone, email, status } = body;
+    await this.dataSource.query(
+      `INSERT INTO sys_dept (parent_id, dept_name, order_num, leader, phone, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [parent_id || 0, dept_name, order_num || 0, leader, phone, email, status ?? 1]
+    );
+    return { success: true };
   }
 
-  @Put('update/:id')
-  @ApiOperation({ summary: '更新部门' })
-  async updateDept(@Request() req, @Param('id') id: number, @Body() body: UpdateDeptDto) {
-    await this.deptRepository.update(id, { ...body, updated_by: req.user.userId });
-    return null;
+  @Put(':id')
+  @ApiOperation({ summary: '修改部门' })
+  @RequirePermissions('sys:org')
+  async updateDept(@Param('id') id: string, @Body() body: any) {
+    const { parent_id, dept_name, order_num, leader, phone, email, status } = body;
+    await this.dataSource.query(
+      `UPDATE sys_dept SET parent_id = ?, dept_name = ?, order_num = ?, leader = ?, phone = ?, email = ?, status = ? WHERE id = ?`,
+      [parent_id, dept_name, order_num, leader, phone, email, status, id]
+    );
+    return { success: true };
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   @ApiOperation({ summary: '删除部门' })
-  async deleteDept(@Param('id') id: number) {
-    const hasChildren = await this.deptRepository.count({ where: { parent_id: id } });
-    if (hasChildren > 0) {
-      throw new BadRequestException('存在子部门，不允许删除');
-    }
-    // 使用软删除
-    await this.deptRepository.softDelete(id);
-    return null;
+  @RequirePermissions('sys:org')
+  async deleteDept(@Param('id') id: string) {
+    const children = await this.dataSource.query(`SELECT id FROM sys_dept WHERE parent_id = ? AND is_deleted IS NULL`, [id]);
+    if (children.length > 0) throw new Error('存在下级部门，禁止删除');
+    
+    const users = await this.dataSource.query(`SELECT id FROM sys_user WHERE dept_id = ? AND status != 0`, [id]);
+    if (users.length > 0) throw new Error('该部门下存在用户，禁止删除');
+
+    await this.dataSource.query(`UPDATE sys_dept SET is_deleted = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+    return { success: true };
+  }
+
+  private buildTree(depts: any[], parentId: number): any[] {
+    return depts
+      .filter((d) => Number(d.parent_id) === Number(parentId))
+      .map((d) => ({
+        ...d,
+        label: d.dept_name,
+        children: this.buildTree(depts, d.id),
+      }));
   }
 }

@@ -6,6 +6,7 @@ import { MenuModule } from './menu/menu.module';
 import { SystemModule } from './system/system.module';
 import { AuditLogInterceptor } from '@app/common';
 import { AuditLog } from '@app/entities/audit-log.entity';
+import { DeptController } from './system/dept.controller';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AuditLog } from '@app/entities/audit-log.entity';
     MenuModule,
     SystemModule,
   ],
-  controllers: [],
+  controllers: [DeptController],
   providers: [
     {
       provide: APP_INTERCEPTOR,

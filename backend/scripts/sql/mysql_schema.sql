@@ -300,6 +300,35 @@ CREATE TABLE IF NOT EXISTS sys_dict_data (
     FOREIGN KEY (dict_type) REFERENCES sys_dict_type(dict_type) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 21. 测点与时序标签映射表 (补全)
+CREATE TABLE IF NOT EXISTS iot_tag_mapping (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id BIGINT NOT NULL COMMENT '关联物理设备ID',
+    gateway_id BIGINT COMMENT '关联网关ID',
+    plc_address VARCHAR(100) COMMENT '底层寄存器地址',
+    ts_tag_name VARCHAR(100) NOT NULL COMMENT '时序库全局标签(如 PUMP_01_PRESS)',
+    deadband DECIMAL(10,4) DEFAULT 0 COMMENT '死区/毛刺过滤阈值',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    FOREIGN KEY (gateway_id) REFERENCES iot_gateway(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 20. 部门/组织架构表
+CREATE TABLE IF NOT EXISTS sys_dept (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    parent_id BIGINT DEFAULT 0 COMMENT '父部门id',
+    dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
+    order_num INT DEFAULT 0 COMMENT '显示顺序',
+    leader VARCHAR(20) DEFAULT NULL COMMENT '负责人',
+    phone VARCHAR(11) DEFAULT NULL COMMENT '联系电话',
+    email VARCHAR(50) DEFAULT NULL COMMENT '邮箱',
+    status SMALLINT DEFAULT 1 COMMENT '部门状态(1正常 0停用)',
+    is_deleted TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

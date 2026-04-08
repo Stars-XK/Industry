@@ -172,4 +172,50 @@ export class GovernanceController {
     await this.dataSource.query(`DELETE FROM iot_gateway WHERE id = ?`, [id]);
     return { success: true };
   }
+
+  @Get('tags')
+  @ApiOperation({ summary: '获取测点与时序标签映射列表' })
+  @RequirePermissions('sys:asset')
+  async getTags() {
+    const query = `
+      SELECT t.*, a.device_name, a.device_code, g.gateway_sn 
+      FROM iot_tag_mapping t
+      LEFT JOIN ast_device a ON t.device_id = a.id
+      LEFT JOIN iot_gateway g ON t.gateway_id = g.id
+      ORDER BY t.id DESC LIMIT 500
+    `;
+    return await this.dataSource.query(query);
+  }
+
+  @Post('tags')
+  @ApiOperation({ summary: '新增测点映射' })
+  @RequirePermissions('sys:asset')
+  async createTag(@Body() body: any) {
+    const { device_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+    await this.dataSource.query(
+      `INSERT INTO iot_tag_mapping (device_id, gateway_id, plc_address, ts_tag_name, deadband) VALUES (?, ?, ?, ?, ?)`,
+      [device_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0]
+    );
+    return { success: true };
+  }
+
+  @Put('tags/:id')
+  @ApiOperation({ summary: '修改测点映射' })
+  @RequirePermissions('sys:asset')
+  async updateTag(@Param('id') id: string, @Body() body: any) {
+    const { device_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+    await this.dataSource.query(
+      `UPDATE iot_tag_mapping SET device_id = ?, gateway_id = ?, plc_address = ?, ts_tag_name = ?, deadband = ? WHERE id = ?`,
+      [device_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('tags/:id')
+  @ApiOperation({ summary: '删除测点映射' })
+  @RequirePermissions('sys:asset')
+  async deleteTag(@Param('id') id: string) {
+    await this.dataSource.query(`DELETE FROM iot_tag_mapping WHERE id = ?`, [id]);
+    return { success: true };
+  }
 }

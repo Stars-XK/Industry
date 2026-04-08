@@ -353,8 +353,8 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- ==============================================================
 
 -- 填充 sys_audit_log 基础日志
-INSERT INTO sys_audit_log (req_url, req_method, user_id, ip_address, before_data_json, after_data_json, action_type, remark)
-VALUES ('/api/v1/system/init', 'POST', 1, '127.0.0.1', '{}', '{"status":"ok"}', 'init', '系统初始化完成');
+INSERT INTO sys_audit_log (req_url, req_method, user_id, ip_address, req_body, execution_time)
+VALUES ('/api/v1/system/init', 'POST', 1, '127.0.0.1', '{"action": "init", "status":"ok", "remark":"系统初始化完成"}', 150);
 
 -- 填充 dma_daily DMA日聚合数据 (模拟 7 天时序降采样假数据)
 INSERT INTO dma_daily (ts, zone_id, supply, sale, balance_value, night_flow) VALUES
@@ -367,18 +367,18 @@ INSERT INTO dma_daily (ts, zone_id, supply, sale, balance_value, night_flow) VAL
 (CURRENT_DATE, 'DMA-001', 13900, 10000, 3900, 29);
 
 -- 填充 wf_duty_schedule 运维排班与位置
-INSERT INTO wf_duty_schedule (user_id, duty_date, shift_type, location_lng, location_lat) VALUES
-(1, CURRENT_DATE, 'day', '121.4737', '31.2304'),
-(2, CURRENT_DATE, 'day', '121.4837', '31.2404');
+INSERT INTO wf_duty_schedule (user_id, duty_date, shift_type, is_attended) VALUES
+(1, CURRENT_DATE, 'morning', 1),
+(2, CURRENT_DATE, 'afternoon', 0);
 
 -- 填充 biz_energy_record 综合能效记录
-INSERT INTO biz_energy_record (zone_id, record_date, water_supply, power_consume, gas_consume, ton_water_power) VALUES
-(1, DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY), 13800, 2800, 150, 0.20),
-(1, DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 13650, 2750, 140, 0.20),
-(1, CURRENT_DATE, 13900, 2900, 160, 0.21);
+INSERT INTO biz_energy_record (device_id, record_date, power_kwh, water_pumped_m3, energy_efficiency) VALUES
+(1, DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY), 2800, 13800, 0.20),
+(1, DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 2750, 13650, 0.20),
+(1, CURRENT_DATE, 2900, 13900, 0.21);
 
 -- 填充 biz_recipe 工艺配方库
-INSERT INTO biz_recipe (recipe_code, recipe_name, target_flow, pac_ratio, pam_ratio, mix_time, created_by) VALUES
-('RCP-S01', '夏季高藻期标准配方', 5000, 15.5, 0.8, 120, 1),
-('RCP-W01', '冬季低温低浊配方', 4500, 12.0, 0.5, 180, 1),
-('RCP-EMG', '原水氨氮超标应急配方', 3000, 25.0, 1.2, 90, 1);
+INSERT INTO biz_recipe (recipe_name, process_type, parameters_json, status) VALUES
+('夏季高藻期标准配方', 'DOSE', '{"target_flow": 5000, "pac_ratio": 15.5, "pam_ratio": 0.8, "mix_time": 120}', 1),
+('冬季低温低浊配方', 'DOSE', '{"target_flow": 4500, "pac_ratio": 12.0, "pam_ratio": 0.5, "mix_time": 180}', 1),
+('原水氨氮超标应急配方', 'DOSE', '{"target_flow": 3000, "pac_ratio": 25.0, "pam_ratio": 1.2, "mix_time": 90}', 1);

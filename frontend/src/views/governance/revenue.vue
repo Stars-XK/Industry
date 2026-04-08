@@ -13,8 +13,8 @@
               <el-form label-width="120px" label-position="left" class="industrial-form">
                 <el-form-item label="计费周期">
                   <el-radio-group v-model="rule.cycle">
-                    <el-radio label="1">单月抄表</el-radio>
-                    <el-radio label="2">双月抄表</el-radio>
+                    <el-radio value="1">单月抄表</el-radio>
+                    <el-radio value="2">双月抄表</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="分摊方式">

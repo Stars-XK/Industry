@@ -113,9 +113,9 @@
         </el-form-item>
         <el-form-item label="挂载方向" prop="direction">
           <el-radio-group v-model="bindForm.direction">
-            <el-radio :label="1">进水表 (流入)</el-radio>
-            <el-radio :label="-1">出水表 (流出)</el-radio>
-            <el-radio :label="0">内部分表 (损耗/自用)</el-radio>
+            <el-radio :value="1">进水表 (流入)</el-radio>
+            <el-radio :value="-1">出水表 (流出)</el-radio>
+            <el-radio :value="0">内部分表 (损耗/自用)</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>

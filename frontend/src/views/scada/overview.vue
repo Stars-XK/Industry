@@ -48,8 +48,8 @@
           <div class="panel-header">
             <div class="panel-title">能耗折标煤趋势 <span>Energy Trend</span></div>
             <el-radio-group v-model="energyTrendRange" size="small" class="custom-radio" @change="fetchEnergyTrend">
-              <el-radio-button label="7days">7天</el-radio-button>
-              <el-radio-button label="30days">30天</el-radio-button>
+              <el-radio-button value="7days">7天</el-radio-button>
+              <el-radio-button value="30days">30天</el-radio-button>
             </el-radio-group>
           </div>
           <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">

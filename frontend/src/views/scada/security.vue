@@ -17,8 +17,8 @@
             <div class="panel-title">RTSP 视频矩阵 <span>Video Matrix</span></div>
             <div class="panel-extra">
               <el-radio-group size="small" class="custom-radio" v-model="layoutMode">
-                <el-radio-button label="4">4分屏</el-radio-button>
-                <el-radio-button label="9">9分屏</el-radio-button>
+                <el-radio-button value="4">4分屏</el-radio-button>
+                <el-radio-button value="9">9分屏</el-radio-button>
               </el-radio-group>
             </div>
           </div>

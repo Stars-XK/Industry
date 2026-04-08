@@ -48,8 +48,8 @@
         </el-form-item>
         <el-form-item label="在线状态" prop="is_online">
           <el-radio-group v-model="form.is_online">
-            <el-radio :label="1">在线</el-radio>
-            <el-radio :label="0">离线</el-radio>
+            <el-radio :value="1">在线</el-radio>
+            <el-radio :value="0">离线</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">

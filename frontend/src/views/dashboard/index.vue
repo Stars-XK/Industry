@@ -11,16 +11,16 @@
         <div class="panel-title">综合KPI概览</div>
         <div class="kpi-box">
           <div class="kpi-item">
-            <div class="kpi-label">今日总供水 (m³)</div>
-            <div class="kpi-value text-blue">124,532</div>
+            <div class="kpi-label">本月总供水 (m³)</div>
+            <div class="kpi-value text-blue">{{ kpi.supply.toLocaleString() }}</div>
           </div>
           <div class="kpi-item">
-            <div class="kpi-label">今日总售水 (m³)</div>
-            <div class="kpi-value text-green">112,410</div>
+            <div class="kpi-label">本月总售水 (m³)</div>
+            <div class="kpi-value text-green">{{ kpi.sales.toLocaleString() }}</div>
           </div>
           <div class="kpi-item">
-            <div class="kpi-label">实时产销差率</div>
-            <div class="kpi-value text-yellow">9.73%</div>
+            <div class="kpi-label">当月产销差率</div>
+            <div class="kpi-value text-yellow">{{ kpi.nrw }}%</div>
           </div>
         </div>
 
@@ -59,6 +59,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import request from '@/utils/request'
 import * as echarts from 'echarts'
 
 const router = useRouter()
@@ -68,6 +69,8 @@ let mapChart: any = null
 let pressureChart: any = null
 let energyChart: any = null
 
+const kpi = ref({ supply: 124532, sales: 112410, nrw: 9.73 })
+
 const alarms = ref([
   { time: '14:23:11', level: 'HH', desc: '一厂区出水压力超高限' },
   { time: '14:15:02', level: 'H', desc: '徐汇泵站余氯偏高' },
@@ -75,6 +78,22 @@ const alarms = ref([
   { time: '13:10:20', level: 'HH', desc: '2号储水池液位低低报' },
   { time: '12:05:00', level: 'H', desc: '网关 GW-002 CPU 负载高' }
 ])
+
+const fetchKpi = async () => {
+  try {
+    const { data } = await request.get('/api/data-center/dashboard/kpi')
+    kpi.value = data
+  } catch (e) { console.error(e) }
+}
+
+const fetchAlarms = async () => {
+  try {
+    const { data } = await request.get('/api/data-center/dashboard/alarms')
+    if (data && data.length > 0) {
+      alarms.value = data
+    }
+  } catch (e) { console.error(e) }
+}
 
 const goHome = () => {
   router.push('/scada/overview')
@@ -163,7 +182,12 @@ const initCharts = () => {
 
 onMounted(() => {
   updateTime()
-  timer = setInterval(updateTime, 1000)
+  fetchKpi()
+  fetchAlarms()
+  timer = setInterval(() => {
+    updateTime()
+    fetchAlarms()
+  }, 5000)
   setTimeout(initCharts, 100)
 
   window.addEventListener('resize', () => {

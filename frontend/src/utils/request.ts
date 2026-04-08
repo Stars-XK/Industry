@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { ElMessage } from 'element-plus';
 
 // 定义接口响应的基础结构
 export interface ApiResponse<T = any> {
@@ -35,7 +36,8 @@ service.interceptors.response.use(
     // 如果自定义 code 不为 200，视为业务错误
     if (res.code !== 200) {
       console.error(`[API Error]: ${res.message}`);
-      // TODO: 结合 UI 组件库 (如 Element Plus) 弹出全局错误提示
+      // 结合 UI 组件库弹出全局错误提示
+      ElMessage.error(res.message || 'Error');
       
       // 401: Token 过期或未登录
       if (res.code === 401) {

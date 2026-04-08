@@ -6,6 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TransformInterceptor, JwtStrategy } from '@app/common';
 import { EdgeTagController } from './edge-tag/edge-tag.controller';
 import { OverviewController } from './overview/overview.controller';
+import { DashboardController } from './overview/dashboard.controller';
 import { BillingController } from './billing/billing.controller';
 import { AnalysisController } from './analysis/analysis.controller';
 import { PredictController } from './analysis/predict.controller';
@@ -33,7 +34,7 @@ import { GovernanceTaskService } from './tasks/governance.task';
     }),
     TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],
-  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController, PredictController, GovernanceController, TariffController, EnergyController, RecipeController],
+  controllers: [EdgeTagController, OverviewController, DashboardController, BillingController, AnalysisController, PredictController, GovernanceController, TariffController, EnergyController, RecipeController],
   providers: [
     JwtStrategy,
     GovernanceTaskService,

@@ -140,11 +140,11 @@ INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (206, 112, '嘉定汽车城DMA', 3, 1);
 
 -- 4. 设备资产测试数据 (匹配上海市DMA)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (1, 'METER_IN_01', '张江园区总进水管表', 1, 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (2, 'PUMP_01', '浦东2号泵站主泵', 4, 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (203, 'PRESS_01', '张江末端管网压力计', 2, 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (3, 'WQ_01', '滴水湖水质监测仪', 3, 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, created_by) VALUES (4, 'ENV_01', '徐汇地下泵站环境传感器', 5, 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (1, 'METER_IN_01', '张江园区总进水管表', 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (2, 'PUMP_01', '浦东2号泵站主泵', 4);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '张江末端管网压力计', 2);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (3, 'WQ_01', '滴水湖水质监测仪', 3);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (4, 'ENV_01', '徐汇地下泵站环境传感器', 5);
 
 -- 5. DMA 与 设备资产 绑定关系
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 张江

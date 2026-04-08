@@ -46,6 +46,7 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (13, 10, '工业SCADA工艺组态', 3, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
 (14, 10, '安防与环境空间监控', 4, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'Camera', '', 1),
 (15, 10, 'DMA 拓扑树配置', 5, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
+(16, 10, 'GIS 管网与资产调度', 6, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 1, 1, 'Location', '', 1),
 
 -- 3. 多维统计与数据分析
 (20, 0, '多维统计与数据分析', 20, '/analytics', 'Layout', 0, 0, '', 'M', 1, 1, 'DataAnalysis', '', 1),
@@ -274,7 +275,10 @@ INSERT IGNORE INTO dma_1h (ts, zone_id, supply, sale, balance_value, night_flow)
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
+(1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16),
 (1, 30), (1, 31), (1, 32), (1, 35),
+(2, 10), (2, 11), (2, 12), (2, 13), (2, 16),
+(3, 10), (3, 11), (3, 12), (3, 16),
 (3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP
 
 -- 11. 第四阶段 初始数据

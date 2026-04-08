@@ -136,7 +136,18 @@
 
 ---
 
-## 3. 时序数据库设计 (基于 TDengine 3.3.8)
+## 3. 时序数据库与流计算架构 (工业级降本增效)
+
+由于工业现场的物联网设备数据（`device_raw`）可能达到百亿级，传统的“Node.js 业务服务在内存中执行 SUM/AVG 聚合”将导致严重的 CPU 满载与 OOM (内存溢出) 宕机。
+
+本系统严格遵守**“计算下推”**架构原则：
+1. **TDengine 负责重度计算 (流计算 Stream Computing)**：
+   - 原始数据接入 `device_raw` 后，由 TDengine 内部的 `CQ` (Continuous Queries) 和流计算引擎，持续不断地生成 5 分钟级 (`device_5m`, `dma_5m`)、小时级 (`dma_1h`)、以及日级 (`dma_daily`) 的预聚合超级表。
+   - 即使业务层（Node.js 服务）宕机或升级，底层的时序库仍会利用 `WATERMARK` 和 `MAX_DELAY` 机制，保证数据计算的连续性和防乱序能力。
+2. **Node.js (NestJS) 仅作为调度与查询中心**：
+   - 严禁在 Node.js 中执行 `SELECT SUM(value) FROM device_raw GROUP BY timestamp`。
+   - 所有的报表、趋势图必须**直接读取 TDengine 已经算好的结果集（如 `dma_1h`, `dma_daily`）**，确保 API 接口耗时在毫秒级 (`<10ms`)。
+   - 对于复杂的数据清洗与断点插值规则，Node.js 负责从 MySQL 读取配置策略（如 PCHIP、Linear），随后生成对应的 TDengine `INTERP` 与 `FILL` SQL 语句，**下发给时序数据库执行底层计算作业**。
 
 针对高频监控数据，采用 **“超级表 (Super Table) + 子表 (Sub Table)”** 模型，并使用 **流计算 (Stream Computing)** 进行多级降采样聚合。
 所有关系维度通过 **Tag** (如 `device_id`, `zone_id`) 映射。

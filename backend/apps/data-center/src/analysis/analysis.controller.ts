@@ -78,6 +78,7 @@ export class AnalysisController {
 
     return { success: true, message: '基线重算完成，异常分数已更新' };
   }
+  @Get('mnf/scatter')
   @ApiOperation({ summary: '获取夜间最小流量 AI 基线与实际值的散点图数据' })
   @RequirePermissions('analytics:mnf')
   async getMnfScatterData(@Query('zoneId') zoneId?: string) {

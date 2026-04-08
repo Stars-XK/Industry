@@ -4,10 +4,10 @@
 
 -- 1. 基础部门
 INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, leader, phone, email, status, remark, created_by) VALUES
-(1, 0, '0', '上海城投水务集团', 1, '张总', '13800138000', 'hq@shwater.com', 1, '集团最高组织架构', 1),
-(2, 1, '0,1', '浦东威立雅供水公司', 1, '李厂长', '13900139001', 'pd@shwater.com', 1, '浦东新区业务', 1),
+(1, 0, '0', '泉州水务集团', 1, '张总', '13800138000', 'hq@shwater.com', 1, '集团最高组织架构', 1),
+(2, 1, '0,1', '丰泽区供水分公司', 1, '李厂长', '13900139001', 'pd@shwater.com', 1, '丰泽区业务', 1),
 (3, 1, '0,1', '黄浦区供水分公司', 2, '王局', '13900139002', 'hp@shwater.com', 1, '黄浦区业务', 1),
-(4, 1, '0,1', '徐汇区供水分公司', 3, '赵局', '13900139003', 'xh@shwater.com', 1, '徐汇区业务', 1),
+(4, 1, '0,1', '鲤城区供水分公司', 3, '赵局', '13900139003', 'xh@shwater.com', 1, '鲤城区业务', 1),
 (5, 1, '0,1', '长宁区供水分公司', 4, '钱局', '13900139004', 'cn@shwater.com', 1, '长宁区业务', 1),
 (6, 1, '0,1', '静安区供水分公司', 5, '孙局', '13900139005', 'ja@shwater.com', 1, '静安区业务', 1),
 (7, 1, '0,1', '普陀区供水分公司', 6, '周局', '13900139006', 'pt@shwater.com', 1, '普陀区业务', 1),
@@ -95,30 +95,30 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- 9. 初始化边缘网关和测点映射规则
 -- ----------------------------
 INSERT IGNORE INTO `iot_gateway` (`id`, `gateway_sn`, `protocol`, `is_online`, `cpu_load`, `latency`, `remark`) VALUES
-(1, 'GW-SH-PD-001', 'MQTT', 1, 15.2, 12, '浦东张江网关'),
-(2, 'GW-SH-XH-002', 'Modbus', 0, 0, 0, '徐汇漕河泾网关');
+(1, 'GW-SH-PD-001', 'MQTT', 1, 15.2, 12, '丰泽东海网关'),
+(2, 'GW-SH-XH-002', 'Modbus', 0, 0, 0, '鲤城洛江网关');
 
 INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
-(1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 'float', '°C', 1.0, 1, '张江园区温度监控'),
-(1, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 'float', 'MPa', 1.0, 1, '张江园区水压'),
-(1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '张江园区瞬时流量'),
-(2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '浦东2号泵站运行状态(1=开,0=关)'),
-(2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '浦东2号泵站变频器频率'),
-(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '浦东2号泵站功率'),
-(3, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 'float', 'NTU', 1.0, 1, '滴水湖水质浊度'),
-(3, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 'float', 'mg/L', 1.0, 1, '滴水湖余氯'),
-(3, 1, 'WQ.PH', '40024', 'ph', 0.05, 'float', '', 1.0, 1, '滴水湖pH值'),
-(4, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 'float', '°C', 1.0, 1, '徐汇地下泵站环境温度'),
-(4, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 'float', '%', 1.0, 1, '徐汇地下泵站环境湿度'),
-(4, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 'float', 'ppm', 1.0, 1, '徐汇地下泵站硫化氢浓度'),
-(4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '徐汇地下泵站一氧化碳浓度'),
-(4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, '徐汇地下泵站PM2.5');
--- 3. DMA分区测试数据 (以上海市进行设计分区)
+(1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 'float', '°C', 1.0, 1, '东海园区温度监控'),
+(1, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 'float', 'MPa', 1.0, 1, '东海园区水压'),
+(1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '东海园区瞬时流量'),
+(2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '丰泽2号泵站运行状态(1=开,0=关)'),
+(2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '丰泽2号泵站变频器频率'),
+(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '丰泽2号泵站功率'),
+(3, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 'float', 'NTU', 1.0, 1, '西湖水质浊度'),
+(3, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 'float', 'mg/L', 1.0, 1, '西湖余氯'),
+(3, 1, 'WQ.PH', '40024', 'ph', 0.05, 'float', '', 1.0, 1, '西湖pH值'),
+(4, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 'float', '°C', 1.0, 1, '鲤城地下泵站环境温度'),
+(4, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 'float', '%', 1.0, 1, '鲤城地下泵站环境湿度'),
+(4, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站硫化氢浓度'),
+(4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
+(4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, '鲤城地下泵站PM2.5');
+-- 3. DMA分区测试数据 (以泉州市进行设计分区)
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
-(101, 0, '上海市供水总管网', 1, 1),
-(102, 101, '浦东新区', 2, 1),
+(101, 0, '泉州市供水总管网', 1, 1),
+(102, 101, '丰泽区', 2, 1),
 (103, 101, '黄浦区', 2, 1),
-(104, 101, '徐汇区', 2, 1),
+(104, 101, '鲤城区', 2, 1),
 (105, 101, '长宁区', 2, 1),
 (106, 101, '静安区', 2, 1),
 (107, 101, '普陀区', 2, 1),
@@ -133,26 +133,26 @@ INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (116, 101, '奉贤区', 2, 1),
 (117, 101, '崇明区', 2, 1),
 -- 增加一些三级 DMA 分区作为底层挂载节点
-(201, 102, '张江高科技园区DMA', 3, 1),
-(202, 102, '临港新片区DMA', 3, 1),
-(203, 102, '陆家嘴金融区DMA', 3, 1),
-(204, 104, '漕河泾开发区DMA', 3, 1),
+(201, 102, '东海科技园区DMA', 3, 1),
+(202, 102, '泉港新片区DMA', 3, 1),
+(203, 102, '浦西金融区DMA', 3, 1),
+(204, 104, '洛江开发区DMA', 3, 1),
 (205, 110, '紫竹高新区DMA', 3, 1),
 (206, 112, '嘉定汽车城DMA', 3, 1);
 
--- 4. 设备资产测试数据 (匹配上海市DMA)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (1, 'METER_IN_01', '张江园区总进水管表', 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (2, 'PUMP_01', '浦东2号泵站主泵', 4);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '张江末端管网压力计', 2);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (3, 'WQ_01', '滴水湖水质监测仪', 3);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (4, 'ENV_01', '徐汇地下泵站环境传感器', 5);
+-- 4. 设备资产测试数据 (匹配泉州市DMA)
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (1, 'METER_IN_01', '东海园区总进水管表', 1);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (2, 'PUMP_01', '丰泽2号泵站主泵', 4);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '东海末端管网压力计', 2);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (3, 'WQ_01', '西湖水质监测仪', 3);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (4, 'ENV_01', '鲤城地下泵站环境传感器', 5);
 
 -- 5. DMA 与 设备资产 绑定关系
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 张江
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 浦东
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 张江
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 202, 3, 0); -- 临港
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 204, 4, 0); -- 漕河泾
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 东海
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 丰泽
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 东海
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 202, 3, 0); -- 泉港
+INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 204, 4, 0); -- 洛江
 
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 
@@ -194,17 +194,17 @@ INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, 
 
 -- 1. 费率配置
 INSERT IGNORE INTO biz_tariff (id, tariff_code, tariff_name, price_per_m3, description) VALUES
-(1, 'T_RESIDENTIAL', '居民生活用水', 2.8000, '上海市居民第一阶梯水价'),
+(1, 'T_RESIDENTIAL', '居民生活用水', 2.8000, '泉州市居民第一阶梯水价'),
 (2, 'T_INDUSTRIAL', '工业生产用水', 4.5000, '工业园区及高耗水企业统一水价'),
 (3, 'T_COMMERCIAL', '商业服务用水', 5.2000, '大型商圈及服务业水价'),
 (4, 'T_SPECIAL', '特种行业用水', 12.0000, '洗车、高尔夫球场等高水耗行业');
 
--- 2. 大用户档案 (挂载到上海市真实 DMA)
+-- 2. 大用户档案 (挂载到泉州市真实 DMA)
 INSERT IGNORE INTO biz_key_account (id, account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_id) VALUES
-(1, 'KA-2026-0001', '张江微电子制造中心', '王厂长', '13811112222', '上海市浦东新区张江高科技园区', '半导体制造', 2, 1),
-(2, 'KA-2026-0002', '临港超级工厂', '马总', '13922223333', '上海市浦东新区临港新片区', '汽车制造', 2, 3),
-(3, 'KA-2026-0003', '陆家嘴国金中心', '刘经理', '13733334444', '上海市浦东新区世纪大道8号', '商业综合体', 3, NULL),
-(4, 'KA-2026-0004', '漕河泾科技绿洲', '陈主任', '13644445555', '上海市徐汇区漕河泾开发区', '软件及服务', 3, 4);
+(1, 'KA-2026-0001', '东海微电子制造中心', '王厂长', '13811112222', '泉州市丰泽区东海科技园区', '半导体制造', 2, 1),
+(2, 'KA-2026-0002', '泉港超级工厂', '马总', '13922223333', '泉州市丰泽区泉港新片区', '汽车制造', 2, 3),
+(3, 'KA-2026-0003', '浦西万达广场', '刘经理', '13733334444', '泉州市丰泽区世纪大道8号', '商业综合体', 3, NULL),
+(4, 'KA-2026-0004', '洛江科技绿洲', '陈主任', '13644445555', '泉州市鲤城区洛江开发区', '软件及服务', 3, 4);
 
 -- 3. 营收账单 (生成2026年3月和4月的模拟账单)
 INSERT IGNORE INTO biz_billing (id, account_id, billing_period, usage_m3, total_amount, status) VALUES
@@ -215,7 +215,7 @@ INSERT IGNORE INTO biz_billing (id, account_id, billing_period, usage_m3, total_
 (5, 3, '2026-03', 8500.00, 44200.00, 'paid'),
 (6, 4, '2026-03', 3200.00, 16640.00, 'paid');
 
--- 4. 夜间最小流量 (MNF) 基线数据 (针对张江DMA: zone_id = 201)
+-- 4. 夜间最小流量 (MNF) 基线数据 (针对东海DMA: zone_id = 201)
 INSERT IGNORE INTO biz_mnf_analysis (id, zone_id, analysis_date, mnf_value, baseline_value, anomaly_score, status) VALUES
 (1, 201, '2026-04-01', 12.5, 12.0, 0.1, 'normal'),
 (2, 201, '2026-04-02', 12.2, 12.0, 0.05, 'normal'),

@@ -100,7 +100,7 @@ const loadData = async () => {
   } catch (error) {
     // Fallback if API is missing
     hasAnomaly.value = true
-    anomalyZone.value = '张江园区'
+    anomalyZone.value = '东海园区'
     nextTick(() => {
       initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [12, 11, 13, 25, 28, 26, 29], [10, 10, 10, 10, 10, 10, 10])
     })

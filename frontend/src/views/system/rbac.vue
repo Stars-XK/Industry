@@ -7,6 +7,7 @@
       </div>
       <div class="header-actions">
         <el-button class="neon-btn" @click="handleAdd">新增角色</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
     </div>
 
@@ -123,10 +124,20 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入用户数据"
+      templateName="用户档案"
+      :templateColumns="['所属部门ID', '登录账号', '用户姓名', '手机号码', '角色ID', '状态(0/1)']"
+      @success="getList"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
@@ -134,6 +145,7 @@ import { useDict } from '@/hooks/useDict'
 const { sys_normal_disable, sys_data_scope } = useDict('sys_normal_disable', 'sys_data_scope')
 
 const loading = ref(false)
+const showImport = ref(false)
 const tableData = ref([])
 const menuOptions = ref([])
 

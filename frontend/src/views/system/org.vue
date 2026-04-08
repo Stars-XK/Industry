@@ -7,6 +7,7 @@
       </div>
       <div class="header-actions">
         <el-button class="neon-btn" @click="handleAdd(0)">新增顶级部门</el-button>
+        <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
     </div>
 
@@ -133,11 +134,21 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入部门数据"
+      templateName="部门档案"
+      :templateColumns="[\'上级部门ID\', \'部门编码\', \'部门名称\', \'负责人\', \'联系电话\', \'邮箱\', \'备注\']"
+      @success="fetchDeptTree"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
@@ -145,6 +156,7 @@ import { useDict } from '@/hooks/useDict'
 const { sys_normal_disable } = useDict('sys_normal_disable')
 
 const loading = ref(false)
+const showImport = ref(false)
 const tableData = ref([])
 const deptOptions = ref<any[]>([])
 

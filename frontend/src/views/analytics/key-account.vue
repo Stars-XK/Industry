@@ -7,6 +7,7 @@
           <div class="header-subtitle">Key Account & Enterprise Profile Management</div>
         </div>
         <el-button class="neon-btn" @click="handleAdd">新增档案</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
       <div class="table-container">
@@ -114,15 +115,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入用水大户数据"
+      templateName="大用户档案"
+      :templateColumns="['客户编号', '企业名称', '联系人', '联系电话', '地址', '所属行业', '绑定水表ID', '关联DMA分区ID']"
+      @success="fetchData"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref([])
 const loading = ref(false)
+const showImport = ref(false)
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增档案')

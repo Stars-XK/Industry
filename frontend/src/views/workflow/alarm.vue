@@ -131,7 +131,7 @@ const fetchData = async () => {
     console.error('获取报警列表失败:', e)
     // 降级假数据，防止全白板
     tableData.value = [
-      { id: 1, device_name: '张江主干管压力计', alarm_desc: '管网压力突降', alarm_level: 2, status: 0, start_time: new Date().toISOString(), sop_name: '爆管抢修预案' },
+      { id: 1, device_name: '东海主干管压力计', alarm_desc: '管网压力突降', alarm_level: 2, status: 0, start_time: new Date().toISOString(), sop_name: '爆管抢修预案' },
       { id: 2, device_name: '2号厂区提升泵', alarm_desc: '变频器电流过载', alarm_level: 1, status: 1, start_time: new Date(Date.now() - 3600000).toISOString(), sop_name: '机电设备维修' }
     ]
   } finally {

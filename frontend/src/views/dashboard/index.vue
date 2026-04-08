@@ -73,8 +73,8 @@ const kpi = ref({ supply: 124532, sales: 112410, nrw: 9.73 })
 
 const alarms = ref([
   { time: '14:23:11', level: 'HH', desc: '一厂区出水压力超高限' },
-  { time: '14:15:02', level: 'H', desc: '徐汇泵站余氯偏高' },
-  { time: '13:45:55', level: 'L', desc: '张江园区流量异常下降' },
+  { time: '14:15:02', level: 'H', desc: '鲤城泵站余氯偏高' },
+  { time: '13:45:55', level: 'L', desc: '东海园区流量异常下降' },
   { time: '13:10:20', level: 'HH', desc: '2号储水池液位低低报' },
   { time: '12:05:00', level: 'H', desc: '网关 GW-002 CPU 负载高' }
 ])
@@ -106,8 +106,8 @@ const fetchAlarms = async () => {
     console.error('获取报警失败:', e)
     // 降级假数据
     alarms.value = [
-      { content: '[浦东] 张江园区主干管瞬时压力突降 15%', type: 'critical' },
-      { content: '[徐汇] 地下泵站环境湿度偏高 85%', type: 'warning' },
+      { content: '[丰泽] 东海园区主干管瞬时压力突降 15%', type: 'critical' },
+      { content: '[鲤城] 地下泵站环境湿度偏高 85%', type: 'warning' },
       { content: '[核心] 2号水泵变频器通讯心跳延迟', type: 'warning' }
     ]
   }

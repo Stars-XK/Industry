@@ -8,8 +8,8 @@
         </div>
         <div class="header-actions">
           <el-select v-model="listQuery.zoneId" @change="fetchData" class="industrial-select" style="width: 240px" placeholder="选择预测区域">
-            <el-option label="张江高科园区" value="201" />
-            <el-option label="漕河泾开发区" value="202" />
+            <el-option label="东海科技园区" value="201" />
+            <el-option label="洛江开发区" value="202" />
           </el-select>
         </div>
       </div>

@@ -10,6 +10,7 @@
               <div class="header-subtitle">DMA Topology Tree</div>
             </div>
             <el-button class="neon-btn" size="small" @click="handleAddZone(0)">新增顶级分区</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
           </div>
           <div class="tree-container" v-loading="loadingTree">
             <el-tree
@@ -127,10 +128,20 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入DMA分区数据"
+      templateName="DMA分区"
+      :templateColumns="['上级分区ID', '分区名称', '分级(1/2/3)', '关联经纬度', '备注']"
+      @success="fetchTree"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 

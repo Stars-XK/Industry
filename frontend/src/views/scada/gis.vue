@@ -95,10 +95,10 @@ const alarmGroup = shallowRef<L.LayerGroup | null>(null);
 
 // Dummy Data
 const assets = ref([
-  { id: 'P01', name: '张江主泵站', type: 'pump', lat: 31.213, lng: 121.595, status: 'normal', statusText: '在线 • 320 kPa' },
+  { id: 'P01', name: '东海主泵站', type: 'pump', lat: 31.213, lng: 121.595, status: 'normal', statusText: '在线 • 320 kPa' },
   { id: 'P02', name: '金桥增压站', type: 'pump', lat: 31.250, lng: 121.610, status: 'normal', statusText: '在线 • 280 kPa' },
   { id: 'N01', name: '节点 A - 川沙', type: 'pressure', lat: 31.190, lng: 121.650, status: 'normal', statusText: '稳定 • 0.3 MPa' },
-  { id: 'N02', name: '节点 B - 陆家嘴', type: 'pressure', lat: 31.235, lng: 121.505, status: 'normal', statusText: '稳定 • 0.35 MPa' },
+  { id: 'N02', name: '节点 B - 浦西', type: 'pressure', lat: 31.235, lng: 121.505, status: 'normal', statusText: '稳定 • 0.35 MPa' },
   { id: 'A01', name: '疑似管道泄漏', type: 'alarm', lat: 31.220, lng: 121.540, status: 'critical', statusText: '压力骤降 -15%' },
   { id: 'A02', name: '阀门 V-34 离线', type: 'alarm', lat: 31.205, lng: 121.580, status: 'warning', statusText: '遥测信号丢失' },
 ]);

@@ -104,9 +104,18 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入资产与站点数据"
+      templateName="设备站点"
+      :templateColumns="['资产编码', '资产名称', '设备类型(1水表/2压力计/3水质仪/4泵站/5环境)', '型号', '供应商', '安装日期', '状态(0/1/2)']"
+    />
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { View } from '@element-plus/icons-vue'
 const dialogVisible = ref(false)
 const assets = ref([

@@ -6,7 +6,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -276,51 +276,41 @@ CREATE TABLE IF NOT EXISTS dma_1h (
     INDEX `idx_dma_1h_ts` (`zone_id`, `ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_1h 降级模拟表';
 
-SET FOREIGN_KEY_CHECKS = 1;
-
--- 18. 数据字典类型表
-CREATE TABLE IF NOT EXISTS sys_dict_type (
+-- ====================== 运维排班与协同 ======================
+CREATE TABLE IF NOT EXISTS wf_duty_schedule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    dict_name VARCHAR(100) NOT NULL COMMENT '字典名称',
-    dict_type VARCHAR(100) UNIQUE NOT NULL COMMENT '字典类型(如 sys_user_sex)',
-    status SMALLINT DEFAULT 1 COMMENT '状态(1正常 0停用)',
-    remark VARCHAR(500) COMMENT '备注',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 19. 数据字典数据表
-CREATE TABLE IF NOT EXISTS sys_dict_data (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    dict_type VARCHAR(100) NOT NULL COMMENT '字典类型',
-    dict_label VARCHAR(100) NOT NULL COMMENT '字典标签',
-    dict_value VARCHAR(100) NOT NULL COMMENT '字典键值',
-    css_class VARCHAR(100) COMMENT '样式属性',
-    list_class VARCHAR(100) COMMENT '表格回显样式',
-    is_default SMALLINT DEFAULT 0 COMMENT '是否默认(1是 0否)',
-    status SMALLINT DEFAULT 1 COMMENT '状态(1正常 0停用)',
-    sort_order INT DEFAULT 0 COMMENT '字典排序',
-    remark VARCHAR(500) COMMENT '备注',
+    user_id BIGINT NOT NULL COMMENT '值班人',
+    duty_date DATE NOT NULL COMMENT '值班日期',
+    shift_type VARCHAR(20) NOT NULL COMMENT '班次: morning, afternoon, night',
+    is_attended SMALLINT DEFAULT 0 COMMENT '0-未打卡, 1-已打卡, 2-缺勤',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (dict_type) REFERENCES sys_dict_type(dict_type) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (user_id) REFERENCES sys_user(id) ON DELETE CASCADE,
+    UNIQUE KEY `uk_duty_date_user` (duty_date, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维排班表';
 
-SET FOREIGN_KEY_CHECKS = 1;
-
--- 21. 测点与时序标签映射表 (补全)
-CREATE TABLE IF NOT EXISTS iot_tag_mapping (
+-- ====================== 综合能效分析 ======================
+CREATE TABLE IF NOT EXISTS biz_energy_record (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_id BIGINT NOT NULL COMMENT '关联物理设备ID',
-    gateway_id BIGINT COMMENT '关联网关ID',
-    plc_address VARCHAR(100) COMMENT '底层寄存器地址',
-    ts_tag_name VARCHAR(100) NOT NULL COMMENT '时序库全局标签(如 PUMP_01_PRESS)',
-    deadband DECIMAL(10,4) DEFAULT 0 COMMENT '死区/毛刺过滤阈值',
+    device_id BIGINT NOT NULL COMMENT '耗能设备(如泵)',
+    record_date DATE NOT NULL COMMENT '能耗记录日期',
+    power_kwh DOUBLE NOT NULL COMMENT '日耗电量 (kWh)',
+    water_pumped_m3 DOUBLE COMMENT '日泵水量 (m3)',
+    energy_efficiency DOUBLE COMMENT '吨水百米能耗指标 (kWh/m3.100m)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
-    FOREIGN KEY (gateway_id) REFERENCES iot_gateway(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    UNIQUE KEY `uk_energy_date_device` (record_date, device_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='综合能效与成本核算表';
 
-SET FOREIGN_KEY_CHECKS = 1;
+-- ====================== 数据中台与工业配方 ======================
+CREATE TABLE IF NOT EXISTS biz_recipe (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    recipe_name VARCHAR(100) NOT NULL COMMENT '配方名称',
+    process_type VARCHAR(50) NOT NULL COMMENT '工艺类型: DOSE(加药), AERATE(曝气)',
+    parameters_json JSON NOT NULL COMMENT '工艺配方参数JSON',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工业工艺配方库表';
 
 -- ====================== 第四阶段: 报警与运维工单 ======================
 
@@ -355,8 +345,6 @@ CREATE TABLE IF NOT EXISTS alm_rule (
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警规则判定表';
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 24. 报警事件表
 CREATE TABLE IF NOT EXISTS alm_event (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -374,8 +362,6 @@ CREATE TABLE IF NOT EXISTS alm_event (
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警事件收敛表';
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- 24. 工单主表
 CREATE TABLE IF NOT EXISTS wf_work_order (
@@ -399,25 +385,6 @@ CREATE TABLE IF NOT EXISTS wf_work_order (
     FOREIGN KEY (creator_id) REFERENCES sys_user(id),
     FOREIGN KEY (handler_id) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维工单主表';
-
-SET FOREIGN_KEY_CHECKS = 1;
-
--- 20. 部门/组织架构表
-CREATE TABLE IF NOT EXISTS sys_dept (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    parent_id BIGINT DEFAULT 0 COMMENT '父部门id',
-    dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
-    order_num INT DEFAULT 0 COMMENT '显示顺序',
-    leader VARCHAR(20) DEFAULT NULL COMMENT '负责人',
-    phone VARCHAR(11) DEFAULT NULL COMMENT '联系电话',
-    email VARCHAR(50) DEFAULT NULL COMMENT '邮箱',
-    status SMALLINT DEFAULT 1 COMMENT '部门状态(1正常 0停用)',
-    is_deleted TIMESTAMP NULL DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
@@ -489,5 +456,40 @@ CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+-- 25. 备品备件库存表
+CREATE TABLE IF NOT EXISTS ast_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    part_name VARCHAR(100) NOT NULL COMMENT '备件名称',
+    part_code VARCHAR(50) UNIQUE NOT NULL COMMENT '备件编码',
+    category VARCHAR(50) COMMENT '分类: valve, meter, chemical, other',
+    specification VARCHAR(100) COMMENT '规格型号',
+    unit VARCHAR(20) COMMENT '单位',
+    stock_quantity DECIMAL(10,2) DEFAULT 0 COMMENT '当前库存数量',
+    safe_stock DECIMAL(10,2) DEFAULT 0 COMMENT '安全库存预警线',
+    unit_price DECIMAL(10,2) DEFAULT 0 COMMENT '单价(成本核算用)',
+    location VARCHAR(100) COMMENT '仓库位置',
+    status SMALLINT DEFAULT 1 COMMENT '1-正常, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='备品备件库存表';
+
+-- 26. 库存出入库流水表
+CREATE TABLE IF NOT EXISTS ast_inventory_log (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    part_id BIGINT NOT NULL COMMENT '备件ID',
+    order_id BIGINT COMMENT '关联工单ID(出库用)',
+    change_type SMALLINT NOT NULL COMMENT '1-入库, -1-出库, 0-盘点修正',
+    quantity DECIMAL(10,2) NOT NULL COMMENT '变动数量',
+    after_stock DECIMAL(10,2) NOT NULL COMMENT '变动后库存',
+    operator_id BIGINT COMMENT '操作人',
+    remark VARCHAR(255) COMMENT '备注',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (part_id) REFERENCES ast_inventory(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES wf_work_order(id) ON DELETE SET NULL,
+    FOREIGN KEY (operator_id) REFERENCES sys_user(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存出入库流水表';
 
 SET FOREIGN_KEY_CHECKS = 1;

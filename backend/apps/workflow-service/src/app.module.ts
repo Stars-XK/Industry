@@ -5,7 +5,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AlarmController } from './alarm/alarm.controller';
 import { SopController } from './sop/sop.controller';
 import { OrderController } from './order/order.controller';
+import { DutyController } from './order/duty.controller';
 import { AlarmTaskService } from './tasks/alarm.task';
+import { InventoryController } from "./inventory/inventory.controller";
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { AlarmTaskService } from './tasks/alarm.task';
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AlarmController, SopController, OrderController],
+  controllers: [AlarmController, SopController, OrderController, DutyController, InventoryController],
   providers: [AlarmTaskService],
 })
 export class AppModule {}

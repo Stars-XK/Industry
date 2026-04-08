@@ -11,6 +11,9 @@ import { AnalysisController } from './analysis/analysis.controller';
 import { GovernanceController } from './governance/governance.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
+import { TariffController } from './billing/tariff.controller';
+import { EnergyController } from './billing/energy.controller';
+import { RecipeController } from './governance/recipe.controller';
 import { GovernanceTaskService } from './tasks/governance.task';
 
 @Module({
@@ -29,7 +32,7 @@ import { GovernanceTaskService } from './tasks/governance.task';
     }),
     TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],
-  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController, GovernanceController],
+  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController, GovernanceController, TariffController, EnergyController, RecipeController],
   providers: [
     JwtStrategy,
     GovernanceTaskService,

@@ -13,15 +13,8 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Layout',
     component: () => import('../layout/index.vue'),
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('../views/dashboard/index.vue'),
-        meta: { title: '数字孪生大屏' }
-      }
-    ]
+    redirect: '/scada/overview',
+    children: []
   }
 ];
 

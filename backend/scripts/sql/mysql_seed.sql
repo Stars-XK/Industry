@@ -36,7 +36,6 @@ INSERT IGNORE INTO sys_user_role (user_id, role_id) VALUES (1, 1);
 INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
 -- 1. 门户
 (1, 0, '统一登录页', 1, '/login', 'login/index', 0, 0, 'sys:login', 'C', 0, 1, 'User', '隐藏的登录页路由', 1),
-(2, 0, '数字孪生大屏', 2, '/dashboard', 'dashboard/index', 0, 1, 'sys:dashboard', 'C', 1, 1, 'Odometer', '首页大屏', 1),
 
 -- 2. 综合业务监控台
 (10, 0, '综合业务监控台', 10, '/scada', 'Layout', 0, 0, '', 'M', 1, 1, 'Monitor', '', 1),
@@ -88,7 +87,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (51, 50, '资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1),
 (52, 50, '备品备件与仓储管理', 6, 'inventory', 'system/inventory', 0, 0, 'sys:inventory', 'C', 1, 1, 'ShoppingCart', '', 1),
 (56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
-(57, 50, '低代码可视化组态工作台', 8, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1);
 
 -- ----------------------------
 -- 9. 初始化边缘网关和测点映射规则
@@ -299,3 +297,16 @@ INSERT IGNORE INTO alm_event (id, device_id, alarm_type, alarm_level, alarm_valu
 INSERT IGNORE INTO wf_work_order (id, order_sn, order_type, alarm_id, device_id, title, description, priority, status, creator_id, handler_id) VALUES
 (1, 'WO-20260408-0001', 2, 1, 1, '一厂区进水总管紧急抢修', '系统检测到压力异常骤降，已触发 SOP，请立即前往现场排查漏点', 4, 10, 1, 3);
 
+
+-- 插入备品备件种子数据
+INSERT INTO ast_inventory (id, part_name, part_code, category, specification, unit, stock_quantity, safe_stock, unit_price, location, status) VALUES
+(1, 'DN100蝶阀', 'V-DN100-01', 'valve', 'DN100', '个', 5, 10, 850.00, 'A区货架1', 1),
+(2, '智能超声波水表', 'M-US-02', 'meter', 'DN50', '台', 20, 5, 1200.00, 'B区货架2', 1),
+(3, 'PAC(聚合氯化铝)', 'C-PAC-01', 'chemical', '工业级25kg/袋', '袋', 150, 50, 45.00, '化工库', 1),
+(4, '潜水排污泵', 'P-SUB-01', 'other', '5.5kW', '台', 2, 1, 3500.00, 'C区重型货架', 1);
+
+INSERT INTO ast_inventory_log (part_id, order_id, change_type, quantity, after_stock, operator_id, remark) VALUES
+(1, NULL, 1, 5, 5, 1, '初始化入库'),
+(2, NULL, 1, 20, 20, 1, '初始化入库'),
+(3, NULL, 1, 150, 150, 1, '初始化入库'),
+(4, NULL, 1, 2, 2, 1, '初始化入库');

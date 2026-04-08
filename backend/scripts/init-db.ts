@@ -7,9 +7,9 @@ import * as path from 'path';
 const MYSQL_CONFIG = {
   host: process.env.DB_HOST || '139.224.26.134',
   port: parseInt(process.env.DB_PORT || '3306'),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PWD || 'Trae@2025',
-  database: process.env.DB_NAME || 'trae_industry',
+  user: process.env.DB_USER || 'Industry',
+  password: process.env.DB_PWD || 'nDTe2mNcSMadmY3S',
+  database: process.env.DB_NAME || 'Industry',
   multipleStatements: true // 允许一次执行多条 SQL 语句
 };
 

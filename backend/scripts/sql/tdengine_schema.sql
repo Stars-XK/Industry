@@ -17,9 +17,11 @@ CREATE STABLE IF NOT EXISTS user_raw (ts TIMESTAMP, raw_value DOUBLE) TAGS (user
 
 -- 衍生聚合超级表
 CREATE STABLE IF NOT EXISTS device_5m (ts TIMESTAMP, raw_value DOUBLE, qcode TINYINT) TAGS (device_id VARCHAR(50), zone_id VARCHAR(30), device_type TINYINT);
+CREATE STABLE IF NOT EXISTS device_1h (ts TIMESTAMP, raw_value DOUBLE) TAGS (device_id VARCHAR(50), zone_id VARCHAR(30), device_type TINYINT);
 CREATE STABLE IF NOT EXISTS device_daily (ts TIMESTAMP, daily_used DOUBLE) TAGS (device_id VARCHAR(50), zone_id VARCHAR(30), device_type TINYINT);
 CREATE STABLE IF NOT EXISTS user_daily (ts TIMESTAMP, daily_used DOUBLE) TAGS (user_id VARCHAR(50), zone_id VARCHAR(30), user_type TINYINT);
 CREATE STABLE IF NOT EXISTS dma_5m (ts TIMESTAMP, supply DOUBLE, sale DOUBLE, balance_value DOUBLE, night_flow DOUBLE) TAGS (zone_id VARCHAR(30));
+CREATE STABLE IF NOT EXISTS dma_1h (ts TIMESTAMP, supply DOUBLE, sale DOUBLE, balance_value DOUBLE, night_flow DOUBLE) TAGS (zone_id VARCHAR(30));
 CREATE STABLE IF NOT EXISTS dma_daily (ts TIMESTAMP, supply DOUBLE, sale DOUBLE, balance_value DOUBLE, night_flow DOUBLE) TAGS (zone_id VARCHAR(30));
 CREATE STABLE IF NOT EXISTS dma_monthly (ts TIMESTAMP, supply DOUBLE, sale DOUBLE, balance_value DOUBLE) TAGS (zone_id VARCHAR(30));
 CREATE STABLE IF NOT EXISTS dma_yearly (ts TIMESTAMP, supply DOUBLE, sale DOUBLE, balance_value DOUBLE) TAGS (zone_id VARCHAR(30));
@@ -39,6 +41,19 @@ FROM device_raw
 PARTITION BY device_id, zone_id, device_type
 INTERVAL(5m);
 
+-- 1.1 设备 1 小时降采样
+CREATE STREAM IF NOT EXISTS stream_device_1h
+INTERVAL(1h) SLIDING(1h) FROM device_5m
+PARTITION BY device_id, zone_id, device_type
+STREAM_OPTIONS(WATERMARK(1m) | MAX_DELAY(5s) | IGNORE_DISORDER)
+INTO device_1h
+AS SELECT
+  _wstart AS ts,
+  AVG(raw_value) AS raw_value
+FROM device_5m
+PARTITION BY device_id, zone_id, device_type
+INTERVAL(1h);
+
 -- 2. DMA 5 分钟供水
 CREATE STREAM IF NOT EXISTS stream_dma_5m
 INTERVAL(5m) SLIDING(5m) FROM device_5m
@@ -54,6 +69,22 @@ AS SELECT
 FROM device_5m
 PARTITION BY zone_id
 INTERVAL(5m);
+
+-- 2.1 DMA 1 小时供水
+CREATE STREAM IF NOT EXISTS stream_dma_1h
+INTERVAL(1h) SLIDING(1h) FROM dma_5m
+PARTITION BY zone_id
+STREAM_OPTIONS(WATERMARK(1m) | IGNORE_DISORDER)
+INTO dma_1h
+AS SELECT
+  _wstart AS ts,
+  SUM(supply) AS supply,
+  CAST(0 AS DOUBLE) AS sale,
+  CAST(0 AS DOUBLE) AS balance_value,
+  CAST(0 AS DOUBLE) AS night_flow
+FROM dma_5m
+PARTITION BY zone_id
+INTERVAL(1h);
 
 -- 3. DMA 日供水
 CREATE STREAM IF NOT EXISTS stream_dma_daily_supply

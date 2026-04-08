@@ -251,6 +251,29 @@ CREATE TABLE IF NOT EXISTS biz_meter_reading (
     FOREIGN KEY (account_id) REFERENCES biz_key_account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 17. 时序库超级表在 MySQL 中的降级模拟表 (用于没有安装 TDengine 时的系统演示不报错)
+CREATE TABLE IF NOT EXISTS dma_daily (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ts TIMESTAMP NOT NULL,
+    zone_id VARCHAR(30),
+    supply DOUBLE,
+    sale DOUBLE,
+    balance_value DOUBLE,
+    night_flow DOUBLE,
+    INDEX `idx_dma_daily_ts` (`zone_id`, `ts`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_daily 降级模拟表';
+
+CREATE TABLE IF NOT EXISTS dma_1h (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ts TIMESTAMP NOT NULL,
+    zone_id VARCHAR(30),
+    supply DOUBLE,
+    sale DOUBLE,
+    balance_value DOUBLE,
+    night_flow DOUBLE,
+    INDEX `idx_dma_1h_ts` (`zone_id`, `ts`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_1h 降级模拟表';
+
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

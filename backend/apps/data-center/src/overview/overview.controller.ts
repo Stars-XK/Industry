@@ -20,38 +20,38 @@ export class OverviewController {
     let activeAlarms = 0;
 
     try {
-      // 1. 获取今日真实供水量 (基于 device_raw)
+      // 1. 工业级真实架构：从 TDengine 的日聚合超级表 dma_daily 读取日供水
+      // 业务服务不再承担海量时序数据的汇总计算 (SUM/GROUP BY)，消除 OOM 风险
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
       const queryFlow = `
-        SELECT SUM(value) as total
-        FROM device_raw
-        WHERE standard_name = 'flow_rate' AND timestamp >= ?
+        SELECT SUM(supply) as total
+        FROM dma_daily
+        WHERE ts >= ?
       `;
-      const resFlow = await this.dataSource.query(queryFlow, [todayStart.getTime()]);
+      const resFlow = await this.dataSource.query(queryFlow, [new Date(todayStart.getTime() - 86400000)]); 
       if (resFlow && resFlow[0] && resFlow[0].total) {
-        dailySupply = parseFloat((resFlow[0].total / 1800).toFixed(1));
+        dailySupply = parseFloat(resFlow[0].total.toFixed(1));
       }
 
-      // 2. 工业级真实闭环：从 biz_nrw_report (产销差报表) 获取最新的全局产销差率，替代原本写死的 0.12
+      // 2. 工业级真实闭环：从 biz_nrw_report (产销差报表) 获取最新的全局产销差率
       const queryNrw = `
-        SELECT nrw_ratio, real_loss_m3 
-        FROM biz_nrw_report 
-        ORDER BY report_month DESC, id DESC 
+        SELECT nrw_ratio, real_loss_m3
+        FROM biz_nrw_report
+        ORDER BY report_month DESC, id DESC
         LIMIT 1
       `;
       const resNrw = await this.dataSource.query(queryNrw);
       if (resNrw && resNrw.length > 0) {
         nrwRate = parseFloat(resNrw[0].nrw_ratio);
-        // 根据真实的 NRW 比例计算今日的预估漏水损失
         dailyLeakage = parseFloat((dailySupply * (nrwRate / 100)).toFixed(1));
       }
 
-      // 3. 获取真实的活跃报警数 (压力极低或硫化氢超标)
+      // 3. 获取真实的活跃报警数
       const queryAlarm = `
-        SELECT COUNT(id) as count 
-        FROM device_raw 
+        SELECT COUNT(id) as count
+        FROM device_raw
         WHERE timestamp >= ? AND (
           (standard_name = 'pressure' AND value < 0.3) OR
           (standard_name = 'h2s' AND value >= 10.0)
@@ -83,31 +83,31 @@ export class OverviewController {
     try {
       const now = new Date();
       now.setMinutes(0, 0, 0);
-      const startTime = now.getTime() - 23 * 3600 * 1000;
+      const startTime = new Date(now.getTime() - 23 * 3600 * 1000);
 
+      // 工业级真实架构：直接查询 TDengine 的一小时聚合表 (dma_1h)，避免在 Node.js 中进行复杂的 FLOOR(timestamp/3600000) 内存分组
       const query = `
-        SELECT
-          FLOOR(timestamp / 3600000) * 3600000 as hour_ts,
-          SUM(value) as total_flow
-        FROM device_raw
-        WHERE standard_name = 'flow_rate' AND timestamp >= ?
-        GROUP BY hour_ts
-        ORDER BY hour_ts ASC
+        SELECT ts as hour_ts, SUM(supply) as total_flow
+        FROM dma_1h
+        WHERE ts >= ?
+        GROUP BY ts
+        ORDER BY ts ASC
       `;
       const res = await this.dataSource.query(query, [startTime]);
       const flowMap = new Map();
       res.forEach(r => {
-        flowMap.set(parseInt(r.hour_ts), parseFloat((r.total_flow / 1800).toFixed(1)));
+        // 在实际 TDengine 查询中，时间戳直接返回
+        const d = new Date(r.hour_ts);
+        flowMap.set(d.getTime(), parseFloat(r.total_flow));
       });
 
       for (let i = 23; i >= 0; i--) {
         const d = new Date(now.getTime() - i * 3600 * 1000);
         hours.push(`${d.getHours().toString().padStart(2, '0')}:00`);
         const ts = d.getTime();
-        let val = flowMap.get(ts) || 0; // 真实工业级：如果没有数据就返回 0，杜绝伪造
+        let val = flowMap.get(ts) || 0; 
         supplyValues.push(val);
-        // 漏损量通过总供水乘以最新的NRW计算
-        leakageValues.push(parseFloat((val * 0.12).toFixed(1))); // 这里简化为当前固定损耗率，实际应读取NRW
+        leakageValues.push(parseFloat((val * 0.12).toFixed(1))); // 实际应读取 dma_1h 的损耗量
       }
     } catch (e) {
       console.error('查询历史趋势失败', e);

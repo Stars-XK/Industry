@@ -199,27 +199,72 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.page-container {
+  padding: 24px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 84px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.box-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
 .chart-container {
   height: 500px;
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
-  padding: 15px;
-  background-color: #fafafa;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
 }
+
 .chart-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #303133;
+  font-size: 14px;
+  font-weight: 600;
+  color: #606266;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
 .sankey-chart {
   width: 100%;
-  height: 450px;
+  flex: 1;
 }
+
 .trend-chart {
   width: 100%;
-  height: 300px;
+  flex: 1;
+}
+
+:deep(.el-table) {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: #f8f9fa;
+  color: #606266;
+  font-weight: 600;
 }
 </style>

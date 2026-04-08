@@ -1,39 +1,50 @@
 <template>
-  <div class="app-container">
-    <el-row :gutter="20">
-      <el-col :span="24">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
-            <span>AI 用水趋势预测分析看板 (ARIMA / LSTM)</span>
-            <el-select v-model="listQuery.zoneId" @change="fetchData" style="float: right; width: 200px" placeholder="选择预测区域">
+  <div class="page-container">
+    <el-card shadow="never" class="box-card">
+      <template #header>
+        <div class="card-header">
+          <div class="header-title">AI 用水趋势预测分析 (ARIMA / LSTM)</div>
+          <div class="header-actions">
+            <el-select v-model="listQuery.zoneId" @change="fetchData" style="width: 240px" placeholder="选择预测区域">
               <el-option label="张江高科园区" value="201" />
               <el-option label="漕河泾开发区" value="202" />
             </el-select>
           </div>
-          
-          <div class="model-info" v-if="predictData">
-            <el-row :gutter="20">
-              <el-col :span="6">
-                <el-statistic title="当前运行模型" :value="predictData.model_type" />
-              </el-col>
-              <el-col :span="6">
-                <el-statistic title="历史拟合准确率 (%)" :value="predictData.accuracy" :precision="1" />
-              </el-col>
-              <el-col :span="6">
-                <el-statistic title="预测跨度 (天)" :value="7" />
-              </el-col>
-              <el-col :span="6">
-                <el-button type="primary" :loading="loading" @click="fetchData" style="margin-top: 20px;">
-                  触发 Python 脚本重训模型
-                </el-button>
-              </el-col>
-            </el-row>
-          </div>
+        </div>
+      </template>
 
-          <div id="predict-chart" style="height: 500px; margin-top: 30px;"></div>
-        </el-card>
-      </el-col>
-    </el-row>
+      <div class="model-info" v-if="predictData" v-loading="loading">
+        <el-row :gutter="24">
+          <el-col :span="6">
+            <div class="stat-item">
+              <div class="stat-label">当前运行模型</div>
+              <div class="stat-value text-blue">{{ predictData.model_type }}</div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="stat-item">
+              <div class="stat-label">历史拟合准确率</div>
+              <div class="stat-value text-green">{{ Number(predictData.accuracy).toFixed(1) }}%</div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="stat-item">
+              <div class="stat-label">预测时间跨度</div>
+              <div class="stat-value">7 天</div>
+            </div>
+          </el-col>
+          <el-col :span="6" class="action-col">
+            <el-button type="primary" size="large" :loading="loading" @click="fetchData">
+              重新训练预测模型
+            </el-button>
+          </el-col>
+        </el-row>
+      </div>
+
+      <div class="chart-container" v-loading="loading">
+        <div id="predict-chart" class="predict-chart"></div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -144,13 +155,85 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 20px;
+.page-container {
+  padding: 24px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 84px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+.box-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
 .model-info {
-  background-color: #f8f9fa;
+  background: linear-gradient(to right, #ffffff, #f8f9fa);
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #ebeef5;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #909399;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #303133;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+}
+
+.text-blue { color: #409EFF; }
+.text-green { color: #67C23A; }
+
+.action-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chart-container {
+  height: 500px;
   padding: 20px;
-  border-radius: 4px;
-  margin-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+}
+
+.predict-chart {
+  width: 100%;
+  height: 100%;
 }
 </style>

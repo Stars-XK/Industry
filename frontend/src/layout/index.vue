@@ -305,9 +305,9 @@ onMounted(() => {
   pointer-events: auto;
 }
 .glass-effect {
-  background: rgba(0, 12, 23, 0.85);
-  backdrop-filter: blur(10px);
-  color: #e6f7ff;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(12px);
+  color: #e2e8f0;
 }
 
 .logo-area {
@@ -318,13 +318,15 @@ onMounted(() => {
 .logo-icon {
   font-size: 24px;
   font-weight: bold;
-  color: #1890ff;
+  color: #00d8ff;
   margin-right: 10px;
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
 }
 .logo-text {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   letter-spacing: 1px;
+  color: #e2e8f0;
 }
 
 .top-menu-list {
@@ -345,19 +347,20 @@ onMounted(() => {
   padding: 0 20px;
   height: 60px;
   cursor: pointer;
-  color: #a6adb4;
+  color: #94a3b8;
   font-size: 15px;
+  font-weight: 500;
   transition: all 0.3s;
   border-bottom: 2px solid transparent;
 }
 .top-menu-item:hover {
-  color: white;
+  color: #e2e8f0;
   background-color: rgba(255, 255, 255, 0.05);
 }
 .top-menu-item.active {
-  color: #1890ff;
-  border-bottom: 2px solid #1890ff;
-  background-color: rgba(24, 144, 255, 0.1);
+  color: #00d8ff;
+  border-bottom: 2px solid #00d8ff;
+  background-color: rgba(0, 216, 255, 0.05);
 }
 .svg-icon-small {
   width: 18px;
@@ -371,17 +374,19 @@ onMounted(() => {
 }
 .logout-btn {
   margin-left: 15px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   background-color: transparent;
-  color: #ff4d4f;
-  border: 1px solid #ff4d4f;
+  color: #ff3366;
+  border: 1px solid rgba(255, 51, 102, 0.5);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;
+  font-weight: 500;
 }
 .logout-btn:hover {
-  background-color: #ff4d4f;
-  color: white;
+  background-color: rgba(255, 51, 102, 0.1);
+  border-color: #ff3366;
+  box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
 }
 
 /* 主体区域：左侧边栏 + 右侧内容 */
@@ -398,9 +403,9 @@ onMounted(() => {
   position: relative;
   z-index: 10;
   width: 64px;
-  background-color: rgba(0, 21, 41, 0.7);
-  backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(8, 15, 30, 0.6);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(0, 216, 255, 0.1);
   display: flex;
   flex-direction: column;
   pointer-events: auto;
@@ -425,19 +430,20 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a6adb4;
+  color: #94a3b8;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
 }
 .menu-icon-box:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
 }
 .menu-icon-box.active {
-  background-color: #1890ff;
-  color: white;
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.5);
+  background-color: rgba(0, 216, 255, 0.1);
+  color: #00d8ff;
+  box-shadow: 0 0 12px rgba(0, 216, 255, 0.2);
+  border: 1px solid rgba(0, 216, 255, 0.3);
 }
 .svg-icon {
   width: 22px;
@@ -449,14 +455,17 @@ onMounted(() => {
   position: absolute;
   left: 70px;
   top: 10px;
-  background-color: rgba(0, 0, 0, 0.85);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
+  background-color: rgba(2, 6, 23, 0.95);
+  color: #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 6px;
   font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
+  border: 1px solid rgba(0, 216, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 .tooltip::before {
   content: '';
@@ -466,7 +475,7 @@ onMounted(() => {
   transform: translateY(-50%);
   border-width: 4px;
   border-style: solid;
-  border-color: transparent rgba(0, 0, 0, 0.85) transparent transparent;
+  border-color: transparent rgba(0, 216, 255, 0.2) transparent transparent;
 }
 
 /* 右侧内容区 */
@@ -481,23 +490,23 @@ onMounted(() => {
 /* 核心路由层: 各个业务组件在这里决定自己的尺寸和位置 */
 .app-main {
   flex: 1;
-  padding: 15px;
+  padding: 20px;
   position: relative;
   pointer-events: none; /* 穿透 */
 }
 
-/* 业务页面通用容器 */
+/* 兼容老页面的业务容器 (新页面建议使用 .premium-container) */
 :deep(.page-container) {
   pointer-events: auto; /* 恢复点击 */
-  background-color: rgba(0, 21, 41, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  padding: 20px;
-  color: white;
+  background: radial-gradient(circle at 50% 0%, rgba(10, 25, 47, 0.8) 0%, rgba(2, 6, 23, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 216, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  color: #e2e8f0;
   height: 100%;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 32px rgba(0, 216, 255, 0.02);
 }
 </style>
 

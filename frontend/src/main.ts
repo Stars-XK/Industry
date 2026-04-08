@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import './assets/premium-theme.css'; // 引入全局工业级玻璃拟态暗黑主题样式
 import App from './App.vue';
 import router from './router';
 

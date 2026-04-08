@@ -35,6 +35,7 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT_AUTH_SERVICE || 3001;
+  app.setGlobalPrefix('api/v1');
   await app.listen(port);
   console.log(`Microservice auth-service is running on port: ${port}`);
   console.log(`Swagger Docs is available at: http://localhost:${port}/api/docs`);

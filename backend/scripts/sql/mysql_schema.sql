@@ -493,3 +493,64 @@ CREATE TABLE IF NOT EXISTS ast_inventory_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存出入库流水表';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- 补充缺少的模拟降级表与业务表
+-- 30. 时序数据模拟表（当 TDengine 不可用时的降级方案，仅做模拟和兼容）
+CREATE TABLE IF NOT EXISTS device_raw (
+    ts TIMESTAMP NOT NULL,
+    raw_value DOUBLE NOT NULL,
+    device_id VARCHAR(50) NOT NULL,
+    zone_id VARCHAR(30) DEFAULT NULL,
+    device_type TINYINT DEFAULT 1,
+    PRIMARY KEY (device_id, ts)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='设备原始遥测数据模拟表';
+
+CREATE TABLE IF NOT EXISTS dma_daily (
+    ts TIMESTAMP NOT NULL,
+    zone_id VARCHAR(30) NOT NULL,
+    supply DOUBLE DEFAULT 0,
+    sale DOUBLE DEFAULT 0,
+    balance_value DOUBLE DEFAULT 0,
+    night_flow DOUBLE DEFAULT 0,
+    PRIMARY KEY (zone_id, ts)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DMA 日聚合数据模拟表';
+
+-- 31. 运维排班表
+CREATE TABLE IF NOT EXISTS wf_duty_schedule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    duty_date DATE NOT NULL,
+    shift_type VARCHAR(20) NOT NULL COMMENT 'day: 白班, night: 夜班',
+    location_lng VARCHAR(20) DEFAULT NULL,
+    location_lat VARCHAR(20) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES sys_user(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维排班与定位表';
+
+-- 32. 综合能效分析表
+CREATE TABLE IF NOT EXISTS biz_energy_record (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    zone_id BIGINT NOT NULL,
+    record_date DATE NOT NULL,
+    water_supply DOUBLE DEFAULT 0 COMMENT '供水量',
+    power_consume DOUBLE DEFAULT 0 COMMENT '耗电量',
+    gas_consume DOUBLE DEFAULT 0 COMMENT '耗气量',
+    ton_water_power DOUBLE DEFAULT 0 COMMENT '吨水百米能耗',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='综合能效分析记录表';
+
+-- 33. 工业工艺配方库表
+CREATE TABLE IF NOT EXISTS biz_recipe (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    recipe_code VARCHAR(50) NOT NULL UNIQUE,
+    recipe_name VARCHAR(100) NOT NULL,
+    version VARCHAR(20) NOT NULL DEFAULT 'v1.0',
+    target_flow DOUBLE DEFAULT 0,
+    pac_ratio DOUBLE DEFAULT 0 COMMENT 'PAC 加药比例',
+    pam_ratio DOUBLE DEFAULT 0 COMMENT 'PAM 加药比例',
+    mix_time INT DEFAULT 0 COMMENT '搅拌时间(秒)',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用 0-停用',
+    created_by BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工业工艺配方库表';

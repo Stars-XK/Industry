@@ -347,3 +347,38 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- 补齐 System 菜单
 INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
 (51, 50, '资产与设备台账', 1, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1);
+
+-- ==============================================================
+-- 填充缺失的测试种子数据 (满足复杂工业系统场景)
+-- ==============================================================
+
+-- 填充 sys_audit_log 基础日志
+INSERT INTO sys_audit_log (req_url, req_method, user_id, ip_address, before_data_json, after_data_json, action_type, remark)
+VALUES ('/api/v1/system/init', 'POST', 1, '127.0.0.1', '{}', '{"status":"ok"}', 'init', '系统初始化完成');
+
+-- 填充 dma_daily DMA日聚合数据 (模拟 7 天时序降采样假数据)
+INSERT INTO dma_daily (ts, zone_id, supply, sale, balance_value, night_flow) VALUES
+(DATE_SUB(CURRENT_DATE, INTERVAL 6 DAY), 'DMA-001', 12500, 10000, 2500, 12),
+(DATE_SUB(CURRENT_DATE, INTERVAL 5 DAY), 'DMA-001', 12600, 10100, 2500, 11),
+(DATE_SUB(CURRENT_DATE, INTERVAL 4 DAY), 'DMA-001', 12450, 10050, 2400, 13),
+(DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY), 'DMA-001', 13500, 10100, 3400, 25),
+(DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY), 'DMA-001', 13800, 10000, 3800, 28),
+(DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 'DMA-001', 13650, 10150, 3500, 26),
+(CURRENT_DATE, 'DMA-001', 13900, 10000, 3900, 29);
+
+-- 填充 wf_duty_schedule 运维排班与位置
+INSERT INTO wf_duty_schedule (user_id, duty_date, shift_type, location_lng, location_lat) VALUES
+(1, CURRENT_DATE, 'day', '121.4737', '31.2304'),
+(2, CURRENT_DATE, 'day', '121.4837', '31.2404');
+
+-- 填充 biz_energy_record 综合能效记录
+INSERT INTO biz_energy_record (zone_id, record_date, water_supply, power_consume, gas_consume, ton_water_power) VALUES
+(1, DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY), 13800, 2800, 150, 0.20),
+(1, DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 13650, 2750, 140, 0.20),
+(1, CURRENT_DATE, 13900, 2900, 160, 0.21);
+
+-- 填充 biz_recipe 工艺配方库
+INSERT INTO biz_recipe (recipe_code, recipe_name, target_flow, pac_ratio, pam_ratio, mix_time, created_by) VALUES
+('RCP-S01', '夏季高藻期标准配方', 5000, 15.5, 0.8, 120, 1),
+('RCP-W01', '冬季低温低浊配方', 4500, 12.0, 0.5, 180, 1),
+('RCP-EMG', '原水氨氮超标应急配方', 3000, 25.0, 1.2, 90, 1);

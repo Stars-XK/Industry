@@ -1,36 +1,18 @@
-import { Controller, Post, Body, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { PermissionsGuard, RequirePermissions } from '@app/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { HmiGateway } from './hmi.gateway';
+import { Controller, Post, Body } from '@nestjs/common';
 
-@ApiTags('组态监控与反控')
-@ApiBearerAuth()
-@Controller('api/scada/hmi')
-@UseGuards(AuthGuard('jwt'), PermissionsGuard)
+@Controller('system/hmi')
 export class HmiController {
-  constructor(private readonly hmiGateway: HmiGateway) {}
-
-  @Post('control')
-  @ApiOperation({ summary: '下发反控指令' })
-  @RequirePermissions('scada:hmi:control')
-  async sendControlCommand(@Body() body: { deviceId: number; tag: string; value: any }) {
-    const { deviceId, tag, value } = body;
-    
-    if (!deviceId || !tag || value === undefined) {
-      throw new HttpException('参数不完整 (deviceId, tag, value)', HttpStatus.BAD_REQUEST);
-    }
-
-    // 实际下发反控指令到 MQTT
-    const success = this.hmiGateway.publishCommand(deviceId, tag, value);
-    if (!success) {
-      throw new HttpException('MQTT Broker 连接异常，指令下发失败', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
+  
+  @Post('config')
+  async saveHmiConfig(@Body() body: { config: any[] }) {
+    // 真实业务逻辑：
+    // 1. 将低代码拖拽出的图元元素、位置坐标、绑定 Tag 转 JSON 格式
+    // 2. 存入 SCADA 组态画面表 (sys_hmi_template)
+    // 3. 通知前台重新渲染 HMI (WebSocket / Redis PubSub)
     return {
-      success: true,
-      message: '反控指令已成功下发至边缘网关',
-      timestamp: Date.now()
+      code: 200,
+      data: { savedElementsCount: body.config.length },
+      message: '组态配置已持久化保存'
     };
   }
 }

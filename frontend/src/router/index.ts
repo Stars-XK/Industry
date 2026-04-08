@@ -70,10 +70,16 @@ router.beforeEach(async (to, from, next) => {
               children: menu.children && menu.children.length > 0 ? formatRoutes(menu.children) : []
             };
 
-            if (menu.menu_type === 'C' && menu.component) {
+            if (menu.menu_type === 'M') {
+              // 给目录节点分配 RouterView 以渲染子路由
+              route.component = () => import('vue-router').then(m => m.RouterView);
+            } else if (menu.menu_type === 'C' && menu.component) {
               // 动态匹配 views 下的 Vue 组件
               const componentPath = `../views/${menu.component}.vue`;
               route.component = modules[componentPath];
+              if (!route.component) {
+                console.warn(`未找到组件路径: ${componentPath}`);
+              }
             }
             routes.push(route);
           }

@@ -4,7 +4,7 @@
 -- ==============================================================
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_sop;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -313,6 +313,62 @@ CREATE TABLE IF NOT EXISTS iot_tag_mapping (
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
     FOREIGN KEY (gateway_id) REFERENCES iot_gateway(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================== 第四阶段: 报警与运维工单 ======================
+
+-- 22. SOP 应急预案库表
+CREATE TABLE IF NOT EXISTS alm_sop (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sop_name VARCHAR(100) NOT NULL COMMENT 'SOP 名称',
+    alarm_type VARCHAR(50) NOT NULL COMMENT '触发报警类型 (如 H2S_HIGH)',
+    steps_json JSON NOT NULL COMMENT '执行步骤 JSON 数组',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_by BIGINT,
+    updated_by BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SOP 应急预案库';
+
+-- 23. 报警事件表
+CREATE TABLE IF NOT EXISTS alm_event (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id BIGINT NOT NULL COMMENT '报警关联设备',
+    alarm_type VARCHAR(50) NOT NULL COMMENT '报警类型 (如 PRESSURE_LOW)',
+    alarm_level VARCHAR(10) NOT NULL COMMENT '报警级别: H/HH/L/LL',
+    alarm_value DOUBLE NOT NULL COMMENT '触发时数值',
+    alarm_desc VARCHAR(255) COMMENT '报警描述',
+    status SMALLINT DEFAULT 0 COMMENT '0-未确认, 1-已确认, 2-已恢复',
+    rca_is_root SMALLINT DEFAULT 1 COMMENT 'RCA根因判定: 1-是根因, 0-衍生报警',
+    sop_id BIGINT COMMENT '关联触发的SOP',
+    recover_time TIMESTAMP NULL COMMENT '恢复时间',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警事件收敛表';
+
+-- 24. 工单主表
+CREATE TABLE IF NOT EXISTS wf_work_order (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_sn VARCHAR(50) NOT NULL UNIQUE COMMENT '工单编号',
+    order_type SMALLINT NOT NULL COMMENT '1-巡检, 2-抢修, 3-听漏, 4-保养',
+    alarm_id BIGINT COMMENT '关联报警事件',
+    device_id BIGINT COMMENT '关联设备',
+    title VARCHAR(100) NOT NULL COMMENT '工单标题',
+    description TEXT COMMENT '工单描述',
+    priority SMALLINT DEFAULT 2 COMMENT '1-低, 2-中, 3-高, 4-紧急',
+    status SMALLINT DEFAULT 10 COMMENT '10-待接单, 20-处理中, 30-已闭环, 40-已取消',
+    creator_id BIGINT NOT NULL COMMENT '创建人',
+    handler_id BIGINT COMMENT '当前处理人',
+    gis_coord VARCHAR(100) COMMENT '故障或处理发生坐标(Lng,Lat)',
+    result_desc TEXT COMMENT '处理结果说明',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (alarm_id) REFERENCES alm_event(id) ON DELETE SET NULL,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE SET NULL,
+    FOREIGN KEY (creator_id) REFERENCES sys_user(id),
+    FOREIGN KEY (handler_id) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维工单主表';
 
 -- 20. 部门/组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (

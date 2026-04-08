@@ -271,11 +271,27 @@ INSERT IGNORE INTO dma_1h (ts, zone_id, supply, sale, balance_value, night_flow)
 ( '2026-04-08 02:00:00', '201', 484, 0, 0, 0 ),
 ( '2026-04-08 03:00:00', '201', 501, 0, 0, 0 );
 
-INSERT IGNORE INTO dma_daily (ts, zone_id, supply, sale, balance_value, night_flow) VALUES
-( '2026-04-02 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-03 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-04 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-05 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-06 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-07 00:00:00', '201', 12000, 10000, 2000, 30 ),
-( '2026-04-08 00:00:00', '201', 12000, 10000, 2000, 30 );
+-- 9. 第四阶段 菜单配置 (报警、SOP、工单)
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, menu_type, visible, status, perm_code, icon, remark, is_preset) VALUES
+(40, 0, '运维协同与工单中心', 5, 'workflow', '', 0, 0, 'M', 1, 1, '', 'Service', '', 1),
+(41, 40, '报警风暴收敛中心', 1, 'alarm', 'workflow/alarm', 0, 0, 'C', 1, 1, 'workflow:alarm', 'Bell', '', 1),
+(42, 40, 'SOP 应急预案库', 2, 'sop', 'workflow/sop', 0, 0, 'C', 1, 1, 'workflow:sop', 'Reading', '', 1),
+(43, 40, '运维工单流转大盘', 3, 'work-order', 'workflow/work-order', 0, 0, 'C', 1, 1, 'workflow:order', 'Tickets', '', 1);
+
+-- 10. 第四阶段 角色权限绑定
+INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
+(1, 40), (1, 41), (1, 42), (1, 43),
+(3, 40), (3, 41), (3, 43); -- 维修工只能看报警和工单，不能编辑 SOP
+
+-- 11. 第四阶段 初始数据
+INSERT IGNORE INTO alm_sop (id, sop_name, alarm_type, steps_json, status) VALUES
+(1, 'H2S 浓度超标应急预案', 'H2S_HIGH', '[{"step":1,"action":"启动排风扇","device":"FAN-01"},{"step":2,"action":"通知安全员","notify":"security@company.com"}]', 1),
+(2, '管网爆管/压力骤降抢修预案', 'PRESSURE_LOW', '[{"step":1,"action":"远程关闭上游阀门","device":"VALVE-UP"},{"step":2,"action":"自动生成抢修工单派发给就近班组"}]', 1);
+
+INSERT IGNORE INTO alm_event (id, device_id, alarm_type, alarm_level, alarm_value, alarm_desc, status, sop_id) VALUES
+(1, 1, 'PRESSURE_LOW', 'HH', 0.15, '一厂区进水总管压力极低，疑似爆管', 0, 2),
+(2, 3, 'H2S_HIGH', 'H', 15.2, '泵站污水池硫化氢浓度超标', 1, 1);
+
+INSERT IGNORE INTO wf_work_order (id, order_sn, order_type, alarm_id, device_id, title, description, priority, status, creator_id, handler_id) VALUES
+(1, 'WO-20260408-0001', 2, 1, 1, '一厂区进水总管紧急抢修', '系统检测到压力异常骤降，已触发 SOP，请立即前往现场排查漏点', 4, 10, 1, 3);
+

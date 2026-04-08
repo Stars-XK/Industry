@@ -128,4 +128,48 @@ export class GovernanceController {
     await this.dataSource.query(`DELETE FROM ast_device WHERE id = ?`, [id]);
     return { success: true };
   }
+
+  @Get('gateways')
+  @ApiOperation({ summary: '获取物联网网关列表' })
+  @RequirePermissions('sys:asset')
+  async getGateways() {
+    const query = `SELECT * FROM iot_gateway ORDER BY id DESC LIMIT 100`;
+    return await this.dataSource.query(query);
+  }
+
+  @Post('gateways')
+  @ApiOperation({ summary: '新增物联网网关' })
+  @RequirePermissions('sys:asset')
+  async createGateway(@Body() body: any) {
+    const { gateway_sn, protocol, is_online, remark } = body;
+    await this.dataSource.query(
+      `INSERT INTO iot_gateway (gateway_sn, protocol, is_online, remark) VALUES (?, ?, ?, ?)`,
+      [gateway_sn, protocol || 'MQTT', is_online || 0, remark]
+    );
+    return { success: true };
+  }
+
+  @Put('gateways/:id')
+  @ApiOperation({ summary: '修改物联网网关' })
+  @RequirePermissions('sys:asset')
+  async updateGateway(@Param('id') id: string, @Body() body: any) {
+    const { gateway_sn, protocol, is_online, remark } = body;
+    await this.dataSource.query(
+      `UPDATE iot_gateway SET gateway_sn = ?, protocol = ?, is_online = ?, remark = ? WHERE id = ?`,
+      [gateway_sn, protocol, is_online, remark, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('gateways/:id')
+  @ApiOperation({ summary: '删除物联网网关' })
+  @RequirePermissions('sys:asset')
+  async deleteGateway(@Param('id') id: string) {
+    const inUse = await this.dataSource.query(`SELECT id FROM iot_tag_mapping WHERE gateway_id = ?`, [id]);
+    if (inUse.length > 0) {
+      throw new Error('该网关已被边缘采集标签绑定，禁止删除');
+    }
+    await this.dataSource.query(`DELETE FROM iot_gateway WHERE id = ?`, [id]);
+    return { success: true };
+  }
 }

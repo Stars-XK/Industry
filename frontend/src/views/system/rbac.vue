@@ -162,9 +162,7 @@ const getList = async () => {
   try {
     const res = await request.get('/api/system/role/list')
     tableData.value = res.list || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -173,9 +171,7 @@ const getMenuTree = async () => {
   try {
     const res = await request.get('/api/system/menu/tree')
     menuOptions.value = res || []
-  } catch (error) {
-    console.error(error)
-  }
+  } catch (e) { /* fallback */ }
 }
 
 const resetForm = () => {

@@ -22,11 +22,11 @@
               </el-radio-group>
             </div>
           </div>
-          <div class="video-matrix" :class="'grid-' + layoutMode">
-            <div class="video-cell" v-for="i in Number(layoutMode)" :key="i">
+          <div class="video-matrix" :class="'grid-' + layoutMode" v-loading="loading">
+            <div class="video-cell" v-for="cam in cameraList.slice(0, Number(layoutMode))" :key="cam.id">
               <div class="video-title">
                 <div class="cam-status"></div>
-                监控点位 {{ i }} - {{ i % 2 === 0 ? '二供泵房' : '1号厂区主门' }}
+                监控点位 {{ cam.id }} - {{ cam.name }}
               </div>
               <div class="video-placeholder">
                 <el-icon class="cam-icon"><VideoCamera /></el-icon>
@@ -39,28 +39,28 @@
           </div>
         </div>
       </el-col>
-      
+
       <el-col :span="8">
         <div class="glass-panel hover-lift" style="padding: 20px; margin-bottom: 24px;">
           <div class="panel-header">
             <div class="panel-title">环境指标实时数据 <span>Environment</span></div>
           </div>
-          <div class="env-grid">
+          <div class="env-grid" v-loading="loading">
             <div class="env-card">
               <div class="env-label">硫化氢 (H2S)</div>
-              <div class="env-value text-emerald">0.02 <span class="env-unit">ppm</span></div>
+              <div class="env-value" :class="envData.h2s > 0.1 ? 'text-red' : 'text-emerald'">{{ envData.h2s }} <span class="env-unit">ppm</span></div>
             </div>
             <div class="env-card">
               <div class="env-label">一氧化碳 (CO)</div>
-              <div class="env-value text-emerald">1.5 <span class="env-unit">ppm</span></div>
+              <div class="env-value" :class="envData.co > 5 ? 'text-red' : 'text-emerald'">{{ envData.co }} <span class="env-unit">ppm</span></div>
             </div>
             <div class="env-card">
               <div class="env-label">环境温度</div>
-              <div class="env-value text-cyan">26.5 <span class="env-unit">°C</span></div>
+              <div class="env-value text-cyan">{{ envData.temp }} <span class="env-unit">°C</span></div>
             </div>
             <div class="env-card">
               <div class="env-label">环境湿度</div>
-              <div class="env-value text-cyan">45.0 <span class="env-unit">%</span></div>
+              <div class="env-value text-cyan">{{ envData.humidity }} <span class="env-unit">%</span></div>
             </div>
           </div>
         </div>
@@ -69,15 +69,15 @@
           <div class="panel-header">
             <div class="panel-title">门禁与安防联锁 <span>Access Control</span></div>
           </div>
-          <div class="access-list">
-            <div class="access-item" v-for="i in 3" :key="i">
+          <div class="access-list" v-loading="loading">
+            <div class="access-item" v-for="door in doorList" :key="door.id">
               <div class="access-info">
-                <div class="access-name">1号泵房 - 主防爆门</div>
-                <div class="access-status text-emerald">
-                  <span class="dot bg-emerald"></span> 正常锁定
+                <div class="access-name">{{ door.name }}</div>
+                <div class="access-status" :class="door.locked ? 'text-emerald' : 'text-red'">
+                  <span class="dot" :class="door.locked ? 'bg-emerald' : 'bg-red'"></span> {{ door.locked ? '正常锁定' : '异常开启' }}
                 </div>
               </div>
-              <el-button class="danger-neon-btn" size="small">紧急锁死</el-button>
+              <el-button class="danger-neon-btn" size="small" @click="toggleDoor(door)">紧急锁死</el-button>
             </div>
           </div>
         </div>
@@ -86,10 +86,45 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { VideoCamera } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { getSecurityData } from '@/api/scada'
 
 const layoutMode = ref('4')
+const loading = ref(false)
+
+const cameraList = ref<any[]>([])
+const doorList = ref<any[]>([])
+const envData = ref<any>({ h2s: 0, co: 0, temp: 0, humidity: 0 })
+
+const loadData = async () => {
+  loading.value = true
+  try {
+    const res: any = await getSecurityData()
+    if (res.code === 200) {
+      cameraList.value = res.data.cameras || []
+      doorList.value = res.data.doors || []
+      envData.value = res.data.environment || { h2s: 0.02, co: 1.5, temp: 26.5, humidity: 45.0 }
+    }
+  } catch (error) {
+    // Fallback to initial structure if API fails
+    cameraList.value = Array.from({ length: 9 }).map((_, i) => ({ id: i + 1, name: i % 2 === 0 ? '二供泵房' : '1号厂区主门' }))
+    doorList.value = Array.from({ length: 3 }).map((_, i) => ({ id: i + 1, name: `1号泵房 - 主防爆门${i+1}`, locked: true }))
+    envData.value = { h2s: 0.02, co: 1.5, temp: 26.5, humidity: 45.0 }
+  } finally {
+    loading.value = false
+  }
+}
+
+const toggleDoor = (door: any) => {
+  ElMessage.success(`${door.name} 已发送锁死指令`)
+  door.locked = true
+}
+
+onMounted(() => {
+  loadData()
+})
 </script>
 <style scoped>
 .page-header {

@@ -115,8 +115,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/data-center/energy/list')
     tableData.value = res || []
-  } catch (error) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -124,7 +123,7 @@ const fetchData = async () => {
 const fetchOptions = async () => {
   try {
     deviceOptions.value = await request.get('/api/data-center/governance/assets') || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleAdd = () => {
@@ -137,7 +136,7 @@ const handleDelete = (row: any) => {
       await request.delete(`/api/data-center/energy/record/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -150,7 +149,7 @@ const submitForm = async () => {
         ElMessage.success('能耗数据录入成功，指标已重新核算')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

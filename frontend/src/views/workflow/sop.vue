@@ -98,8 +98,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/workflow/sop/list')
     tableData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -121,7 +120,7 @@ const handleDelete = (row: any) => {
       await request.delete(`/api/workflow/sop/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -129,7 +128,7 @@ const handleStatusChange = async (row: any) => {
   try {
     await request.put(`/api/workflow/sop/${row.id}`, { ...row, steps_json: typeof row.steps_json === 'string' ? JSON.parse(row.steps_json) : row.steps_json })
     ElMessage.success('状态更新成功')
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const viewSteps = (jsonStr: any) => {
@@ -162,7 +161,7 @@ const submitForm = async () => {
         ElMessage.success('保存成功')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

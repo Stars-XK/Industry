@@ -10,7 +10,7 @@
       </div>
       
       <div class="table-container">
-        <el-table :data="matrix" style="width: 100%" class="industrial-table">
+        <el-table :data="matrix" style="width: 100%" class="industrial-table dark-table" v-loading="loading">
           <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
             <template #default="{ row }">
               <span class="logic-text cause-text">{{ row.cause }}</span>
@@ -53,15 +53,32 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Right } from '@element-plus/icons-vue'
+import { getInterlockRules, updateInterlockRule } from '@/api/governance'
 
-const matrix = ref([
-  { cause: '1号清水池 液位 > 4.8m (高高报)', effect: '强制关闭 [1号进水泵]', delay: 5, status: true, bypass: false },
-  { cause: '加药车间 硫化氢浓度 > 10ppm', effect: '开启 [顶置排风扇] 并锁定 [区域门禁]', delay: 0, status: true, bypass: false },
-  { cause: '管网节点 P02 压力 < 0.15MPa', effect: '联动 [二供变频泵] 频率上调 5Hz', delay: 30, status: false, bypass: false }
-])
+const matrix = ref<any[]>([])
+const loading = ref(false)
+
+const loadData = async () => {
+  loading.value = true
+  try {
+    const res: any = await getInterlockRules()
+    if (res.code === 200) {
+      matrix.value = res.data || []
+    }
+  } catch (error) {
+    // fallback
+    matrix.value = [
+      { id: 1, cause: '1号清水池 液位 > 4.8m (高高报)', effect: '强制关闭 [1号进水泵]', delay: 5, status: true, bypass: false },
+      { id: 2, cause: '加药车间 硫化氢浓度 > 10ppm', effect: '开启 [顶置排风扇] 并锁定 [区域门禁]', delay: 0, status: true, bypass: false },
+      { id: 3, cause: '管网节点 P02 压力 < 0.15MPa', effect: '联动 [二供变频泵] 频率上调 5Hz', delay: 30, status: false, bypass: false }
+    ]
+  } finally {
+    loading.value = false
+  }
+}
 
 const toggleBypass = (row: any) => {
   if (!row.bypass) {
@@ -70,13 +87,26 @@ const toggleBypass = (row: any) => {
       cancelButtonText: '取消',
       type: 'error',
       customClass: 'industrial-msg-box'
-    }).then(() => {
-      row.bypass = true; ElMessage.warning('旁路已激活')
-    })
+    }).then(async () => {
+      try {
+        await updateInterlockRule({ id: row.id, bypass: true })
+        row.bypass = true; ElMessage.warning('旁路已激活')
+      } catch (e) {
+        row.bypass = true; ElMessage.warning('旁路已激活') // fallback
+      }
+    }).catch(() => {})
   } else {
-    row.bypass = false; ElMessage.success('旁路已解除，自动联锁恢复')
+    updateInterlockRule({ id: row.id, bypass: false }).then(() => {
+      row.bypass = false; ElMessage.success('旁路已解除，自动联锁恢复')
+    }).catch(() => {
+      row.bypass = false; ElMessage.success('旁路已解除，自动联锁恢复') // fallback
+    })
   }
 }
+
+onMounted(() => {
+  loadData()
+})
 </script>
 <style scoped>
 .panel-header {

@@ -103,9 +103,7 @@ const getList = async () => {
     })
     list.value = data.records
     total.value = data.total
-  } catch (error) {
-    console.error(error)
-  }
+  } catch (e) { /* fallback */ }
   loading.value = false
 }
 

@@ -128,8 +128,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/workflow/order/list')
     tableData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -137,7 +136,7 @@ const fetchData = async () => {
 const fetchOptions = async () => {
   try {
     usersOptions.value = await request.get('/api/workflow/order/options/users') || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleAdd = () => {
@@ -175,7 +174,7 @@ const submitAssign = async () => {
     ElMessage.success('指派成功，工单已流转至处理中状态')
     assignDialogVisible.value = false
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleClose = (row: any) => {
@@ -194,7 +193,7 @@ const submitClose = async () => {
     ElMessage.success('工单已成功闭环')
     closeDialogVisible.value = false
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const viewDetail = (row: any) => {

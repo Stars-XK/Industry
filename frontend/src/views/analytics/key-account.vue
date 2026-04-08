@@ -153,9 +153,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/data-center/billing/accounts')
     tableData.value = res || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -170,9 +168,7 @@ const fetchOptions = async () => {
     const aRes = await request.get('/api/data-center/governance/assets')
     // device_type: 1 为水表
     deviceOptions.value = (aRes || []).filter((a: any) => a.device_type === 1 && a.status === 1)
-  } catch (e) {
-    console.error(e)
-  }
+  } catch (e) { /* fallback */ }
 }
 
 const handleAdd = () => {
@@ -216,7 +212,7 @@ const submitForm = async () => {
         ElMessage.success('保存成功')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

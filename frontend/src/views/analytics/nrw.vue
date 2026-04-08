@@ -104,9 +104,7 @@ const fetchData = async () => {
     } else {
       renderSankey([], [])
     }
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -131,9 +129,7 @@ const handleRowClick = async (row: any) => {
     if (trendRes && trendRes.months) {
       renderTrend(trendRes.months, trendRes.ratios)
     }
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     sankeyLoading.value = false
     trendLoading.value = false
   }

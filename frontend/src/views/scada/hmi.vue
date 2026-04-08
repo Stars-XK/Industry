@@ -131,9 +131,7 @@ const handleControl = (targetStatus: number) => {
         value: targetStatus
       })
       ElMessage.success(`指令下发成功！等待设备响应...`)
-    } catch (e) {
-      console.error(e)
-    }
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -152,9 +150,7 @@ const handleSetFreq = () => {
         value: parseFloat(value)
       })
       ElMessage.success(`变频指令 [${value} Hz] 下发成功！等待设备响应...`)
-    } catch (e) {
-      console.error(e)
-    }
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 

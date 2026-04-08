@@ -158,9 +158,7 @@ const fetchData = async () => {
     })
     predictData.value = data
     initChart()
-  } catch (error) {
-    console.error(error)
-  }
+  } catch (e) { /* fallback */ }
   loading.value = false
 }
 

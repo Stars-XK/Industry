@@ -78,13 +78,13 @@ const form = ref({ user_id: null, duty_date: '', shift_type: 'morning' })
 const fetchData = async () => {
   try {
     scheduleList.value = await request.get('/api/workflow/duty/schedule', { params: { month: currentMonth.value } }) || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const fetchOptions = async () => {
   try {
     usersOptions.value = await request.get('/api/workflow/order/options/users') || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const getDutiesByDate = (date: string) => {
@@ -108,7 +108,7 @@ const submitForm = async () => {
     ElMessage.success('排班成功')
     dialogVisible.value = false
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const markAttend = async (id: number) => {
@@ -116,7 +116,7 @@ const markAttend = async (id: number) => {
     await request.put(`/api/workflow/duty/schedule/${id}/attend`)
     ElMessage.success('打卡成功')
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 onMounted(() => {

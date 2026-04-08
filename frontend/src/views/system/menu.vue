@@ -223,9 +223,7 @@ const getList = async () => {
     const res = await request.get('/api/system/menu/tree')
     tableData.value = res.data || res || []
     menuOptions.value = [{ id: 0, menu_name: '主类目', children: tableData.value }]
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }

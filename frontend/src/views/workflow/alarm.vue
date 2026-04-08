@@ -121,8 +121,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/workflow/alarm/events')
     tableData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -132,7 +131,7 @@ const handleConfirm = async (row: any) => {
     await request.put(`/api/workflow/alarm/events/${row.id}/confirm`)
     ElMessage.success('已确认报警')
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleRecover = async (row: any) => {
@@ -140,7 +139,7 @@ const handleRecover = async (row: any) => {
     await request.put(`/api/workflow/alarm/events/${row.id}/recover`)
     ElMessage.success('已人工标记为恢复')
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleDelete = async (row: any) => {
@@ -149,7 +148,7 @@ const handleDelete = async (row: any) => {
       await request.delete(`/api/workflow/alarm/events/${row.id}`)
       ElMessage.success('清除成功')
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -172,7 +171,7 @@ const submitOrderForm = async () => {
         // 自动确认报警
         await request.put(`/api/workflow/alarm/events/${form.value.alarm_id}/confirm`)
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

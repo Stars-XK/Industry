@@ -144,8 +144,7 @@ const fetchTree = async () => {
   try {
     const res = await request.get('/api/scada/topology/tree')
     treeData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loadingTree.value = false
   }
 }
@@ -194,7 +193,7 @@ const submitZoneForm = async () => {
         if (currentZone.value && currentZone.value.id === zoneForm.value.id) {
           currentZone.value.label = zoneForm.value.zone_name
         }
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }
@@ -212,7 +211,7 @@ const handleDeleteZone = (data: any) => {
         deviceData.value = []
       }
       fetchTree()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -246,8 +245,7 @@ const fetchDevices = async () => {
   try {
     const res = await request.get(`/api/scada/topology/devices/${currentZone.value.id}`)
     deviceData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loadingDevices.value = false
   }
 }
@@ -256,7 +254,7 @@ const fetchAvailableAssets = async () => {
   try {
     const res = await request.get('/api/scada/topology/assets/available')
     availableAssets.value = res || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleBindDevice = async () => {
@@ -273,7 +271,7 @@ const submitBindForm = async () => {
         ElMessage.success('挂载成功')
         bindDialogVisible.value = false
         fetchDevices()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }
@@ -287,7 +285,7 @@ const handleUnbindDevice = (row: any) => {
       await request.delete(`/api/scada/topology/devices/unbind/${row.rel_id}`)
       ElMessage.success('解绑成功')
       fetchDevices()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 

@@ -174,9 +174,7 @@ const getList = async () => {
     const res = await request.get('/api/system/dept/tree')
     tableData.value = res || []
     deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }

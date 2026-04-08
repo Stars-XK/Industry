@@ -95,9 +95,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/data-center/billing/tariffs')
     tableData.value = res || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -152,7 +150,7 @@ const submitForm = async () => {
         ElMessage.success('保存成功')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

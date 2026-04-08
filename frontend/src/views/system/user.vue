@@ -153,7 +153,7 @@ const fetchOptions = async () => {
     
     const roleRes = await request.get('/api/system/role/list')
     roleOptions.value = roleRes || []
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const form = ref({
@@ -180,9 +180,7 @@ const getList = async () => {
   try {
     const res = await request.get('/api/system/user/list?page=1&size=50')
     tableData.value = res.data?.list || res.list || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }

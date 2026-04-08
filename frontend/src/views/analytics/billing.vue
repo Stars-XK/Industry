@@ -114,9 +114,7 @@ const fetchData = async () => {
     
     const accRes = await request.get('/api/data-center/billing/accounts')
     accountList.value = (accRes || []).filter((a: any) => a.meter_device_id)
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -140,7 +138,7 @@ const submitForm = async () => {
         await request.post('/api/data-center/billing/records/meter-reading', form.value)
         ElMessage.success('抄表底度保存成功，可据此生成账单')
         dialogVisible.value = false
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }
@@ -166,7 +164,7 @@ const handleGenerate = () => {
         ElMessage.success(res.message || '生成成功')
       }
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -175,7 +173,7 @@ const handlePay = async (row: any) => {
     await request.put(`/api/data-center/billing/records/${row.id}/pay`)
     ElMessage.success('销账成功')
     fetchData()
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 onMounted(() => {

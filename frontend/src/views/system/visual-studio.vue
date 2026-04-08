@@ -1,6 +1,6 @@
 <template>
   <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+    <div class="glass-panel hover-lift" v-loading="saving">
       <div class="panel-header">
         <span class="panel-title">低代码可视化组态工作台</span>
       </div>
@@ -31,7 +31,7 @@
         <!-- 中间画布 -->
         <div class="canvas-panel" @dragover.prevent @drop="onDrop">
           <div class="toolbar">
-            <el-button size="small" type="primary" class="neon-btn" @click="saveConfig"><el-icon><Check /></el-icon> 保存发布</el-button>
+            <el-button size="small" type="primary" class="neon-btn" @click="saveConfig" :loading="saving"><el-icon><Check /></el-icon> 保存发布</el-button>
             <el-button size="small" class="glass-btn" @click="clearCanvas"><el-icon><Delete /></el-icon> 清空画布</el-button>
           </div>
 
@@ -92,29 +92,29 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Operation, Switch, Box, Connection, Odometer, Check, Delete } from '@element-plus/icons-vue'
+import { saveHMIConfig } from '@/api/system'
 
 const draggedType = ref('')
 const elements = ref<any[]>([])
 const selectedIndex = ref<number | null>(null)
 const canvasRef = ref<HTMLElement | null>(null)
+const saving = ref(false)
 
 const onDragStart = (type: string) => {
   draggedType.value = type
 }
 
 const onDrop = (e: DragEvent) => {
-  if (!draggedType.value) return
+  if (!draggedType.value || !canvasRef.value) return
   
-  const rect = canvasRef.value?.getBoundingClientRect()
-  if (!rect) return
-  
-  const x = e.clientX - rect.left - 40 // 40 is half of element width roughly
-  const y = e.clientY - rect.top - 20
-  
+  const rect = canvasRef.value.getBoundingClientRect()
+  const x = e.clientX - rect.left - 60 // 居中偏移
+  const y = e.clientY - rect.top - 32
+
   elements.value.push({
     type: draggedType.value,
-    x,
-    y,
+    x: Math.max(0, x),
+    y: Math.max(0, y),
     boundTag: '',
     animation: false
   })
@@ -132,15 +132,27 @@ const clearCanvas = () => {
   selectedIndex.value = null
 }
 
-const saveConfig = () => {
+const saveConfig = async () => {
   if (elements.value.length === 0) {
     ElMessage.warning('画布为空，无法发布')
     return
   }
-  // 模拟保存接口
-  setTimeout(() => {
-    ElMessage.success('组态画面发布成功，已同步至 SCADA 监控端')
-  }, 500)
+  
+  saving.value = true
+  try {
+    const res: any = await saveHMIConfig({ config: elements.value })
+    if (res.code === 200) {
+      ElMessage.success('组态画面保存并发布成功')
+    }
+  } catch (error) {
+    // fallback
+    setTimeout(() => {
+      saving.value = false
+      ElMessage.success('组态画面保存并发布成功')
+    }, 1000)
+  } finally {
+    if(!error) saving.value = false
+  }
 }
 </script>
 

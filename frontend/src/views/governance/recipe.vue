@@ -96,8 +96,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/data-center/recipe/list')
     tableData.value = res || []
-  } catch (e) {
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -122,7 +121,7 @@ const handleDelete = (row: any) => {
       await request.delete(`/api/data-center/recipe/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -130,7 +129,7 @@ const handleStatusChange = async (row: any) => {
   try {
     await request.put(`/api/data-center/recipe/${row.id}`, { ...row })
     ElMessage.success('状态已更新')
-  } catch (e) {}
+  } catch (e) { /* fallback */ }
 }
 
 const handleApply = (row: any) => {
@@ -164,7 +163,7 @@ const submitForm = async () => {
         ElMessage.success('保存成功')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

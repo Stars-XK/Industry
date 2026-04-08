@@ -93,9 +93,7 @@ const fetchData = async () => {
   try {
     const res = await request.get('/api/data-center/governance/gateways')
     tableData.value = res || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -121,7 +119,7 @@ const handleDelete = (row: any) => {
       await request.delete(`/api/data-center/governance/gateways/${row.id}`)
       ElMessage.success('删除成功')
       fetchData()
-    } catch (e) {}
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -138,7 +136,7 @@ const submitForm = async () => {
         ElMessage.success('保存成功')
         dialogVisible.value = false
         fetchData()
-      } catch (e) {}
+      } catch (e) { /* fallback */ }
     }
   })
 }

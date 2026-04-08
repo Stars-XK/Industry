@@ -225,9 +225,7 @@ const getGatewayList = async () => {
   try {
     const res = await request.get('/api/data-center/edge-tag/gateways')
     gatewayList.value = res || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     gatewayLoading.value = false
   }
 }
@@ -242,9 +240,7 @@ const handleSendProtection = (gw: any) => {
     try {
       await request.post(`/api/data-center/edge-tag/gateways/${gw.id}/protection-policy`)
       ElMessage.success('策略已成功推送到边缘网关队列')
-    } catch (e) {
-      console.error(e)
-    }
+    } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
 
@@ -261,9 +257,7 @@ const getList = async () => {
     })
     tableData.value = res.list || []
     total.value = res.total || 0
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }

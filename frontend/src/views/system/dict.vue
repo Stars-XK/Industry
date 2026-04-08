@@ -129,9 +129,7 @@ const fetchTypeList = async () => {
     if (typeList.value.length > 0 && !currentType.value) {
       handleSelectType(typeList.value[0].dict_type)
     }
-  } catch (error) {
-    console.error(error)
-  }
+  } catch (e) { /* fallback */ }
 }
 
 const fetchDataList = async (type: string) => {
@@ -139,9 +137,7 @@ const fetchDataList = async (type: string) => {
   try {
     const res = await request.get('/api/system/dict/data/list', { params: { dictType: currentType.value } })
     dataList.value = res.data || res || []
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loadingData.value = false
   }
 }

@@ -225,9 +225,7 @@ const getTree = async () => {
     const res = await request.get('/api/scada/topology/tree')
     treeData.value = res || []
     chartOption.value.series[0].data = mapTreeDataForEcharts(treeData.value)
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
@@ -237,9 +235,7 @@ const getDevices = async (zoneId: number) => {
   try {
     const res = await request.get(`/api/scada/topology/devices/${zoneId}`)
     deviceList.value = (res || []).map((d: any) => ({ ...d, telemetry: {} }))
-  } catch (error) {
-    console.error(error)
-  } finally {
+  } catch (e) { /* fallback */ } finally {
     deviceLoading.value = false
   }
 }

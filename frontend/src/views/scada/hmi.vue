@@ -177,24 +177,44 @@ onUnmounted(() => {
 
 <style scoped>
 .page-container {
-  padding: 20px;
-  height: calc(100vh - 100px);
+  padding: 24px;
+  height: calc(100vh - 84px);
   box-sizing: border-box;
-  background-color: #0b1a2a;
+  background-color: #050a15;
+  background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .box-card {
-  background-color: #112233;
-  border-color: #1a3344;
+  display: flex;
+  flex-direction: column;
+  background: rgba(8, 15, 30, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 216, 255, 0.15);
+  border-radius: 12px;
   color: #fff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  height: 100%;
 }
+
 :deep(.el-card__header) {
-  border-bottom: 1px solid #1a3344;
+  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
+  padding: 16px 24px;
 }
+
+:deep(.el-card__body) {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 .hmi-canvas {
@@ -209,34 +229,40 @@ onUnmounted(() => {
 .tank-container {
   width: 150px;
   height: 200px;
-  border: 4px solid #5a6b7c;
+  border: 4px solid rgba(0, 216, 255, 0.3);
   border-top: none;
   border-radius: 0 0 10px 10px;
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 -10px 30px rgba(0, 216, 255, 0.1);
 }
 .water-level {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(180deg, #409EFF, #0a529e);
+  background: linear-gradient(180deg, rgba(0, 216, 255, 0.8), rgba(0, 100, 255, 0.9));
   transition: height 1s ease;
   border-radius: 0 0 6px 6px;
+  box-shadow: 0 -5px 15px rgba(0, 216, 255, 0.4);
 }
 .tank .label {
   position: absolute;
   top: -30px;
   width: 100%;
   text-align: center;
-  color: #409EFF;
-  font-weight: bold;
+  color: #00d8ff;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
 }
 
 /* 管道与流向动画 */
 .pipe-horizontal {
   width: 100px;
   height: 20px;
-  background: #5a6b7c;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 216, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 216, 255, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -245,8 +271,8 @@ onUnmounted(() => {
   height: 100%;
   background: repeating-linear-gradient(
     45deg,
-    rgba(64, 158, 255, 0.5) 0,
-    rgba(64, 158, 255, 0.5) 10px,
+    rgba(0, 216, 255, 0.3) 0,
+    rgba(0, 216, 255, 0.3) 10px,
     transparent 10px,
     transparent 20px
   );
@@ -262,18 +288,21 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.4);
   padding: 30px;
   border-radius: 12px;
-  border: 1px solid #1a3344;
+  border: 1px solid rgba(0, 216, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
 }
 .pump {
-  color: #909399;
+  color: rgba(255, 255, 255, 0.3);
   text-align: center;
   margin-bottom: 20px;
+  transition: all 0.3s ease;
 }
 .pump.running {
-  color: #67C23A;
+  color: #00ffaa;
+  text-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
 }
 .is-spinning {
   animation: spin 1s linear infinite;
@@ -283,34 +312,48 @@ onUnmounted(() => {
 }
 .pump-label {
   margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 .data-panel {
-  background: #1e1e1e;
-  padding: 15px;
-  border-radius: 6px;
-  width: 200px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px 20px;
+  border-radius: 8px;
+  width: 220px;
   margin-bottom: 20px;
-  font-family: Consolas, monospace;
+  font-family: "SF Mono", Consolas, monospace;
 }
 .data-row {
-  margin-bottom: 10px;
-  font-size: 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.data-row:last-child {
+  margin-bottom: 0;
 }
 .val {
-  color: #E6A23C;
-  font-weight: bold;
+  color: #00d8ff;
+  font-weight: 600;
   font-size: 18px;
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
 }
 .control-panel {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .valve {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+.valve .el-icon {
+  filter: drop-shadow(0 0 8px rgba(230, 162, 60, 0.4));
 }
 </style>

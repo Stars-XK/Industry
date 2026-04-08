@@ -145,104 +145,154 @@ const saveConfig = () => {
 </script>
 
 <style scoped>
-.app-container { padding: 20px; }
+.page-container {
+  padding: 24px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 84px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.box-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
 .designer-container {
   display: flex;
   height: 600px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  overflow: hidden;
+  background: #fff;
 }
 
 .panel-title {
-  padding: 10px 15px;
-  background-color: #f5f7fa;
-  border-bottom: 1px solid #dcdfe6;
-  font-weight: bold;
+  padding: 16px 20px;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #f0f2f5;
+  font-weight: 600;
   font-size: 14px;
+  color: #303133;
 }
 
 .components-panel {
-  width: 200px;
-  border-right: 1px solid #dcdfe6;
+  width: 240px;
+  border-right: 1px solid #f0f2f5;
   background-color: #fff;
 }
 
 .component-list {
-  padding: 10px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .component-item {
-  padding: 10px;
-  border: 1px dashed #dcdfe6;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
   cursor: grab;
   text-align: center;
-  background-color: #fafafa;
-  transition: all 0.3s;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  color: #606266;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
+
 .component-item:hover {
   border-color: #409EFF;
   color: #409EFF;
   background-color: #ecf5ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(64,158,255,0.1);
 }
 
 .canvas-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #f0f2f5;
+  background-color: #f8f9fa;
   position: relative;
 }
 
 .toolbar {
-  padding: 10px;
+  padding: 12px 20px;
   background-color: #fff;
-  border-bottom: 1px solid #dcdfe6;
+  border-bottom: 1px solid #f0f2f5;
+  display: flex;
+  gap: 12px;
 }
 
 .canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(90deg, rgba(200, 200, 200, 0.15) 10%, transparent 0),
-                    linear-gradient(rgba(200, 200, 200, 0.15) 10%, transparent 0);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
 .canvas-element {
   position: absolute;
-  width: 100px;
-  height: 60px;
+  width: 120px;
+  height: 64px;
   background-color: #fff;
-  border: 2px solid #909399;
-  border-radius: 4px;
+  border: 2px solid #dcdfe6;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.canvas-element:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 
 .canvas-element.active {
   border-color: #409EFF;
-  box-shadow: 0 0 8px rgba(64,158,255,0.5);
+  box-shadow: 0 0 0 2px rgba(64,158,255,0.2), 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .element-content {
   text-align: center;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #303133;
 }
 
 .bound-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: #67C23A;
-  margin-top: 5px;
-  font-weight: normal;
+  margin-top: 6px;
+  font-weight: 500;
+  font-family: "SF Mono", Consolas, monospace;
 }
 
 .empty-text {
@@ -251,17 +301,23 @@ const saveConfig = () => {
   left: 50%;
   transform: translate(-50%, -50%);
   color: #909399;
-  font-size: 16px;
+  font-size: 14px;
+  letter-spacing: 1px;
   pointer-events: none;
 }
 
 .props-panel {
-  width: 300px;
-  border-left: 1px solid #dcdfe6;
+  width: 320px;
+  border-left: 1px solid #f0f2f5;
   background-color: #fff;
 }
 
 .props-content {
-  padding: 15px;
+  padding: 20px;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 500;
+  color: #606266;
 }
 </style>

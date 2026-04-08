@@ -245,55 +245,115 @@ onUnmounted(() => {
 
 <style scoped>
 .page-container {
-  padding: 20px;
-  height: calc(100vh - 100px);
+  padding: 24px;
+  height: calc(100vh - 84px);
   box-sizing: border-box;
-  background-color: #0b1a2a;
+  background-color: #050a15;
+  background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
 .box-card {
   display: flex;
   flex-direction: column;
-  background-color: #112233;
-  border-color: #1a3344;
+  background: rgba(8, 15, 30, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 216, 255, 0.15);
+  border-radius: 12px;
   color: #fff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  height: 100%;
 }
+
 :deep(.el-card__header) {
-  border-bottom: 1px solid #1a3344;
+  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
+  padding: 16px 24px;
 }
+
 :deep(.el-card__body) {
   flex: 1;
   overflow: auto;
-  padding: 10px;
+  padding: 24px;
 }
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
+
 .canvas-container {
   height: 100%;
+  width: 100%;
+  position: relative;
 }
+
 .chart {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
+
 .empty-tip {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+:deep(.el-descriptions) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 :deep(.el-descriptions__body) {
   background-color: transparent !important;
 }
+
 :deep(.el-descriptions-item__label) {
-  background-color: #1a2a3a !important;
-  color: #909399;
-  border-color: #2a3a4a !important;
+  background-color: rgba(0, 216, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 216, 255, 0.1) !important;
+  font-weight: 500;
 }
+
 :deep(.el-descriptions-item__content) {
-  background-color: #112233 !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
   color: #fff;
-  border-color: #2a3a4a !important;
+  border-color: rgba(0, 216, 255, 0.1) !important;
+}
+
+:deep(.el-table) {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid rgba(0, 216, 255, 0.1);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: rgba(0, 216, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
+  color: #00d8ff;
+  font-weight: 500;
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+:deep(.el-table--border .el-table__inner-wrapper::after),
+:deep(.el-table--border::after),
+:deep(.el-table--border::before),
+:deep(.el-table__inner-wrapper::before) {
+  background-color: rgba(0, 216, 255, 0.1);
+}
+
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
+  background-color: rgba(0, 216, 255, 0.05);
 }
 </style>

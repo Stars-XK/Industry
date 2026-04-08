@@ -1,10 +1,10 @@
 <template>
   <div class="page-container">
-    <el-card class="box-card" shadow="never">
+    <el-card shadow="never" class="box-card">
       <template #header>
         <div class="card-header">
-          <span>综合能效优化与动态成本核算</span>
-          <el-button type="primary" @click="handleAdd">补录能耗数据</el-button>
+          <div class="header-title">综合能效优化与动态成本核算</div>
+          <el-button type="primary" size="default" @click="handleAdd">补录能耗数据</el-button>
         </div>
       </template>
 
@@ -13,34 +13,37 @@
         type="info"
         description="核心指标：吨水百米能耗指标 (kWh/m3·100m) = (日耗电量 / 日泵水量) × (100 / 设计扬程)。该指标越低，说明泵组运行能效越高。当指标显著偏离基线时，建议安排机电检修。"
         show-icon
-        style="margin-bottom: 20px;"
+        :closable="false"
+        class="alert-banner"
       />
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="record_date" label="记录日期" width="150">
-          <template #default="scope">{{ scope.row.record_date.split('T')[0] }}</template>
-        </el-table-column>
-        <el-table-column prop="device_name" label="耗能设备 (泵组)">
-          <template #default="scope">
-            <span style="font-weight: bold;">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="power_kwh" label="日耗电量 (kWh)" width="150" align="right" />
-        <el-table-column prop="water_pumped_m3" label="日泵水量 (m³)" width="150" align="right" />
-        <el-table-column prop="energy_efficiency" label="吨水百米能耗 (kWh/m³·100m)" width="220" align="right">
-          <template #default="scope">
-            <el-tag :type="scope.row.energy_efficiency > 3.4 ? 'danger' : (scope.row.energy_efficiency > 3.2 ? 'warning' : 'success')" effect="dark">
-              {{ parseFloat(scope.row.energy_efficiency).toFixed(2) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template #default="scope">
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="table-container">
+        <el-table :data="tableData" style="width: 100%" v-loading="loading">
+          <el-table-column prop="id" label="ID" width="80" align="center" />
+          <el-table-column prop="record_date" label="记录日期" width="150" align="center">
+            <template #default="scope">{{ scope.row.record_date.split('T')[0] }}</template>
+          </el-table-column>
+          <el-table-column prop="device_name" label="耗能设备 (泵组)">
+            <template #default="scope">
+              <span class="device-label">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="power_kwh" label="日耗电量 (kWh)" width="160" align="right" />
+          <el-table-column prop="water_pumped_m3" label="日泵水量 (m³)" width="160" align="right" />
+          <el-table-column prop="energy_efficiency" label="吨水百米能耗" width="200" align="center">
+            <template #default="scope">
+              <el-tag :type="scope.row.energy_efficiency > 3.4 ? 'danger' : (scope.row.energy_efficiency > 3.2 ? 'warning' : 'success')" effect="dark" size="large">
+                {{ parseFloat(scope.row.energy_efficiency).toFixed(2) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" align="center">
+            <template #default="scope">
+              <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-card>
 
     <el-dialog title="手工补录设备能耗" v-model="dialogVisible" width="400px" @close="resetForm">
@@ -151,6 +154,57 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.page-container {
+  padding: 24px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 84px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.box-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.el-card__header) {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
+.alert-banner {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(144, 147, 153, 0.2);
+}
+
+.table-container {
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+}
+
+.device-label {
+  font-weight: 600;
+  color: #303133;
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: #f8f9fa;
+  color: #606266;
+  font-weight: 600;
+}
 </style>

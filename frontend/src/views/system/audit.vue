@@ -1,35 +1,53 @@
 <template>
-  <div class="app-container">
-    <el-card shadow="never">
-      <div slot="header" class="clearfix">
-        <span>安全审计与操作日志</span>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">安全审计与脱敏日志</h1>
+        <p class="page-subtitle">Security Audit & Data Masking Logs</p>
       </div>
-      
-      <el-table v-loading="loading" :data="list" border stripe>
+      <div class="header-actions">
+        <el-button class="neon-btn" @click="getList">刷新记录</el-button>
+      </div>
+    </div>
+    
+    <div class="glass-panel" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
+      <el-table v-loading="loading" :data="list" style="width: 100%" class="dark-table custom-scrollbar" element-loading-background="rgba(15,23,42,0.8)">
         <el-table-column prop="id" label="日志ID" width="100" align="center" />
-        <el-table-column prop="user_id" label="操作人ID" width="100" align="center" />
-        <el-table-column prop="ip_address" label="来源 IP" width="150" />
-        <el-table-column prop="req_method" label="请求方法" width="100" align="center">
+        <el-table-column prop="user_id" label="操作人ID" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="getMethodTag(row.req_method)">{{ row.req_method }}</el-tag>
+            <span class="highlight-text">{{ row.user_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="req_url" label="请求路径" />
+        <el-table-column prop="ip_address" label="来源 IP" width="150">
+          <template #default="{ row }">
+            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ row.ip_address }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="req_method" label="请求方法" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag :class="getMethodClass(row.req_method)" effect="dark" style="border: none; font-family: 'SF Mono', monospace;">{{ row.req_method }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="req_url" label="请求路径">
+          <template #default="{ row }">
+            <span style="color: #e2e8f0; font-family: 'SF Mono', monospace;">{{ row.req_url }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="耗时(ms)" width="100" align="center">
           <template #default="{ row }">
-            <span :style="{ color: row.execution_time > 1000 ? 'red' : 'inherit' }">
+            <span :style="{ color: row.execution_time > 1000 ? '#f43f5e' : '#10b981', fontFamily: 'SF Mono, monospace' }">
               {{ row.execution_time }} ms
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="操作时间" width="180" align="center">
           <template #default="{ row }">
-            {{ new Date(row.created_at).toLocaleString() }}
+            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" align="center">
+        <el-table-column label="操作" width="120" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link @click="showDetail(row)">查看参数</el-button>
+            <el-button class="action-btn text-cyan" link @click="showDetail(row)">查看参数</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -42,14 +60,20 @@
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="getList"
           @current-change="getList"
+          class="dark-pagination"
         />
       </div>
-    </el-card>
+    </div>
 
-    <el-dialog title="请求参数详情 (已脱敏)" v-model="dialogVisible" width="600px">
-      <div v-if="currentLog" style="background-color: #f5f7fa; padding: 15px; border-radius: 4px;">
-        <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0;">{{ formatJson(currentLog.req_body) }}</pre>
+    <el-dialog title="请求参数详情 (已脱敏)" v-model="dialogVisible" width="600px" class="glass-dialog" :show-close="false">
+      <div v-if="currentLog" class="json-viewer custom-scrollbar">
+        <pre>{{ formatJson(currentLog.req_body) }}</pre>
       </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false" class="glass-btn">关闭</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -85,13 +109,13 @@ const getList = async () => {
   loading.value = false
 }
 
-const getMethodTag = (method: string) => {
+const getMethodClass = (method: string) => {
   switch (method) {
-    case 'GET': return ''
-    case 'POST': return 'success'
-    case 'PUT': return 'warning'
-    case 'DELETE': return 'danger'
-    default: return 'info'
+    case 'GET': return 'cyan-tag'
+    case 'POST': return 'emerald-tag'
+    case 'PUT': return 'amber-tag'
+    case 'DELETE': return 'rose-tag'
+    default: return 'dark-tag'
   }
 }
 
@@ -116,12 +140,197 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 20px;
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.highlight-text {
+  color: #00d8ff;
+  font-family: "SF Mono", monospace;
+  font-weight: 600;
+}
+
+.dark-tag { background: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: none; }
+.cyan-tag { background: rgba(0, 216, 255, 0.1); color: #00d8ff; border: none; }
+.emerald-tag { background: rgba(16, 185, 129, 0.1); color: #10b981; border: none; }
+.amber-tag { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: none; }
+.rose-tag { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: none; }
+
+.action-btn {
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  text-shadow: 0 0 8px currentColor;
+  transform: translateY(-1px);
+}
+
+.text-cyan { color: #00d8ff; }
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid #00d8ff;
+  color: #00d8ff;
+  transition: all 0.3s;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  color: #fff;
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Table styles */
+.dark-table {
+  background-color: transparent !important;
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-header-text-color: #94a3b8;
+  --el-table-text-color: #e2e8f0;
+  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color) !important;
+  border-bottom: 1px solid var(--el-table-border-color);
+}
+
+:deep(.el-table tr) { background-color: transparent !important; }
+:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
+:deep(.el-table::before) { display: none; }
+
+.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
+  width: 4px;
+}
+
+.custom-scrollbar :deep(.el-scrollbar__thumb) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dialog Styles */
+:deep(.glass-dialog) {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+:deep(.glass-dialog .el-dialog__header) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-right: 0;
+  padding-bottom: 16px;
+}
+
+:deep(.glass-dialog .el-dialog__title) {
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:deep(.glass-dialog .el-dialog__body) {
+  color: #cbd5e1;
+  padding-top: 20px;
+}
+
+:deep(.glass-dialog .el-dialog__footer) {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.json-viewer {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.json-viewer pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+  color: #10b981;
+  font-family: "SF Mono", monospace;
+  font-size: 13px;
+}
+
 .pagination-container {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+:deep(.dark-pagination .el-pagination__total),
+:deep(.dark-pagination .el-pagination__jump) {
+  color: #94a3b8;
+}
+
+:deep(.dark-pagination button),
+:deep(.dark-pagination .el-pager li) {
+  background-color: transparent !important;
+  color: #94a3b8;
+}
+
+:deep(.dark-pagination .el-pager li.is-active) {
+  color: #00d8ff;
+  font-weight: bold;
 }
 </style>

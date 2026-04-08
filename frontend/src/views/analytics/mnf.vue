@@ -1,94 +1,193 @@
 <template>
-  <div class="page-container">
-    <el-card shadow="never" class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span class="header-title">夜间最小流量分析 (MNF)</span>
-          <el-button type="primary" size="default">生成听漏工单</el-button>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">夜间最小流量分析</h1>
+        <p class="page-subtitle">Minimum Night Flow (MNF) Analysis</p>
+      </div>
+      <div class="header-actions">
+        <el-button class="neon-btn">生成听漏工单</el-button>
+      </div>
+    </div>
+
+    <el-row :gutter="24">
+      <el-col :span="24">
+        <div class="warning-banner">
+          <el-icon class="banner-icon"><WarningFilled /></el-icon>
+          <div class="banner-content">
+            <div class="banner-title">检测到 张江园区 连续3天凌晨 2:00 - 4:00 用量偏离 AI 基线</div>
+            <div class="banner-desc">建议立即排查物理暗漏或未授权用水行为</div>
+          </div>
         </div>
-      </template>
-      <el-row :gutter="24">
-        <el-col :span="24">
-          <el-alert 
-            title="检测到 张江园区 连续3天凌晨 2:00 - 4:00 用量偏离 AI 基线，建议排查物理暗漏" 
-            type="warning" 
-            show-icon 
-            :closable="false"
-            class="alert-banner"
-          />
-        </el-col>
-        <el-col :span="24">
+      </el-col>
+      <el-col :span="24">
+        <div class="glass-panel" style="padding: 20px;">
+          <div class="panel-header">
+            <div class="panel-title">凌晨 2:00 - 4:00 供水散点图 <span>MNF Scatter Plot</span></div>
+          </div>
           <div class="chart-wrapper">
             <div id="mnf-chart" class="chart-inner"></div>
           </div>
-        </el-col>
-      </el-row>
-    </el-card>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { WarningFilled } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 
 const initChart = () => {
   const chart = echarts.init(document.getElementById('mnf-chart'))
   chart.setOption({
-    title: { text: '凌晨 2:00 - 4:00 供水散点图' },
-    tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: ['1日', '2日', '3日', '4日', '5日', '6日', '7日'] },
-    yAxis: { type: 'value', name: '水量 m³' },
+    tooltip: { 
+      trigger: 'axis',
+      backgroundColor: 'rgba(15, 23, 42, 0.9)',
+      borderColor: 'rgba(255,255,255,0.1)',
+      textStyle: { color: '#e2e8f0' }
+    },
+    legend: { textStyle: { color: '#94a3b8' } },
+    xAxis: { 
+      type: 'category', 
+      data: ['1日', '2日', '3日', '4日', '5日', '6日', '7日'],
+      axisLabel: { color: '#64748b' },
+      axisLine: { lineStyle: { color: '#334155' } }
+    },
+    yAxis: { 
+      type: 'value', 
+      name: '水量 m³',
+      nameTextStyle: { color: '#64748b' },
+      axisLabel: { color: '#64748b' },
+      splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
+    },
     series: [
-      { name: '实际夜间流量', type: 'scatter', data: [12, 11, 13, 25, 28, 26, 29], symbolSize: 10, itemStyle: { color: '#F56C6C' } },
-      { name: 'AI 正常基线', type: 'line', data: [10, 10, 10, 10, 10, 10, 10], lineStyle: { type: 'dashed', color: '#67C23A' } }
+      { 
+        name: '实际夜间流量', 
+        type: 'scatter', 
+        data: [12, 11, 13, 25, 28, 26, 29], 
+        symbolSize: 12, 
+        itemStyle: { color: '#f43f5e', shadowColor: 'rgba(244,63,94,0.5)', shadowBlur: 10 } 
+      },
+      { 
+        name: 'AI 正常基线', 
+        type: 'line', 
+        data: [10, 10, 10, 10, 10, 10, 10], 
+        lineStyle: { type: 'dashed', color: '#10b981', width: 2 } 
+      }
     ]
   })
 }
 onMounted(() => setTimeout(initChart, 100))
 </script>
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
 }
 
-.box-card {
-  border: none;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid #00d8ff;
+  color: #00d8ff;
+  transition: all 0.3s;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  color: #fff;
+}
+
+.warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 16px 20px;
+  margin-bottom: 24px;
 }
 
-:deep(.el-card__header) {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f2f5;
+.banner-icon {
+  font-size: 24px;
+  color: #f59e0b;
+  margin-top: 2px;
 }
 
-.card-header {
+.banner-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fcd34d;
+  margin-bottom: 4px;
+}
+
+.banner-desc {
+  font-size: 13px;
+  color: #fbbf24;
+  opacity: 0.8;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
-.header-title {
+.panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1f2d3d;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.alert-banner {
-  margin-bottom: 24px;
-  border-radius: 8px;
-  border: 1px solid rgba(230, 162, 60, 0.2);
+.panel-title span {
+  font-size: 12px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .chart-wrapper {
   height: 460px;
-  padding: 20px;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  width: 100%;
 }
 
 .chart-inner {

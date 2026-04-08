@@ -1,80 +1,96 @@
 <template>
-  <div class="page-container">
-    <div class="toolbar">
-      <el-button type="primary" @click="handleAdd">新增角色</el-button>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">角色与权限体系</h1>
+        <p class="page-subtitle">Role-Based Access Control (RBAC)</p>
+      </div>
+      <div class="header-actions">
+        <el-button class="neon-btn" @click="handleAdd">新增角色</el-button>
+      </div>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading"
-      element-loading-text="Thinking..."
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.8)">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="role_name" label="角色名称" />
-      <el-table-column prop="role_key" label="角色标识" />
-      <el-table-column prop="role_sort" label="排序" width="80" />
-      <el-table-column prop="data_scope" label="数据范围">
-        <template #default="{ row }">
-          <el-tag v-if="row.data_scope === 1" type="danger">全部数据</el-tag>
-          <el-tag v-else-if="row.data_scope === 2" type="warning">本部门</el-tag>
-          <el-tag v-else-if="row.data_scope === 3" type="info">自定义</el-tag>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="状态" width="80">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-            {{ row.status === 1 ? '正常' : '停用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="创建时间" width="180">
-        <template #default="{ row }">
-          {{ new Date(row.created_at).toLocaleString() }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
-        <template #default="{ row }">
-          <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="glass-panel" style="flex: 1; padding: 20px;">
+      <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" v-loading="loading"
+        element-loading-background="rgba(15,23,42,0.8)">
+        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column prop="role_name" label="角色名称" min-width="150">
+          <template #default="{ row }">
+            <span style="color: #e2e8f0; font-weight: 500;">{{ row.role_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="role_key" label="角色标识" width="150">
+          <template #default="{ row }">
+            <span class="highlight-text">{{ row.role_key }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="role_sort" label="排序" width="80" align="center" />
+        <el-table-column prop="data_scope" label="数据范围" width="120">
+          <template #default="{ row }">
+            <el-tag v-if="row.data_scope === 1" effect="dark" class="danger-tag" style="border: none;">全部数据</el-tag>
+            <el-tag v-else-if="row.data_scope === 2" effect="dark" class="warning-tag" style="border: none;">本部门</el-tag>
+            <el-tag v-else-if="row.data_scope === 3" effect="dark" class="dark-tag" style="border: none;">自定义</el-tag>
+            <span v-else>未知</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag :class="row.status === 1 ? 'success-tag' : 'danger-tag'" effect="dark" style="border: none;">
+              {{ row.status === 1 ? '正常' : '停用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="created_at" label="创建时间" width="180">
+          <template #default="{ row }">
+            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="action-btns" style="justify-content: center;">
+              <el-button class="action-btn text-cyan" link size="small" @click="handleEdit(row)">编辑</el-button>
+              <el-button class="action-btn text-rose" link size="small" @click="handleDelete(row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <el-row :gutter="20">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" class="glass-dialog" :show-close="false">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" class="dark-form" label-position="left">
+        <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="角色名称" prop="role_name">
-              <el-input v-model="form.role_name" placeholder="请输入角色名称" />
+              <el-input v-model="form.role_name" placeholder="请输入角色名称" class="glass-input" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色标识" prop="role_key">
-              <el-input v-model="form.role_key" placeholder="请输入角色标识 (如 admin)" />
+              <el-input v-model="form.role_key" placeholder="如 admin" class="glass-input" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="显示顺序" prop="role_sort">
-              <el-input-number v-model="form.role_sort" :min="0" style="width: 100%" />
+              <el-input-number v-model="form.role_sort" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio 
-              v-for="dict in sys_normal_disable" 
-              :key="dict.dict_value" 
-              :value="parseInt(dict.dict_value)"
-            >{{ dict.dict_label }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
+              <el-radio-group v-model="form.status" class="dark-radio-group">
+                <el-radio 
+                  v-for="dict in sys_normal_disable" 
+                  :key="dict.dict_value" 
+                  :value="parseInt(dict.dict_value)"
+                >{{ dict.dict_label }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="数据范围" prop="data_scope">
-          <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%">
+          <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
             <el-option 
               v-for="dict in sys_data_scope" 
               :key="dict.dict_value" 
@@ -84,22 +100,26 @@
           </el-select>
         </el-form-item>
         <el-form-item label="菜单权限">
-          <el-tree
-            ref="menuTreeRef"
-            :data="menuOptions"
-            show-checkbox
-            node-key="id"
-            :props="{ label: 'menu_name', children: 'children' }"
-            style="width: 100%; border: 1px solid #dcdfe6; border-radius: 4px; padding: 10px;"
-          />
+          <div class="glass-tree-container custom-scrollbar">
+            <el-tree
+              ref="menuTreeRef"
+              :data="menuOptions"
+              show-checkbox
+              node-key="id"
+              :props="{ label: 'menu_name', children: 'children' }"
+              class="dark-tree"
+            />
+          </div>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
+          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" class="glass-input" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button class="neon-btn" @click="submitForm">确认保存</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -248,13 +268,263 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 20px;
-  background: #fff;
-  height: 100%;
-  border-radius: 4px;
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
-.toolbar {
-  margin-bottom: 20px;
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.highlight-text {
+  color: #00d8ff;
+  font-family: "SF Mono", monospace;
+  font-weight: 600;
+}
+
+.success-tag {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.danger-tag {
+  background-color: rgba(244, 63, 94, 0.2);
+  color: #f43f5e;
+}
+
+.warning-tag {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.dark-tag {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.action-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  text-shadow: 0 0 8px currentColor;
+  transform: translateY(-1px);
+}
+
+.text-cyan { color: #00d8ff; }
+.text-rose { color: #f43f5e; }
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid #00d8ff;
+  color: #00d8ff;
+  transition: all 0.3s;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  color: #fff;
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Table styles */
+.dark-table {
+  background-color: transparent !important;
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-header-text-color: #94a3b8;
+  --el-table-text-color: #e2e8f0;
+  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color) !important;
+  border-bottom: 1px solid var(--el-table-border-color);
+}
+
+:deep(.el-table tr) { background-color: transparent !important; }
+:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
+:deep(.el-table::before) { display: none; }
+
+.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
+  width: 4px;
+}
+
+.custom-scrollbar :deep(.el-scrollbar__thumb) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dialog Styles */
+:deep(.glass-dialog) {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+:deep(.glass-dialog .el-dialog__header) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-right: 0;
+  padding-bottom: 16px;
+}
+
+:deep(.glass-dialog .el-dialog__title) {
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:deep(.glass-dialog .el-dialog__body) {
+  color: #cbd5e1;
+  padding-top: 20px;
+}
+
+:deep(.glass-dialog .el-dialog__footer) {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Form Styles */
+:deep(.dark-form .el-form-item__label) {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+:deep(.glass-input .el-input__wrapper),
+:deep(.glass-input-number .el-input__wrapper),
+:deep(.glass-input .el-textarea__inner) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  color: #e2e8f0;
+}
+
+:deep(.glass-input .el-input__wrapper:hover),
+:deep(.glass-input-number .el-input__wrapper:hover),
+:deep(.glass-input .el-textarea__inner:hover) {
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
+}
+
+:deep(.glass-input .el-input__wrapper.is-focus),
+:deep(.glass-input-number .el-input__wrapper.is-focus),
+:deep(.glass-input .el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #00d8ff inset !important;
+}
+
+:deep(.glass-select .el-input__wrapper) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+:deep(.glass-select .el-input__inner),
+:deep(.glass-input .el-input__inner),
+:deep(.glass-input-number .el-input__inner) {
+  color: #e2e8f0;
+}
+
+:deep(.el-input-number__decrease),
+:deep(.el-input-number__increase) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+}
+
+:deep(.el-input-number__decrease:hover),
+:deep(.el-input-number__increase:hover) {
+  color: #00d8ff !important;
+}
+
+:deep(.dark-radio-group .el-radio) {
+  color: #94a3b8;
+}
+:deep(.dark-radio-group .el-radio__input.is-checked + .el-radio__label) {
+  color: #00d8ff;
+}
+:deep(.dark-radio-group .el-radio__input.is-checked .el-radio__inner) {
+  border-color: #00d8ff;
+  background: #00d8ff;
+}
+
+.glass-tree-container {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dark-tree {
+  background-color: transparent !important;
+  color: #e2e8f0;
+}
+
+:deep(.dark-tree .el-tree-node__content:hover) {
+  background-color: rgba(0, 216, 255, 0.1);
+}
+
+:deep(.dark-tree .el-tree-node:focus > .el-tree-node__content) {
+  background-color: transparent;
 }
 </style>

@@ -1,56 +1,62 @@
 <template>
-  <div class="page-container">
-    <el-card shadow="never">
-      <template #header>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span>班组排班与考勤调度</span>
-          <el-date-picker v-model="currentMonth" type="month" placeholder="选择月份" value-format="YYYY-MM" @change="fetchData" :clearable="false" />
-        </div>
-      </template>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">班组排班与考勤调度</h1>
+        <p class="page-subtitle">Duty Roster & Attendance Scheduling</p>
+      </div>
+      <div class="header-actions">
+        <el-date-picker v-model="currentMonth" type="month" placeholder="选择月份" value-format="YYYY-MM" @change="fetchData" :clearable="false" class="glass-date-picker" popper-class="glass-dropdown" />
+      </div>
+    </div>
 
-      <el-calendar :v-model="currentDate">
+    <div class="glass-panel" style="padding: 20px;">
+      <el-calendar v-model="currentDate" class="dark-calendar">
         <template #date-cell="{ data }">
-          <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="font-weight: bold; margin-bottom: 5px;">{{ data.day.split('-').slice(2).join('') }}</div>
-            <div style="flex: 1; overflow-y: auto; font-size: 12px;">
+          <div class="calendar-cell">
+            <div class="calendar-day">{{ data.day.split('-').slice(2).join('') }}</div>
+            <div class="duty-list custom-scrollbar">
               <div v-for="item in getDutiesByDate(data.day)" :key="item.id" 
-                   style="margin-bottom: 2px; padding: 2px; border-radius: 2px;"
-                   :style="{ background: item.is_attended ? '#f0f9eb' : '#fdf6ec', color: item.is_attended ? '#67c23a' : '#e6a23c' }">
-                [{{ getShiftName(item.shift_type) }}] {{ item.nickname }}
-                <el-button v-if="!item.is_attended" type="success" link size="small" @click.stop="markAttend(item.id)">打卡</el-button>
+                   class="duty-item"
+                   :class="item.is_attended ? 'duty-attended' : 'duty-pending'">
+                <div class="duty-info">
+                  <span class="duty-shift">[{{ getShiftName(item.shift_type) }}]</span> 
+                  <span class="duty-name">{{ item.nickname }}</span>
+                </div>
+                <el-button v-if="!item.is_attended" class="action-btn text-emerald" link size="small" @click.stop="markAttend(item.id)">打卡</el-button>
               </div>
             </div>
-            <div style="text-align: right;">
-              <el-button type="primary" link size="small" @click.stop="handleAdd(data.day)">+ 排班</el-button>
+            <div class="calendar-action">
+              <el-button class="action-btn text-cyan" link size="small" @click.stop="handleAdd(data.day)">+ 排班</el-button>
             </div>
           </div>
         </template>
       </el-calendar>
-    </el-card>
+    </div>
 
-    <el-dialog title="新增排班" v-model="dialogVisible" width="400px">
-      <el-form label-width="80px">
+    <el-dialog title="新增排班" v-model="dialogVisible" width="400px" class="glass-dialog" :show-close="false">
+      <el-form label-width="80px" class="dark-form" label-position="top">
         <el-form-item label="日期">
-          <el-input :model-value="form.duty_date" disabled />
+          <el-input :model-value="form.duty_date" disabled class="glass-input is-disabled" />
         </el-form-item>
         <el-form-item label="班次">
-          <el-select v-model="form.shift_type" style="width: 100%">
+          <el-select v-model="form.shift_type" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
             <el-option label="早班 (08:00-16:00)" value="morning" />
             <el-option label="中班 (16:00-00:00)" value="afternoon" />
             <el-option label="夜班 (00:00-08:00)" value="night" />
           </el-select>
         </el-form-item>
         <el-form-item label="值班人">
-          <el-select v-model="form.user_id" filterable style="width: 100%">
+          <el-select v-model="form.user_id" filterable style="width: 100%" class="glass-select" popper-class="glass-dropdown">
             <el-option v-for="u in usersOptions" :key="u.id" :label="u.nickname" :value="u.id" />
           </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">确定排班</el-button>
-        </span>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button class="neon-btn" @click="submitForm">确定排班</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -119,5 +125,270 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-.page-container { padding: 20px; }
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark-calendar {
+  background-color: transparent;
+  --el-calendar-border: rgba(255, 255, 255, 0.05);
+  --el-calendar-cell-width: 120px;
+}
+
+:deep(.el-calendar__header) {
+  display: none;
+}
+
+:deep(.el-calendar-table) {
+  height: 100%;
+}
+
+:deep(.el-calendar-table td) {
+  border-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.02);
+  transition: all 0.3s ease;
+}
+
+:deep(.el-calendar-table td.is-selected) {
+  background-color: rgba(0, 216, 255, 0.05);
+}
+
+:deep(.el-calendar-table td:hover) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+:deep(.el-calendar-table th) {
+  color: #94a3b8;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendar-cell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.calendar-day {
+  font-family: "SF Mono", monospace;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.duty-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duty-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  border-left: 2px solid transparent;
+}
+
+.duty-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.duty-shift {
+  color: #94a3b8;
+  font-family: "SF Mono", monospace;
+}
+
+.duty-name {
+  font-weight: 500;
+}
+
+.duty-attended {
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: #10b981;
+  color: #10b981;
+}
+
+.duty-pending {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.calendar-action {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.action-btn {
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  text-shadow: 0 0 8px currentColor;
+}
+
+.text-cyan { color: #00d8ff; }
+.text-emerald { color: #10b981; }
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid #00d8ff;
+  color: #00d8ff;
+  transition: all 0.3s;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  color: #fff;
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dialog Styles */
+:deep(.glass-dialog) {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+:deep(.glass-dialog .el-dialog__header) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-right: 0;
+  padding-bottom: 16px;
+}
+
+:deep(.glass-dialog .el-dialog__title) {
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:deep(.glass-dialog .el-dialog__body) {
+  color: #cbd5e1;
+  padding-top: 20px;
+}
+
+:deep(.glass-dialog .el-dialog__footer) {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Form Styles */
+:deep(.dark-form .el-form-item__label) {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+:deep(.glass-input .el-input__wrapper),
+:deep(.glass-input .el-textarea__inner) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  color: #e2e8f0;
+}
+
+:deep(.glass-input.is-disabled .el-input__wrapper) {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+:deep(.glass-input .el-input__wrapper:hover:not(.is-disabled)),
+:deep(.glass-input .el-textarea__inner:hover) {
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
+}
+
+:deep(.glass-input .el-input__wrapper.is-focus),
+:deep(.glass-input .el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #00d8ff inset !important;
+}
+
+:deep(.glass-select .el-input__wrapper),
+:deep(.glass-date-picker .el-input__wrapper) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+:deep(.glass-select .el-input__inner),
+:deep(.glass-input .el-input__inner),
+:deep(.glass-date-picker .el-input__inner) {
+  color: #e2e8f0;
+}
+
+:deep(.glass-input.is-disabled .el-input__inner) {
+  color: #94a3b8;
+}
 </style>

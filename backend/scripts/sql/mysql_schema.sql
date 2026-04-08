@@ -274,6 +274,32 @@ CREATE TABLE IF NOT EXISTS dma_1h (
     INDEX `idx_dma_1h_ts` (`zone_id`, `ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_1h 降级模拟表';
 
+-- 18. 数据字典类型表
+CREATE TABLE IF NOT EXISTS sys_dict_type (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    dict_name VARCHAR(100) NOT NULL COMMENT '字典名称',
+    dict_type VARCHAR(100) UNIQUE NOT NULL COMMENT '字典类型(如 sys_user_sex)',
+    status SMALLINT DEFAULT 1 COMMENT '状态(1正常 0停用)',
+    remark VARCHAR(500) COMMENT '备注',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 19. 数据字典数据表
+CREATE TABLE IF NOT EXISTS sys_dict_data (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    dict_type VARCHAR(100) NOT NULL COMMENT '字典类型',
+    dict_label VARCHAR(100) NOT NULL COMMENT '字典标签',
+    dict_value VARCHAR(100) NOT NULL COMMENT '字典键值',
+    css_class VARCHAR(100) COMMENT '样式属性',
+    list_class VARCHAR(100) COMMENT '表格回显样式',
+    is_default SMALLINT DEFAULT 0 COMMENT '是否默认(1是 0否)',
+    status SMALLINT DEFAULT 1 COMMENT '状态(1正常 0停用)',
+    sort_order INT DEFAULT 0 COMMENT '字典排序',
+    remark VARCHAR(500) COMMENT '备注',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (dict_type) REFERENCES sys_dict_type(dict_type) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

@@ -1,86 +1,103 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, BadRequestException, Request, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { DictType } from '../../../../libs/entities/src/dict-type.entity';
 import { DictData } from '../../../../libs/entities/src/dict-data.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateDictTypeDto, UpdateDictTypeDto, CreateDictDataDto, UpdateDictDataDto } from './dto/dict.dto';
 
 @ApiTags('字典管理')
 @ApiBearerAuth()
 @Controller('api/system/dict')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class DictController {
   constructor(
     @InjectRepository(DictType)
     private readonly dictTypeRepository: Repository<DictType>,
     @InjectRepository(DictData)
     private readonly dictDataRepository: Repository<DictData>,
+    private dataSource: DataSource
   ) {}
 
-  // ================= 字典类型接口 =================
   @Get('type/list')
   @ApiOperation({ summary: '获取字典类型列表' })
-  async getDictTypeList() {
-    const list = await this.dictTypeRepository.find();
-    return list;
+  @RequirePermissions('sys:dict')
+  async getDictTypes() {
+    return await this.dataSource.query(`SELECT * FROM sys_dict_type ORDER BY id DESC`);
   }
 
-  @Post('type/create')
-  @ApiOperation({ summary: '创建字典类型' })
-  async createDictType(@Request() req, @Body() body: CreateDictTypeDto) {
-    const type = new DictType();
-    type.dict_name = body.dict_name;
-    type.dict_type = body.dict_type;
-    type.remark = body.remark;
-    type.created_by = req.user.userId;
-    if (body.status !== undefined) type.status = body.status;
-    await this.dictTypeRepository.save(type);
-    return null;
+  @Post('type')
+  @ApiOperation({ summary: '新增字典类型' })
+  @RequirePermissions('sys:dict')
+  async createDictType(@Body() body: any) {
+    const { dict_name, dict_type, status, remark } = body;
+    await this.dataSource.query(
+      `INSERT INTO sys_dict_type (dict_name, dict_type, status, remark) VALUES (?, ?, ?, ?)`,
+      [dict_name, dict_type, status ?? 1, remark]
+    );
+    return { success: true };
   }
 
-  @Delete('type/delete/:id')
+  @Put('type/:id')
+  @ApiOperation({ summary: '修改字典类型' })
+  @RequirePermissions('sys:dict')
+  async updateDictType(@Param('id') id: string, @Body() body: any) {
+    const { dict_name, dict_type, status, remark } = body;
+    await this.dataSource.query(
+      `UPDATE sys_dict_type SET dict_name = ?, dict_type = ?, status = ?, remark = ? WHERE id = ?`,
+      [dict_name, dict_type, status, remark, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('type/:id')
   @ApiOperation({ summary: '删除字典类型' })
-  async deleteDictType(@Request() req, @Param('id') id: number) {
-    const type = await this.dictTypeRepository.findOne({ where: { id } });
-    if (type) {
-      // 级联删除字典数据 (软删除)
-      await this.dictDataRepository.softDelete({ dict_type: type.dict_type });
-      await this.dictTypeRepository.softDelete(id);
-    }
-    return null;
+  @RequirePermissions('sys:dict')
+  async deleteDictType(@Param('id') id: string) {
+    await this.dataSource.query(`DELETE FROM sys_dict_type WHERE id = ?`, [id]);
+    return { success: true };
   }
 
-  // ================= 字典数据接口 =================
-  @Get('data/list/:dictType')
-  @ApiOperation({ summary: '获取指定字典类型的数据列表' })
-  async getDictDataByType(@Param('dictType') dictType: string) {
-    const list = await this.dictDataRepository.find({
-      where: { dict_type: dictType, status: 1 },
-      order: { dict_sort: 'ASC' }
-    });
-    return list;
+  @Get('data/list')
+  @ApiOperation({ summary: '根据字典类型获取字典数据' })
+  async getDictData(@Query('dictType') dictType: string) {
+    return await this.dataSource.query(
+      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY sort_order ASC`,
+      [dictType]
+    );
   }
 
-  @Post('data/create')
-  @ApiOperation({ summary: '创建字典数据项' })
-  async createDictData(@Request() req, @Body() body: CreateDictDataDto) {
-    const data = new DictData();
-    data.dict_type = body.dict_type;
-    data.dict_label = body.dict_label;
-    data.dict_value = body.dict_value;
-    data.dict_sort = body.dict_sort || 0;
-    data.created_by = req.user.userId;
-    if (body.status !== undefined) data.status = body.status;
-    await this.dictDataRepository.save(data);
-    return null;
+  @Post('data')
+  @ApiOperation({ summary: '新增字典数据' })
+  @RequirePermissions('sys:dict')
+  async createDictData(@Body() body: any) {
+    const { dict_type, dict_label, dict_value, css_class, list_class, sort_order, status, remark } = body;
+    await this.dataSource.query(
+      `INSERT INTO sys_dict_data (dict_type, dict_label, dict_value, css_class, list_class, sort_order, status, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [dict_type, dict_label, dict_value, css_class, list_class, sort_order || 0, status ?? 1, remark]
+    );
+    return { success: true };
   }
 
-  @Delete('data/delete/:id')
-  @ApiOperation({ summary: '删除字典数据项' })
-  async deleteDictData(@Param('id') id: number) {
-    await this.dictDataRepository.softDelete(id);
-    return null;
+  @Put('data/:id')
+  @ApiOperation({ summary: '修改字典数据' })
+  @RequirePermissions('sys:dict')
+  async updateDictData(@Param('id') id: string, @Body() body: any) {
+    const { dict_label, dict_value, css_class, list_class, sort_order, status, remark } = body;
+    await this.dataSource.query(
+      `UPDATE sys_dict_data SET dict_label = ?, dict_value = ?, css_class = ?, list_class = ?, sort_order = ?, status = ?, remark = ? WHERE id = ?`,
+      [dict_label, dict_value, css_class, list_class, sort_order, status, remark, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('data/:id')
+  @ApiOperation({ summary: '删除字典数据' })
+  @RequirePermissions('sys:dict')
+  async deleteDictData(@Param('id') id: string) {
+    await this.dataSource.query(`DELETE FROM sys_dict_data WHERE id = ?`, [id]);
+    return { success: true };
   }
 }

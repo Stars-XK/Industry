@@ -129,7 +129,7 @@ const dataRules = {
 
 const fetchTypeList = async () => {
   try {
-    const res = await request.get('/api/system/dict/type/list')
+    const res = await request.get('/api/auth/system/dict/type/list')
     typeList.value = res.data || res || []
     if (typeList.value.length > 0 && !currentType.value) {
       handleSelectType(typeList.value[0].dict_type)
@@ -142,7 +142,7 @@ const fetchTypeList = async () => {
 const fetchDataList = async (type: string) => {
   loadingData.value = true
   try {
-    const res = await request.get(`/api/system/dict/data/list/${type}`)
+    const res = await request.get('/api/auth/system/dict/data/list', { params: { dictType: currentType.value } })
     dataList.value = res.data || res || []
   } catch (error) {
     console.error(error)
@@ -166,8 +166,12 @@ const submitTypeForm = async () => {
   if (!typeFormRef.value) return
   await typeFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      await request.post('/api/system/dict/type/create', typeForm.value)
-      ElMessage.success('新增类型成功')
+      if (typeForm.value.id) {
+        await request.put(`/api/auth/system/dict/type/${typeForm.value.id}`, typeForm.value)
+      } else {
+        await request.post('/api/auth/system/dict/type', typeForm.value)
+      }
+      ElMessage.success('保存类型成功')
       typeDialogVisible.value = false
       fetchTypeList()
     }
@@ -178,7 +182,7 @@ const handleDeleteType = (type: any) => {
   ElMessageBox.confirm(`确认删除字典类型 "${type.dict_name}" 吗？这将级联删除其下所有字典项！`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/dict/type/delete/${type.id}`)
+    await request.delete(`/api/auth/system/dict/type/${type.id}`)
     ElMessage.success('删除成功')
     currentType.value = ''
     fetchTypeList()
@@ -195,11 +199,15 @@ const submitDataForm = async () => {
   if (!dataFormRef.value) return
   await dataFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      await request.post('/api/system/dict/data/create', { 
-        dict_type: currentType.value, 
-        ...dataForm.value
-      })
-      ElMessage.success('新增字典项成功')
+      if (dataForm.value.id) {
+        await request.put(`/api/auth/system/dict/data/${dataForm.value.id}`, dataForm.value)
+      } else {
+        await request.post('/api/auth/system/dict/data', {
+          dict_type: currentType.value,
+          ...dataForm.value
+        })
+      }
+      ElMessage.success('保存数据成功')
       dataDialogVisible.value = false
       fetchDataList(currentType.value)
     }
@@ -210,7 +218,7 @@ const handleDeleteData = (data: any) => {
   ElMessageBox.confirm(`确认删除字典项 "${data.dict_label}" 吗？`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/dict/data/delete/${data.id}`)
+    await request.delete(`/api/auth/system/dict/data/${data.id}`)
     ElMessage.success('删除成功')
     fetchDataList(currentType.value)
   }).catch(() => {})

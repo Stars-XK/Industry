@@ -23,6 +23,8 @@ import { AuditLog } from '../../../libs/entities/src/audit-log.entity';
       database: process.env.DB_NAME || 'Industry',
       autoLoadEntities: true,
       synchronize: false,
+      keepConnectionAlive: true,
+      extra: { connectionLimit: 10, enableKeepAlive: true, keepAliveInitialDelay: 10000 },
     }),
     TypeOrmModule.forFeature([DmaZone, AstDevice, AuditLog])
   ],

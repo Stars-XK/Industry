@@ -19,6 +19,8 @@ import { InventoryController } from "./inventory/inventory.controller";
       password: process.env.DB_PASSWORD || 'nDTe2mNcSMadmY3S',
       database: process.env.DB_DATABASE || 'Industry',
       synchronize: false,
+      keepConnectionAlive: true,
+      extra: { connectionLimit: 10, enableKeepAlive: true, keepAliveInitialDelay: 10000 },
     }),
     ScheduleModule.forRoot(),
   ],

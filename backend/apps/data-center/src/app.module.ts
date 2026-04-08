@@ -35,6 +35,8 @@ import { GovernanceTaskService } from './tasks/governance.task';
       database: process.env.DB_NAME || 'Industry',
       autoLoadEntities: true,
       synchronize: false,
+      keepConnectionAlive: true,
+      extra: { connectionLimit: 10, enableKeepAlive: true, keepAliveInitialDelay: 10000 },
     }),
     TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],

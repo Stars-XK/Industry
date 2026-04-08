@@ -8,7 +8,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('DMA 拓扑导航与分区配置')
 @ApiBearerAuth()
-@Controller('api/scada/topology')
+@Controller('scada/topology')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class TopologyController {
   constructor(

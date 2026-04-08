@@ -10,7 +10,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('边缘测点标签映射')
 @ApiBearerAuth()
-@Controller('api/data-center/edge-tag')
+@Controller('data-center/edge-tag')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class EdgeTagController {
   constructor(

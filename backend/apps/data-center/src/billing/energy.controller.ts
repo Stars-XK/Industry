@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('综合能效管理')
 @ApiBearerAuth()
-@Controller('api/data-center/energy')
+@Controller('data-center/energy')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class EnergyController {
   constructor(private dataSource: DataSource) {}

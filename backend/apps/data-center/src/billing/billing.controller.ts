@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('营收对账管理')
 @ApiBearerAuth()
-@Controller('api/data-center/billing')
+@Controller('data-center/billing')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class BillingController {
   constructor(private dataSource: DataSource) {}

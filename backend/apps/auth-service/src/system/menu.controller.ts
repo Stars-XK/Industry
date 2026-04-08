@@ -8,7 +8,7 @@ import { CreateMenuDto, UpdateMenuDto } from './dto/menu.dto';
 
 @ApiTags('菜单管理')
 @ApiBearerAuth()
-@Controller('api/system/menu')
+@Controller('system/menu')
 @UseGuards(AuthGuard('jwt'))
 export class SystemMenuController {
   constructor(

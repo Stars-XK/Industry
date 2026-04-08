@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('数据中台与治理底座')
 @ApiBearerAuth()
-@Controller('api/data-center/governance')
+@Controller('data-center/governance')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class GovernanceController {
   constructor(private dataSource: DataSource) {}

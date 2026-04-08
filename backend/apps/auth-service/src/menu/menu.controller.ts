@@ -5,7 +5,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('菜单动态拉取')
 @ApiBearerAuth()
-@Controller('api/menus')
+@Controller('menus')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 

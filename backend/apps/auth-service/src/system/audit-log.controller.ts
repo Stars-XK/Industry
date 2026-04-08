@@ -8,7 +8,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('安全审计管理')
 @ApiBearerAuth()
-@Controller('api/system/audit')
+@Controller('system/audit')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class AuditLogController {
   constructor(

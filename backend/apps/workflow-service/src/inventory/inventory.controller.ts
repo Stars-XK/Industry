@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Put, Param, Delete, Query, UseGuards, Req 
 import { DataSource } from 'typeorm';
 import { PermissionsGuard } from '@app/common/guards/permissions.guard';
 
-@Controller('api/workflow/inventory')
+@Controller('workflow/inventory')
 @UseGuards(PermissionsGuard)
 export class InventoryController {
   constructor(private readonly dataSource: DataSource) {}

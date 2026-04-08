@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('SOP 应急预案库')
 @ApiBearerAuth()
-@Controller('api/workflow/sop')
+@Controller('workflow/sop')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class SopController {
   constructor(private dataSource: DataSource) {}

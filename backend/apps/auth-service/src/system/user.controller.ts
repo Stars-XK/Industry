@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 
 @ApiTags('用户管理')
 @ApiBearerAuth()
-@Controller('api/system/user')
+@Controller('system/user')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class UserController {
   constructor(

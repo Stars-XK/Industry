@@ -10,7 +10,7 @@ import { CreateDictTypeDto, UpdateDictTypeDto, CreateDictDataDto, UpdateDictData
 
 @ApiTags('字典管理')
 @ApiBearerAuth()
-@Controller('api/system/dict')
+@Controller('system/dict')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class DictController {
   constructor(

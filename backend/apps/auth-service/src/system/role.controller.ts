@@ -9,7 +9,7 @@ import { CreateRoleDto, UpdateRoleDto } from './dto/role.dto';
 
 @ApiTags('角色管理')
 @ApiBearerAuth()
-@Controller('api/system/role')
+@Controller('system/role')
 @UseGuards(AuthGuard('jwt'))
 export class RoleController {
   constructor(

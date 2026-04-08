@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '@app/common';
 
-@Controller('api/data-center/dashboard')
+@Controller('data-center/dashboard')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class DashboardController {
   constructor(private dataSource: DataSource) {}

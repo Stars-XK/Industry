@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('工单流转')
 @ApiBearerAuth()
-@Controller('api/workflow/order')
+@Controller('workflow/order')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class OrderController {
   constructor(private dataSource: DataSource) {}

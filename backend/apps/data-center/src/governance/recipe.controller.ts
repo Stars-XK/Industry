@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('工业配方管理')
 @ApiBearerAuth()
-@Controller('api/data-center/recipe')
+@Controller('data-center/recipe')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class RecipeController {
   constructor(private dataSource: DataSource) {}

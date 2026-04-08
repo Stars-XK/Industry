@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('报警风暴收敛中心')
 @ApiBearerAuth()
-@Controller('api/workflow/alarm')
+@Controller('workflow/alarm')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class AlarmController {
   constructor(private dataSource: DataSource) {}

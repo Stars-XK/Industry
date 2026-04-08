@@ -200,7 +200,7 @@ const energyTrendOption = ref({
   ]
 })
 
-const alarms = ref([])
+const alarms = ref<any[]>([])
 
 const fetchAlarms = async () => {
   try {

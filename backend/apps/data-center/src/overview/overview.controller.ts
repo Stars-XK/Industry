@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '@app/common';
@@ -9,6 +9,8 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 @Controller('api/data-center/overview')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class OverviewController {
+  private readonly logger = new Logger(OverviewController.name);
+
   constructor(private dataSource: DataSource) {}
 
   @Get('metrics')
@@ -62,7 +64,7 @@ export class OverviewController {
         activeAlarms = parseInt(resAlarm[0].count);
       }
     } catch (e) {
-      console.error('查询核心指标失败', e);
+      this.logger.error('查询核心指标失败', e);
     }
 
     return {
@@ -110,7 +112,7 @@ export class OverviewController {
         leakageValues.push(parseFloat((val * 0.12).toFixed(1))); // 实际应读取 dma_1h 的损耗量
       }
     } catch (e) {
-      console.error('查询历史趋势失败', e);
+      this.logger.error('查询历史趋势失败', e);
     }
 
     return { hours, supplyValues, leakageValues };
@@ -139,7 +141,7 @@ export class OverviewController {
         if (r.standard_name === 'ph') ph = r.value;
       });
     } catch (e) {
-      console.error('获取水质数据失败', e);
+      this.logger.error('获取水质数据失败', e);
     }
 
     return {
@@ -202,7 +204,7 @@ export class OverviewController {
         });
       }
     } catch (e) {
-      console.error('获取报警数据失败', e);
+      this.logger.error('获取报警数据失败', e);
     }
 
     return []; // 真实工业级：如果没有真实报警，就返回空数组，而不是假数据

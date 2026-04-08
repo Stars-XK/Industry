@@ -94,7 +94,7 @@ use([CanvasRenderer, TreeChart, TooltipComponent])
 
 const loading = ref(false)
 const deviceLoading = ref(false)
-const treeData = ref([])
+const treeData = ref<any[]>([])
 const deviceList = ref<any[]>([])
 const currentNode = ref<any>(null)
 let socket: Socket | null = null

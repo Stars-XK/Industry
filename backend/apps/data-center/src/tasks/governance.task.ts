@@ -72,4 +72,46 @@ export class GovernanceTaskService {
     };
     return map[method] || 'NONE';
   }
+
+  /**
+   * 每月 1 号凌晨 05:00 执行产销差(NRW)统计报表生成
+   */
+  @Cron('0 0 5 1 * *')
+  async generateNrwReport() {
+    this.logger.log('--- [CRON START] 触发工业级定时任务: 月度产销差 NRW 报表生成 ---');
+    try {
+      const now = new Date();
+      now.setMonth(now.getMonth() - 1);
+      const reportMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+
+      const salesRes = await this.dataSource.query(
+        `SELECT SUM(usage_m3) as total_sales FROM biz_billing WHERE billing_period = ? AND status != 'cancelled'`,
+        [reportMonth]
+      );
+      const totalSales = parseFloat(salesRes[0]?.total_sales || 0);
+
+      const supplyRes = await this.dataSource.query(
+        `SELECT SUM(supply) as total_supply FROM dma_daily WHERE ts LIKE ?`,
+        [`${reportMonth}%`]
+      );
+      const totalSupply = parseFloat(supplyRes[0]?.total_supply || 0);
+
+      let nrwRatio = 0;
+      let realLoss = 0;
+      if (totalSupply > 0) {
+        realLoss = totalSupply - totalSales;
+        nrwRatio = (realLoss / totalSupply) * 100;
+      }
+
+      await this.dataSource.query(
+        `INSERT INTO biz_nrw_report (zone_id, report_month, total_supply_m3, total_sales_m3, real_loss_m3, apparent_loss_m3, nrw_ratio, evaluated_by) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [1, reportMonth, totalSupply, totalSales, realLoss, 0, nrwRatio, 1]
+      );
+
+      this.logger.log(`NRW 报表已生成 [${reportMonth}]: 供水 ${totalSupply}, 售水 ${totalSales}, 差率 ${nrwRatio.toFixed(2)}%`);
+    } catch (e) {
+      this.logger.error('NRW 报表生成任务失败', e);
+    }
+  }
 }

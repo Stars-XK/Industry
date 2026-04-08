@@ -51,4 +51,50 @@ export class AlarmController {
     await this.dataSource.query(`DELETE FROM alm_event WHERE id = ?`, [id]);
     return { success: true };
   }
+
+  @Get('rules')
+  @ApiOperation({ summary: '获取报警规则列表' })
+  @RequirePermissions('workflow:alarm')
+  async getRules() {
+    const query = `
+      SELECT r.*, d.device_name, s.sop_name
+      FROM alm_rule r
+      LEFT JOIN ast_device d ON r.device_id = d.id
+      LEFT JOIN alm_sop s ON r.sop_id = s.id
+      ORDER BY r.id DESC
+    `;
+    return await this.dataSource.query(query);
+  }
+
+  @Post('rules')
+  @ApiOperation({ summary: '新增报警规则' })
+  @RequirePermissions('workflow:alarm')
+  async createRule(@Body() body: any) {
+    const { rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status } = body;
+    await this.dataSource.query(
+      `INSERT INTO alm_rule (rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [rule_name, device_id || null, tag_name, condition_type, threshold, alarm_level, sop_id || null, status ?? 1]
+    );
+    return { success: true };
+  }
+
+  @Put('rules/:id')
+  @ApiOperation({ summary: '修改报警规则' })
+  @RequirePermissions('workflow:alarm')
+  async updateRule(@Param('id') id: string, @Body() body: any) {
+    const { rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status } = body;
+    await this.dataSource.query(
+      `UPDATE alm_rule SET rule_name=?, device_id=?, tag_name=?, condition_type=?, threshold=?, alarm_level=?, sop_id=?, status=? WHERE id=?`,
+      [rule_name, device_id || null, tag_name, condition_type, threshold, alarm_level, sop_id || null, status, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('rules/:id')
+  @ApiOperation({ summary: '删除报警规则' })
+  @RequirePermissions('workflow:alarm')
+  async deleteRule(@Param('id') id: string) {
+    await this.dataSource.query(`DELETE FROM alm_rule WHERE id = ?`, [id]);
+    return { success: true };
+  }
 }

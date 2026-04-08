@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AlarmController } from './alarm/alarm.controller';
 import { SopController } from './sop/sop.controller';
 import { OrderController } from './order/order.controller';
+import { AlarmTaskService } from './tasks/alarm.task';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import { OrderController } from './order/order.controller';
       database: process.env.DB_DATABASE || 'Industry',
       synchronize: false,
     }),
+    ScheduleModule.forRoot(),
   ],
   controllers: [AlarmController, SopController, OrderController],
-  providers: [],
+  providers: [AlarmTaskService],
 })
 export class AppModule {}

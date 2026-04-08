@@ -288,6 +288,10 @@ INSERT IGNORE INTO alm_sop (id, sop_name, alarm_type, steps_json, status) VALUES
 (1, 'H2S 浓度超标应急预案', 'H2S_HIGH', '[{"step":1,"action":"启动排风扇","device":"FAN-01"},{"step":2,"action":"通知安全员","notify":"security@company.com"}]', 1),
 (2, '管网爆管/压力骤降抢修预案', 'PRESSURE_LOW', '[{"step":1,"action":"远程关闭上游阀门","device":"VALVE-UP"},{"step":2,"action":"自动生成抢修工单派发给就近班组"}]', 1);
 
+INSERT IGNORE INTO alm_rule (id, rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status) VALUES
+(1, '全厂进水管网爆管检测', 1, 'flow_rate', '<', 200, 'HH', 2, 1),
+(2, '泵站污水池硫化氢超标检测', 3, 'h2s', '>=', 10.0, 'H', 1, 1);
+
 INSERT IGNORE INTO alm_event (id, device_id, alarm_type, alarm_level, alarm_value, alarm_desc, status, sop_id) VALUES
 (1, 1, 'PRESSURE_LOW', 'HH', 0.15, '一厂区进水总管压力极低，疑似爆管', 0, 2),
 (2, 3, 'H2S_HIGH', 'H', 15.2, '泵站污水池硫化氢浓度超标', 1, 1);

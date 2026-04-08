@@ -4,7 +4,7 @@
 -- ==============================================================
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_sop;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -316,7 +316,25 @@ CREATE TABLE IF NOT EXISTS iot_tag_mapping (
 
 -- ====================== 第四阶段: 报警与运维工单 ======================
 
--- 22. SOP 应急预案库表
+-- 22. 报警规则/阈值配置表
+CREATE TABLE IF NOT EXISTS alm_rule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    rule_name VARCHAR(100) NOT NULL COMMENT '规则名称(如：一厂区压力极低报警)',
+    device_id BIGINT COMMENT '指定设备(可选，为空则全局)',
+    zone_id BIGINT COMMENT '指定分区(可选)',
+    tag_name VARCHAR(50) NOT NULL COMMENT '监测指标(如 PRESSURE)',
+    condition_type VARCHAR(10) NOT NULL COMMENT '条件: >, <, >=, <=, ==',
+    threshold DOUBLE NOT NULL COMMENT '报警阈值',
+    alarm_level VARCHAR(10) NOT NULL COMMENT '级别: HH/H/L/LL',
+    sop_id BIGINT COMMENT '触发关联的 SOP 预案',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    FOREIGN KEY (zone_id) REFERENCES dma_zone(id) ON DELETE CASCADE,
+    FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警规则判定表';
+
+-- 23. SOP 应急预案库表
 CREATE TABLE IF NOT EXISTS alm_sop (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sop_name VARCHAR(100) NOT NULL COMMENT 'SOP 名称',

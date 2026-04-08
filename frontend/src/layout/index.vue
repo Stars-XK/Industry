@@ -16,8 +16,8 @@
       <!-- 一级菜单区域 -->
       <nav class="top-menu-list">
         <ul>
-          <li 
-            v-for="(menu, index) in staticMenuTree" 
+          <li
+            v-for="(menu, index) in dynamicMenuTree"
             :key="menu.path || menu.name"
             class="top-menu-item"
             :class="{ active: isTopMenuActive(menu, index) }"
@@ -130,86 +130,82 @@ const icons = {
   officeBuilding: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>`,
   collection: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
   documentChecked: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><polyline points="9 15 11 17 15 13"></polyline></svg>`,
-  brush: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>`
+  brush: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>`,
+  location: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`,
+  share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
 };
 
-const staticMenuTree = ref([
-  { name: '数字大屏', path: '/dashboard', icon: icons.dashboard },
-  {
-    name: '业务监控',
-    icon: icons.scada,
-    children: [
-      { name: '全局态势感知', path: '/scada/overview', icon: icons.overview },
-      { name: '2D拓扑与分区导航', path: '/scada/topology', icon: icons.topology },
-      { name: '工业SCADA工艺组态', path: '/scada/hmi', icon: icons.hmi },
-      { name: '安防与环境空间监控', path: '/scada/security', icon: icons.security }
-    ]
-  },
-  {
-    name: '统计分析',
-    icon: icons.analytics,
-    children: [
-      { name: 'DMA产销差与漏损报表', path: '/analytics/nrw', icon: icons.pieChart },
-      { name: '夜间最小流量分析', path: '/analytics/mnf', icon: icons.trend },
-      { name: '大用户档案与重点企业画像', path: '/analytics/key-account', icon: icons.userAvatar },
-      { name: '营收计费与出账对账管理', path: '/analytics/billing', icon: icons.money },
-      { name: '综合能效优化与动态成本核算', path: '/analytics/energy', icon: icons.lightning },
-      { name: '用量与能耗AI预测分析', path: '/analytics/predict', icon: icons.cpu },
-      { name: '在线水力模型仿真与推演', path: '/analytics/hydraulic', icon: icons.opportunity }
-    ]
-  },
-  {
-    name: '运维治理',
-    icon: icons.workflow,
-    children: [
-      { name: '报警风暴收敛中心', path: '/workflow/alarm', icon: icons.bell },
-      { name: '工单与巡检全生命周期管理', path: '/workflow/work-order', icon: icons.document },
-      { name: 'AI智能调度与协同指挥', path: '/workflow/aigc', icon: icons.guide },
-      { name: '消息通知与排班调度', path: '/workflow/duty', icon: icons.message },
-      { name: '应急预案与SOP数字化管理', path: '/workflow/sop', icon: icons.management }
-    ]
-  },
-  {
-    name: '数据中台',
-    icon: icons.governance,
-    children: [
-      { name: '异构设备与数据源接入', path: '/governance/integration', icon: icons.link },
-      { name: '营收数据融合与清洗配置', path: '/governance/revenue', icon: icons.filter },
-      { name: '累积量换算与插值容错规则', path: '/governance/interpolate', icon: icons.operation },
-      { name: 'SCADA报警联锁与规则引擎', path: '/governance/interlock', icon: icons.system },
-      { name: '边缘网关与测点标签管理', path: '/governance/edge-tag', icon: icons.cpu },
-      { name: '工业配方管理', path: '/governance/recipe', icon: icons.document },
-      { name: '数据清洗与传感器健康度', path: '/governance/sensor', icon: icons.opportunity }
-    ]
-  },
-  {
-    name: '系统设置',
-    icon: icons.system,
-    children: [
-      { name: '用户与账号管理', path: '/system/user', icon: icons.userAvatar },
-      { name: '组织架构与部门管理', path: '/system/org', icon: icons.officeBuilding },
-      { name: '角色与权限体系', path: '/system/rbac', icon: icons.userAvatar },
-      { name: '数据字典管理', path: '/system/dict', icon: icons.collection },
-      { name: '资产与设备台账', path: '/system/asset', icon: icons.box },
-      { name: '备品备件与仓储管理', path: '/system/inventory', icon: icons.shoppingCart },
-      { name: '安全审计与脱敏日志', path: '/system/audit', icon: icons.documentChecked },
-      { name: '低代码可视化组态工作台', path: '/system/visual-studio', icon: icons.brush }
-    ]
-  }
-]);
+const dynamicMenuTree = computed(() => {
+  const menus = userStore.menus || [];
+  
+  // Create static base
+  const tree = [
+    { name: '数字大屏', path: '/dashboard', icon: icons.dashboard }
+  ];
+
+  // Map backend menus to frontend structure
+  menus.forEach(menu => {
+    if (menu.menu_type === 'M' && menu.visible) {
+      // Find default icon based on name
+      let menuIcon = icons.workflow;
+      if (menu.menu_name.includes('SCADA') || menu.menu_name.includes('监控')) menuIcon = icons.scada;
+      if (menu.menu_name.includes('统计') || menu.menu_name.includes('分析')) menuIcon = icons.analytics;
+      if (menu.menu_name.includes('中台') || menu.menu_name.includes('治理')) menuIcon = icons.governance;
+      if (menu.menu_name.includes('设置') || menu.menu_name.includes('权限')) menuIcon = icons.system;
+
+      const treeNode = {
+        name: menu.menu_name,
+        icon: menuIcon,
+        children: menu.children?.filter((c: any) => c.visible && c.menu_type === 'C').map((child: any) => {
+          let childIcon = icons.defaultSub;
+          
+          // Map some common icons
+          if (child.path === 'scada/overview') childIcon = icons.overview;
+          if (child.path === 'scada/topology') childIcon = icons.topology;
+          if (child.path === 'scada/hmi') childIcon = icons.hmi;
+          if (child.path === 'scada/security') childIcon = icons.security;
+          if (child.path === 'scada/gis') childIcon = icons.location;
+          if (child.path === 'scada/dma-config') childIcon = icons.share;
+          if (child.path === 'analytics/nrw') childIcon = icons.pieChart;
+          if (child.path === 'analytics/mnf') childIcon = icons.trend;
+          if (child.path === 'analytics/key-account') childIcon = icons.userAvatar;
+          if (child.path === 'analytics/billing') childIcon = icons.money;
+          if (child.path === 'analytics/energy') childIcon = icons.lightning;
+          if (child.path === 'analytics/predict') childIcon = icons.cpu;
+          if (child.path === 'analytics/hydraulic') childIcon = icons.opportunity;
+          if (child.path === 'workflow/alarm') childIcon = icons.bell;
+          if (child.path === 'workflow/work-order') childIcon = icons.document;
+          if (child.path === 'workflow/aigc') childIcon = icons.guide;
+          if (child.path === 'workflow/duty') childIcon = icons.message;
+          if (child.path === 'workflow/sop') childIcon = icons.documentChecked;
+
+          return {
+            name: child.menu_name,
+            path: `/${child.path}`,
+            icon: childIcon
+          };
+        }) || []
+      };
+      
+      tree.push(treeNode);
+    }
+  });
+
+  return tree;
+});
 
 // 获取当前选中一级菜单的子菜单列表
 const currentSubMenus = computed(() => {
-  return staticMenuTree.value[activeTopMenuIndex.value]?.children || [];
+  return dynamicMenuTree.value[activeTopMenuIndex.value]?.children || [];
 });
 
 // 根据当前路由路径更新顶部一级菜单的激活状态
 const updateActiveTopMenuByPath = (path: string) => {
-  const index = staticMenuTree.value.findIndex(menu => {
+  const index = dynamicMenuTree.value.findIndex(menu => {
     if (menu.path === path) return true;
-    if (menu.children && menu.children.some(child => child.path === path)) return true;
+    if (menu.children && menu.children.some((child: any) => child.path === path)) return true;
     // 处理带参数的子路由匹配
-    if (menu.children && menu.children.some(child => path.startsWith(child.path))) return true;
+    if (menu.children && menu.children.some((child: any) => path.startsWith(child.path))) return true;
     return false;
   });
   if (index !== -1) {

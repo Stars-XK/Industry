@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 
-@Controller('analytics/nrw')
+@Controller('data-center/analytics/nrw')
 export class NrwController {
   
   @Get()

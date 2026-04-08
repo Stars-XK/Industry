@@ -109,10 +109,10 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/billing/records')
+    const res = await request.get('/api/v1/data-center/billing/records')
     tableData.value = res || []
     
-    const accRes = await request.get('/api/data-center/billing/accounts')
+    const accRes = await request.get('/api/v1/data-center/billing/accounts')
     accountList.value = (accRes || []).filter((a: any) => a.meter_device_id)
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -135,7 +135,7 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       try {
-        await request.post('/api/data-center/billing/records/meter-reading', form.value)
+        await request.post('/api/v1/data-center/billing/records/meter-reading', form.value)
         ElMessage.success('抄表底度保存成功，可据此生成账单')
         dialogVisible.value = false
       } catch (e) { /* fallback */ }
@@ -157,7 +157,7 @@ const handleGenerate = () => {
     customClass: 'industrial-msg-box'
   }).then(async ({ value }) => {
     try {
-      const res: any = await request.post('/api/data-center/billing/records/generate', { period: value })
+      const res: any = await request.post('/api/v1/data-center/billing/records/generate', { period: value })
       if (res.errors && res.errors.length > 0) {
         ElMessageBox.alert(res.errors.join('<br/>'), '部分账单生成失败(缺乏底度)', { dangerouslyUseHTMLString: true, type: 'warning', customClass: 'industrial-msg-box' })
       } else {
@@ -170,7 +170,7 @@ const handleGenerate = () => {
 
 const handlePay = async (row: any) => {
   try {
-    await request.put(`/api/data-center/billing/records/${row.id}/pay`)
+    await request.put(`/api/v1/data-center/billing/records/${row.id}/pay`)
     ElMessage.success('销账成功')
     fetchData()
   } catch (e) { /* fallback */ }

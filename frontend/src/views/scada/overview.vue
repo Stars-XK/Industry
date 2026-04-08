@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container scada-overview">
+  <div class="premium-container fade-in-up scada-overview">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">全局态势感知</h1>
@@ -13,7 +13,7 @@
     <!-- 核心 KPI 概览 -->
     <el-row :gutter="24">
       <el-col :span="6" v-for="(item, index) in metrics" :key="index">
-        <div class="glass-panel metric-card">
+        <div class="glass-panel hover-lift metric-card">
           <div class="metric-icon-wrap" :style="{ color: item.color, boxShadow: `0 0 20px ${item.color}30` }">
             <el-icon class="metric-icon"><component :is="item.icon" /></el-icon>
           </div>
@@ -31,7 +31,7 @@
     <!-- 水质综合看板与能耗趋势 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="12">
-        <div class="glass-panel chart-card">
+        <div class="glass-panel hover-lift chart-card">
           <div class="panel-header">
             <div class="panel-title">水质综合看板 <span>Water Quality</span></div>
             <div class="panel-extra">
@@ -44,7 +44,7 @@
         </div>
       </el-col>
       <el-col :span="12">
-        <div class="glass-panel chart-card">
+        <div class="glass-panel hover-lift chart-card">
           <div class="panel-header">
             <div class="panel-title">能耗折标煤趋势 <span>Energy Trend</span></div>
             <el-radio-group v-model="energyTrendRange" size="small" class="custom-radio" @change="fetchEnergyTrend">
@@ -62,7 +62,7 @@
     <!-- 供水漏损趋势与报警列表 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="16">
-        <div class="glass-panel chart-card large-chart">
+        <div class="glass-panel hover-lift chart-card large-chart">
           <div class="panel-header">
             <div class="panel-title">供水与漏损趋势 <span>Supply & Leakage</span></div>
             <el-tag type="info" effect="dark" class="dark-tag">1h 聚合</el-tag>
@@ -73,7 +73,7 @@
         </div>
       </el-col>
       <el-col :span="8">
-        <div class="glass-panel list-card">
+        <div class="glass-panel hover-lift list-card">
           <div class="panel-header">
             <div class="panel-title">活跃异常报警 <span>Active Alarms</span></div>
             <el-button link class="neon-btn">处理</el-button>

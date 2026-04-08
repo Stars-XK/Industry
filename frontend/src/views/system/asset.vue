@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">资产与设备台账</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="margin-bottom: 24px; padding: 16px 20px;">
+    <div class="glass-panel hover-lift" style="margin-bottom: 24px; padding: 16px 20px;">
       <el-form :inline="true" class="dark-filter-form">
         <el-form-item label="设备编码">
           <el-input placeholder="SN / 资产号" clearable class="glass-input" />
@@ -28,7 +28,7 @@
       </el-form>
     </div>
 
-    <div class="glass-panel" style="flex: 1; padding: 20px;">
+    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
       <el-table :data="assets" style="width: 100%" class="dark-table custom-scrollbar">
         <el-table-column prop="code" label="设备编码" width="180">
           <template #default="{ row }">

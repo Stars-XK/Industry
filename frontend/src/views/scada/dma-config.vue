@@ -1,9 +1,9 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <el-row :gutter="24" style="height: 100%;">
       <!-- 左侧：DMA分区树 -->
       <el-col :span="8" style="height: 100%;">
-        <div class="glass-panel" style="height: 100%;">
+        <div class="glass-panel hover-lift" style="height: 100%;">
           <div class="panel-header">
             <div>
               <div class="header-title">DMA 拓扑树管理</div>
@@ -37,7 +37,7 @@
 
       <!-- 右侧：挂载设备管理 -->
       <el-col :span="16" style="height: 100%;">
-        <div class="glass-panel" style="height: 100%;" v-if="currentZone">
+        <div class="glass-panel hover-lift" style="height: 100%;" v-if="currentZone">
           <div class="panel-header">
             <div>
               <div class="header-title">已挂载的物理设备</div>

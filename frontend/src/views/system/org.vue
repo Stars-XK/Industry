@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">组织架构管理</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="flex: 1; padding: 20px;">
+    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
       <el-table
         :data="tableData"
         row-key="id"

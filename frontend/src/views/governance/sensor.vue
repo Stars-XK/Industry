@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <div class="header-title">数据清洗与传感器健康度评估</div>
         <div class="header-subtitle">Data Quality & Sensor Health Monitoring</div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">运维工单流转大盘</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="padding: 20px; flex: 1;">
+    <div class="glass-panel hover-lift" style="padding: 20px; flex: 1;">
       <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
         <el-table-column prop="order_sn" label="工单编号" width="180">
           <template #default="scope">

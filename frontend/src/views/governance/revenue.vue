@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <div class="header-title">营收数据融合清洗 (错期分摊)</div>
         <div class="header-subtitle">Revenue Data Cleansing & Allocation</div>

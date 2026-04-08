@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">班组排班与考勤调度</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="padding: 20px;">
+    <div class="glass-panel hover-lift" style="padding: 20px;">
       <el-calendar v-model="currentDate" class="dark-calendar">
         <template #date-cell="{ data }">
           <div class="calendar-cell">

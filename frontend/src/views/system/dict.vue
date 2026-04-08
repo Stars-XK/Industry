@@ -1,7 +1,7 @@
 <template>
-  <div class="premium-container sys-dict-container">
+  <div class="premium-container fade-in-up sys-dict-container">
     <!-- 左侧：字典类型列表 -->
-    <div class="glass-panel dict-type-panel">
+    <div class="glass-panel hover-lift dict-type-panel">
       <div class="panel-header">
         <span class="panel-title">字典类型 (DictType)</span>
         <el-button type="primary" size="small" class="neon-btn" @click="handleAddType">新增</el-button>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- 右侧：字典数据列表 -->
-    <div class="glass-panel dict-data-panel">
+    <div class="glass-panel hover-lift dict-data-panel">
       <div class="panel-header">
         <span class="panel-title">字典数据 (DictData) <span v-if="currentType" class="highlight-text"> - {{ currentType }}</span></span>
         <el-button type="primary" size="small" class="neon-btn" v-if="currentType" @click="handleAddData">新增字典项</el-button>

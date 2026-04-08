@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">综合能效优化与动态成本核算</h1>
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="padding: 20px;">
+    <div class="glass-panel hover-lift" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="record_date" label="记录日期" width="150" align="center">

@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">夜间最小流量分析</h1>
@@ -21,7 +21,7 @@
         </div>
       </el-col>
       <el-col :span="24">
-        <div class="glass-panel" style="padding: 20px;">
+        <div class="glass-panel hover-lift" style="padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">凌晨 2:00 - 4:00 供水散点图 <span>MNF Scatter Plot</span></div>
           </div>

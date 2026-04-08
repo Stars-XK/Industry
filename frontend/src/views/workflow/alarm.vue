@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">报警风暴收敛中心</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+    <div class="glass-panel hover-lift" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
       <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" row-key="id">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="device_name" label="报警设备" min-width="200">

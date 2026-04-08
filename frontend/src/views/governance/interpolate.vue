@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <div class="header-title">累积量换算与插值容错规则配置</div>
         <div class="header-subtitle">Data Interpolation & Error Tolerance Rules</div>

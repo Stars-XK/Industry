@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <div>
           <div class="header-title">SCADA 报警联锁与因果矩阵引擎</div>

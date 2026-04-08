@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">DMA 产销差与漏损分析</h1>
@@ -15,7 +15,7 @@
 
     <el-row :gutter="24" style="margin-bottom: 24px;">
       <el-col :span="10">
-        <div class="glass-panel table-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+        <div class="glass-panel hover-lift table-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
           <div class="panel-header">
             <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
           </div>
@@ -43,7 +43,7 @@
       </el-col>
       
       <el-col :span="14">
-        <div class="glass-panel chart-panel" v-loading="sankeyLoading" element-loading-background="rgba(15,23,42,0.8)">
+        <div class="glass-panel hover-lift chart-panel" v-loading="sankeyLoading" element-loading-background="rgba(15,23,42,0.8)">
           <div class="panel-header">
             <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
             <el-tag type="info" effect="dark" class="dark-tag">{{ currentZoneName || '未选择' }}</el-tag>
@@ -55,7 +55,7 @@
 
     <el-row>
       <el-col :span="24">
-        <div class="glass-panel chart-panel" v-loading="trendLoading" element-loading-background="rgba(15,23,42,0.8)" style="height: 380px;">
+        <div class="glass-panel hover-lift chart-panel" v-loading="trendLoading" element-loading-background="rgba(15,23,42,0.8)" style="height: 380px;">
           <div class="panel-header">
             <div class="panel-title">历史趋势及同环比分析 <span>Historical Trend</span></div>
           </div>

@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <div>
           <div class="header-title">AI 用水趋势预测分析 (ARIMA / LSTM)</div>

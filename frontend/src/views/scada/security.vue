@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">安防与环境空间监控</h1>
@@ -12,7 +12,7 @@
 
     <el-row :gutter="24">
       <el-col :span="16">
-        <div class="glass-panel" style="padding: 20px; height: calc(100vh - 160px);">
+        <div class="glass-panel hover-lift" style="padding: 20px; height: calc(100vh - 160px);">
           <div class="panel-header">
             <div class="panel-title">RTSP 视频矩阵 <span>Video Matrix</span></div>
             <div class="panel-extra">
@@ -41,7 +41,7 @@
       </el-col>
       
       <el-col :span="8">
-        <div class="glass-panel" style="padding: 20px; margin-bottom: 24px;">
+        <div class="glass-panel hover-lift" style="padding: 20px; margin-bottom: 24px;">
           <div class="panel-header">
             <div class="panel-title">环境指标实时数据 <span>Environment</span></div>
           </div>
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="glass-panel" style="padding: 20px;">
+        <div class="glass-panel hover-lift" style="padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">门禁与安防联锁 <span>Access Control</span></div>
           </div>

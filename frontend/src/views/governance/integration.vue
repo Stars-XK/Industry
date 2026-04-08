@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">异构设备与数据源接入网关</h1>
@@ -12,7 +12,7 @@
 
     <el-row :gutter="24" style="flex: 1; display: flex;">
       <el-col :span="14" style="display: flex; flex-direction: column;">
-        <div class="glass-panel" style="flex: 1; padding: 20px;">
+        <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">边缘网关协议通道 <span>Edge Protocol Channels</span></div>
           </div>
@@ -45,7 +45,7 @@
       </el-col>
 
       <el-col :span="10" style="display: flex; flex-direction: column;">
-        <div class="glass-panel" style="flex: 1; padding: 20px;">
+        <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">MQTT 代理中间件状态 <span>Broker Status</span></div>
           </div>

@@ -129,3 +129,45 @@
 .glass-dialog .el-form-item__label {
   color: #94a3b8 !important;
 }
+
+/* 全局进场动画 */
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 呼吸发光特效 */
+.pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 216, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 216, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 216, 255, 0); }
+}
+
+/* 文字渐变高亮 */
+.text-gradient {
+  background: linear-gradient(90deg, #00d8ff, #00ffaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+/* 卡片悬浮特效 */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 216, 255, 0.2);
+}

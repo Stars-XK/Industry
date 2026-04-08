@@ -1,9 +1,9 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <!-- 边缘网关状态面板 -->
     <el-row :gutter="20" style="margin-bottom: 24px;">
       <el-col :span="24">
-        <div class="glass-panel">
+        <div class="glass-panel hover-lift">
           <div class="panel-header">
             <div class="header-title">边缘网关状态监控与策略下发</div>
             <div class="header-subtitle">Edge Gateway Monitoring & Policy Deployment</div>
@@ -35,7 +35,7 @@
     </el-row>
 
     <!-- 测点与标签映射管理 -->
-    <div class="glass-panel" style="flex: 1;">
+    <div class="glass-panel hover-lift" style="flex: 1;">
       <div class="toolbar">
         <div>
           <div class="header-title">测点与标签映射配置</div>

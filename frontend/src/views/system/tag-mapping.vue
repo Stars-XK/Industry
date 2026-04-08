@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <span class="panel-title">测点与时序标签映射管理 (IoT Tag Mapping)</span>
         <el-button type="primary" class="neon-btn" @click="handleAdd">新增映射</el-button>

@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">备品备件与仓储管理</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="glass-panel" style="margin-bottom: 24px; padding: 16px 20px;">
+    <div class="glass-panel hover-lift" style="margin-bottom: 24px; padding: 16px 20px;">
       <el-form :inline="true" :model="listQuery" class="dark-filter-form">
         <el-form-item label="备件名称">
           <el-input v-model="listQuery.part_name" placeholder="请输入名称" clearable class="glass-input" />
@@ -30,7 +30,7 @@
       </el-form>
     </div>
 
-    <div class="glass-panel" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
+    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="dark-table custom-scrollbar" element-loading-background="rgba(15,23,42,0.8)">
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="part_code" label="备件编码" width="150">

@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="panel-header">
         <span class="panel-title">边缘计算与物联网网关台账 (IoT Gateways)</span>
         <el-button type="primary" class="neon-btn" @click="handleAdd">新增网关</el-button>

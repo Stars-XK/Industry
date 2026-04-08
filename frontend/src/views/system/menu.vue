@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container">
-    <div class="glass-panel">
+  <div class="premium-container fade-in-up">
+    <div class="glass-panel hover-lift">
       <div class="toolbar">
         <el-button type="primary" class="neon-btn" @click="handleAdd(0)">新增顶级菜单</el-button>
       </div>

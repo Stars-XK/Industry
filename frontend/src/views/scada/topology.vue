@@ -1,9 +1,9 @@
 <template>
-  <div class="premium-container scada-topology">
+  <div class="premium-container fade-in-up scada-topology">
     <el-row :gutter="24" style="height: 100%;">
       <!-- 左侧 2D 拓扑画布 -->
       <el-col :span="14" style="height: 100%;">
-        <div class="glass-panel" style="height: 100%;">
+        <div class="glass-panel hover-lift" style="height: 100%;">
           <div class="panel-header">
             <div>
               <div class="header-title">供水 DMA 拓扑全景导航</div>
@@ -18,7 +18,7 @@
 
       <!-- 右侧详情/设备列表区 -->
       <el-col :span="10" style="height: 100%;">
-        <div class="glass-panel" style="height: 100%;">
+        <div class="glass-panel hover-lift" style="height: 100%;">
           <div class="panel-header">
             <div>
               <div class="header-title">分区设备关联信息</div>

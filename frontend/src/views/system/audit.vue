@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container">
+  <div class="premium-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">安全审计与脱敏日志</h1>
@@ -10,7 +10,7 @@
       </div>
     </div>
     
-    <div class="glass-panel" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
+    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="dark-table custom-scrollbar" element-loading-background="rgba(15,23,42,0.8)">
         <el-table-column prop="id" label="日志ID" width="100" align="center" />
         <el-table-column prop="user_id" label="操作人ID" width="100" align="center">

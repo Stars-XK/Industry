@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container hmi-container">
-    <div class="glass-panel" style="height: 100%;">
+  <div class="premium-container fade-in-up hmi-container">
+    <div class="glass-panel hover-lift" style="height: 100%;">
       <div class="panel-header">
         <div>
           <div class="header-title">工业 SCADA 工艺组态监控 (浦东2号泵站)</div>

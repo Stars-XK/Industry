@@ -7,12 +7,12 @@
     <div class="gis-header fade-in-down">
       <div class="brand">
         <el-icon class="brand-icon"><Location /></el-icon>
-        <h2>Geo-Spatial Intelligence (GIS)</h2>
-        <span class="badge">Real-Time</span>
+        <h2>地理空间智能 (GIS)</h2>
+        <span class="badge">实时</span>
       </div>
       <div class="actions">
         <el-button type="primary" @click="resetView" plain>
-          <el-icon><Refresh /></el-icon> Reset View
+          <el-icon><Refresh /></el-icon> 重置视图
         </el-button>
       </div>
     </div>
@@ -20,32 +20,32 @@
     <!-- Floating Sidebar (Glassmorphism) -->
     <div class="gis-sidebar fade-in-left">
       <div class="panel-section">
-        <h3>Network Assets</h3>
-        <p class="desc">Toggle visibility of infrastructure layers.</p>
+        <h3>管网资产</h3>
+        <p class="desc">切换基础设施图层的可见性。</p>
         <div class="layer-toggles">
           <label class="toggle-item" :class="{ active: layers.pump }">
             <input type="checkbox" v-model="layers.pump" @change="updateLayers" />
-            <span class="dot pump-dot"></span> Pump Stations
+            <span class="dot pump-dot"></span> 增压泵站
           </label>
           <label class="toggle-item" :class="{ active: layers.pressure }">
             <input type="checkbox" v-model="layers.pressure" @change="updateLayers" />
-            <span class="dot pressure-dot"></span> Pressure Nodes
+            <span class="dot pressure-dot"></span> 压力监测井
           </label>
           <label class="toggle-item" :class="{ active: layers.pipe }">
             <input type="checkbox" v-model="layers.pipe" @change="updateLayers" />
-            <span class="line-icon"></span> Main Pipelines
+            <span class="line-icon"></span> 主干供水管线
           </label>
           <label class="toggle-item" :class="{ active: layers.alarm }">
             <input type="checkbox" v-model="layers.alarm" @change="updateLayers" />
-            <span class="dot alarm-dot"></span> Active Alarms
+            <span class="dot alarm-dot"></span> 活跃异常报警
           </label>
         </div>
       </div>
 
       <div class="panel-section">
-        <h3>Critical Assets Directory</h3>
+        <h3>关键资产目录</h3>
         <div class="search-box">
-          <el-input v-model="searchQuery" placeholder="Search asset ID or name..." prefix-icon="Search" />
+          <el-input v-model="searchQuery" placeholder="搜索资产 ID 或名称..." prefix-icon="Search" />
         </div>
         <div class="asset-list">
           <div 
@@ -95,12 +95,12 @@ const alarmGroup = shallowRef<L.LayerGroup | null>(null);
 
 // Dummy Data
 const assets = ref([
-  { id: 'P01', name: 'Zhangjiang Main Pump Station', type: 'pump', lat: 31.213, lng: 121.595, status: 'normal', statusText: 'Online • 320 kPa' },
-  { id: 'P02', name: 'Jinqiao Booster Station', type: 'pump', lat: 31.250, lng: 121.610, status: 'normal', statusText: 'Online • 280 kPa' },
-  { id: 'N01', name: 'Node A - Chuansha', type: 'pressure', lat: 31.190, lng: 121.650, status: 'normal', statusText: 'Stable • 0.3 MPa' },
-  { id: 'N02', name: 'Node B - Lujiazui', type: 'pressure', lat: 31.235, lng: 121.505, status: 'normal', statusText: 'Stable • 0.35 MPa' },
-  { id: 'A01', name: 'Pipeline Leak Suspected', type: 'alarm', lat: 31.220, lng: 121.540, status: 'critical', statusText: 'Pressure Drop -15%' },
-  { id: 'A02', name: 'Valve V-34 Offline', type: 'alarm', lat: 31.205, lng: 121.580, status: 'warning', statusText: 'Telemetry Lost' },
+  { id: 'P01', name: '张江主泵站', type: 'pump', lat: 31.213, lng: 121.595, status: 'normal', statusText: '在线 • 320 kPa' },
+  { id: 'P02', name: '金桥增压站', type: 'pump', lat: 31.250, lng: 121.610, status: 'normal', statusText: '在线 • 280 kPa' },
+  { id: 'N01', name: '节点 A - 川沙', type: 'pressure', lat: 31.190, lng: 121.650, status: 'normal', statusText: '稳定 • 0.3 MPa' },
+  { id: 'N02', name: '节点 B - 陆家嘴', type: 'pressure', lat: 31.235, lng: 121.505, status: 'normal', statusText: '稳定 • 0.35 MPa' },
+  { id: 'A01', name: '疑似管道泄漏', type: 'alarm', lat: 31.220, lng: 121.540, status: 'critical', statusText: '压力骤降 -15%' },
+  { id: 'A02', name: '阀门 V-34 离线', type: 'alarm', lat: 31.205, lng: 121.580, status: 'warning', statusText: '遥测信号丢失' },
 ]);
 
 const pipelines = [
@@ -160,7 +160,7 @@ const renderLayers = () => {
       dashArray: '5, 10',
       lineCap: 'round'
     });
-    polyline.bindTooltip('Main Trunk Line M-01', { className: 'industrial-tooltip', direction: 'top' });
+    polyline.bindTooltip('主干线 M-01', { className: 'industrial-tooltip', direction: 'top' });
     pipeGroup.value?.addLayer(polyline);
   });
 
@@ -186,14 +186,16 @@ const renderLayers = () => {
 
     const marker = L.marker([asset.lat, asset.lng], { icon });
 
+    const typeText = asset.type === 'pump' ? '泵站' : (asset.type === 'pressure' ? '压力节点' : '报警点');
+
     const popupHtml = `
       <div class="industrial-popup">
         <h4>${asset.name}</h4>
         <div class="divider"></div>
         <p><strong>ID:</strong> ${asset.id}</p>
-        <p><strong>Type:</strong> ${asset.type.toUpperCase()}</p>
-        <p><strong>Status:</strong> <span style="color:${color}">${asset.statusText}</span></p>
-        <p><strong>Coordinates:</strong> ${asset.lat.toFixed(3)}, ${asset.lng.toFixed(3)}</p>
+        <p><strong>类型:</strong> ${typeText}</p>
+        <p><strong>状态:</strong> <span style="color:${color}">${asset.statusText}</span></p>
+        <p><strong>坐标:</strong> ${asset.lat.toFixed(3)}, ${asset.lng.toFixed(3)}</p>
       </div>
     `;
 

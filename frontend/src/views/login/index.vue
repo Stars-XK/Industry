@@ -5,21 +5,21 @@
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <div class="brand-badge">信创工业底座</div>
-        <h1 class="hero-title">Industrial Digital Twin<br />& SCADA System</h1>
-        <p class="hero-desc">Next-generation governance platform for critical infrastructure. <br />Powered by advanced analytics, AI, and real-time telemetry.</p>
-        
+        <h1 class="hero-title">工业数字孪生<br />与 SCADA 监控系统</h1>
+        <p class="hero-desc">面向关键基础设施的新一代治理平台。<br />由高级分析、人工智能和实时遥测技术驱动。</p>
+
         <div class="system-stats">
           <div class="stat-item">
             <span class="stat-value">99.99%</span>
-            <span class="stat-label">System Uptime</span>
+            <span class="stat-label">系统正常运行时间</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">&lt; 10ms</span>
-            <span class="stat-label">Telemetry Latency</span>
+            <span class="stat-value">&lt;50ms</span>
+            <span class="stat-label">遥测延迟</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">AES-256</span>
-            <span class="stat-label">End-to-End Encrypted</span>
+            <span class="stat-value">TLS 1.3</span>
+            <span class="stat-label">端到端加密</span>
           </div>
         </div>
       </div>
@@ -36,22 +36,22 @@
               <path d="M2 12L12 17L22 12" stroke="#00d8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h2>Control Center Access</h2>
-          <p>Please authenticate to access the governance dashboard.</p>
+          <h2>控制中心登录</h2>
+          <p>请进行身份验证以访问治理看板。</p>
         </div>
 
         <form class="login-form" @submit.prevent="preLogin">
           <div class="input-group">
-            <label>Username</label>
+            <label>用户名</label>
             <div class="input-field">
-              <input v-model="form.username" type="text" placeholder="admin" autocomplete="username" />
+              <input v-model="form.username" type="text" placeholder="请输入用户名" autocomplete="username" />
             </div>
           </div>
 
           <div class="input-group">
             <div class="label-row">
-              <label>Password</label>
-              <a href="#" class="forgot-link" @click.prevent>Forgot?</a>
+              <label>密码</label>
+              <a href="#" class="forgot-link" @click.prevent>忘记密码？</a>
             </div>
             <div class="input-field">
               <input v-model="form.password" type="password" placeholder="••••••••" autocomplete="current-password" />
@@ -65,12 +65,12 @@
 
           <button type="submit" class="submit-btn pulse-glow" :disabled="loading">
             <span v-if="loading" class="loading-spinner"></span>
-            <span v-else>Authenticate</span>
+            <span v-else>登录系统</span>
           </button>
         </form>
 
         <div class="form-footer">
-          <p>Unauthorized access is strictly prohibited. All actions are logged and monitored by the security audit engine.</p>
+          <p>严禁未经授权的访问。所有操作均由安全审计引擎记录和监控。</p>
         </div>
       </div>
     </div>
@@ -80,9 +80,10 @@
       :show="isShowCaptcha"
       @success="onCaptchaSuccess"
       @close="onCaptchaClose"
-      successText="Security Check Passed"
-      failText="Verification Failed"
-      sliderText="Slide to verify"
+      title="安全验证通过"
+      successText="验证通过"
+      failText="验证失败"
+      sliderText="向右滑动以完成验证"
     />
   </div>
 </template>
@@ -138,7 +139,7 @@ const handleLogin = async () => {
       errorCount.value = 0;
       router.push('/dashboard');
     } else {
-      throw new Error('Authentication failed');
+      throw new Error('身份验证失败');
     }
   } catch (error: any) {
     errorCount.value += 1;

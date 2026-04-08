@@ -359,6 +359,11 @@ onMounted(() => {
   height: 18px;
   margin-right: 8px;
 }
+:deep(.svg-icon-small svg) {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 .user-info {
   display: flex;
   align-items: center;
@@ -437,6 +442,11 @@ onMounted(() => {
 .svg-icon {
   width: 22px;
   height: 22px;
+}
+:deep(.svg-icon svg) {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 /* 悬浮 Tooltip */
 .tooltip {

@@ -3,8 +3,10 @@
 -- 参考: /.trae/rules/Database_Schema_Design.md
 -- ==============================================================
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -251,7 +253,7 @@ CREATE TABLE IF NOT EXISTS biz_meter_reading (
     FOREIGN KEY (account_id) REFERENCES biz_key_account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 17. 时序库超级表在 MySQL 中的降级模拟表 (用于没有安装 TDengine 时的系统演示不报错)
+-- 16. 时序库超级表在 MySQL 中的降级模拟表 (用于没有安装 TDengine 时的系统演示不报错)
 CREATE TABLE IF NOT EXISTS dma_daily (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     ts TIMESTAMP NOT NULL,
@@ -273,6 +275,8 @@ CREATE TABLE IF NOT EXISTS dma_1h (
     night_flow DOUBLE,
     INDEX `idx_dma_1h_ts` (`zone_id`, `ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_1h 降级模拟表';
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 18. 数据字典类型表
 CREATE TABLE IF NOT EXISTS sys_dict_type (
@@ -300,6 +304,8 @@ CREATE TABLE IF NOT EXISTS sys_dict_data (
     FOREIGN KEY (dict_type) REFERENCES sys_dict_type(dict_type) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 21. 测点与时序标签映射表 (补全)
 CREATE TABLE IF NOT EXISTS iot_tag_mapping (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -313,6 +319,8 @@ CREATE TABLE IF NOT EXISTS iot_tag_mapping (
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
     FOREIGN KEY (gateway_id) REFERENCES iot_gateway(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- ====================== 第四阶段: 报警与运维工单 ======================
 
@@ -334,6 +342,8 @@ CREATE TABLE IF NOT EXISTS alm_rule (
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警规则判定表';
 
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 23. SOP 应急预案库表
 CREATE TABLE IF NOT EXISTS alm_sop (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -347,7 +357,7 @@ CREATE TABLE IF NOT EXISTS alm_sop (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SOP 应急预案库';
 
--- 23. 报警事件表
+-- 24. 报警事件表
 CREATE TABLE IF NOT EXISTS alm_event (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     device_id BIGINT NOT NULL COMMENT '报警关联设备',
@@ -364,6 +374,8 @@ CREATE TABLE IF NOT EXISTS alm_event (
     FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警事件收敛表';
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 24. 工单主表
 CREATE TABLE IF NOT EXISTS wf_work_order (
@@ -388,6 +400,8 @@ CREATE TABLE IF NOT EXISTS wf_work_order (
     FOREIGN KEY (handler_id) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维工单主表';
 
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 20. 部门/组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -402,6 +416,8 @@ CREATE TABLE IF NOT EXISTS sys_dept (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 11. 大用户档案表
 CREATE TABLE IF NOT EXISTS biz_key_account (
@@ -445,22 +461,23 @@ CREATE TABLE IF NOT EXISTS biz_mnf_analysis (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 14. 产销差(NRW)报表
+-- 14. 产销差(NRW)统计报表
 CREATE TABLE IF NOT EXISTS biz_nrw_report (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    zone_id BIGINT NOT NULL,
-    report_month VARCHAR(20) NOT NULL COMMENT '月份，如 2026-04',
-    supply_m3 DECIMAL(14, 2) NOT NULL,
-    consumption_m3 DECIMAL(14, 2) NOT NULL,
-    nrw_m3 DECIMAL(14, 2) NOT NULL,
-    nrw_ratio DECIMAL(5, 2) NOT NULL COMMENT '产销差率百分比',
-    residential_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '居民用水合法消费',
-    industrial_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '工业用水合法消费',
-    commercial_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '商业用水合法消费',
-    apparent_loss_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '表观漏损 (计量误差/偷水)',
-    real_loss_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '物理漏损 (管网爆管/渗漏)',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    zone_id BIGINT NOT NULL COMMENT '分析层级(如整个厂区或某DMA)',
+    report_month VARCHAR(10) NOT NULL COMMENT '报表月份(YYYY-MM)',
+    total_supply_m3 DOUBLE NOT NULL DEFAULT 0 COMMENT '当月总供水量',
+    total_sales_m3 DOUBLE NOT NULL DEFAULT 0 COMMENT '当月总售水量',
+    real_loss_m3 DOUBLE NOT NULL DEFAULT 0 COMMENT '真实漏损量(物理漏损)',
+    apparent_loss_m3 DOUBLE NOT NULL DEFAULT 0 COMMENT '表观漏损量(计量误差+偷水)',
+    nrw_ratio DOUBLE NOT NULL DEFAULT 0 COMMENT '产销差率(%)',
+    evaluated_by BIGINT COMMENT '评估人',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (zone_id) REFERENCES dma_zone(id),
+    FOREIGN KEY (evaluated_by) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 15. 数据清洗与插值规则表
 CREATE TABLE IF NOT EXISTS biz_interpolate_rule (

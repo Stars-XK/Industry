@@ -324,7 +324,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- ====================== 第四阶段: 报警与运维工单 ======================
 
--- 22. 报警规则/阈值配置表
+-- 22. SOP 应急预案库表
+CREATE TABLE IF NOT EXISTS alm_sop (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sop_name VARCHAR(100) NOT NULL COMMENT 'SOP 名称',
+    alarm_type VARCHAR(50) NOT NULL COMMENT '触发报警类型 (如 H2S_HIGH)',
+    steps_json JSON NOT NULL COMMENT '执行步骤 JSON 数组',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_by BIGINT,
+    updated_by BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SOP 应急预案库';
+
+-- 23. 报警规则/阈值配置表
 CREATE TABLE IF NOT EXISTS alm_rule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     rule_name VARCHAR(100) NOT NULL COMMENT '规则名称(如：一厂区压力极低报警)',
@@ -343,19 +356,6 @@ CREATE TABLE IF NOT EXISTS alm_rule (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警规则判定表';
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- 23. SOP 应急预案库表
-CREATE TABLE IF NOT EXISTS alm_sop (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    sop_name VARCHAR(100) NOT NULL COMMENT 'SOP 名称',
-    alarm_type VARCHAR(50) NOT NULL COMMENT '触发报警类型 (如 H2S_HIGH)',
-    steps_json JSON NOT NULL COMMENT '执行步骤 JSON 数组',
-    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
-    created_by BIGINT,
-    updated_by BIGINT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SOP 应急预案库';
 
 -- 24. 报警事件表
 CREATE TABLE IF NOT EXISTS alm_event (

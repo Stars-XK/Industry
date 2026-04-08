@@ -7,6 +7,7 @@ import { EdgeTagController } from './edge-tag/edge-tag.controller';
 import { OverviewController } from './overview/overview.controller';
 import { BillingController } from './billing/billing.controller';
 import { AnalysisController } from './analysis/analysis.controller';
+import { GovernanceController } from './governance/governance.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
 
@@ -25,7 +26,7 @@ import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
     }),
     TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],
-  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController],
+  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController, GovernanceController],
   providers: [
     JwtStrategy,
     {

@@ -294,5 +294,22 @@ CREATE TABLE IF NOT EXISTS biz_nrw_report (
     consumption_m3 DECIMAL(14, 2) NOT NULL,
     nrw_m3 DECIMAL(14, 2) NOT NULL,
     nrw_ratio DECIMAL(5, 2) NOT NULL COMMENT '产销差率百分比',
+    residential_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '居民用水合法消费',
+    industrial_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '工业用水合法消费',
+    commercial_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '商业用水合法消费',
+    apparent_loss_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '表观漏损 (计量误差/偷水)',
+    real_loss_m3 DECIMAL(14, 2) DEFAULT 0 COMMENT '物理漏损 (管网爆管/渗漏)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 15. 数据清洗与插值规则表
+CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    tag_name VARCHAR(100) NOT NULL,
+    method VARCHAR(50) NOT NULL COMMENT '插值算法：linear, pchip, zero, previous',
+    max_gap_minutes INT NOT NULL DEFAULT 60 COMMENT '允许插值的最大断点间隙',
+    status SMALLINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

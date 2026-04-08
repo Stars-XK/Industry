@@ -216,9 +216,15 @@ INSERT IGNORE INTO biz_mnf_analysis (id, zone_id, analysis_date, mnf_value, base
 (4, 201, '2026-04-04', 18.5, 12.0, 1.5, 'anomaly'),
 (5, 201, '2026-04-05', 12.8, 12.0, 0.15, 'normal');
 
--- 5. 产销差 (NRW) 报表 (针对几个主要 DMA)
-INSERT IGNORE INTO biz_nrw_report (id, zone_id, report_month, supply_m3, consumption_m3, nrw_m3, nrw_ratio) VALUES
-(1, 201, '2026-03', 150000, 132000, 18000, 12.00),
-(2, 202, '2026-03', 280000, 255000, 25000, 8.93),
-(3, 204, '2026-03', 85000, 75000, 10000, 11.76),
-(4, 102, '2026-03', 850000, 720000, 130000, 15.29);
+-- 5. 产销差 (NRW) 报表 (针对几个主要 DMA，含细分流量用于桑基图渲染)
+INSERT IGNORE INTO biz_nrw_report (id, zone_id, report_month, supply_m3, consumption_m3, nrw_m3, nrw_ratio, residential_m3, industrial_m3, commercial_m3, apparent_loss_m3, real_loss_m3) VALUES
+(1, 201, '2026-03', 150000, 132000, 18000, 12.00, 50000, 60000, 22000, 4000, 14000),
+(2, 202, '2026-03', 280000, 255000, 25000, 8.93, 80000, 120000, 55000, 8000, 17000),
+(3, 204, '2026-03', 85000, 75000, 10000, 11.76, 30000, 20000, 25000, 3000, 7000),
+(4, 102, '2026-03', 850000, 720000, 130000, 15.29, 300000, 250000, 170000, 40000, 90000);
+
+-- 6. 数据清洗与插值规则表
+INSERT IGNORE INTO biz_interpolate_rule (id, device_id, tag_name, method, max_gap_minutes, status) VALUES
+(1, 1, 'flow_rate', 'pchip', 120, 1),
+(2, 2, 'frequency', 'linear', 60, 1),
+(3, 3, 'turbidity', 'previous', 30, 1);

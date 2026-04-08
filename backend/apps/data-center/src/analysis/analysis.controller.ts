@@ -48,4 +48,82 @@ export class AnalysisController {
     query += ` ORDER BY n.report_month DESC, n.nrw_ratio DESC LIMIT 50`;
     return await this.dataSource.query(query, params);
   }
+
+  @Get('mnf/scatter')
+  @ApiOperation({ summary: '获取夜间最小流量 AI 基线与实际值的散点图数据' })
+  @RequirePermissions('analytics:mnf')
+  async getMnfScatterData(@Query('zoneId') zoneId?: string) {
+    const targetZoneId = zoneId || '201'; // 默认张江
+    const query = `
+      SELECT analysis_date, mnf_value, baseline_value, status 
+      FROM biz_mnf_analysis 
+      WHERE zone_id = ? 
+      ORDER BY analysis_date ASC
+      LIMIT 30
+    `;
+    const rows = await this.dataSource.query(query, [targetZoneId]);
+    
+    const dates = [];
+    const actualPoints = [];
+    const baselineLine = [];
+    const anomalies = [];
+
+    rows.forEach(row => {
+      const dateStr = new Date(row.analysis_date).toISOString().split('T')[0];
+      dates.push(dateStr);
+      actualPoints.push(row.mnf_value);
+      baselineLine.push(row.baseline_value);
+      if (row.status === 'anomaly') {
+        anomalies.push({
+          xAxis: dateStr,
+          yAxis: row.mnf_value,
+          value: '疑似暗漏'
+        });
+      }
+    });
+
+    return {
+      dates,
+      actualPoints,
+      baselineLine,
+      anomalies
+    };
+  }
+
+  @Get('nrw/sankey')
+  @ApiOperation({ summary: '获取产销差桑基图数据流向' })
+  @RequirePermissions('analytics:nrw')
+  async getNrwSankey(@Query('month') month: string, @Query('zoneId') zoneId: string) {
+    if (!month || !zoneId) return { nodes: [], links: [] };
+    
+    const query = `SELECT * FROM biz_nrw_report WHERE zone_id = ? AND report_month = ? LIMIT 1`;
+    const rows = await this.dataSource.query(query, [zoneId, month]);
+    if (rows.length === 0) return { nodes: [], links: [] };
+    
+    const data = rows[0];
+    const nodes = [
+      { name: '系统总供水' },
+      { name: '合法计费用水' },
+      { name: '居民用水' },
+      { name: '工业用水' },
+      { name: '商业用水' },
+      { name: '总漏损水量(NRW)' },
+      { name: '物理漏损(爆管/渗漏)' },
+      { name: '表观漏损(偷水/误差)' }
+    ];
+    
+    const links = [
+      { source: '系统总供水', target: '合法计费用水', value: Number(data.consumption_m3) },
+      { source: '系统总供水', target: '总漏损水量(NRW)', value: Number(data.nrw_m3) },
+      
+      { source: '合法计费用水', target: '居民用水', value: Number(data.residential_m3) },
+      { source: '合法计费用水', target: '工业用水', value: Number(data.industrial_m3) },
+      { source: '合法计费用水', target: '商业用水', value: Number(data.commercial_m3) },
+      
+      { source: '总漏损水量(NRW)', target: '物理漏损(爆管/渗漏)', value: Number(data.real_loss_m3) },
+      { source: '总漏损水量(NRW)', target: '表观漏损(偷水/误差)', value: Number(data.apparent_loss_m3) }
+    ];
+    
+    return { nodes, links };
+  }
 }

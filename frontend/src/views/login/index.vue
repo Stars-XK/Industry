@@ -184,26 +184,6 @@ label {
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-.dark-input {
-  width: 100%;
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-.dark-input:focus {
-  outline: none;
-  border-color: #00d8ff;
-  background: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 2px rgba(0, 216, 255, 0.1);
-}
-.dark-input::placeholder {
-  color: #475569;
-}
 .login-btn {
   width: 100%;
   margin-top: 10px;

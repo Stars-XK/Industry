@@ -219,21 +219,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -241,47 +232,25 @@ onBeforeUnmount(() => {
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel:hover {
-  border-color: rgba(0, 216, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 216, 255, 0.1);
-}
-
 .table-panel {
   height: 520px;
   padding: 20px;
 }
-
 .chart-panel {
   height: 520px;
   padding: 20px;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
@@ -290,89 +259,63 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
 }
-
 .panel-title span {
   font-size: 12px;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .dark-tag {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #cbd5e1;
 }
-
 .sankey-chart, .trend-chart {
   width: 100%;
   flex: 1;
 }
-
 .highlight-number {
   color: #f59e0b;
   font-weight: 700;
   font-family: "SF Mono", monospace;
   font-size: 16px;
 }
-
-.dark-table {
-  background-color: transparent !important;
-  --el-table-border-color: rgba(255, 255, 255, 0.05);
-  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-  --el-table-header-text-color: #94a3b8;
-  --el-table-text-color: #e2e8f0;
-  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
-  --el-table-current-row-bg-color: rgba(0, 216, 255, 0.1);
-}
-
 :deep(.el-table th.el-table__cell) {
   background-color: var(--el-table-header-bg-color) !important;
   border-bottom: 1px solid var(--el-table-border-color);
 }
-
 :deep(.el-table tr) {
   background-color: transparent !important;
 }
-
 :deep(.el-table td.el-table__cell) {
   border-bottom: 1px solid var(--el-table-border-color);
 }
-
 :deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
   background-color: var(--el-table-row-hover-bg-color) !important;
 }
-
 :deep(.el-table__body tr.current-row > td.el-table__cell) {
   background-color: var(--el-table-current-row-bg-color) !important;
 }
-
 :deep(.el-table::before) {
   display: none;
 }
-
 .custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
   width: 4px;
 }
-
 .custom-scrollbar :deep(.el-scrollbar__thumb) {
   background-color: rgba(255, 255, 255, 0.2);
 }
-
 :deep(.dark-progress .el-progress__text) {
   color: #e2e8f0;
   font-family: "SF Mono", monospace;
 }
-
 :deep(.dark-progress .el-progress-bar__outer) {
   background-color: rgba(255, 255, 255, 0.1);
 }
-
 :deep(.glass-select .el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
-
 :deep(.glass-select .el-input__inner) {
   color: #e2e8f0;
 }

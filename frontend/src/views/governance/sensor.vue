@@ -76,28 +76,6 @@ const sensors = ref([
 ])
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   flex-direction: column;
@@ -105,14 +83,12 @@ const sensors = ref([
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -121,11 +97,9 @@ const sensors = ref([
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .content-row {
   flex: 1;
 }
-
 .industrial-section {
   background: rgba(2, 6, 23, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.05);
@@ -135,7 +109,6 @@ const sensors = ref([
   display: flex;
   flex-direction: column;
 }
-
 .section-title {
   padding: 16px 20px;
   font-weight: 600;
@@ -145,16 +118,13 @@ const sensors = ref([
   background: rgba(15, 23, 42, 0.6);
   letter-spacing: 0.5px;
 }
-
 .section-content {
   padding: 24px;
   flex: 1;
 }
-
 .table-container {
   flex: 1;
 }
-
 .industrial-table {
   background: transparent !important;
   --el-table-border-color: rgba(148, 163, 184, 0.05);
@@ -164,82 +134,53 @@ const sensors = ref([
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: #94a3b8;
 }
-
 :deep(.el-table th.el-table__cell) {
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
-
 :deep(.el-table td.el-table__cell) {
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
 }
-
 .form-tip {
   color: #94a3b8;
   margin-left: 12px;
   font-size: 13px;
 }
-
 .text-danger {
   color: #F56C6C;
   text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
   font-weight: 600;
 }
-
 .text-success {
   color: #00d8ff;
   font-weight: 600;
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  border-radius: 4px;
-  padding: 8px 24px;
-  cursor: pointer;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 .industrial-form :deep(.el-form-item__label) {
   color: #cbd5e1;
   font-weight: 500;
 }
-
 :deep(.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   box-shadow: none !important;
 }
-
 :deep(.el-input__inner) {
   color: #e2e8f0 !important;
 }
-
 :deep(.el-switch__core) {
   background-color: rgba(148, 163, 184, 0.2) !important;
   border-color: rgba(148, 163, 184, 0.2) !important;
 }
-
 :deep(.el-switch.is-checked .el-switch__core) {
   background-color: #00d8ff !important;
   border-color: #00d8ff !important;
   box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
 }
-
 :deep(.el-progress-bar__outer) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
-
 :deep(.el-progress__text) {
   color: #e2e8f0 !important;
 }

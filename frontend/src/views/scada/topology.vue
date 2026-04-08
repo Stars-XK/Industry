@@ -98,11 +98,12 @@ use([CanvasRenderer, TreeChart, TooltipComponent])
 const loading = ref(false)
 const deviceLoading = ref(false)
 const treeData = ref<any[]>([])
+
 const deviceList = ref<any[]>([])
 const currentNode = ref<any>(null)
 let socket: Socket | null = null
 
-const chartOption = ref({
+const chartOption = ref<any>({
   backgroundColor: 'transparent',
   tooltip: {
     trigger: 'item',
@@ -254,27 +255,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -283,14 +263,12 @@ onUnmounted(() => {
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -299,7 +277,6 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .canvas-container {
   flex: 1;
   width: 100%;
@@ -308,7 +285,6 @@ onUnmounted(() => {
   border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.05);
 }
-
 .chart {
   width: 100%;
   height: 100%;
@@ -316,42 +292,35 @@ onUnmounted(() => {
   top: 0;
   left: 0;
 }
-
 .empty-tip {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .detail-content {
   flex: 1;
   overflow: auto;
 }
-
 :deep(.industrial-descriptions) {
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.1) !important;
 }
-
 :deep(.industrial-descriptions .el-descriptions__body) {
   background-color: transparent !important;
 }
-
 :deep(.industrial-descriptions .el-descriptions-item__label) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   color: #94a3b8;
   border-color: rgba(148, 163, 184, 0.1) !important;
   font-weight: 500;
 }
-
 :deep(.industrial-descriptions .el-descriptions-item__content) {
   background-color: rgba(2, 6, 23, 0.3) !important;
   color: #e2e8f0;
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
-
 .industrial-table {
   background: transparent !important;
   --el-table-border-color: rgba(148, 163, 184, 0.05);
@@ -361,23 +330,19 @@ onUnmounted(() => {
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: #e2e8f0;
 }
-
 :deep(.el-table th.el-table__cell) {
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
-
 :deep(.el-table td.el-table__cell) {
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
 }
-
 .telemetry-box {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .telemetry-item {
   display: flex;
   justify-content: space-between;
@@ -388,16 +353,13 @@ onUnmounted(() => {
   border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
-
 .telemetry-item .t-key {
   color: #94a3b8;
 }
-
 .telemetry-item .t-val {
   color: #00d8ff;
   font-weight: 600;
 }
-
 .industrial-tag {
   border: none;
 }

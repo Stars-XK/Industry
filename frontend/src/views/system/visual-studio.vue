@@ -157,7 +157,6 @@ const saveConfig = () => {
   font-weight: 600;
   color: #e2e8f0;
 }
-
 .designer-container {
   display: flex;
   height: 600px;
@@ -165,7 +164,6 @@ const saveConfig = () => {
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
 }
-
 .panel-subtitle {
   padding: 16px 20px;
   background-color: rgba(0, 0, 0, 0.3);
@@ -174,20 +172,17 @@ const saveConfig = () => {
   font-size: 14px;
   color: #e2e8f0;
 }
-
 .components-panel {
   width: 240px;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   background-color: rgba(255, 255, 255, 0.02);
 }
-
 .component-list {
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .component-item {
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -203,7 +198,6 @@ const saveConfig = () => {
   justify-content: center;
   gap: 8px;
 }
-
 .component-item:hover {
   border-color: #00d8ff;
   color: #00d8ff;
@@ -211,7 +205,6 @@ const saveConfig = () => {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 216, 255, 0.2);
 }
-
 .canvas-panel {
   flex: 1;
   display: flex;
@@ -219,7 +212,6 @@ const saveConfig = () => {
   background-color: rgba(0, 0, 0, 0.4);
   position: relative;
 }
-
 .toolbar {
   padding: 12px 20px;
   background-color: rgba(255, 255, 255, 0.02);
@@ -227,7 +219,6 @@ const saveConfig = () => {
   display: flex;
   gap: 12px;
 }
-
 .canvas-area {
   flex: 1;
   position: relative;
@@ -235,7 +226,6 @@ const saveConfig = () => {
   background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
-
 .canvas-element {
   position: absolute;
   width: 120px;
@@ -252,24 +242,20 @@ const saveConfig = () => {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: all 0.2s ease;
 }
-
 .canvas-element:hover {
   box-shadow: 0 6px 16px rgba(0,216,255,0.2);
   border-color: rgba(0, 216, 255, 0.5);
 }
-
 .canvas-element.active {
   border-color: #00d8ff;
   box-shadow: 0 0 0 1px rgba(0,216,255,0.5), 0 4px 12px rgba(0,0,0,0.3);
 }
-
 .element-content {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
   color: #e2e8f0;
 }
-
 .bound-tag {
   font-size: 11px;
   color: #00d8ff;
@@ -277,7 +263,6 @@ const saveConfig = () => {
   font-weight: 500;
   font-family: "SF Mono", Consolas, monospace;
 }
-
 .empty-text {
   position: absolute;
   top: 50%;
@@ -288,17 +273,14 @@ const saveConfig = () => {
   letter-spacing: 1px;
   pointer-events: none;
 }
-
 .props-panel {
   width: 320px;
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   background-color: rgba(255, 255, 255, 0.02);
 }
-
 .props-content {
   padding: 20px;
 }
-
 :deep(.el-form-item__label) {
   font-weight: 500;
   color: #94a3b8;

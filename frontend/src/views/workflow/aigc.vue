@@ -101,13 +101,11 @@ const ask = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.2);
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
   color: #e2e8f0;
 }
-
 .chat-container {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
@@ -118,35 +116,29 @@ const ask = () => {
   box-shadow: inset 0 0 0 1px rgba(0, 216, 255, 0.05);
   overflow: hidden;
 }
-
 .chat-history {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
   background-color: transparent;
 }
-
 .chat-input {
   padding: 20px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 .input-actions {
   display: flex;
   justify-content: flex-end;
   margin-top: 12px;
 }
-
 .message {
   display: flex;
   margin-bottom: 24px;
 }
-
 .message.user {
   justify-content: flex-end;
 }
-
 .avatar {
   width: 40px;
   height: 40px;
@@ -160,17 +152,14 @@ const ask = () => {
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(0, 216, 255, 0.3);
 }
-
 .message.user .avatar {
   background: linear-gradient(135deg, #00ffaa, #00aa66);
   margin-left: 16px;
   box-shadow: 0 4px 12px rgba(0, 255, 170, 0.3);
 }
-
 .message.system .avatar {
   margin-right: 16px;
 }
-
 .bubble {
   max-width: 70%;
   padding: 14px 18px;
@@ -184,7 +173,6 @@ const ask = () => {
   color: #e2e8f0;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .message.user .bubble {
   border-top-left-radius: 12px;
   border-top-right-radius: 4px;
@@ -192,38 +180,31 @@ const ask = () => {
   border: 1px solid rgba(0, 255, 170, 0.2);
   color: #e2e8f0;
 }
-
 .typing-bubble {
   color: #94a3b8;
   font-style: italic;
 }
-
 .action-bubble {
   background: rgba(234, 179, 8, 0.1);
   border: 1px solid rgba(234, 179, 8, 0.2);
 }
-
 .bubble-title {
   font-weight: 600;
   color: #ffb800;
   margin-bottom: 12px;
   font-size: 15px;
 }
-
 .action-list {
   padding-left: 20px;
   margin-bottom: 16px;
   color: #e2e8f0;
 }
-
 .action-list li {
   margin-bottom: 6px;
 }
-
 .bubble-btn {
   width: 100%;
 }
-
 .side-card {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
@@ -232,7 +213,6 @@ const ask = () => {
   display: flex;
   flex-direction: column;
 }
-
 .side-header {
   padding: 16px 20px;
   font-weight: 600;
@@ -241,14 +221,12 @@ const ask = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   background: rgba(0, 0, 0, 0.2);
 }
-
 .side-content {
   padding: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-
 .map-placeholder {
   height: 300px;
   background: rgba(0, 0, 0, 0.3);
@@ -258,19 +236,16 @@ const ask = () => {
   border-radius: 8px;
   border: 1px dashed rgba(255, 255, 255, 0.2);
 }
-
 .placeholder-text {
   color: #64748b;
   font-size: 13px;
   letter-spacing: 1px;
 }
-
 .location-list {
   list-style: none;
   padding: 0;
   margin: 20px 0 0 0;
 }
-
 .location-item {
   display: flex;
   align-items: center;
@@ -278,22 +253,18 @@ const ask = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 14px;
 }
-
 .location-item:last-child {
   border-bottom: none;
 }
-
 .loc-icon {
   font-size: 18px;
   margin-right: 12px;
 }
-
 .loc-name {
   flex: 1;
   color: #e2e8f0;
   font-weight: 500;
 }
-
 .loc-dist {
   color: #94a3b8;
   font-family: "SF Mono", Consolas, monospace;

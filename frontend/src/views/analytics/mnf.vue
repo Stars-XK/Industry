@@ -81,21 +81,12 @@ const initChart = () => {
 onMounted(() => setTimeout(initChart, 100))
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -103,26 +94,11 @@ onMounted(() => setTimeout(initChart, 100))
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid #00d8ff;
-  color: #00d8ff;
-  transition: all 0.3s;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  color: #fff;
-}
-
 .warning-banner {
   display: flex;
   align-items: flex-start;
@@ -133,42 +109,28 @@ onMounted(() => setTimeout(initChart, 100))
   padding: 16px 20px;
   margin-bottom: 24px;
 }
-
 .banner-icon {
   font-size: 24px;
   color: #f59e0b;
   margin-top: 2px;
 }
-
 .banner-title {
   font-size: 16px;
   font-weight: 600;
   color: #fcd34d;
   margin-bottom: 4px;
 }
-
 .banner-desc {
   font-size: 13px;
   color: #fbbf24;
   opacity: 0.8;
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
@@ -177,19 +139,16 @@ onMounted(() => setTimeout(initChart, 100))
   align-items: center;
   gap: 8px;
 }
-
 .panel-title span {
   font-size: 12px;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .chart-wrapper {
   height: 460px;
   width: 100%;
 }
-
 .chart-inner {
   width: 100%;
   height: 100%;

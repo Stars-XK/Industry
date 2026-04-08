@@ -125,23 +125,12 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -149,73 +138,50 @@ onMounted(() => {
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .dark-calendar {
   background-color: transparent;
   --el-calendar-border: rgba(255, 255, 255, 0.05);
   --el-calendar-cell-width: 120px;
 }
-
 :deep(.el-calendar__header) {
   display: none;
 }
-
 :deep(.el-calendar-table) {
   height: 100%;
 }
-
 :deep(.el-calendar-table td) {
   border-color: rgba(255, 255, 255, 0.05);
   background-color: rgba(255, 255, 255, 0.02);
   transition: all 0.3s ease;
 }
-
 :deep(.el-calendar-table td.is-selected) {
   background-color: rgba(0, 216, 255, 0.05);
 }
-
 :deep(.el-calendar-table td:hover) {
   background-color: rgba(255, 255, 255, 0.05);
 }
-
 :deep(.el-calendar-table th) {
   color: #94a3b8;
   font-weight: 500;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 .calendar-cell {
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: 4px;
 }
-
 .calendar-day {
   font-family: "SF Mono", monospace;
   font-weight: 600;
   color: #e2e8f0;
   margin-bottom: 8px;
 }
-
 .duty-list {
   flex: 1;
   overflow-y: auto;
@@ -223,7 +189,6 @@ onMounted(() => {
   flex-direction: column;
   gap: 4px;
 }
-
 .duty-item {
   display: flex;
   justify-content: space-between;
@@ -233,83 +198,47 @@ onMounted(() => {
   font-size: 12px;
   border-left: 2px solid transparent;
 }
-
 .duty-info {
   display: flex;
   align-items: center;
   gap: 4px;
 }
-
 .duty-shift {
   color: #94a3b8;
   font-family: "SF Mono", monospace;
 }
-
 .duty-name {
   font-weight: 500;
 }
-
 .duty-attended {
   background: rgba(16, 185, 129, 0.1);
   border-left-color: #10b981;
   color: #10b981;
 }
-
 .duty-pending {
   background: rgba(245, 158, 11, 0.1);
   border-left-color: #f59e0b;
   color: #f59e0b;
 }
-
 .calendar-action {
   text-align: right;
   margin-top: 4px;
 }
-
 .action-btn {
   font-weight: 600;
   transition: all 0.2s;
 }
-
 .action-btn:hover {
   text-shadow: 0 0 8px currentColor;
 }
-
 .text-cyan { color: #00d8ff; }
 .text-emerald { color: #10b981; }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid #00d8ff;
-  color: #00d8ff;
-  transition: all 0.3s;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  color: #fff;
-}
-
-.glass-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
-}
-
-.glass-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 2px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.2);
 }
-
 /* Dialog Styles */
 :deep(.glass-dialog) {
   background: rgba(15, 23, 42, 0.85);
@@ -319,75 +248,44 @@ onMounted(() => {
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
-
-:deep(.glass-dialog .el-dialog__header) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-right: 0;
-  padding-bottom: 16px;
-}
-
-:deep(.glass-dialog .el-dialog__title) {
-  color: #ffffff;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-:deep(.glass-dialog .el-dialog__body) {
-  color: #cbd5e1;
-  padding-top: 20px;
-}
-
-:deep(.glass-dialog .el-dialog__footer) {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 16px;
-}
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
-
 /* Form Styles */
 :deep(.dark-form .el-form-item__label) {
   color: #94a3b8;
   font-weight: 500;
 }
-
 :deep(.glass-input .el-input__wrapper),
 :deep(.glass-input .el-textarea__inner) {
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   color: #e2e8f0;
 }
-
 :deep(.glass-input.is-disabled .el-input__wrapper) {
   background-color: rgba(255, 255, 255, 0.05);
   box-shadow: none;
 }
-
 :deep(.glass-input .el-input__wrapper:hover:not(.is-disabled)),
 :deep(.glass-input .el-textarea__inner:hover) {
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
 }
-
 :deep(.glass-input .el-input__wrapper.is-focus),
 :deep(.glass-input .el-textarea__inner:focus) {
   box-shadow: 0 0 0 1px #00d8ff inset !important;
 }
-
 :deep(.glass-select .el-input__wrapper),
 :deep(.glass-date-picker .el-input__wrapper) {
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
-
 :deep(.glass-select .el-input__inner),
 :deep(.glass-input .el-input__inner),
 :deep(.glass-date-picker .el-input__inner) {
   color: #e2e8f0;
 }
-
 :deep(.glass-input.is-disabled .el-input__inner) {
   color: #94a3b8;
 }

@@ -89,23 +89,12 @@ const channels = ref([
 ])
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -113,44 +102,28 @@ const channels = ref([
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
   border-color: rgba(16, 185, 129, 0.5);
   color: #34d399;
 }
-
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
   100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
@@ -159,20 +132,17 @@ const channels = ref([
   align-items: center;
   gap: 8px;
 }
-
 .panel-title span {
   font-size: 12px;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .highlight-text {
   color: #00d8ff;
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
 .status-indicator {
   display: flex;
   align-items: center;
@@ -180,32 +150,26 @@ const channels = ref([
   font-size: 13px;
   font-weight: 500;
 }
-
 .status-indicator .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
-
 .status-success { color: #10b981; }
 .status-success .dot { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-
 .status-danger { color: #f43f5e; }
 .status-danger .dot { background-color: #f43f5e; box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
-
 @keyframes pulse-danger {
   0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
   100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
 }
-
 .metrics-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   flex: 1;
 }
-
 .metric-cell {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -215,58 +179,40 @@ const channels = ref([
   flex-direction: column;
   justify-content: center;
 }
-
 .highlight-cell {
   background: rgba(0, 216, 255, 0.03);
   border-color: rgba(0, 216, 255, 0.1);
   box-shadow: inset 0 0 20px rgba(0, 216, 255, 0.02);
 }
-
 .metric-label {
   font-size: 13px;
   color: #94a3b8;
   margin-bottom: 8px;
   font-weight: 500;
 }
-
 .metric-val {
   font-size: 16px;
   font-weight: 600;
   font-family: "SF Mono", monospace;
 }
-
 .large-val {
   font-size: 32px;
   line-height: 1;
 }
-
 .text-cyan { color: #00d8ff; }
 .text-emerald { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.3); }
-
 /* Table styles */
-.dark-table {
-  background-color: transparent !important;
-  --el-table-border-color: rgba(255, 255, 255, 0.05);
-  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
-  --el-table-header-text-color: #94a3b8;
-  --el-table-text-color: #e2e8f0;
-  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
-}
-
 :deep(.el-table th.el-table__cell) {
   background-color: var(--el-table-header-bg-color) !important;
   border-bottom: 1px solid var(--el-table-border-color);
 }
-
 :deep(.el-table tr) { background-color: transparent !important; }
 :deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
 :deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
 :deep(.el-table::before) { display: none; }
-
 .custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
   width: 4px;
 }
-
 .custom-scrollbar :deep(.el-scrollbar__thumb) {
   background-color: rgba(255, 255, 255, 0.2);
 }

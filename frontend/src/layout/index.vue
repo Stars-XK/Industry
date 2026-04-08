@@ -260,7 +260,6 @@ onMounted(() => {
   overflow: hidden;
   background-color: #0b1426;
 }
-
 /* 全局底层地图层 */
 .global-map-bg {
   position: absolute;
@@ -290,7 +289,6 @@ onMounted(() => {
   pointer-events: none;
   user-select: none;
 }
-
 /* 顶部导航栏 (包含一级菜单) */
 .top-navbar {
   position: relative;
@@ -309,7 +307,6 @@ onMounted(() => {
   backdrop-filter: blur(12px);
   color: #e2e8f0;
 }
-
 .logo-area {
   display: flex;
   align-items: center;
@@ -328,7 +325,6 @@ onMounted(() => {
   letter-spacing: 1px;
   color: #e2e8f0;
 }
-
 .top-menu-list {
   flex: 1;
   display: flex;
@@ -367,7 +363,6 @@ onMounted(() => {
   height: 18px;
   margin-right: 8px;
 }
-
 .user-info {
   display: flex;
   align-items: center;
@@ -388,7 +383,6 @@ onMounted(() => {
   border-color: #ff3366;
   box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
 }
-
 /* 主体区域：左侧边栏 + 右侧内容 */
 .main-body {
   flex: 1;
@@ -397,7 +391,6 @@ onMounted(() => {
   z-index: 5;
   overflow: hidden;
 }
-
 /* 左侧边栏 (渲染二级菜单，小图标模式) */
 .sidebar-icon-mode {
   position: relative;
@@ -449,7 +442,6 @@ onMounted(() => {
   width: 22px;
   height: 22px;
 }
-
 /* 悬浮 Tooltip */
 .tooltip {
   position: absolute;
@@ -477,7 +469,6 @@ onMounted(() => {
   border-style: solid;
   border-color: transparent rgba(0, 216, 255, 0.2) transparent transparent;
 }
-
 /* 右侧内容区 */
 .main-container {
   flex: 1;
@@ -486,7 +477,6 @@ onMounted(() => {
   position: relative;
   pointer-events: none; /* 让鼠标事件默认穿透到地图 */
 }
-
 /* 核心路由层: 各个业务组件在这里决定自己的尺寸和位置 */
 .app-main {
   flex: 1;
@@ -494,20 +484,7 @@ onMounted(() => {
   position: relative;
   pointer-events: none; /* 穿透 */
 }
-
 /* 兼容老页面的业务容器 (新页面建议使用 .premium-container) */
-:deep(.page-container) {
-  pointer-events: auto; /* 恢复点击 */
-  background: radial-gradient(circle at 50% 0%, rgba(10, 25, 47, 0.8) 0%, rgba(2, 6, 23, 0.9) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 216, 255, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  color: #e2e8f0;
-  height: 100%;
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 32px rgba(0, 216, 255, 0.02);
-}
 </style>
 
 <style>

@@ -302,33 +302,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-}
-
 .empty-panel {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -337,14 +315,12 @@ onMounted(() => {
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -353,7 +329,6 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .tree-container {
   flex: 1;
   overflow-y: auto;
@@ -362,20 +337,16 @@ onMounted(() => {
   border: 1px solid rgba(148, 163, 184, 0.05);
   padding: 16px;
 }
-
 .industrial-tree {
   background: transparent !important;
   color: #e2e8f0;
 }
-
 :deep(.el-tree-node__content:hover) {
   background-color: rgba(30, 41, 59, 0.5) !important;
 }
-
 :deep(.el-tree-node:focus > .el-tree-node__content) {
   background-color: rgba(0, 216, 255, 0.1) !important;
 }
-
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -384,27 +355,22 @@ onMounted(() => {
   font-size: 14px;
   padding-right: 8px;
 }
-
 .node-label {
   letter-spacing: 0.5px;
 }
-
 .node-level {
   color: #94a3b8;
   font-size: 12px;
   margin-left: 8px;
   font-family: "SF Mono", Consolas, monospace;
 }
-
 .node-actions {
   opacity: 0;
   transition: opacity 0.2s;
 }
-
 .custom-tree-node:hover .node-actions {
   opacity: 1;
 }
-
 .table-container {
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 8px;
@@ -412,7 +378,6 @@ onMounted(() => {
   background: rgba(2, 6, 23, 0.3);
   flex: 1;
 }
-
 .industrial-table {
   background: transparent !important;
   --el-table-border-color: rgba(148, 163, 184, 0.05);
@@ -422,96 +387,64 @@ onMounted(() => {
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: #94a3b8;
 }
-
 :deep(.el-table th.el-table__cell) {
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
-
 :deep(.el-table td.el-table__cell) {
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 .neon-btn-success {
   border-color: rgba(103, 194, 58, 0.5);
   color: #67C23A;
 }
-
 .neon-btn-success:hover {
   background: rgba(103, 194, 58, 0.1);
   box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
   border-color: #67C23A;
 }
-
 .text-neon { color: #00d8ff; }
 .text-danger { color: #F56C6C; }
 .text-warning { color: #E6A23C; }
-
 .industrial-tag {
   border: none;
 }
-
 .industrial-form :deep(.el-form-item__label) {
   color: #cbd5e1;
   font-weight: 500;
 }
-
 :deep(.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   box-shadow: none !important;
 }
-
 :deep(.el-input__inner) {
   color: #e2e8f0 !important;
 }
-
 :deep(.el-input.is-disabled .el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.3) !important;
   border-color: rgba(148, 163, 184, 0.1) !important;
 }
-
 :deep(.el-input.is-disabled .el-input__inner) {
   color: #64748b !important;
 }
-
 :deep(.el-select .el-input__wrapper.is-focus) {
   border-color: #00d8ff !important;
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
 }
-
 :deep(.el-radio__label) {
   color: #94a3b8;
 }
 :deep(.el-radio__input.is-checked + .el-radio__label) {
   color: #00d8ff;
 }
-
 :deep(.el-textarea__inner) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   color: #e2e8f0 !important;
   font-family: "SF Mono", Consolas, monospace;
 }
-
 :deep(.el-textarea__inner:focus) {
   border-color: #00d8ff !important;
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;

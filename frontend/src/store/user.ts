@@ -4,8 +4,8 @@ import request from '../utils/request';
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('token') || '',
-    userInfo: null,
-    menus: []
+    userInfo: null as any,
+    menus: [] as any[]
   }),
   actions: {
     async login(loginForm: any) {

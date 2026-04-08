@@ -92,21 +92,12 @@ import { VideoCamera } from '@element-plus/icons-vue'
 const layoutMode = ref('4')
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -114,44 +105,28 @@ const layoutMode = ref('4')
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
   border-color: rgba(16, 185, 129, 0.5);
   color: #34d399;
 }
-
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
   100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
@@ -160,31 +135,26 @@ const layoutMode = ref('4')
   align-items: center;
   gap: 8px;
 }
-
 .panel-title span {
   font-size: 12px;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .video-matrix {
   display: grid;
   gap: 16px;
   flex: 1;
   height: calc(100% - 40px);
 }
-
 .grid-4 {
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 }
-
 .grid-9 {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
 }
-
 .video-cell {
   border: 1px solid rgba(0, 216, 255, 0.2);
   border-radius: 8px;
@@ -196,7 +166,6 @@ const layoutMode = ref('4')
   justify-content: center;
   align-items: center;
 }
-
 .video-title {
   position: absolute;
   top: 0;
@@ -212,7 +181,6 @@ const layoutMode = ref('4')
   align-items: center;
   gap: 8px;
 }
-
 .cam-status {
   width: 8px;
   height: 8px;
@@ -220,7 +188,6 @@ const layoutMode = ref('4')
   border-radius: 50%;
   box-shadow: 0 0 8px #10b981;
 }
-
 .video-placeholder {
   color: #475569;
   display: flex;
@@ -231,12 +198,10 @@ const layoutMode = ref('4')
   font-size: 14px;
   letter-spacing: 1px;
 }
-
 .cam-icon {
   font-size: 32px;
   opacity: 0.5;
 }
-
 .video-overlay {
   position: absolute;
   bottom: 12px;
@@ -249,7 +214,6 @@ const layoutMode = ref('4')
   align-items: center;
   gap: 4px;
 }
-
 .video-overlay::before {
   content: '';
   display: block;
@@ -259,18 +223,15 @@ const layoutMode = ref('4')
   border-radius: 50%;
   animation: blink 1s infinite;
 }
-
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
-
 .env-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
-
 .env-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -280,12 +241,10 @@ const layoutMode = ref('4')
   flex-direction: column;
   gap: 8px;
 }
-
 .env-label {
   font-size: 13px;
   color: #94a3b8;
 }
-
 .env-value {
   font-size: 24px;
   font-weight: 700;
@@ -294,24 +253,20 @@ const layoutMode = ref('4')
   align-items: baseline;
   gap: 4px;
 }
-
 .env-unit {
   font-size: 12px;
   font-weight: 500;
   color: #64748b;
   font-family: "SF Pro Display", sans-serif;
 }
-
 .text-emerald { color: #10b981; }
 .text-cyan { color: #00d8ff; }
 .bg-emerald { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-
 .access-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .access-item {
   display: flex;
   justify-content: space-between;
@@ -321,55 +276,46 @@ const layoutMode = ref('4')
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
 }
-
 .access-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .access-name {
   font-size: 14px;
   color: #e2e8f0;
   font-weight: 500;
 }
-
 .access-status {
   font-size: 12px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-
 .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
 }
-
 .danger-neon-btn {
   background: transparent;
   border: 1px solid #f43f5e;
   color: #f43f5e;
   transition: all 0.3s;
 }
-
 .danger-neon-btn:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
   color: #fff;
 }
-
 :deep(.el-radio-button__inner) {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.1);
   color: #94a3b8;
 }
-
 :deep(.el-radio-button:first-child .el-radio-button__inner) {
   border-left-color: rgba(255, 255, 255, 0.1);
 }
-
 :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
   background-color: #00d8ff;
   border-color: #00d8ff;

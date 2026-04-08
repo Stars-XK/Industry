@@ -78,28 +78,6 @@ const handleRecalc = () => {
 }
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   flex-direction: column;
@@ -107,14 +85,12 @@ const handleRecalc = () => {
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -123,11 +99,9 @@ const handleRecalc = () => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .content-row {
   flex: 1;
 }
-
 .industrial-section {
   background: rgba(2, 6, 23, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.05);
@@ -135,7 +109,6 @@ const handleRecalc = () => {
   overflow: hidden;
   height: 100%;
 }
-
 .section-title {
   padding: 16px 20px;
   font-weight: 600;
@@ -147,31 +120,25 @@ const handleRecalc = () => {
   align-items: center;
   letter-spacing: 0.5px;
 }
-
 .section-content {
   padding: 24px;
 }
-
 .danger-section {
   border-color: rgba(245, 108, 108, 0.2);
   background: rgba(245, 108, 108, 0.02);
 }
-
 .danger-section .section-title {
   background: rgba(245, 108, 108, 0.05);
   border-bottom-color: rgba(245, 108, 108, 0.1);
 }
-
 .text-danger {
   color: #F56C6C;
   text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
 }
-
 .danger-icon {
   margin-right: 8px;
   font-size: 16px;
 }
-
 .danger-desc {
   padding: 16px;
   background: rgba(245, 108, 108, 0.05);
@@ -183,61 +150,38 @@ const handleRecalc = () => {
   border-left: 4px solid #F56C6C;
   box-shadow: inset 0 0 20px rgba(245, 108, 108, 0.02);
 }
-
 .industrial-form :deep(.el-form-item__label) {
   color: #cbd5e1;
   font-weight: 500;
 }
-
 .industrial-form :deep(.el-radio__label) {
   color: #94a3b8;
 }
 .industrial-form :deep(.el-radio__input.is-checked + .el-radio__label) {
   color: #00d8ff;
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  letter-spacing: 1px;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 .neon-btn-danger {
   border-color: rgba(245, 108, 108, 0.5);
   color: #F56C6C;
 }
-
 .neon-btn-danger:hover {
   background: rgba(245, 108, 108, 0.1);
   box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
   border-color: #F56C6C;
 }
-
 /* Custom Input/Select Styling */
 :deep(.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   box-shadow: none !important;
 }
-
 :deep(.el-input__inner) {
   color: #e2e8f0 !important;
 }
-
 :deep(.el-select .el-input__wrapper.is-focus) {
   border-color: #00d8ff !important;
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
 }
-
 :deep(.el-date-editor.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
 }

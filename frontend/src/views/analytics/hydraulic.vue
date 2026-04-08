@@ -64,28 +64,6 @@ import { Position } from '@element-plus/icons-vue'
 const scenario = ref('close_v05')
 </script>
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -94,14 +72,12 @@ const scenario = ref('close_v05')
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -110,11 +86,9 @@ const scenario = ref('close_v05')
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .content-row {
   flex: 1;
 }
-
 .industrial-section {
   background: rgba(2, 6, 23, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.05);
@@ -124,7 +98,6 @@ const scenario = ref('close_v05')
   display: flex;
   flex-direction: column;
 }
-
 .section-title {
   padding: 16px 20px;
   font-weight: 600;
@@ -134,61 +107,35 @@ const scenario = ref('close_v05')
   background: rgba(15, 23, 42, 0.6);
   letter-spacing: 0.5px;
 }
-
 .section-content {
   padding: 24px;
   flex: 1;
 }
-
 .industrial-form :deep(.el-form-item__label) {
   color: #cbd5e1;
   font-weight: 500;
 }
-
 :deep(.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   box-shadow: none !important;
 }
-
 :deep(.el-input__inner) {
   color: #e2e8f0 !important;
 }
-
 :deep(.el-select .el-input__wrapper.is-focus) {
   border-color: #00d8ff !important;
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  letter-spacing: 1px;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 .neon-btn-warning {
   border-color: rgba(230, 162, 60, 0.5);
   color: #E6A23C;
 }
-
 .neon-btn-warning:hover {
   background: rgba(230, 162, 60, 0.1);
   box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
   border-color: #E6A23C;
 }
-
 .result-panel {
   margin-top: 32px;
   padding: 20px;
@@ -197,14 +144,12 @@ const scenario = ref('close_v05')
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-left: 4px solid #00d8ff;
 }
-
 .result-header {
   font-weight: 600;
   color: #f8fafc;
   margin-bottom: 16px;
   letter-spacing: 0.5px;
 }
-
 .result-metric {
   display: flex;
   justify-content: space-between;
@@ -212,19 +157,15 @@ const scenario = ref('close_v05')
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
 }
-
 .result-metric .label {
   color: #94a3b8;
 }
-
 .result-metric .value {
   font-weight: 600;
 }
-
 .text-danger { color: #F56C6C; text-shadow: 0 0 10px rgba(245, 108, 108, 0.3); }
 .text-warning { color: #E6A23C; }
 .text-neon { color: #00d8ff; }
-
 .map-placeholder {
   background: rgba(2, 6, 23, 0.6);
   height: 100%;
@@ -237,7 +178,6 @@ const scenario = ref('close_v05')
   justify-content: center;
   overflow: hidden;
 }
-
 .map-grid {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -247,19 +187,16 @@ const scenario = ref('close_v05')
   background-size: 40px 40px;
   z-index: 1;
 }
-
 .map-content {
   position: relative;
   z-index: 2;
   text-align: center;
 }
-
 .map-icon {
   font-size: 48px;
   color: rgba(0, 216, 255, 0.5);
   margin-bottom: 16px;
 }
-
 .map-content p {
   color: #e2e8f0;
   font-size: 18px;
@@ -267,7 +204,6 @@ const scenario = ref('close_v05')
   letter-spacing: 1px;
   margin: 0 0 8px 0;
 }
-
 .map-desc {
   color: #94a3b8;
   font-size: 13px;

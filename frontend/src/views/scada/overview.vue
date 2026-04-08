@@ -282,21 +282,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-}
-
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
 }
-
 .page-title {
   font-size: 28px;
   font-weight: 600;
@@ -304,48 +295,28 @@ onMounted(() => {
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
 }
-
 .page-subtitle {
   font-size: 14px;
   color: #94a3b8;
   margin: 0;
 }
-
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
   border-color: rgba(16, 185, 129, 0.5);
   color: #34d399;
 }
-
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
   100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
-
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-.glass-panel:hover {
-  border-color: rgba(0, 216, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 216, 255, 0.1);
-}
-
 .metric-card {
   display: flex;
   align-items: center;
   padding: 24px;
   height: 120px;
 }
-
 .metric-icon-wrap {
   width: 56px;
   height: 56px;
@@ -358,11 +329,9 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 .metric-info {
   flex: 1;
 }
-
 .metric-title {
   font-size: 13px;
   color: #94a3b8;
@@ -370,7 +339,6 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
 .metric-value {
   font-size: 32px;
   font-weight: 700;
@@ -378,7 +346,6 @@ onMounted(() => {
   font-family: "SF Mono", monospace;
   line-height: 1;
 }
-
 .metric-unit {
   font-size: 14px;
   color: #64748b;
@@ -386,25 +353,21 @@ onMounted(() => {
   margin-left: 4px;
   font-family: "SF Pro Display", sans-serif;
 }
-
 .chart-card, .list-card {
   display: flex;
   flex-direction: column;
   height: 400px;
   padding: 20px;
 }
-
 .large-chart {
   height: 420px;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 600;
@@ -413,43 +376,28 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
 }
-
 .panel-title span {
   font-size: 12px;
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .highlight-text {
   color: #34d399;
   font-weight: 600;
   font-family: "SF Mono", monospace;
   text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
 }
-
 .dark-tag {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #cbd5e1;
 }
-
-.neon-btn {
-  color: #00d8ff;
-  font-weight: 500;
-}
-
-.neon-btn:hover {
-  color: #ffffff;
-  text-shadow: 0 0 8px #00d8ff;
-}
-
 .chart-container {
   flex: 1;
   width: 100%;
   position: relative;
 }
-
 .chart {
   width: 100%;
   height: 100%;
@@ -457,54 +405,44 @@ onMounted(() => {
   top: 0;
   left: 0;
 }
-
 .alarm-list {
   flex: 1;
   overflow-y: auto;
   padding-right: 10px;
 }
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .dark-timeline :deep(.el-timeline-item__content) {
   color: #e2e8f0;
   font-size: 14px;
 }
-
 .dark-timeline :deep(.el-timeline-item__timestamp) {
   color: #64748b;
   font-size: 12px;
   font-family: "SF Mono", monospace;
 }
-
 :deep(.el-radio-button__inner) {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.1);
   color: #94a3b8;
 }
-
 :deep(.el-radio-button:first-child .el-radio-button__inner) {
   border-left-color: rgba(255, 255, 255, 0.1);
 }
-
 :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
   background-color: #00d8ff;
   border-color: #00d8ff;
   color: #020617;
   box-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
 }
-
 :deep(.el-empty__description) {
   color: #64748b;
 }

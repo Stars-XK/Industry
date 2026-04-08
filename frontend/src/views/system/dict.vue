@@ -107,7 +107,7 @@ const loadingData = ref(false)
 // 字典类型表单
 const typeDialogVisible = ref(false)
 const typeFormRef = ref()
-const typeForm = ref({ dict_name: '', dict_type: '', remark: '' })
+const typeForm = ref<any>({ dict_name: '', dict_type: '', remark: '' })
 const typeRules = {
   dict_name: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
   dict_type: [{ required: true, message: '请输入字典标识', trigger: 'blur' }],
@@ -116,7 +116,7 @@ const typeRules = {
 // 字典数据表单
 const dataDialogVisible = ref(false)
 const dataFormRef = ref()
-const dataForm = ref({ dict_label: '', dict_value: '', dict_sort: 0 })
+const dataForm = ref<any>({ dict_label: '', dict_value: '', dict_sort: 0 })
 const dataRules = {
   dict_label: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
   dict_value: [{ required: true, message: '请输入字典键值', trigger: 'blur' }],

@@ -170,28 +170,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -200,14 +178,12 @@ onUnmounted(() => {
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -216,7 +192,6 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .hmi-canvas {
   height: 100%;
   display: flex;
@@ -227,7 +202,6 @@ onUnmounted(() => {
   border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.05);
 }
-
 /* 模拟水池 */
 .tank-container {
   width: 150px;
@@ -258,7 +232,6 @@ onUnmounted(() => {
   letter-spacing: 1px;
   text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
 }
-
 /* 管道与流向动画 */
 .pipe-horizontal {
   width: 100px;
@@ -285,7 +258,6 @@ onUnmounted(() => {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
-
 /* 泵站组件 */
 .pump-station {
   display: flex;
@@ -349,7 +321,6 @@ onUnmounted(() => {
   display: flex;
   gap: 12px;
 }
-
 .valve {
   display: flex;
   flex-direction: column;
@@ -359,24 +330,6 @@ onUnmounted(() => {
 .valve .el-icon {
   filter: drop-shadow(0 0 8px rgba(230, 162, 60, 0.4));
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.neon-btn:hover:not(:disabled) {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 .neon-btn-danger {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
@@ -387,13 +340,11 @@ onUnmounted(() => {
   padding: 8px 16px;
   cursor: pointer;
 }
-
 .neon-btn-danger:hover:not(:disabled) {
   background: rgba(245, 108, 108, 0.1);
   box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
   border-color: #F56C6C;
 }
-
 .industrial-tag {
   border: none;
 }

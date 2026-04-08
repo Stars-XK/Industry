@@ -172,28 +172,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.premium-container {
-  padding: 24px;
-  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
-  min-height: calc(100vh - 60px);
-  color: #e2e8f0;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.glass-panel {
-  background: rgba(10, 25, 47, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -202,14 +180,12 @@ onMounted(() => {
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
   padding-bottom: 16px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #f8fafc;
   letter-spacing: 0.5px;
 }
-
 .header-subtitle {
   font-size: 12px;
   color: #94a3b8;
@@ -218,7 +194,6 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .model-info {
   background: rgba(2, 6, 23, 0.3);
   padding: 24px;
@@ -226,12 +201,10 @@ onMounted(() => {
   margin-bottom: 24px;
   border: 1px solid rgba(148, 163, 184, 0.05);
 }
-
 .stat-item {
   display: flex;
   flex-direction: column;
 }
-
 .stat-label {
   font-size: 13px;
   color: #94a3b8;
@@ -240,13 +213,11 @@ onMounted(() => {
   letter-spacing: 0.5px;
   font-weight: 500;
 }
-
 .stat-value {
   font-size: 28px;
   font-weight: 600;
   font-family: "SF Mono", Consolas, monospace;
 }
-
 .text-white { color: #e2e8f0; }
 .text-blue { 
   color: #00d8ff; 
@@ -256,13 +227,11 @@ onMounted(() => {
   color: #67C23A; 
   text-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
 }
-
 .action-col {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
-
 .chart-container {
   height: 500px;
   padding: 20px;
@@ -271,40 +240,18 @@ onMounted(() => {
   background: rgba(2, 6, 23, 0.3);
   flex: 1;
 }
-
 .predict-chart {
   width: 100%;
   height: 100%;
 }
-
-.neon-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.5);
-  color: #00d8ff;
-  transition: all 0.3s ease;
-  font-family: "SF Pro Display", sans-serif;
-  border-radius: 4px;
-  padding: 10px 24px;
-  cursor: pointer;
-  letter-spacing: 1px;
-}
-
-.neon-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
-  border-color: #00d8ff;
-}
-
 :deep(.el-input__wrapper) {
   background-color: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
   box-shadow: none !important;
 }
-
 :deep(.el-input__inner) {
   color: #e2e8f0 !important;
 }
-
 :deep(.el-select .el-input__wrapper.is-focus) {
   border-color: #00d8ff !important;
   box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;

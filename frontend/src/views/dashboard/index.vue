@@ -214,7 +214,6 @@ onUnmounted(() => {
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-
 .header {
   height: 80px;
   background: linear-gradient(180deg, rgba(0, 216, 255, 0.1) 0%, transparent 100%);
@@ -224,7 +223,6 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
 }
-
 .title {
   font-size: 28px;
   font-weight: 600;
@@ -232,7 +230,6 @@ onUnmounted(() => {
   color: #fff;
   text-shadow: 0 0 20px rgba(0, 216, 255, 0.4);
 }
-
 .time {
   position: absolute;
   right: 30px;
@@ -242,7 +239,6 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 1px;
 }
-
 .exit-btn {
   position: absolute;
   left: 30px;
@@ -254,19 +250,16 @@ onUnmounted(() => {
   border-radius: 4px;
   transition: all 0.3s ease;
 }
-
 .exit-btn:hover {
   background: rgba(0, 216, 255, 0.1);
   box-shadow: 0 0 15px rgba(0, 216, 255, 0.2);
 }
-
 .main-content {
   flex: 1;
   display: flex;
   padding: 24px;
   gap: 24px;
 }
-
 .panel {
   width: 25%;
   background: rgba(8, 15, 30, 0.7);
@@ -278,7 +271,6 @@ onUnmounted(() => {
   flex-direction: column;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
-
 .panel-title {
   font-size: 16px;
   font-weight: 500;
@@ -288,7 +280,6 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
 }
-
 .panel-title::before {
   content: '';
   display: inline-block;
@@ -299,7 +290,6 @@ onUnmounted(() => {
   border-radius: 2px;
   box-shadow: 0 0 8px #00d8ff;
 }
-
 .center-panel {
   width: 50%;
   position: relative;
@@ -308,18 +298,15 @@ onUnmounted(() => {
   background: rgba(8, 15, 30, 0.4);
   overflow: hidden;
 }
-
 .map-container {
   width: 100%;
   height: 100%;
 }
-
 .kpi-box {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .kpi-item {
   background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
   border-left: 1px solid rgba(255,255,255,0.1);
@@ -327,13 +314,11 @@ onUnmounted(() => {
   border-radius: 4px;
   transition: transform 0.3s ease;
 }
-
 .kpi-item:hover {
   transform: translateX(4px);
   background: linear-gradient(90deg, rgba(0,216,255,0.05) 0%, transparent 100%);
   border-left-color: #00d8ff;
 }
-
 .kpi-label {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.5);
@@ -341,29 +326,24 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .kpi-value {
   font-size: 32px;
   font-weight: 300;
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
-
 .text-blue { color: #00d8ff; text-shadow: 0 0 10px rgba(0,216,255,0.3); }
 .text-green { color: #00ffaa; text-shadow: 0 0 10px rgba(0,255,170,0.3); }
 .text-yellow { color: #ffb800; text-shadow: 0 0 10px rgba(255,184,0,0.3); }
-
 .chart-box {
   flex: 1;
   width: 100%;
   min-height: 200px;
 }
-
 .alarm-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .alarm-item {
   display: flex;
   align-items: center;
@@ -373,19 +353,15 @@ onUnmounted(() => {
   border-left: 2px solid transparent;
   transition: all 0.2s ease;
 }
-
 .alarm-item:hover {
   background: rgba(255, 255, 255, 0.05);
 }
-
 .alarm-time { width: 65px; color: rgba(255,255,255,0.4); font-size: 12px; font-family: monospace; }
 .alarm-level { width: 36px; font-weight: 600; text-align: center; font-size: 12px; border-radius: 4px; padding: 2px 0; margin-right: 12px; }
 .alarm-desc { flex: 1; font-size: 13px; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
 .HH { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
 .H { background: rgba(255, 184, 0, 0.15); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.3); }
 .L { background: rgba(0, 216, 255, 0.15); color: #00d8ff; border: 1px solid rgba(0, 216, 255, 0.3); }
-
 .map-overlay {
   position: absolute;
   top: 24px;
@@ -398,7 +374,6 @@ onUnmounted(() => {
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
-
 .stat-item {
   font-size: 13px;
   color: rgba(255,255,255,0.7);
@@ -406,11 +381,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
 }
-
 .stat-item:last-child {
   margin-bottom: 0;
 }
-
 .dot {
   width: 6px;
   height: 6px;

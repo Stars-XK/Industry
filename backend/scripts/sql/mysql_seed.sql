@@ -272,7 +272,7 @@ INSERT IGNORE INTO dma_1h (ts, zone_id, supply, sale, balance_value, night_flow)
 ( '2026-04-08 03:00:00', '201', 501, 0, 0, 0 );
 
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
-INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, menu_type, visible, status, perm_code, icon, remark, is_preset) VALUES
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, menu_type, visible, status, perm_code, icon, remark, created_by) VALUES
 (40, 0, '运维协同与工单中心', 5, 'workflow', '', 0, 0, 'M', 1, 1, '', 'Service', '', 1),
 (41, 40, '报警风暴收敛中心', 1, 'alarm', 'workflow/alarm', 0, 0, 'C', 1, 1, 'workflow:alarm', 'Bell', '', 1),
 (42, 40, 'SOP 应急预案库', 2, 'sop', 'workflow/sop', 0, 0, 'C', 1, 1, 'workflow:sop', 'Reading', '', 1),

@@ -21,6 +21,14 @@
       <el-table-column prop="phone" label="手机号" />
       <el-table-column prop="email" label="邮箱" />
       <el-table-column prop="dept_id" label="部门ID" width="80" />
+      <el-table-column label="分配角色" width="180">
+        <template #default="scope">
+          <el-tag v-for="role in scope.row.roles" :key="role.id" size="small" class="mr-1" style="margin-right:4px;">
+            {{ role.role_name }}
+          </el-tag>
+          <span v-if="!scope.row.roles || scope.row.roles.length === 0" class="text-gray-400">未分配</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="80">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'danger'">
@@ -90,6 +98,12 @@
           </el-col>
         </el-row>
 
+        <el-form-item label="分配角色" prop="roleIds">
+          <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
+            <el-option v-for="item in roleOptions" :key="item.id" :label="item.role_name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="状态" prop="status" v-if="form.id">
           <el-radio-group v-model="form.status">
             <el-radio 
@@ -127,6 +141,19 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('新增用户')
 const formRef = ref()
 
+const deptOptions = ref<any[]>([])
+const roleOptions = ref<any[]>([])
+
+const fetchOptions = async () => {
+  try {
+    const res = await request.get('/api/auth/system/dept/tree')
+    deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
+    
+    const roleRes = await request.get('/api/auth/system/role/list')
+    roleOptions.value = roleRes || []
+  } catch (e) {}
+}
+
 const form = ref({
   id: undefined,
   username: '',
@@ -135,6 +162,7 @@ const form = ref({
   email: '',
   gender: 0,
   dept_id: 1,
+  roleIds: [] as number[],
   status: 1,
   remark: ''
 })
@@ -166,18 +194,21 @@ const resetForm = () => {
     email: '',
     gender: 0,
     dept_id: 1,
+    roleIds: [],
     status: 1,
     remark: ''
   }
 }
 
-const handleAdd = () => {
+const handleAdd = async () => {
+  await fetchOptions()
   resetForm()
   dialogTitle.value = '新增用户'
   dialogVisible.value = true
 }
 
-const handleEdit = (row: any) => {
+const handleEdit = async (row: any) => {
+  await fetchOptions()
   resetForm()
   form.value = {
     id: row.id,
@@ -187,6 +218,7 @@ const handleEdit = (row: any) => {
     email: row.email,
     gender: row.gender,
     dept_id: row.dept_id,
+    roleIds: row.roles ? row.roles.map((r: any) => r.id) : [],
     status: row.status,
     remark: row.remark
   }

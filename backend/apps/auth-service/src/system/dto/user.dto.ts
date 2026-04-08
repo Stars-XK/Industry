@@ -40,6 +40,10 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   remark?: string;
+
+  @ApiPropertyOptional({ description: '分配的角色ID列表', example: [1, 2] })
+  @IsOptional()
+  roleIds?: number[];
 }
 
 export class UpdateUserDto {
@@ -77,4 +81,8 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   remark?: string;
+
+  @ApiPropertyOptional({ description: '分配的角色ID列表', example: [1, 2] })
+  @IsOptional()
+  roleIds?: number[];
 }

@@ -271,13 +271,14 @@ const logs = ref([])
 const getList = async () => {
   loading.value = true
   try {
-    const { data } = await request({
-      url: '/api/workflow/inventory',
+    const res = await request({
+      url: '/api/v1/workflow/inventory',
       method: 'get',
       params: listQuery
     })
-    list.value = data.records
-    total.value = data.total
+    const innerData = res.data ? res.data : res
+    list.value = innerData.records || []
+    total.value = innerData.total || 0
   } catch (e) { /* fallback */ }
   loading.value = false
 }

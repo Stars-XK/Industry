@@ -118,6 +118,7 @@ import { ref } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { View } from '@element-plus/icons-vue'
 const dialogVisible = ref(false)
+const showImport = ref(false)
 const assets = ref([
   { code: 'M-DN100-01', name: '一厂区总出水表', type: '智能水表', install_date: '2023-01-15', status: '在线', warranty: '2028-01-15' },
   { code: 'V-REG-02', name: '高位水池进水调节阀', type: '阀门', install_date: '2022-05-20', status: '在线', warranty: '2025-05-20' },

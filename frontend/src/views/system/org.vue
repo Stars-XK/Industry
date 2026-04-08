@@ -141,7 +141,7 @@
       title="导入部门数据"
       templateName="部门档案"
       :templateColumns="['上级部门ID', '部门编码', '部门名称', '负责人', '联系电话', '邮箱', '备注']"
-      @success="fetchDeptTree"
+      @success="getList"
     />
   </div>
 </template>
@@ -183,7 +183,7 @@ const rules = {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/system/dept/tree')
+    const res = await request.get('/api/v1/system/dept/tree')
     tableData.value = res || []
     deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
   } catch (e) { /* fallback */ } finally {
@@ -237,7 +237,7 @@ const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除部门 "${row.dept_name}" 吗？`, '警告', {
     type: 'warning'
   }).then(async () => {
-    await request.delete(`/api/system/dept/${row.id}`)
+    await request.delete(`/api/v1/system/dept/${row.id}`)
     ElMessage.success('删除成功')
     getList()
   }).catch(() => {})
@@ -248,10 +248,10 @@ const submitForm = async () => {
   await formRef.value.validate(async (valid: boolean) => {
     if (valid) {
         if (form.value.id) {
-          await request.put(`/api/system/dept/${form.value.id}`, form.value)
+          await request.put(`/api/v1/system/dept/${form.value.id}`, form.value)
           ElMessage.success('更新成功')
         } else {
-          await request.post('/api/system/dept', form.value)
+          await request.post('/api/v1/system/dept', form.value)
           ElMessage.success('新增成功')
         }
         dialogVisible.value = false

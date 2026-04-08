@@ -78,8 +78,8 @@ router.beforeEach(async (to, from, next) => {
             };
 
             if (menu.menu_type === 'M') {
-              // 给目录节点分配 RouterView 以渲染子路由，使用 h() 包裹以避免 Vue 3 的 <transition> 直接包裹 RouterView 警告
-              route.component = { render: () => h(RouterView) };
+              // 给目录节点分配 RouterView 以渲染子路由，使用 h() 和 div 包裹以彻底避免 Vue 3 的 <transition> 警告
+              route.component = { render: () => h('div', { class: 'nested-router-view', style: 'height: 100%; width: 100%' }, [h(RouterView)]) };
             } else if (menu.menu_type === 'C' && menu.component) {
               // 动态匹配 views 下的 Vue 组件
               const componentPath = `../views/${menu.component}.vue`;

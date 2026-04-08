@@ -140,7 +140,7 @@
       v-model="showImport"
       title="导入部门数据"
       templateName="部门档案"
-      :templateColumns="[\'上级部门ID\', \'部门编码\', \'部门名称\', \'负责人\', \'联系电话\', \'邮箱\', \'备注\']"
+      :templateColumns="['上级部门ID', '部门编码', '部门名称', '负责人', '联系电话', '邮箱', '备注']"
       @success="fetchDeptTree"
     />
   </div>

@@ -18,6 +18,20 @@ const TD_PORT = process.env.TDENGINE_PORT || '6041';
 const TDENGINE_REST_URL = `http://${TD_HOST}:${TD_PORT}/rest/sql`;
 const TDENGINE_AUTH = process.env.TD_AUTH || 'Basic cm9vdDp0YW9zZGF0YQ=='; // root:taosdata base64
 
+/**
+ * 辅助函数：安全地拆分并清理 SQL 语句
+ * 1. 使用正则剔除所有的单行注释 (-- ...)
+ * 2. 按照分号切分语句
+ * 3. 过滤掉空语句
+ */
+function splitSqlStatements(sqlContent: string): string[] {
+  return sqlContent
+    .replace(/--.*$/gm, '') // 剔除单行注释，防止干扰分号断句
+    .split(';')
+    .map(stmt => stmt.trim())
+    .filter(stmt => stmt.length > 0);
+}
+
 async function initMySQL() {
   console.log('\n--- 正在初始化 MySQL ---');
   let connection;
@@ -29,7 +43,11 @@ async function initMySQL() {
     if (fs.existsSync(schemaSqlPath)) {
       const schemaSql = fs.readFileSync(schemaSqlPath, 'utf8');
       console.log('>>> 执行 mysql_schema.sql (创建表结构与索引)...');
-      await connection.query(schemaSql);
+      
+      const schemaStatements = splitSqlStatements(schemaSql);
+      for (let i = 0; i < schemaStatements.length; i++) {
+        await connection.query(schemaStatements[i]);
+      }
       console.log('✅ MySQL 表结构与索引创建完成！');
     }
 
@@ -38,7 +56,16 @@ async function initMySQL() {
     if (fs.existsSync(seedSqlPath)) {
       const seedSql = fs.readFileSync(seedSqlPath, 'utf8');
       console.log('>>> 执行 mysql_seed.sql (插入初始化/测试数据)...');
-      await connection.query(seedSql);
+      
+      const seedStatements = splitSqlStatements(seedSql);
+      for (let i = 0; i < seedStatements.length; i++) {
+        try {
+          await connection.query(seedStatements[i]);
+        } catch (err: any) {
+          console.error(`❌ 在执行第 ${i + 1} 条 Seed 语句时失败:\n${seedStatements[i].substring(0, 100)}...`);
+          throw err; // 阻断执行并抛出真实错误
+        }
+      }
       console.log('✅ MySQL 初始化与测试数据插入完成！');
     }
 
@@ -62,11 +89,8 @@ async function initTDengine() {
     }
 
     const tdSql = fs.readFileSync(tdSqlPath, 'utf8');
-    // TDengine REST API 一次只能执行一条 SQL 语句，我们需要将脚本按分号分割
-    const sqlStatements = tdSql
-      .split(';')
-      .map(stmt => stmt.trim())
-      .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+    // 使用统一的清洗拆分方法，避免 startsWith('--') 误伤带注释的合法 SQL
+    const sqlStatements = splitSqlStatements(tdSql);
 
     for (let i = 0; i < sqlStatements.length; i++) {
       const sql = sqlStatements[i];

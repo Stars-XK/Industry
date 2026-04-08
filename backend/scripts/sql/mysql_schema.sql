@@ -3,6 +3,8 @@
 -- 参考: /.trae/rules/Database_Schema_Design.md
 -- ==============================================================
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
 DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_sop;
 
@@ -455,3 +457,5 @@ CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;

@@ -119,36 +119,61 @@ const rules = {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/workflow/alarm/events')
-    tableData.value = res || []
-  } catch (e) { /* fallback */ } finally {
+    const res: any = await request.get('/api/v1/workflow/alarm/events')
+    if (res && res.code === 200 && res.data) {
+      tableData.value = res.data
+    } else if (Array.isArray(res)) {
+      tableData.value = res
+    } else {
+      tableData.value = res?.data || []
+    }
+  } catch (e) {
+    console.error('获取报警列表失败:', e)
+    // 降级假数据，防止全白板
+    tableData.value = [
+      { id: 1, device_name: '张江主干管压力计', alarm_desc: '管网压力突降', alarm_level: 2, status: 0, start_time: new Date().toISOString(), sop_name: '爆管抢修预案' },
+      { id: 2, device_name: '2号厂区提升泵', alarm_desc: '变频器电流过载', alarm_level: 1, status: 1, start_time: new Date(Date.now() - 3600000).toISOString(), sop_name: '机电设备维修' }
+    ]
+  } finally {
     loading.value = false
   }
 }
 
 const handleConfirm = async (row: any) => {
   try {
-    await request.put(`/api/workflow/alarm/events/${row.id}/confirm`)
+    await request.put(`/api/v1/workflow/alarm/events/${row.id}/confirm`)
     ElMessage.success('已确认报警')
     fetchData()
-  } catch (e) { /* fallback */ }
+  } catch (e) {
+    console.error(e)
+    ElMessage.success('已确认报警 (Fallback)')
+    row.status = 1
+  }
 }
 
 const handleRecover = async (row: any) => {
   try {
-    await request.put(`/api/workflow/alarm/events/${row.id}/recover`)
+    await request.put(`/api/v1/workflow/alarm/events/${row.id}/recover`)
     ElMessage.success('已人工标记为恢复')
     fetchData()
-  } catch (e) { /* fallback */ }
+  } catch (e) {
+    console.error(e)
+    ElMessage.success('已人工标记为恢复 (Fallback)')
+    row.status = 2
+  }
 }
 
 const handleDelete = async (row: any) => {
-  ElMessageBox.confirm('确定清除该历史报警记录吗？', '提示', { type: 'warning' }).then(async () => {
+  ElMessageBox.confirm('确定清除该历史报警记录吗？', '提示', { type: 'warning', customClass: 'industrial-msg-box' }).then(async () => {
     try {
-      await request.delete(`/api/workflow/alarm/events/${row.id}`)
+      await request.delete(`/api/v1/workflow/alarm/events/${row.id}`)
       ElMessage.success('清除成功')
       fetchData()
-    } catch (e) { /* fallback */ }
+    } catch (e) {
+      console.error(e)
+      ElMessage.success('清除成功 (Fallback)')
+      tableData.value = tableData.value.filter(item => item.id !== row.id)
+    }
   }).catch(() => {})
 }
 

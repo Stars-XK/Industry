@@ -181,7 +181,7 @@ const dynamicMenuTree = computed(() => {
 
           return {
             name: child.menu_name,
-            path: `/${child.path}`,
+            path: `${menu.path}/${child.path}`.replace(/\/\//g, '/'),
             icon: childIcon
           };
         }) || []

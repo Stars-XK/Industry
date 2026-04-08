@@ -64,7 +64,7 @@ export class DictController {
   @ApiOperation({ summary: '根据字典类型获取字典数据' })
   async getDictData(@Query('dictType') dictType: string) {
     return await this.dataSource.query(
-      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY sort_order ASC`,
+      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY dict_sort ASC`,
       [dictType]
     );
   }
@@ -73,7 +73,7 @@ export class DictController {
   @ApiOperation({ summary: '根据字典类型获取字典数据(路径参数)' })
   async getDictDataByPath(@Param('dictType') dictType: string) {
     return await this.dataSource.query(
-      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY sort_order ASC`,
+      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY dict_sort ASC`,
       [dictType]
     );
   }
@@ -82,10 +82,10 @@ export class DictController {
   @ApiOperation({ summary: '新增字典数据' })
   @RequirePermissions('sys:dict')
   async createDictData(@Body() body: any) {
-    const { dict_type, dict_label, dict_value, css_class, list_class, sort_order, status, remark } = body;
+    const { dict_type, dict_label, dict_value, css_class, list_class, dict_sort, status, remark } = body;
     await this.dataSource.query(
-      `INSERT INTO sys_dict_data (dict_type, dict_label, dict_value, css_class, list_class, sort_order, status, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [dict_type, dict_label, dict_value, css_class, list_class, sort_order || 0, status ?? 1, remark]
+      `INSERT INTO sys_dict_data (dict_type, dict_label, dict_value, css_class, list_class, dict_sort, status, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [dict_type, dict_label, dict_value, css_class, list_class, dict_sort || 0, status ?? 1, remark]
     );
     return { success: true };
   }
@@ -94,10 +94,10 @@ export class DictController {
   @ApiOperation({ summary: '修改字典数据' })
   @RequirePermissions('sys:dict')
   async updateDictData(@Param('id') id: string, @Body() body: any) {
-    const { dict_label, dict_value, css_class, list_class, sort_order, status, remark } = body;
+    const { dict_label, dict_value, css_class, list_class, dict_sort, status, remark } = body;
     await this.dataSource.query(
-      `UPDATE sys_dict_data SET dict_label = ?, dict_value = ?, css_class = ?, list_class = ?, sort_order = ?, status = ?, remark = ? WHERE id = ?`,
-      [dict_label, dict_value, css_class, list_class, sort_order, status, remark, id]
+      `UPDATE sys_dict_data SET dict_label = ?, dict_value = ?, css_class = ?, list_class = ?, dict_sort = ?, status = ?, remark = ? WHERE id = ?`,
+      [dict_label, dict_value, css_class, list_class, dict_sort, status, remark, id]
     );
     return { success: true };
   }

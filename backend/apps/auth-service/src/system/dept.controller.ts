@@ -15,7 +15,7 @@ export class DeptController {
   @ApiOperation({ summary: '获取组织架构树' })
   @RequirePermissions('sys:org')
   async getDeptTree() {
-    const depts = await this.dataSource.query(`SELECT * FROM sys_dept WHERE is_deleted IS NULL ORDER BY order_num ASC`);
+    const depts = await this.dataSource.query(`SELECT * FROM sys_dept WHERE is_deleted IS NULL ORDER BY sort_order ASC`);
     return this.buildTree(depts, 0);
   }
 
@@ -23,10 +23,10 @@ export class DeptController {
   @ApiOperation({ summary: '新增部门' })
   @RequirePermissions('sys:org')
   async createDept(@Body() body: any) {
-    const { parent_id, dept_name, order_num, leader, phone, email, status } = body;
+    const { parent_id, dept_name, sort_order, leader, phone, email, status } = body;
     await this.dataSource.query(
-      `INSERT INTO sys_dept (parent_id, dept_name, order_num, leader, phone, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [parent_id || 0, dept_name, order_num || 0, leader, phone, email, status ?? 1]
+      `INSERT INTO sys_dept (parent_id, dept_name, sort_order, leader, phone, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [parent_id || 0, dept_name, sort_order || 0, leader, phone, email, status ?? 1]
     );
     return { success: true };
   }
@@ -35,10 +35,10 @@ export class DeptController {
   @ApiOperation({ summary: '修改部门' })
   @RequirePermissions('sys:org')
   async updateDept(@Param('id') id: string, @Body() body: any) {
-    const { parent_id, dept_name, order_num, leader, phone, email, status } = body;
+    const { parent_id, dept_name, sort_order, leader, phone, email, status } = body;
     await this.dataSource.query(
-      `UPDATE sys_dept SET parent_id = ?, dept_name = ?, order_num = ?, leader = ?, phone = ?, email = ?, status = ? WHERE id = ?`,
-      [parent_id, dept_name, order_num, leader, phone, email, status, id]
+      `UPDATE sys_dept SET parent_id = ?, dept_name = ?, sort_order = ?, leader = ?, phone = ?, email = ?, status = ? WHERE id = ?`,
+      [parent_id, dept_name, sort_order, leader, phone, email, status, id]
     );
     return { success: true };
   }

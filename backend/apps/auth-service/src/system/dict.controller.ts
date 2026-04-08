@@ -69,6 +69,15 @@ export class DictController {
     );
   }
 
+  @Get('data/list/:dictType')
+  @ApiOperation({ summary: '根据字典类型获取字典数据(路径参数)' })
+  async getDictDataByPath(@Param('dictType') dictType: string) {
+    return await this.dataSource.query(
+      `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY sort_order ASC`,
+      [dictType]
+    );
+  }
+
   @Post('data')
   @ApiOperation({ summary: '新增字典数据' })
   @RequirePermissions('sys:dict')

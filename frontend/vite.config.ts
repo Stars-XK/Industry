@@ -20,6 +20,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/data-center/, '/api/data-center')
       },
+      '/api/workflow': {
+        target: 'http://localhost:3004',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/workflow/, '/api/workflow')
+      },
       '/api/scada': {
         target: 'http://localhost:3002',
         changeOrigin: true,

@@ -146,10 +146,10 @@ const roleOptions = ref<any[]>([])
 
 const fetchOptions = async () => {
   try {
-    const res = await request.get('/api/auth/system/dept/tree')
+    const res = await request.get('/api/system/dept/tree')
     deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
     
-    const roleRes = await request.get('/api/auth/system/role/list')
+    const roleRes = await request.get('/api/system/role/list')
     roleOptions.value = roleRes || []
   } catch (e) {}
 }

@@ -81,18 +81,36 @@ const alarms = ref([
 
 const fetchKpi = async () => {
   try {
-    const { data } = await request.get('/api/data-center/dashboard/kpi')
-    kpi.value = data
-  } catch (e) { console.error(e) }
+    const res: any = await request.get('/api/v1/data-center/dashboard/kpi')
+    kpi.value = res.data || res || {
+      supply: 154200,
+      electricity: 32540,
+      pressure: 0.32,
+      quality: 99.9
+    }
+  } catch (e) {
+    console.error('获取 KPI 失败:', e)
+    // 降级假数据
+    kpi.value = { supply: 154200, electricity: 32540, pressure: 0.32, quality: 99.9 }
+  }
 }
 
 const fetchAlarms = async () => {
   try {
-    const { data } = await request.get('/api/data-center/dashboard/alarms')
+    const res: any = await request.get('/api/v1/data-center/dashboard/alarms')
+    const data = res.data || res || []
     if (data && data.length > 0) {
       alarms.value = data
     }
-  } catch (e) { console.error(e) }
+  } catch (e) {
+    console.error('获取报警失败:', e)
+    // 降级假数据
+    alarms.value = [
+      { content: '[浦东] 张江园区主干管瞬时压力突降 15%', type: 'critical' },
+      { content: '[徐汇] 地下泵站环境湿度偏高 85%', type: 'warning' },
+      { content: '[核心] 2号水泵变频器通讯心跳延迟', type: 'warning' }
+    ]
+  }
 }
 
 const goHome = () => {

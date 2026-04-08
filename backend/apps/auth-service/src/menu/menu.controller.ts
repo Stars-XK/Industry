@@ -14,7 +14,8 @@ export class MenuController {
   @Get('my-menus')
   @ApiOperation({ summary: '获取当前用户的动态菜单树' })
   async getMyMenus(@Request() req) {
-    const userId = req.user.userId;
+    // 增加可选链保护，避免 req.user 为空时引发 500 内部崩溃
+    const userId = req.user?.userId;
     return this.menuService.getUserMenus(userId);
   }
 }

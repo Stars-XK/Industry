@@ -20,9 +20,10 @@ export class SystemMenuController {
   @ApiOperation({ summary: '获取菜单树' })
   async getMenuTree() {
     const menus = await this.menuRepository.find({ order: { id: 'ASC' } });
-    const buildTree = (data: Menu[], parentId = 0) => {
+    const buildTree = (data: Menu[], parentId: number | string = 0) => {
       return data
-        .filter((node) => node.parent_id === parentId)
+        // 强制转 Number，防止 TypeORM BIGINT 变成 String 导致严格比较失败
+        .filter((node) => Number(node.parent_id) === Number(parentId))
         .map((node) => ({
           ...node,
           children: buildTree(data, node.id),

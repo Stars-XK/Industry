@@ -13,9 +13,10 @@ export class MenuService {
   /**
    * 将平铺的菜单数组转为树形结构
    */
-  private buildMenuTree(menus: Menu[], parentId: number = 0): any[] {
+  private buildMenuTree(menus: Menu[], parentId: number | string = 0): any[] {
     return menus
-      .filter((menu) => menu.parent_id === parentId)
+      // 将两者统一转为 Number 比较，防止 TypeORM 的 BIGINT 映射为 String 造成严格比较失败
+      .filter((menu) => Number(menu.parent_id) === Number(parentId))
       .map((menu) => ({
         ...menu,
         children: this.buildMenuTree(menus, menu.id),

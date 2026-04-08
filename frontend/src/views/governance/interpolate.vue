@@ -34,13 +34,15 @@
         </el-table-column>
         <el-table-column prop="status" label="规则状态" width="120">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <el-tag :type="scope.row.status === 1 ? 'success' : (scope.row.status === 2 ? 'warning' : 'info')">
+              {{ scope.row.status === 1 ? '生效中' : (scope.row.status === 2 ? '重算锁定中' : '已停用') }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEditRule(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" link @click="handleDeleteRule(scope.row)">删除</el-button>
+            <el-button size="small" type="primary" link :disabled="scope.row.status === 2" @click="handleEditRule(scope.row)">编辑</el-button>
+            <el-button size="small" type="danger" link :disabled="scope.row.status === 2" @click="handleDeleteRule(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

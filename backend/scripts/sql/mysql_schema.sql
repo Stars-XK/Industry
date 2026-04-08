@@ -113,21 +113,17 @@ CREATE TABLE IF NOT EXISTS sys_audit_log (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作审计记录表';
 
--- 5. 设备台账表
+-- 4. 设备台账表 (`ast_device`)
 CREATE TABLE IF NOT EXISTS ast_device (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) NOT NULL UNIQUE,
+    device_code VARCHAR(50) UNIQUE NOT NULL,
     device_name VARCHAR(200) NOT NULL,
-    device_type SMALLINT NOT NULL,
+    device_type SMALLINT NOT NULL COMMENT '字典: 1-水表, 2-阀门, 3-泵, 4-压力计',
     install_date DATE,
     gis_coord VARCHAR(100),
-    status SMALLINT NOT NULL DEFAULT 1,
+    status SMALLINT DEFAULT 1 COMMENT '状态: 1-在线, 2-离线, 3-维修中',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by BIGINT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    updated_by BIGINT,
-    is_deleted TIMESTAMP NULL DEFAULT NULL,
-    INDEX idx_ast_device_code (device_code)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 6. DMA 分区表

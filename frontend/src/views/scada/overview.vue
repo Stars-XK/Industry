@@ -1,97 +1,100 @@
 <template>
-  <div class="page-container scada-overview">
+  <div class="premium-container scada-overview">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">全局态势感知</h1>
+        <p class="page-subtitle">Real-time Global Operations Dashboard</p>
+      </div>
+      <div class="header-actions">
+        <el-tag effect="dark" class="status-tag pulse-tag">系统运行正常</el-tag>
+      </div>
+    </div>
+
     <!-- 核心 KPI 概览 -->
-    <el-row :gutter="20">
+    <el-row :gutter="24">
       <el-col :span="6" v-for="(item, index) in metrics" :key="index">
-        <el-card class="metric-card" shadow="hover">
-          <div class="metric-content">
-            <div class="metric-icon" :style="{ backgroundColor: item.color + '20', color: item.color }">
-              <el-icon><component :is="item.icon" /></el-icon>
-            </div>
-            <div class="metric-info">
-              <div class="metric-title">{{ item.title }}</div>
-              <div class="metric-value">
-                {{ item.value }}
-                <span class="metric-unit" v-if="item.unit">{{ item.unit }}</span>
-              </div>
+        <div class="glass-panel metric-card">
+          <div class="metric-icon-wrap" :style="{ color: item.color, boxShadow: `0 0 20px ${item.color}30` }">
+            <el-icon class="metric-icon"><component :is="item.icon" /></el-icon>
+          </div>
+          <div class="metric-info">
+            <div class="metric-title">{{ item.title }}</div>
+            <div class="metric-value">
+              {{ item.value }}
+              <span class="metric-unit" v-if="item.unit">{{ item.unit }}</span>
             </div>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
 
     <!-- 水质综合看板与能耗趋势 -->
-    <el-row :gutter="20" style="margin-top: 20px;">
+    <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="12">
-        <el-card shadow="hover" class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>水质综合看板 (全网关键节点)</span>
-              <el-tag type="success">历史达标率: {{ complianceRate }}%</el-tag>
+        <div class="glass-panel chart-card">
+          <div class="panel-header">
+            <div class="panel-title">水质综合看板 <span>Water Quality</span></div>
+            <div class="panel-extra">
+              <span class="highlight-text">达标率: {{ complianceRate }}%</span>
             </div>
-          </template>
-          <div class="chart-container" v-loading="loading">
+          </div>
+          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
             <v-chart class="chart" :option="waterQualityOption" autoresize />
           </div>
-        </el-card>
+        </div>
       </el-col>
       <el-col :span="12">
-        <el-card shadow="hover" class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>近 7 天水电气能耗折标煤趋势</span>
-              <el-radio-group v-model="energyTrendRange" size="small" @change="fetchEnergyTrend">
-                <el-radio-button label="7days">近 7 天</el-radio-button>
-                <el-radio-button label="30days">近 30 天</el-radio-button>
-              </el-radio-group>
-            </div>
-          </template>
-          <div class="chart-container" v-loading="loading">
+        <div class="glass-panel chart-card">
+          <div class="panel-header">
+            <div class="panel-title">能耗折标煤趋势 <span>Energy Trend</span></div>
+            <el-radio-group v-model="energyTrendRange" size="small" class="custom-radio" @change="fetchEnergyTrend">
+              <el-radio-button label="7days">7天</el-radio-button>
+              <el-radio-button label="30days">30天</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
             <v-chart class="chart" :option="energyTrendOption" autoresize />
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
 
     <!-- 供水漏损趋势与报警列表 -->
-    <el-row :gutter="20" style="margin-top: 20px;">
+    <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="16">
-        <el-card shadow="hover" class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>近 24 小时管网供水与漏损趋势</span>
-              <el-tag type="info">每小时聚合</el-tag>
-            </div>
-          </template>
-          <div class="chart-container" v-loading="loading">
+        <div class="glass-panel chart-card large-chart">
+          <div class="panel-header">
+            <div class="panel-title">供水与漏损趋势 <span>Supply & Leakage</span></div>
+            <el-tag type="info" effect="dark" class="dark-tag">1h 聚合</el-tag>
+          </div>
+          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
             <v-chart class="chart" :option="trendOption" autoresize />
           </div>
-        </el-card>
+        </div>
       </el-col>
       <el-col :span="8">
-        <el-card shadow="hover" class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>当前管网异常报警状态</span>
-              <el-button type="danger" link>查看更多</el-button>
-            </div>
-          </template>
-          <div class="alarm-list">
-            <el-empty v-if="!metrics[3] || metrics[3].value === 0" description="管网运行正常，无活跃报警" />
-            <el-timeline v-else>
+        <div class="glass-panel list-card">
+          <div class="panel-header">
+            <div class="panel-title">活跃异常报警 <span>Active Alarms</span></div>
+            <el-button link class="neon-btn">处理</el-button>
+          </div>
+          <div class="alarm-list custom-scrollbar">
+            <el-empty v-if="!metrics[3] || metrics[3].value === 0" description="运行正常" :image-size="60" />
+            <el-timeline v-else class="dark-timeline">
               <el-timeline-item
                 v-for="(activity, index) in alarms"
                 :key="index"
                 :type="activity.type"
-                :color="activity.color"
-                :size="activity.size"
+                :color="activity.color || '#00d8ff'"
+                :size="activity.size || 'large'"
                 :timestamp="activity.timestamp"
+                placement="top"
               >
-                {{ activity.content }}
+                <div class="timeline-content">{{ activity.content }}</div>
               </el-timeline-item>
             </el-timeline>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -121,32 +124,39 @@ const metrics = ref([
 ])
 
 const trendOption = ref({
-  tooltip: { trigger: 'axis' },
-  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'] },
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
+  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: '#94a3b8' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', boundaryGap: false, data: [] },
-  yAxis: { type: 'value' },
+  xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
   series: [
     {
       name: '供水量 (m³/h)',
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: '#409EFF' },
-      areaStyle: { color: 'rgba(64, 158, 255, 0.2)' }
+      itemStyle: { color: '#00d8ff' },
+      lineStyle: { width: 3, shadowColor: 'rgba(0,216,255,0.5)', shadowBlur: 10 },
+      areaStyle: {
+        color: {
+          type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+          colorStops: [{ offset: 0, color: 'rgba(0, 216, 255, 0.4)' }, { offset: 1, color: 'rgba(0, 216, 255, 0)' }]
+        }
+      }
     },
     {
       name: '漏水量 (m³/h)',
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: '#E6A23C' }
+      itemStyle: { color: '#f59e0b' },
+      lineStyle: { width: 3, shadowColor: 'rgba(245,158,11,0.5)', shadowBlur: 10 }
     }
   ]
 })
 
 const waterQualityOption = ref({
-  tooltip: { formatter: '{a} <br/>{b} : {c}' },
+  tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'rgba(15, 23, 42, 0.9)', textStyle: { color: '#e2e8f0' }, borderColor: 'rgba(255,255,255,0.1)' },
   series: [
     {
       name: '浊度 (NTU)',
@@ -155,10 +165,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 5,
-      axisLine: { lineStyle: { width: 10, color: [[0.2, '#67C23A'], [0.8, '#E6A23C'], [1, '#F56C6C']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.2, '#10b981'], [0.8, '#f59e0b'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      detail: { fontSize: 14, formatter: '{value} NTU' },
-      data: [{ value: 0, name: '浊度' }]
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
+      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} NTU', color: '#e2e8f0' },
+      data: [{ value: 0, name: '浊度' }],
+      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: '余氯 (mg/L)',
@@ -167,10 +181,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 2,
-      axisLine: { lineStyle: { width: 10, color: [[0.15, '#F56C6C'], [0.8, '#67C23A'], [1, '#E6A23C']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.15, '#ef4444'], [0.8, '#10b981'], [1, '#f59e0b']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      detail: { fontSize: 14, formatter: '{value} mg/L' },
-      data: [{ value: 0, name: '余氯' }]
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
+      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} mg/L', color: '#e2e8f0' },
+      data: [{ value: 0, name: '余氯' }],
+      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: 'pH值',
@@ -179,24 +197,28 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 14,
-      axisLine: { lineStyle: { width: 10, color: [[0.45, '#F56C6C'], [0.6, '#67C23A'], [1, '#F56C6C']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.45, '#ef4444'], [0.6, '#10b981'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      detail: { fontSize: 14, formatter: '{value}' },
-      data: [{ value: 0, name: 'pH值' }]
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
+      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value}', color: '#e2e8f0' },
+      data: [{ value: 0, name: 'pH值' }],
+      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
     }
   ]
 })
 
 const energyTrendOption = ref({
-  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'] },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
+  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: '#94a3b8' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: [] },
-  yAxis: { type: 'value', name: 'kgce' },
+  xAxis: { type: 'category', data: [], axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
+  yAxis: { type: 'value', name: 'kgce', nameTextStyle: { color: '#64748b' }, axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
   series: [
-    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [] },
-    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [] },
-    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [] }
+    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#3b82f6', borderRadius: [0, 0, 0, 0] } },
+    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#10b981', borderRadius: [0, 0, 0, 0] } },
+    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] } }
   ]
 })
 
@@ -260,40 +282,81 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.pulse-tag {
+  animation: pulse 2s infinite;
+  background-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 216, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 216, 255, 0.1);
 }
 
 .metric-card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.metric-content {
   display: flex;
   align-items: center;
-  padding: 8px 4px;
+  padding: 24px;
+  height: 120px;
 }
 
-.metric-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+.metric-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 28px;
   margin-right: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .metric-info {
@@ -302,56 +365,83 @@ onMounted(() => {
 
 .metric-title {
   font-size: 13px;
-  color: #606266;
-  margin-bottom: 4px;
+  color: #94a3b8;
+  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 500;
 }
 
 .metric-value {
   font-size: 32px;
-  font-weight: 600;
-  color: #1f2d3d;
-  font-family: "SF Pro Display", -apple-system, sans-serif;
-  letter-spacing: -0.5px;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: "SF Mono", monospace;
+  line-height: 1;
 }
 
 .metric-unit {
   font-size: 14px;
-  color: #909399;
+  color: #64748b;
   font-weight: 500;
   margin-left: 4px;
+  font-family: "SF Pro Display", sans-serif;
 }
 
-.chart-card {
-  border: none;
-  border-radius: 12px;
+.chart-card, .list-card {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  padding: 20px;
+}
+
+.large-chart {
   height: 420px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
 }
 
-:deep(.el-card__header) {
-  padding: 16px 24px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-:deep(.el-card__body) {
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-header {
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title span {
+  font-size: 12px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.highlight-text {
+  color: #34d399;
+  font-weight: 600;
+  font-family: "SF Mono", monospace;
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+}
+
+.dark-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #cbd5e1;
+}
+
+.neon-btn {
+  color: #00d8ff;
+  font-weight: 500;
+}
+
+.neon-btn:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px #00d8ff;
 }
 
 .chart-container {
@@ -374,27 +464,48 @@ onMounted(() => {
   padding-right: 10px;
 }
 
-.alarm-list::-webkit-scrollbar {
-  width: 6px;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
 
-.alarm-list::-webkit-scrollbar-thumb {
-  background: #dcdfe6;
-  border-radius: 3px;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
-.alarm-list::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-:deep(.el-timeline-item__content) {
-  color: #606266;
+.dark-timeline :deep(.el-timeline-item__content) {
+  color: #e2e8f0;
   font-size: 14px;
-  line-height: 1.5;
 }
 
-:deep(.el-timeline-item__timestamp) {
-  color: #909399;
+.dark-timeline :deep(.el-timeline-item__timestamp) {
+  color: #64748b;
   font-size: 12px;
+  font-family: "SF Mono", monospace;
+}
+
+:deep(.el-radio-button__inner) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+:deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-left-color: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  background-color: #00d8ff;
+  border-color: #00d8ff;
+  color: #020617;
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+}
+
+:deep(.el-empty__description) {
+  color: #64748b;
 }
 </style>

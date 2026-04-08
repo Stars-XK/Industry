@@ -1,78 +1,93 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>报警风暴收敛中心</span>
-          <el-button type="primary" plain @click="fetchData">刷新列表</el-button>
-        </div>
-      </template>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">报警风暴收敛中心</h1>
+        <p class="page-subtitle">Alarm RCA & Convergence Center</p>
+      </div>
+      <div class="header-actions">
+        <el-button class="neon-btn" @click="fetchData">刷新列表</el-button>
+      </div>
+    </div>
 
-      <el-table :data="tableData" style="width: 100%" v-loading="loading" row-key="id">
+    <div class="glass-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+      <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" row-key="id">
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="device_name" label="报警设备">
+        <el-table-column prop="device_name" label="报警设备" min-width="200">
           <template #default="scope">
-            <span style="font-weight: bold;">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
+            <span class="highlight-text">[{{ scope.row.device_code }}]</span> 
+            <span style="color: #e2e8f0; margin-left: 8px;">{{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="alarm_type" label="报警类型" width="180" />
-        <el-table-column prop="alarm_level" label="报警级别" width="100">
+        <el-table-column prop="alarm_level" label="级别" width="100">
           <template #default="scope">
-            <el-tag :type="scope.row.alarm_level === 'HH' ? 'danger' : 'warning'">{{ scope.row.alarm_level }}</el-tag>
+            <el-tag effect="dark" :class="scope.row.alarm_level === 'HH' ? 'danger-tag' : 'warning-tag'" style="border: none;">
+              {{ scope.row.alarm_level }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="alarm_desc" label="报警描述" />
-        <el-table-column prop="status" label="处理状态" width="120">
+        <el-table-column prop="alarm_desc" label="报警描述" min-width="250" show-overflow-tooltip />
+        <el-table-column prop="status" label="状态" width="120">
           <template #default="scope">
-            <el-tag v-if="scope.row.status === 0" type="danger" effect="dark">未确认</el-tag>
-            <el-tag v-else-if="scope.row.status === 1" type="warning" effect="dark">已确认</el-tag>
-            <el-tag v-else-if="scope.row.status === 2" type="success" effect="dark">已恢复</el-tag>
+            <div class="status-indicator" :class="getStatusClass(scope.row.status)">
+              <span class="dot"></span>
+              {{ getStatusText(scope.row.status) }}
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="sop_name" label="关联SOP预案" width="200">
+        <el-table-column prop="sop_name" label="SOP 预案" width="200">
           <template #default="scope">
-            <el-tag v-if="scope.row.sop_name" type="info">{{ scope.row.sop_name }}</el-tag>
-            <span v-else class="text-gray-400">无预案</span>
+            <el-tag v-if="scope.row.sop_name" class="dark-tag" effect="dark">{{ scope.row.sop_name }}</el-tag>
+            <span v-else style="color: #64748b;">无预案</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-button v-if="scope.row.status === 0" size="small" type="primary" link @click="handleConfirm(scope.row)">确认报警</el-button>
-            <el-button v-if="scope.row.status !== 2" size="small" type="success" link @click="handleRecover(scope.row)">人工恢复</el-button>
-            <el-button v-if="scope.row.status !== 2" size="small" type="warning" link @click="handleCreateOrder(scope.row)">生成工单</el-button>
-            <el-button v-if="scope.row.status === 2" size="small" type="danger" link @click="handleDelete(scope.row)">清除记录</el-button>
+            <div class="action-btns">
+              <el-button v-if="scope.row.status === 0" size="small" class="action-btn text-cyan" link @click="handleConfirm(scope.row)">确认</el-button>
+              <el-button v-if="scope.row.status !== 2" size="small" class="action-btn text-emerald" link @click="handleRecover(scope.row)">恢复</el-button>
+              <el-button v-if="scope.row.status !== 2" size="small" class="action-btn text-amber" link @click="handleCreateOrder(scope.row)">转工单</el-button>
+              <el-button v-if="scope.row.status === 2" size="small" class="action-btn text-rose" link @click="handleDelete(scope.row)">清除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </div>
 
-    <el-dialog title="由报警生成工单" v-model="dialogVisible" width="500px" @close="resetForm">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+    <el-dialog title="下发抢修工单" v-model="dialogVisible" width="500px" @close="resetForm" class="glass-dialog" :show-close="false">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" class="dark-form" label-position="top">
         <el-form-item label="工单标题" prop="title">
-          <el-input v-model="form.title" placeholder="如：泵站紧急抢修" />
+          <el-input v-model="form.title" placeholder="如：泵站紧急抢修" class="glass-input" />
         </el-form-item>
-        <el-form-item label="工单类型" prop="order_type">
-          <el-select v-model="form.order_type" style="width: 100%">
-            <el-option label="抢修工单" :value="2" />
-            <el-option label="听漏工单" :value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="优先级" prop="priority">
-          <el-select v-model="form.priority" style="width: 100%">
-            <el-option label="中" :value="2" />
-            <el-option label="高" :value="3" />
-            <el-option label="紧急" :value="4" />
-          </el-select>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="工单类型" prop="order_type">
+              <el-select v-model="form.order_type" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+                <el-option label="抢修工单" :value="2" />
+                <el-option label="听漏工单" :value="3" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="优先级" prop="priority">
+              <el-select v-model="form.priority" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+                <el-option label="中" :value="2" />
+                <el-option label="高" :value="3" />
+                <el-option label="紧急" :value="4" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="任务描述" prop="description">
-          <el-input type="textarea" v-model="form.description" :rows="3" />
+          <el-input type="textarea" v-model="form.description" :rows="4" class="glass-input" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitOrderForm">确定下发</el-button>
-        </span>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button class="neon-btn" @click="submitOrderForm">确定下发</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -166,12 +181,246 @@ const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
 }
 
+const getStatusClass = (status: number) => {
+  if (status === 0) return 'status-danger'
+  if (status === 1) return 'status-warning'
+  if (status === 2) return 'status-success'
+  return ''
+}
+
+const getStatusText = (status: number) => {
+  if (status === 0) return '未确认'
+  if (status === 1) return '已确认'
+  if (status === 2) return '已恢复'
+  return '未知'
+}
+
 onMounted(() => {
   fetchData()
 })
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.premium-container {
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.highlight-text {
+  color: #00d8ff;
+  font-family: "SF Mono", monospace;
+  font-weight: 600;
+}
+
+.danger-tag {
+  background-color: rgba(244, 63, 94, 0.2);
+  color: #f43f5e;
+}
+
+.warning-tag {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.dark-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #cbd5e1;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.status-indicator .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-danger { color: #f43f5e; }
+.status-danger .dot { background-color: #f43f5e; box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
+
+.status-warning { color: #f59e0b; }
+.status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+
+.status-success { color: #10b981; }
+.status-success .dot { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+
+@keyframes pulse-danger {
+  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+}
+
+.action-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  text-shadow: 0 0 8px currentColor;
+  transform: translateY(-1px);
+}
+
+.text-cyan { color: #00d8ff; }
+.text-emerald { color: #10b981; }
+.text-amber { color: #f59e0b; }
+.text-rose { color: #f43f5e; }
+
+.neon-btn {
+  background: transparent;
+  border: 1px solid #00d8ff;
+  color: #00d8ff;
+  transition: all 0.3s;
+}
+
+.neon-btn:hover {
+  background: rgba(0, 216, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  color: #fff;
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Table styles */
+.dark-table {
+  background-color: transparent !important;
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-header-text-color: #94a3b8;
+  --el-table-text-color: #e2e8f0;
+  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: var(--el-table-header-bg-color) !important;
+  border-bottom: 1px solid var(--el-table-border-color);
+}
+
+:deep(.el-table tr) { background-color: transparent !important; }
+:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
+:deep(.el-table::before) { display: none; }
+
+/* Dialog Styles */
+:deep(.glass-dialog) {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+:deep(.glass-dialog .el-dialog__header) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-right: 0;
+  padding-bottom: 16px;
+}
+
+:deep(.glass-dialog .el-dialog__title) {
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:deep(.glass-dialog .el-dialog__body) {
+  color: #cbd5e1;
+}
+
+:deep(.glass-dialog .el-dialog__footer) {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Form Styles */
+:deep(.dark-form .el-form-item__label) {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+:deep(.glass-input .el-input__wrapper),
+:deep(.glass-input .el-textarea__inner) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  color: #e2e8f0;
+}
+
+:deep(.glass-input .el-input__wrapper:hover),
+:deep(.glass-input .el-textarea__inner:hover) {
+  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
+}
+
+:deep(.glass-input .el-input__wrapper.is-focus),
+:deep(.glass-input .el-textarea__inner:focus) {
+  box-shadow: 0 0 0 1px #00d8ff inset !important;
+}
+
+:deep(.glass-select .el-input__wrapper) {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+:deep(.glass-select .el-input__inner) {
+  color: #e2e8f0;
+}
 </style>

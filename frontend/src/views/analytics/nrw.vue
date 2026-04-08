@@ -1,55 +1,68 @@
 <template>
-  <div class="page-container">
-    <el-card class="box-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>DMA 产销差与漏损分析 (NRW Sankey Analysis)</span>
-          <el-select v-model="month" placeholder="请选择分析月份" @change="fetchData" style="width: 150px">
-            <el-option label="2026-04" value="2026-04" />
-            <el-option label="2026-03" value="2026-03" />
-          </el-select>
-        </div>
-      </template>
+  <div class="premium-container">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">DMA 产销差与漏损分析</h1>
+        <p class="page-subtitle">NRW Sankey Analysis & Leakage Reports</p>
+      </div>
+      <div class="header-actions">
+        <el-select v-model="month" placeholder="分析月份" @change="fetchData" class="glass-select" style="width: 160px">
+          <el-option label="2026-04" value="2026-04" />
+          <el-option label="2026-03" value="2026-03" />
+        </el-select>
+      </div>
+    </div>
 
-      <el-row :gutter="20" style="margin-bottom: 20px;">
-        <el-col :span="10">
-          <el-table :data="tableData" style="width: 100%" v-loading="loading" @row-click="handleRowClick" highlight-current-row height="500">
-            <el-table-column prop="zone_name" label="DMA分区名称" />
-            <el-table-column prop="nrw_ratio" label="产销差率 (NRW %)">
+    <el-row :gutter="24" style="margin-bottom: 24px;">
+      <el-col :span="10">
+        <div class="glass-panel table-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+          <div class="panel-header">
+            <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
+          </div>
+          <el-table :data="tableData" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="dark-table custom-scrollbar">
+            <el-table-column prop="zone_name" label="DMA分区" min-width="120" />
+            <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="150">
               <template #default="scope">
                 <el-progress 
                   :percentage="Number(scope.row.nrw_ratio)" 
                   :color="customColors" 
-                  :stroke-width="12" />
+                  :stroke-width="8" 
+                  :show-text="true"
+                  class="dark-progress" />
               </template>
             </el-table-column>
-            <el-table-column prop="nrw_m3" label="漏水损失 (m³)">
+            <el-table-column prop="nrw_m3" label="损失量 (m³)" align="right" min-width="120">
               <template #default="scope">
-                <span style="color: #E6A23C; font-weight: bold;">
+                <span class="highlight-number">
                   {{ Number(scope.row.nrw_m3).toLocaleString() }}
                 </span>
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-        
-        <el-col :span="14">
-          <div class="chart-container" v-loading="sankeyLoading">
-            <div class="chart-title">区域水量平衡图 (IWA 标准) - {{ currentZoneName }}</div>
-            <div ref="sankeyChartRef" class="sankey-chart"></div>
+        </div>
+      </el-col>
+      
+      <el-col :span="14">
+        <div class="glass-panel chart-panel" v-loading="sankeyLoading" element-loading-background="rgba(15,23,42,0.8)">
+          <div class="panel-header">
+            <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
+            <el-tag type="info" effect="dark" class="dark-tag">{{ currentZoneName || '未选择' }}</el-tag>
           </div>
-        </el-col>
-      </el-row>
+          <div ref="sankeyChartRef" class="sankey-chart"></div>
+        </div>
+      </el-col>
+    </el-row>
 
-      <el-row>
-        <el-col :span="24">
-          <div class="chart-container" v-loading="trendLoading" style="height: 350px;">
-            <div class="chart-title">产销差率 (NRW %) 历史趋势及同环比分析</div>
-            <div ref="trendChartRef" class="trend-chart"></div>
+    <el-row>
+      <el-col :span="24">
+        <div class="glass-panel chart-panel" v-loading="trendLoading" element-loading-background="rgba(15,23,42,0.8)" style="height: 380px;">
+          <div class="panel-header">
+            <div class="panel-title">历史趋势及同环比分析 <span>Historical Trend</span></div>
           </div>
-        </el-col>
-      </el-row>
-    </el-card>
+          <div ref="trendChartRef" class="trend-chart"></div>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -133,7 +146,7 @@ const renderSankey = (nodes: any[], links: any[]) => {
   if (!sankeyInstance) return
 
   const option = {
-    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
     series: [
       {
         type: 'sankey',
@@ -143,7 +156,13 @@ const renderSankey = (nodes: any[], links: any[]) => {
         lineStyle: { color: 'gradient', curveness: 0.5 },
         label: {
           position: 'right',
-          formatter: '{b} \n ({c} m³)'
+          formatter: '{b} \n ({c} m³)',
+          color: '#e2e8f0',
+          fontFamily: 'SF Pro Display'
+        },
+        itemStyle: {
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.2)'
         }
       }
     ]
@@ -158,21 +177,22 @@ const renderTrend = (months: string[], ratios: number[]) => {
   if (!trendInstance) return
 
   const option = {
-    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%' },
+    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-    xAxis: { type: 'category', data: months, boundaryGap: false },
-    yAxis: { type: 'value', name: 'NRW (%)', axisLabel: { formatter: '{value} %' } },
+    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
+    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: '#64748b' }, axisLabel: { formatter: '{value} %', color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
     series: [
       {
         name: '产销差率',
         type: 'line',
         data: ratios,
         smooth: true,
-        itemStyle: { color: '#E6A23C' },
+        itemStyle: { color: '#f59e0b' },
+        lineStyle: { width: 3, shadowColor: 'rgba(245,158,11,0.5)', shadowBlur: 10 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(230,162,60,0.5)' },
-            { offset: 1, color: 'rgba(230,162,60,0.1)' }
+            { offset: 0, color: 'rgba(245,158,11,0.5)' },
+            { offset: 1, color: 'rgba(245,158,11,0.05)' }
           ])
         }
       }
@@ -199,72 +219,161 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page-container {
+.premium-container {
   padding: 24px;
-  background: #f4f6f8;
-  min-height: calc(100vh - 84px);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020617 100%);
+  min-height: calc(100vh - 60px);
+  color: #e2e8f0;
+  font-family: "SF Pro Display", -apple-system, sans-serif;
 }
 
-.box-card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-
-:deep(.el-card__header) {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f2f5;
-}
-
-.card-header {
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2d3d;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 
-.chart-container {
-  height: 500px;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
-.chart-title {
-  font-size: 14px;
+.glass-panel:hover {
+  border-color: rgba(0, 216, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 216, 255, 0.1);
+}
+
+.table-panel {
+  height: 520px;
+  padding: 20px;
+}
+
+.chart-panel {
+  height: 520px;
+  padding: 20px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.panel-title {
+  font-size: 16px;
   font-weight: 600;
-  color: #606266;
-  margin-bottom: 16px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title span {
+  font-size: 12px;
+  color: #475569;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
-.sankey-chart {
+.dark-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #cbd5e1;
+}
+
+.sankey-chart, .trend-chart {
   width: 100%;
   flex: 1;
 }
 
-.trend-chart {
-  width: 100%;
-  flex: 1;
+.highlight-number {
+  color: #f59e0b;
+  font-weight: 700;
+  font-family: "SF Mono", monospace;
+  font-size: 16px;
 }
 
-:deep(.el-table) {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+.dark-table {
+  background-color: transparent !important;
+  --el-table-border-color: rgba(255, 255, 255, 0.05);
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.02);
+  --el-table-header-text-color: #94a3b8;
+  --el-table-text-color: #e2e8f0;
+  --el-table-row-hover-bg-color: rgba(0, 216, 255, 0.05);
+  --el-table-current-row-bg-color: rgba(0, 216, 255, 0.1);
 }
 
 :deep(.el-table th.el-table__cell) {
-  background-color: #f8f9fa;
-  color: #606266;
-  font-weight: 600;
+  background-color: var(--el-table-header-bg-color) !important;
+  border-bottom: 1px solid var(--el-table-border-color);
+}
+
+:deep(.el-table tr) {
+  background-color: transparent !important;
+}
+
+:deep(.el-table td.el-table__cell) {
+  border-bottom: 1px solid var(--el-table-border-color);
+}
+
+:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
+  background-color: var(--el-table-row-hover-bg-color) !important;
+}
+
+:deep(.el-table__body tr.current-row > td.el-table__cell) {
+  background-color: var(--el-table-current-row-bg-color) !important;
+}
+
+:deep(.el-table::before) {
+  display: none;
+}
+
+.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
+  width: 4px;
+}
+
+.custom-scrollbar :deep(.el-scrollbar__thumb) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+:deep(.dark-progress .el-progress__text) {
+  color: #e2e8f0;
+  font-family: "SF Mono", monospace;
+}
+
+:deep(.dark-progress .el-progress-bar__outer) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.glass-select .el-input__wrapper) {
+  background-color: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+:deep(.glass-select .el-input__inner) {
+  color: #e2e8f0;
 }
 </style>

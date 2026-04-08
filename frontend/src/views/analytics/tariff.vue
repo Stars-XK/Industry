@@ -62,15 +62,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入费率数据"
+      templateName="费率"
+      :templateColumns="['费率编码', '费率名称', '单价 (元/m³)', '适用说明', '状态']"
+      @success="fetchData"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref([])
 const loading = ref(false)
+const showImport = ref(false)
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增费率')

@@ -4,6 +4,7 @@
       <div class="panel-header">
         <span class="panel-title">边缘计算与物联网网关台账 (IoT Gateways)</span>
         <el-button type="primary" class="neon-btn" @click="handleAdd">新增网关</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
       <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
@@ -64,15 +65,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入边缘网关数据"
+      templateName="边缘网关"
+      :templateColumns="['网关序列号 (SN)', '通信协议', '在线状态', '备注说明']"
+      @success="fetchData"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref([])
 const loading = ref(false)
+const showImport = ref(false)
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增网关')
 const formRef = ref()

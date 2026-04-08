@@ -66,16 +66,27 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入应急预案数据"
+      templateName="应急预案"
+      :templateColumns="['预案名称', '触发报警类型', '执行步骤', '状态']"
+      @success="fetchData"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { View } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const tableData = ref<any[]>([])
 const loading = ref(false)
+const showImport = ref(false)
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增预案')

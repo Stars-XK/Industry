@@ -5,6 +5,7 @@
       <div class="panel-header">
         <span class="panel-title">字典类型 (DictType)</span>
         <el-button type="primary" size="small" class="neon-btn" @click="handleAddType">新增</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
       <ul class="type-list">
         <li
@@ -92,10 +93,21 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入业务字典数据"
+      templateName="业务字典"
+      :templateColumns="['字典类型', '字典标签 (Label)', '字典键值 (Value)', '排序', '状态']"
+      @success="fetchTypeList"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
+const showImport = ref(false)
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 

@@ -43,18 +43,7 @@
         </div>
         <div class="toolbar-actions">
           <el-button class="neon-btn" @click="handleAdd" :icon="Plus">新增映射</el-button>
-          <el-upload
-            class="upload-demo"
-            action="/api/data-center/edge-tag/import"
-            :show-file-list="false"
-            :on-success="handleImportSuccess"
-            :on-error="handleImportError"
-            :headers="uploadHeaders"
-            accept=".xlsx,.xls"
-            style="display: inline-block; margin: 0 10px;"
-          >
-            <el-button class="neon-btn neon-btn-success" :icon="Upload">批量导入</el-button>
-          </el-upload>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
           <el-button class="neon-btn" @click="getList" :icon="Refresh">刷新</el-button>
         </div>
       </div>
@@ -168,15 +157,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入边缘标签映射数据"
+      templateName="边缘标签映射"
+      :templateColumns="['设备ID', '原始测点标签名', '标准化属性名', '数据类型', '单位', '缩放因子', '状态', '备注']"
+      @success="getList"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, Search, Upload, Cpu } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const loading = ref(false)
+const showImport = ref(false)
 const gatewayLoading = ref(false)
 const tableData = ref([])
 const gatewayList = ref<any[]>([])

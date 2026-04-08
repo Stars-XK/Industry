@@ -66,15 +66,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入工业配方数据"
+      templateName="工业配方"
+      :templateColumns="['配方名称', '工艺类型', '工艺参数', '状态']"
+      @success="fetchData"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref<any[]>([])
 const loading = ref(false)
+const showImport = ref(false)
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增配方')
 const formRef = ref()

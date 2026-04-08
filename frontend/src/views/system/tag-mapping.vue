@@ -4,6 +4,7 @@
       <div class="panel-header">
         <span class="panel-title">测点与时序标签映射管理 (IoT Tag Mapping)</span>
         <el-button type="primary" class="neon-btn" @click="handleAdd">新增映射</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
       <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
@@ -65,15 +66,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入测点映射数据"
+      templateName="测点映射"
+      :templateColumns="['关联物理设备', '归属网关SN', 'PLC/寄存器地址', '时序库全局标签', '死区过滤阈值']"
+      @success="fetchOptions"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref<any[]>([])
 const loading = ref(false)
+const showImport = ref(false)
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增映射')
 const formRef = ref()

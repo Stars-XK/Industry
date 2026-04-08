@@ -7,6 +7,7 @@
           <div class="header-subtitle">Interlock & Rule Engine (Cause & Effect)</div>
         </div>
         <el-button type="primary" class="neon-btn" @click="dialogVisible = true">新增联锁策略</el-button>
+          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
       <div class="table-container">
@@ -72,15 +73,26 @@
       </template>
     </el-dialog>
   </div>
+
+    <!-- Import Dialog -->
+    <ExcelImport
+      v-model="showImport"
+      title="导入SCADA联锁策略数据"
+      templateName="SCADA联锁策略"
+      :templateColumns="['触发条件 (Cause)', '执行动作 (Effect)', '延迟执行', '策略状态']"
+      @success="fetchData"
+    />
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Right } from '@element-plus/icons-vue'
 import { getInterlockRules, updateInterlockRule } from '@/api/governance'
 
 const matrix = ref<any[]>([])
 const loading = ref(false)
+const showImport = ref(false)
 const dialogVisible = ref(false)
 const form = ref({ cause: '', effect: '', delay: 0 })
 

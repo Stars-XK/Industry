@@ -53,11 +53,11 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (22, 20, '夜间最小流量分析', 2, 'mnf', 'analytics/mnf', 0, 0, 'analytics:mnf', 'C', 1, 1, 'TrendCharts', '', 1),
 (23, 20, '大用户档案与重点企业画像', 3, 'key-account', 'analytics/key-account', 0, 0, 'analytics:account', 'C', 1, 1, 'Avatar', '', 1),
 (24, 20, '营收计费与出账对账管理', 4, 'billing', 'analytics/billing', 0, 0, 'analytics:billing', 'C', 1, 1, 'Money', '', 1),
-(26, 20, '数据清洗与插值规则', 6, 'interpolate', 'governance/interpolate', 0, 0, 'gov:interpolate', 'C', 1, 1, 'Filter', '', 1),
-(27, 12, '物理资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Briefcase', '', 1),
-(29, 12, '边缘网关设备管理', 6, 'gateway', 'system/gateway', 0, 0, 'sys:asset', 'C', 1, 1, 'Connection', '', 1),
-(31, 12, '测点与时序标签映射', 7, 'tag-mapping', 'system/tag-mapping', 0, 0, 'sys:asset', 'C', 1, 1, 'Cpu', '', 1),
-(28, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
+(126, 20, '数据清洗与插值规则', 6, 'interpolate', 'governance/interpolate', 0, 0, 'gov:interpolate', 'C', 1, 1, 'Filter', '', 1),
+(127, 12, '物理资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Briefcase', '', 1),
+(129, 12, '边缘网关设备管理', 6, 'gateway', 'system/gateway', 0, 0, 'sys:asset', 'C', 1, 1, 'Connection', '', 1),
+(131, 12, '测点与时序标签映射', 7, 'tag-mapping', 'system/tag-mapping', 0, 0, 'sys:asset', 'C', 1, 1, 'Cpu', '', 1),
+(128, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
 (25, 20, '综合能效优化与动态成本核算', 5, 'energy', 'analytics/energy', 0, 0, 'analytics:energy', 'C', 1, 1, 'Lightning', '', 1),
 (26, 20, '用量与能耗AI预测分析', 6, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'Cpu', '', 1),
 (27, 20, '在线水力模型仿真与推演', 7, 'hydraulic', 'analytics/hydraulic', 0, 0, 'analytics:hydraulic', 'C', 1, 1, 'Opportunity', '', 1),
@@ -272,16 +272,10 @@ INSERT IGNORE INTO dma_1h (ts, zone_id, supply, sale, balance_value, night_flow)
 ( '2026-04-08 03:00:00', '201', 501, 0, 0, 0 );
 
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
-INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, menu_type, visible, status, perm_code, icon, remark, created_by) VALUES
-(40, 0, '运维协同与工单中心', 5, 'workflow', '', 0, 0, 'M', 1, 1, '', 'Service', '', 1),
-(41, 40, '报警风暴收敛中心', 1, 'alarm', 'workflow/alarm', 0, 0, 'C', 1, 1, 'workflow:alarm', 'Bell', '', 1),
-(42, 40, 'SOP 应急预案库', 2, 'sop', 'workflow/sop', 0, 0, 'C', 1, 1, 'workflow:sop', 'Reading', '', 1),
-(43, 40, '运维工单流转大盘', 3, 'work-order', 'workflow/work-order', 0, 0, 'C', 1, 1, 'workflow:order', 'Tickets', '', 1);
-
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
-(1, 40), (1, 41), (1, 42), (1, 43),
-(3, 40), (3, 41), (3, 43); -- 维修工只能看报警和工单，不能编辑 SOP
+(1, 30), (1, 31), (1, 32), (1, 35),
+(3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP
 
 -- 11. 第四阶段 初始数据
 INSERT IGNORE INTO alm_sop (id, sop_name, alarm_type, steps_json, status) VALUES

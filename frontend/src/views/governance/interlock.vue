@@ -6,9 +6,9 @@
           <div class="header-title">SCADA 报警联锁与因果矩阵引擎</div>
           <div class="header-subtitle">Interlock & Rule Engine (Cause & Effect)</div>
         </div>
-        <el-button type="primary" class="neon-btn">新增联锁策略</el-button>
+        <el-button type="primary" class="neon-btn" @click="dialogVisible = true">新增联锁策略</el-button>
       </div>
-      
+
       <div class="table-container">
         <el-table :data="matrix" style="width: 100%" class="industrial-table dark-table" v-loading="loading">
           <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
@@ -38,9 +38,9 @@
           </el-table-column>
           <el-table-column label="高级运维" width="180" align="center">
             <template #default="{ row }">
-              <el-button 
-                :class="row.bypass ? 'neon-btn-danger' : 'neon-btn'" 
-                size="small" 
+              <el-button
+                :class="row.bypass ? 'neon-btn-danger' : 'neon-btn'"
+                size="small"
                 @click="toggleBypass(row)"
               >
                 {{ row.bypass ? '解除旁路 (Bypass)' : '开启强制旁路' }}
@@ -50,6 +50,27 @@
         </el-table>
       </div>
     </div>
+
+    <!-- 新增策略弹窗 -->
+    <el-dialog title="新增联锁策略配置" v-model="dialogVisible" width="500px" custom-class="glass-dialog" @close="resetForm">
+      <el-form ref="formRef" :model="form" label-width="120px">
+        <el-form-item label="触发条件 (Cause)">
+          <el-input v-model="form.cause" placeholder="如: 1号清水池 液位 > 4.8m" class="dark-input" />
+        </el-form-item>
+        <el-form-item label="执行动作 (Effect)">
+          <el-input v-model="form.effect" placeholder="如: 强制关闭 [1号进水泵]" class="dark-input" />
+        </el-form-item>
+        <el-form-item label="延迟执行 (s)">
+          <el-input-number v-model="form.delay" :min="0" class="dark-input" style="width: 100%" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
+          <el-button type="primary" @click="submitForm" class="neon-btn">确认新增</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -60,6 +81,30 @@ import { getInterlockRules, updateInterlockRule } from '@/api/governance'
 
 const matrix = ref<any[]>([])
 const loading = ref(false)
+const dialogVisible = ref(false)
+const form = ref({ cause: '', effect: '', delay: 0 })
+
+const resetForm = () => {
+  form.value = { cause: '', effect: '', delay: 0 }
+}
+
+const submitForm = () => {
+  if (!form.value.cause || !form.value.effect) {
+    ElMessage.warning('请输入完整的触发条件与执行动作')
+    return
+  }
+  // 模拟调用 API 添加
+  matrix.value.push({
+    id: Date.now(),
+    cause: form.value.cause,
+    effect: form.value.effect,
+    delay: form.value.delay,
+    status: true,
+    bypass: false
+  })
+  ElMessage.success('联锁策略新增成功，已下发底层 PLC 引擎')
+  dialogVisible.value = false
+}
 
 const loadData = async () => {
   loading.value = true

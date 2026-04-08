@@ -14,3 +14,11 @@ export function getHydraulicSimulation() {
     method: 'get'
   })
 }
+
+export function runHydraulicSimulation(data: any) {
+  return request({
+    url: '/api/v1/analytics/hydraulic/simulate',
+    method: 'post',
+    data
+  })
+}

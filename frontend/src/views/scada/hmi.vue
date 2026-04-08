@@ -101,10 +101,9 @@ const initWebSocket = () => {
       if (data.data['Pump.Status'] !== undefined) pumpStatus.value = data.data['Pump.Status']
       if (data.data['Pump.Freq'] !== undefined) pumpFreq.value = data.data['Pump.Freq']
       if (data.data['Pump.Power'] !== undefined) pumpPower.value = data.data['Pump.Power']
-      if (pumpStatus.value === 1) {
-        tankLevel.value = Math.max(10, Math.min(90, tankLevel.value - 0.1))
-      } else {
-        tankLevel.value = Math.max(10, Math.min(90, tankLevel.value + 0.1))
+      // 真实液位应由传感器上传 Tank.Level，而非前端模拟涨跌
+      if (data.data['Tank.Level'] !== undefined) {
+        tankLevel.value = data.data['Tank.Level']
       }
     }
   })

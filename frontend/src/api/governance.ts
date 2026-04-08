@@ -14,3 +14,19 @@ export function updateInterlockRule(data: any) {
     data
   })
 }
+
+export function saveRevenueRules(data: any) {
+  return request({
+    url: '/api/v1/governance/revenue/rules',
+    method: 'post',
+    data
+  })
+}
+
+export function triggerRecalculate(data: any) {
+  return request({
+    url: '/api/v1/governance/revenue/recalc',
+    method: 'post',
+    data
+  })
+}

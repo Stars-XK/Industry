@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
@@ -22,6 +22,38 @@ export class GovernanceController {
       ORDER BY r.id DESC
     `;
     return await this.dataSource.query(query);
+  }
+
+  @Post('interpolate/rules')
+  @ApiOperation({ summary: '新增清洗与插值规则' })
+  @RequirePermissions('gov:interpolate')
+  async createInterpolateRule(@Body() body: any) {
+    const { device_id, tag_name, method, max_gap_minutes } = body;
+    await this.dataSource.query(
+      `INSERT INTO biz_interpolate_rule (device_id, tag_name, method, max_gap_minutes) VALUES (?, ?, ?, ?)`,
+      [device_id, tag_name, method, max_gap_minutes]
+    );
+    return { success: true };
+  }
+
+  @Put('interpolate/rules/:id')
+  @ApiOperation({ summary: '修改清洗与插值规则' })
+  @RequirePermissions('gov:interpolate')
+  async updateInterpolateRule(@Param('id') id: string, @Body() body: any) {
+    const { device_id, tag_name, method, max_gap_minutes, status } = body;
+    await this.dataSource.query(
+      `UPDATE biz_interpolate_rule SET device_id = ?, tag_name = ?, method = ?, max_gap_minutes = ?, status = ? WHERE id = ?`,
+      [device_id, tag_name, method, max_gap_minutes, status, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('interpolate/rules/:id')
+  @ApiOperation({ summary: '删除清洗与插值规则' })
+  @RequirePermissions('gov:interpolate')
+  async deleteInterpolateRule(@Param('id') id: string) {
+    await this.dataSource.query(`DELETE FROM biz_interpolate_rule WHERE id = ?`, [id]);
+    return { success: true };
   }
 
   @Post('interpolate/recalculate')

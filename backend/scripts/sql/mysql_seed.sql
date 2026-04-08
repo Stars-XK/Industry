@@ -51,6 +51,7 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (22, 20, '夜间最小流量分析', 2, 'mnf', 'analytics/mnf', 0, 0, 'analytics:mnf', 'C', 1, 1, 'TrendCharts', '', 1),
 (23, 20, '大用户档案与重点企业画像', 3, 'key-account', 'analytics/key-account', 0, 0, 'analytics:account', 'C', 1, 1, 'Avatar', '', 1),
 (24, 20, '营收计费与出账对账管理', 4, 'billing', 'analytics/billing', 0, 0, 'analytics:billing', 'C', 1, 1, 'Money', '', 1),
+(28, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
 (25, 20, '综合能效优化与动态成本核算', 5, 'energy', 'analytics/energy', 0, 0, 'analytics:energy', 'C', 1, 1, 'Lightning', '', 1),
 (26, 20, '用量与能耗AI预测分析', 6, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'Cpu', '', 1),
 (27, 20, '在线水力模型仿真与推演', 7, 'hydraulic', 'analytics/hydraulic', 0, 0, 'analytics:hydraulic', 'C', 1, 1, 'Opportunity', '', 1),

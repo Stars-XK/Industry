@@ -49,7 +49,35 @@ export class AnalysisController {
     return await this.dataSource.query(query, params);
   }
 
-  @Get('mnf/scatter')
+  @Post('mnf/deduct')
+  @ApiOperation({ summary: '剥离大户夜间合法用水量并重算基线' })
+  @RequirePermissions('analytics:mnf')
+  async deductMnfKeyAccount(@Body() body: { zoneId: string, deductValue: number }) {
+    const targetZoneId = body.zoneId || '201';
+    const deductValue = body.deductValue || 4.5;
+    
+    // 真实工业逻辑：更新 MNF 表的实际观测值，剥离大户消耗
+    await this.dataSource.query(
+      `UPDATE biz_mnf_analysis 
+       SET mnf_value = mnf_value - ?,
+           anomaly_score = CASE 
+             WHEN (mnf_value - ?) > baseline_value THEN ((mnf_value - ?) - baseline_value) / baseline_value 
+             ELSE 0 
+           END
+       WHERE zone_id = ? AND status = 'anomaly'`,
+      [deductValue, deductValue, deductValue, targetZoneId]
+    );
+
+    // 重新判定状态
+    await this.dataSource.query(
+      `UPDATE biz_mnf_analysis 
+       SET status = 'normal' 
+       WHERE zone_id = ? AND anomaly_score < 0.2`,
+      [targetZoneId]
+    );
+
+    return { success: true, message: '基线重算完成，异常分数已更新' };
+  }
   @ApiOperation({ summary: '获取夜间最小流量 AI 基线与实际值的散点图数据' })
   @RequirePermissions('analytics:mnf')
   async getMnfScatterData(@Query('zoneId') zoneId?: string) {

@@ -4,7 +4,10 @@
       <template #header>
         <div class="card-header">
           <span>数据清洗与插值规则配置 (Data Cleaning & Interpolation)</span>
-          <el-button type="danger" @click="handleRecalculate">⚠️ 历史数据重算</el-button>
+          <div>
+            <el-button type="primary" @click="handleAddRule">新增规则</el-button>
+            <el-button type="danger" @click="handleRecalculate">⚠️ 历史数据重算</el-button>
+          </div>
         </div>
       </template>
 
@@ -31,12 +34,13 @@
         </el-table-column>
         <el-table-column prop="status" label="规则状态" width="120">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" disabled />
+            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="150" fixed="right">
           <template #default="scope">
-            <el-button size="small" type="primary" plain disabled>修改规则</el-button>
+            <el-button size="small" type="primary" link @click="handleEditRule(scope.row)">编辑</el-button>
+            <el-button size="small" type="danger" link @click="handleDeleteRule(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,17 +80,57 @@
         </span>
       </template>
     </el-dialog>
+
+    <el-dialog :title="ruleDialogTitle" v-model="ruleDialogVisible" width="500px" @close="resetRuleForm">
+      <el-form ref="ruleFormRef" :model="ruleForm" label-width="120px">
+        <el-form-item label="设备ID" required>
+          <el-input-number v-model="ruleForm.device_id" :min="1" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="时序标签(Tag)" required>
+          <el-input v-model="ruleForm.tag_name" placeholder="如 flow_rate" />
+        </el-form-item>
+        <el-form-item label="插值算法" required>
+          <el-select v-model="ruleForm.method" style="width: 100%">
+            <el-option label="PCHIP (保调三次分段)" value="pchip" />
+            <el-option label="Linear (线性插值)" value="linear" />
+            <el-option label="Previous (前值填充)" value="previous" />
+            <el-option label="Zero (补零)" value="zero" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="最大间隙(分钟)" required>
+          <el-input-number v-model="ruleForm.max_gap_minutes" :min="1" :max="1440" style="width: 100%" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="ruleDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitRuleForm">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const tableData = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
+
+const ruleDialogVisible = ref(false)
+const ruleDialogTitle = ref('新增规则')
+const ruleFormRef = ref()
+const ruleForm = ref({
+  id: '',
+  device_id: 1,
+  tag_name: '',
+  method: 'linear',
+  max_gap_minutes: 60,
+  status: 1
+})
 
 const form = ref({
   deviceId: '',
@@ -115,6 +159,61 @@ const fetchData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleAddRule = () => {
+  ruleDialogTitle.value = '新增规则'
+  ruleDialogVisible.value = true
+}
+
+const handleEditRule = (row: any) => {
+  ruleDialogTitle.value = '修改规则'
+  ruleForm.value = { ...row }
+  ruleDialogVisible.value = true
+}
+
+const handleStatusChange = async (row: any) => {
+  try {
+    await request.put(`/api/data-center/governance/interpolate/rules/${row.id}`, row)
+    ElMessage.success('状态已更新')
+  } catch (error) {
+    row.status = row.status === 1 ? 0 : 1
+  }
+}
+
+const handleDeleteRule = (row: any) => {
+  ElMessageBox.confirm('确定删除该数据清洗规则吗？删除后该测点的脏数据将不作处理进入分析池！', '警告', {
+    confirmButtonText: '确定删除',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      await request.delete(`/api/data-center/governance/interpolate/rules/${row.id}`)
+      ElMessage.success('删除成功')
+      fetchData()
+    } catch (e) {}
+  }).catch(() => {})
+}
+
+const submitRuleForm = async () => {
+  if (!ruleForm.value.device_id || !ruleForm.value.tag_name) {
+    ElMessage.warning('请完整填写必填项')
+    return
+  }
+  try {
+    if (ruleForm.value.id) {
+      await request.put(`/api/data-center/governance/interpolate/rules/${ruleForm.value.id}`, ruleForm.value)
+    } else {
+      await request.post('/api/data-center/governance/interpolate/rules', ruleForm.value)
+    }
+    ElMessage.success('保存成功')
+    ruleDialogVisible.value = false
+    fetchData()
+  } catch (e) {}
+}
+
+const resetRuleForm = () => {
+  ruleForm.value = { id: '', device_id: 1, tag_name: '', method: 'linear', max_gap_minutes: 60, status: 1 }
 }
 
 const handleRecalculate = () => {

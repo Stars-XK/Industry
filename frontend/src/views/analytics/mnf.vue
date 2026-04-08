@@ -115,10 +115,14 @@ const renderScatter = (data: any) => {
   chartInstance.setOption(option)
 }
 
-const handleDeductKeyAccount = () => {
-  ElMessage.success('已自动剥离 [张江微电子制造中心] 凌晨时段合法工艺用水 4.5 m³/h，正在重算基线...')
-  // 模拟刷新重算效果
-  setTimeout(() => fetchData(), 1000)
+const handleDeductKeyAccount = async () => {
+  try {
+    const res = await request.post('/api/data-center/analysis/mnf/deduct', { zoneId: '201', deductValue: 4.5 })
+    ElMessage.success(`已自动剥离 [张江微电子制造中心] 凌晨时段合法工艺用水 4.5 m³/h，${res.message || '重算完成'}`)
+    fetchData()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const handleResize = () => {

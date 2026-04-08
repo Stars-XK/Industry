@@ -24,7 +24,9 @@ INSERT IGNORE INTO sys_dept (id, parent_id, ancestors, dept_name, sort_order, le
 
 -- 2. 管理员账号 (密码: admin123 经过 bcrypt 处理的 hash)
 INSERT INTO sys_user (id, username, password, nickname, email, phone, gender, avatar, dept_id, status, remark, created_by) 
-VALUES (1, 'admin', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2LO', '超级管理员', 'admin@trae.ai', '18888888888', 1, '', 1, 1, '系统内置超级管理员', 1)
+VALUES 
+(1, 'admin', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2LO', '超级管理员', 'admin@trae.ai', '18888888888', 1, '', 1, 1, '系统内置超级管理员', 1),
+(2, 'operator', '$2b$10$kthni4frECVuap.W9tX3teEzKBhYNA3XTBVHbP/0s72f8tTHDR2LO', '运维工程师', 'operator@trae.ai', '13812345678', 1, '', 2, 1, '一线运维人员', 1)
 ON DUPLICATE KEY UPDATE password = VALUES(password);
 
 -- 2.1 角色与菜单测试数据

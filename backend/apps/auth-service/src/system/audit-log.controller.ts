@@ -18,13 +18,17 @@ export class AuditLogController {
 
   @Get('list')
   @ApiOperation({ summary: '获取审计日志列表' })
-  // @RequirePermissions('sys:audit:list') // 如果需要权限可以打开
-  async getAuditLogList(@Query('page') page = 1, @Query('size') size = 20) {
-    const [list, total] = await this.auditLogRepository.findAndCount({
+  async getAuditLogList(@Query('page') page = 1, @Query('limit') limit = 20) {
+    const skip = (page - 1) * limit;
+    const [records, total] = await this.auditLogRepository.findAndCount({
       order: { created_at: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
+      skip: skip,
+      take: limit,
     });
-    return { list, total };
+    return {
+      code: 200,
+      data: { records, total, page: Number(page), limit: Number(limit) },
+      message: 'success',
+    };
   }
 }

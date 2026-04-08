@@ -10,10 +10,16 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     meta: { title: '统一登录页' }
   },
   {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/dashboard/index.vue'),
+    meta: { title: '数字孪生大屏' }
+  },
+  {
     path: '/',
     name: 'Layout',
     component: () => import('../layout/index.vue'),
-    redirect: '/scada/overview',
+    redirect: '/dashboard',
     children: []
   }
 ];

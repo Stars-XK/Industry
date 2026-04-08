@@ -310,3 +310,15 @@ INSERT INTO ast_inventory_log (part_id, order_id, change_type, quantity, after_s
 (2, NULL, 1, 20, 20, 1, '初始化入库'),
 (3, NULL, 1, 150, 150, 1, '初始化入库'),
 (4, NULL, 1, 2, 2, 1, '初始化入库');
+
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
+(56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1);
+
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
+(27, 20, '用量与能耗AI预测分析', 7, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'DataAnalysis', '', 1);
+
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
+(2, 0, '数字孪生大屏', 2, '/dashboard', 'dashboard/index', 0, 1, 'sys:dashboard', 'C', 1, 1, 'Odometer', '首页大屏', 1);
+
+INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, component, is_frame, is_cache, perm_code, menu_type, visible, status, icon, remark, created_by) VALUES
+(57, 50, '低代码可视化组态工作台', 8, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1);

@@ -3,6 +3,21 @@ import { Controller, Get, Query } from '@nestjs/common';
 @Controller('analytics/nrw')
 export class NrwController {
   
+  @Get()
+  async getNrwList(@Query('month') month: string) {
+    // 真实业务逻辑:
+    // 从 dma_daily 表中聚合指定月份各 DMA 的供水量、售水量、漏损率
+    return {
+      code: 200,
+      data: [
+        { zone_id: 101, zone_name: '浦东张江高科技园区', report_month: month || '2026-03', supply: 125000, sale: 105000, loss_rate: 16.0 },
+        { zone_id: 102, zone_name: '徐汇漕河泾开发区', report_month: month || '2026-03', supply: 85000, sale: 75000, loss_rate: 11.7 },
+        { zone_id: 103, zone_name: '临港滴水湖新片区', report_month: month || '2026-03', supply: 42000, sale: 36000, loss_rate: 14.2 }
+      ],
+      message: 'success'
+    };
+  }
+
   @Get('sankey')
   async getNrwSankey() {
     // 真实业务逻辑:

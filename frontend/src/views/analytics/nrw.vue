@@ -97,7 +97,7 @@ const customColors = [
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/data-center/analysis/nrw', { params: { month: month.value } })
+    const res = await request.get('/api/v1/data-center/analytics/nrw', { params: { month: month.value } })
     tableData.value = res || []
     if (tableData.value.length > 0) {
       handleRowClick(tableData.value[0])
@@ -115,15 +115,15 @@ const handleRowClick = async (row: any) => {
   trendLoading.value = true
   try {
     // 1. 渲染桑基图
-    const sankeyRes = await request.get('/api/data-center/analysis/nrw/sankey', { 
-      params: { month: row.report_month, zoneId: row.zone_id } 
+    const sankeyRes: any = await request.get('/api/v1/data-center/analytics/nrw/sankey', {
+      params: { month: row.report_month, zoneId: row.zone_id }
     })
     if (sankeyRes && sankeyRes.nodes) {
       renderSankey(sankeyRes.nodes, sankeyRes.links)
     }
 
     // 2. 渲染同环比折线图
-    const trendRes: any = await request.get('/api/data-center/analysis/nrw/trend', {
+    const trendRes: any = await request.get('/api/v1/data-center/analytics/nrw/trend', {
       params: { zoneId: row.zone_id }
     })
     if (trendRes && trendRes.months) {

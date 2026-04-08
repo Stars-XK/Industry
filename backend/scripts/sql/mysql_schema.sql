@@ -230,3 +230,69 @@ CREATE TABLE IF NOT EXISTS sys_dict_data (
     is_deleted TIMESTAMP NULL DEFAULT NULL,
     INDEX idx_sys_dict_data_type (dict_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. 费率配置表
+CREATE TABLE IF NOT EXISTS biz_tariff (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tariff_code VARCHAR(50) UNIQUE NOT NULL,
+    tariff_name VARCHAR(100) NOT NULL,
+    price_per_m3 DECIMAL(10, 4) NOT NULL,
+    description VARCHAR(255),
+    status SMALLINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. 大用户档案表
+CREATE TABLE IF NOT EXISTS biz_key_account (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_no VARCHAR(50) UNIQUE NOT NULL,
+    account_name VARCHAR(100) NOT NULL,
+    contact VARCHAR(50),
+    phone VARCHAR(20),
+    address VARCHAR(200),
+    industry_type VARCHAR(50),
+    tariff_id BIGINT,
+    meter_device_id BIGINT COMMENT '关联的水表资产ID',
+    status SMALLINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tariff_id) REFERENCES biz_tariff(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 12. 营收账单表
+CREATE TABLE IF NOT EXISTS biz_billing (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_id BIGINT NOT NULL,
+    billing_period VARCHAR(20) NOT NULL COMMENT '账期，如 2026-04',
+    usage_m3 DECIMAL(14, 2) NOT NULL,
+    total_amount DECIMAL(14, 2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'unpaid' COMMENT 'unpaid, paid',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_id) REFERENCES biz_key_account(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. 夜间最小流量(MNF)分析表
+CREATE TABLE IF NOT EXISTS biz_mnf_analysis (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    zone_id BIGINT NOT NULL,
+    analysis_date DATE NOT NULL,
+    mnf_value DECIMAL(10, 2) NOT NULL,
+    baseline_value DECIMAL(10, 2) NOT NULL,
+    anomaly_score DECIMAL(5, 2) DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'normal' COMMENT 'normal, anomaly',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 14. 产销差(NRW)报表
+CREATE TABLE IF NOT EXISTS biz_nrw_report (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    zone_id BIGINT NOT NULL,
+    report_month VARCHAR(20) NOT NULL COMMENT '月份，如 2026-04',
+    supply_m3 DECIMAL(14, 2) NOT NULL,
+    consumption_m3 DECIMAL(14, 2) NOT NULL,
+    nrw_m3 DECIMAL(14, 2) NOT NULL,
+    nrw_ratio DECIMAL(5, 2) NOT NULL COMMENT '产销差率百分比',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

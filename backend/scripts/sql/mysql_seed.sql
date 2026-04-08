@@ -180,3 +180,45 @@ INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, 
 ('自定义', '3', 'sys_data_scope', 3, 1),
 ('是', '1', 'sys_yes_no', 1, 1),
 ('否', '0', 'sys_yes_no', 2, 1);
+
+-- ==========================================
+-- 阶段三：数据中台与营收对账 (Billing & Data Governance) 种子数据
+-- ==========================================
+
+-- 1. 费率配置
+INSERT IGNORE INTO biz_tariff (id, tariff_code, tariff_name, price_per_m3, description) VALUES
+(1, 'T_RESIDENTIAL', '居民生活用水', 2.8000, '上海市居民第一阶梯水价'),
+(2, 'T_INDUSTRIAL', '工业生产用水', 4.5000, '工业园区及高耗水企业统一水价'),
+(3, 'T_COMMERCIAL', '商业服务用水', 5.2000, '大型商圈及服务业水价'),
+(4, 'T_SPECIAL', '特种行业用水', 12.0000, '洗车、高尔夫球场等高水耗行业');
+
+-- 2. 大用户档案 (挂载到上海市真实 DMA)
+INSERT IGNORE INTO biz_key_account (id, account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_id) VALUES
+(1, 'KA-2026-0001', '张江微电子制造中心', '王厂长', '13811112222', '上海市浦东新区张江高科技园区', '半导体制造', 2, 1),
+(2, 'KA-2026-0002', '临港超级工厂', '马总', '13922223333', '上海市浦东新区临港新片区', '汽车制造', 2, 3),
+(3, 'KA-2026-0003', '陆家嘴国金中心', '刘经理', '13733334444', '上海市浦东新区世纪大道8号', '商业综合体', 3, NULL),
+(4, 'KA-2026-0004', '漕河泾科技绿洲', '陈主任', '13644445555', '上海市徐汇区漕河泾开发区', '软件及服务', 3, 4);
+
+-- 3. 营收账单 (生成2026年3月和4月的模拟账单)
+INSERT IGNORE INTO biz_billing (id, account_id, billing_period, usage_m3, total_amount, status) VALUES
+(1, 1, '2026-03', 12500.50, 56252.25, 'paid'),
+(2, 1, '2026-04', 13200.00, 59400.00, 'unpaid'),
+(3, 2, '2026-03', 45000.00, 202500.00, 'paid'),
+(4, 2, '2026-04', 46500.00, 209250.00, 'unpaid'),
+(5, 3, '2026-03', 8500.00, 44200.00, 'paid'),
+(6, 4, '2026-03', 3200.00, 16640.00, 'paid');
+
+-- 4. 夜间最小流量 (MNF) 基线数据 (针对张江DMA: zone_id = 201)
+INSERT IGNORE INTO biz_mnf_analysis (id, zone_id, analysis_date, mnf_value, baseline_value, anomaly_score, status) VALUES
+(1, 201, '2026-04-01', 12.5, 12.0, 0.1, 'normal'),
+(2, 201, '2026-04-02', 12.2, 12.0, 0.05, 'normal'),
+(3, 201, '2026-04-03', 15.8, 12.0, 0.85, 'anomaly'),
+(4, 201, '2026-04-04', 18.5, 12.0, 1.5, 'anomaly'),
+(5, 201, '2026-04-05', 12.8, 12.0, 0.15, 'normal');
+
+-- 5. 产销差 (NRW) 报表 (针对几个主要 DMA)
+INSERT IGNORE INTO biz_nrw_report (id, zone_id, report_month, supply_m3, consumption_m3, nrw_m3, nrw_ratio) VALUES
+(1, 201, '2026-03', 150000, 132000, 18000, 12.00),
+(2, 202, '2026-03', 280000, 255000, 25000, 8.93),
+(3, 204, '2026-03', 85000, 75000, 10000, 11.76),
+(4, 102, '2026-03', 850000, 720000, 130000, 15.29);

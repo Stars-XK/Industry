@@ -5,6 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { TransformInterceptor, JwtStrategy } from '@app/common';
 import { EdgeTagController } from './edge-tag/edge-tag.controller';
 import { OverviewController } from './overview/overview.controller';
+import { BillingController } from './billing/billing.controller';
+import { AnalysisController } from './analysis/analysis.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
 
@@ -23,7 +25,7 @@ import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
     }),
     TypeOrmModule.forFeature([IotTagMapping, IotGateway])
   ],
-  controllers: [EdgeTagController, OverviewController],
+  controllers: [EdgeTagController, OverviewController, BillingController, AnalysisController],
   providers: [
     JwtStrategy,
     {

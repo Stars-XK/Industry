@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, markRaw } from 'vue'
 import { DataLine, WarnTriangleFilled, Opportunity, Odometer } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { use } from 'echarts/core'
@@ -117,10 +117,10 @@ const energyTrendRange = ref('7days')
 const complianceRate = ref(99.8)
 
 const metrics = ref([
-  { title: '今日总供水量', value: 0, unit: 'm³', icon: Odometer, color: '#409EFF' },
-  { title: '今日总漏水量', value: 0, unit: 'm³', icon: Opportunity, color: '#E6A23C' },
-  { title: '实时产销差率', value: 0, unit: '%', icon: DataLine, color: '#67C23A' },
-  { title: '活跃异常报警', value: 0, unit: '条', icon: WarnTriangleFilled, color: '#F56C6C' },
+  { title: '今日总供水量', value: 0, unit: 'm³', icon: markRaw(Odometer), color: '#409EFF' },
+  { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: '#E6A23C' },
+  { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: '#67C23A' },
+  { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: '#F56C6C' },
 ])
 
 const trendOption = ref({

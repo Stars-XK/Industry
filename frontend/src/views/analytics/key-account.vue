@@ -343,14 +343,6 @@ onMounted(() => {
 .industrial-tag-plain {
   background: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  color: var(--el-text-color-regular); !important;
+  color: var(--el-text-color-regular) !important;
 }
-.industrial-form 
-
-
-
-
-
-
-
 </style>

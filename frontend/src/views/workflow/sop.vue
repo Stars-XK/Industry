@@ -249,11 +249,6 @@ onMounted(() => {
 /* Table styles */
 
 
-
-
-
-.custom-scrollbar 
-.custom-scrollbar 
 /* Dialog Styles */
 
 .dialog-footer {

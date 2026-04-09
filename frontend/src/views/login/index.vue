@@ -366,25 +366,26 @@ label {
 }
 
 .submit-btn {
-  background: #00d8ff;
-  color: #020617;
+  background: var(--el-color-primary);
+  color: #fff;
   border: none;
-  padding: 16px;
   border-radius: 8px;
-  font-size: 15px;
+  width: 100%;
+  padding: 14px 0;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   margin-top: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #00eeff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 216, 255, 0.3);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .submit-btn:disabled {

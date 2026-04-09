@@ -88,6 +88,7 @@ const themeColor = ref(localStorage.getItem('theme-color') || '#3b82f6');
 const isDark = ref(localStorage.getItem('theme-dark') === 'true' || document.documentElement.classList.contains('dark'));
 
 const toggleDark = (val: boolean) => {
+  formData.value['sys.ui.is_dark'] = val ? 'true' : 'false';
   if (val) {
     document.documentElement.classList.add('dark');
     localStorage.setItem('theme-dark', 'true');
@@ -100,6 +101,7 @@ const toggleDark = (val: boolean) => {
 // 动态修改 Element Plus 主题色及相关的混入变量
 const handleThemeChange = (color: string) => {
   if (!color) return;
+  formData.value['sys.ui.theme_color'] = color;
   document.documentElement.style.setProperty('--el-color-primary', color);
   
   // 简易生成 light/dark 变体（实际工程中可以使用 color mix 或 tinycolor2 库，这里仅作基础混色演示）
@@ -117,6 +119,12 @@ const fetchConfig = async () => {
     const res = await getGlobalConfig();
     if (res) {
       formData.value = res as unknown as Record<string, string>;
+      if (formData.value['sys.ui.theme_color']) {
+        themeColor.value = formData.value['sys.ui.theme_color'];
+      }
+      if (formData.value['sys.ui.is_dark']) {
+        isDark.value = formData.value['sys.ui.is_dark'] === 'true';
+      }
     }
   } catch (error) {
     console.error('获取配置失败:', error);

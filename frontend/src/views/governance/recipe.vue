@@ -288,12 +288,5 @@ onMounted(() => {
 .text-neon { color: var(--el-color-primary); }
 .text-danger { color: #F56C6C; }
 .text-success { color: #67C23A; }
-.industrial-form 
-
-
-
-
-
-
 
 </style>

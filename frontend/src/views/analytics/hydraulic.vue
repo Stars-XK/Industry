@@ -220,9 +220,6 @@ onMounted(() => {
   padding: 24px;
   flex: 1;
 }
-.industrial-form 
-
-
 
 .-warning {
   border-color: rgba(230, 162, 60, 0.5);

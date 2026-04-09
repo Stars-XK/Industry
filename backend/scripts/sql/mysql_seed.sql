@@ -98,7 +98,9 @@ INSERT IGNORE INTO sys_config (id, config_name, config_key, config_value, config
 (2, '系统LOGO图标', 'sys.site.logo', '/logo.png', 'Y', '系统顶部导航及大屏显示的Logo路径'),
 (3, 'GIS地图来源', 'sys.map.source', 'amap', 'Y', '地图引擎来源：amap(高德), baidu(百度), tianditu(天地图), offline(离线自建)'),
 (4, 'GIS默认中心点', 'sys.map.center', '[118.67, 24.87]', 'Y', '格式为 [经度, 纬度]'),
-(5, 'SMTP邮件服务器', 'sys.mail.smtp', 'smtp.163.com', 'N', '报警通知发送邮箱服务器地址');
+(5, 'SMTP邮件服务器', 'sys.mail.smtp', 'smtp.163.com', 'N', '报警通知发送邮箱服务器地址'),
+(6, '系统主题色', 'sys.ui.theme_color', '#3b82f6', 'Y', 'UI全局主色调'),
+(7, '深色模式', 'sys.ui.is_dark', 'true', 'Y', 'UI全局暗黑模式开关');
 
 -- ----------------------------
 -- 9. 初始化边缘网关和测点映射规则

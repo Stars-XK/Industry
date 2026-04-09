@@ -28,6 +28,23 @@ export const useConfigStore = defineStore('sysConfig', {
               console.error('解析地图中心点失败:', e);
             }
           }
+          // Apply theme settings
+          if (data['sys.ui.theme_color']) {
+            const color = data['sys.ui.theme_color'];
+            document.documentElement.style.setProperty('--el-color-primary', color);
+            for (let i = 1; i <= 9; i++) {
+              document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `color-mix(in srgb, ${color}, white ${i * 10}%)`);
+            }
+            document.documentElement.style.setProperty('--el-color-primary-dark-2', `color-mix(in srgb, ${color}, black 20%)`);
+            localStorage.setItem('theme-color', color);
+          }
+          if (data['sys.ui.is_dark'] === 'true') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme-dark', 'true');
+          } else if (data['sys.ui.is_dark'] === 'false') {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme-dark', 'false');
+          }
           // 动态修改浏览器标签页标题
           document.title = this.sysTitle;
         }

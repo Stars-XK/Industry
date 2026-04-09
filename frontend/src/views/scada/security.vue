@@ -362,13 +362,13 @@ onMounted(() => {
   height: 6px;
   border-radius: 50%;
 }
-.danger- {
+.danger-btn {
   background: transparent;
   border: 1px solid #f43f5e;
   color: var(--el-color-danger);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
-.danger-:hover {
+.danger-btn:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
   color: #fff;

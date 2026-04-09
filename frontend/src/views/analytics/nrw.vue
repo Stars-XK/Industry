@@ -332,17 +332,6 @@ onBeforeUnmount(() => {
 }
 
 
-
-
-
-
-.custom-scrollbar 
-.custom-scrollbar 
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

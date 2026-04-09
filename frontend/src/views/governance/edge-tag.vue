@@ -523,11 +523,6 @@ onMounted(() => {
 .text-danger {
   color: #F56C6C;
 }
-.industrial-form 
-
-
-
-
 
 .pagination {
   margin-top: 20px;

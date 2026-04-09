@@ -296,7 +296,7 @@ onUnmounted(() => {
   border: 1px solid rgba(0, 216, 255, 0.2);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
-  color: var(--el-text-color-regular); !important;
+  color: var(--el-text-color-regular) !important;
 }
 .industrial-popup {
   padding: 16px;

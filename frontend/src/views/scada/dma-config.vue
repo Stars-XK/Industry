@@ -454,14 +454,5 @@ onMounted(() => {
 .industrial-tag {
   border: none;
 }
-.industrial-form 
-
-
-
-
-
-
-
-
 
 </style>

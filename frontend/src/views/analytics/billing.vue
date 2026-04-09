@@ -299,10 +299,4 @@ onMounted(() => {
   box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
   border-color: #67C23A;
 }
-.industrial-form 
-
-
-
-
-
 </style>

@@ -215,9 +215,9 @@ const handleRecalc = () => {
   border-left: 4px solid #F56C6C;
   box-shadow: inset 0 0 20px rgba(245, 108, 108, 0.02);
 }
-.industrial-form 
-.industrial-form 
-.industrial-form 
+
+
+
 .-danger {
   border-color: rgba(245, 108, 108, 0.5);
   color: #F56C6C;

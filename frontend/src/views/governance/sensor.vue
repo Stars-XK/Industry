@@ -195,11 +195,5 @@ const sensors = ref([
   color: var(--el-color-primary);
   font-weight: 600;
 }
-.industrial-form 
-
-
-
-
-
 
 </style>

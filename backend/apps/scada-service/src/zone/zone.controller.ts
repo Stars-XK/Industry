@@ -72,22 +72,28 @@ export class ZoneController {
       }
     });
 
-    // 组装分区到部门
+    // 组装分区到部门 (这里假设 parent_id 对应的如果是部门则在 deptMap 里，如果也是分区则在 zoneMap 里)
     zones.forEach((z: any) => {
-      if (z.parent_id && zoneMap.has(z.parent_id)) {
-        zoneMap.get(z.parent_id).children.push(zoneMap.get(z.id));
-      } else {
-        if (deptMap.has(1)) {
-          deptMap.get(1).children.push(zoneMap.get(z.id));
+      const parentId = Number(z.parent_id);
+      if (parentId) {
+        if (zoneMap.has(parentId)) {
+          zoneMap.get(parentId).children.push(zoneMap.get(z.id));
+        } else if (deptMap.has(parentId)) {
+          deptMap.get(parentId).children.push(zoneMap.get(z.id));
         } else {
+          // 如果找不到父节点，默认推到顶层
           tree.push(zoneMap.get(z.id));
         }
+      } else {
+        // 没有 parent_id 的作为顶层分区
+        tree.push(zoneMap.get(z.id));
       }
     });
 
     depts.forEach((d: any) => {
-      if (d.parent_id && deptMap.has(d.parent_id)) {
-        deptMap.get(d.parent_id).children.push(deptMap.get(d.id));
+      const parentId = Number(d.parent_id);
+      if (parentId && deptMap.has(parentId)) {
+        deptMap.get(parentId).children.push(deptMap.get(d.id));
       } else {
         tree.push(deptMap.get(d.id));
       }

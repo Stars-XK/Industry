@@ -1,16 +1,141 @@
+
 <template>
   <div class="app-container config-container">
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><Setting /></el-icon>系统参数配置 (System Configuration)</span>
-          <div class="header-actions">
-            <el-button type="primary" @click="handleBatchSave">
-              <el-icon style="margin-right: 4px;"><Check /></el-icon> 批量保存并动态生效
-            </el-button>
+    <div class="settings-layout">
+      <!-- 左侧导航 -->
+      <div class="settings-sidebar">
+        <div class="sidebar-title">系统偏好设置</div>
+        <div 
+          class="nav-item" 
+          :class="{ active: activeTab === 'basic' }"
+          @click="activeTab = 'basic'"
+        >
+          <el-icon class="nav-icon"><Setting /></el-icon>
+          常规与基础
+        </div>
+        <div 
+          class="nav-item" 
+          :class="{ active: activeTab === 'theme' }"
+          @click="activeTab = 'theme'"
+        >
+          <el-icon class="nav-icon"><Brush /></el-icon>
+          外观与个性化
+        </div>
+        <div 
+          class="nav-item" 
+          :class="{ active: activeTab === 'map' }"
+          @click="activeTab = 'map'"
+        >
+          <el-icon class="nav-icon"><Location /></el-icon>
+          GIS 地理引擎
+        </div>
+        <div 
+          class="nav-item" 
+          :class="{ active: activeTab === 'notification' }"
+          @click="activeTab = 'notification'"
+        >
+          <el-icon class="nav-icon"><Message /></el-icon>
+          消息与通知通道
+        </div>
+      </div>
+
+      <!-- 右侧内容 -->
+      <div class="settings-content">
+        <div class="section-header">
+          <h2 class="section-title">
+            {{ activeTab === 'basic' ? '常规与基础' : 
+               activeTab === 'theme' ? '外观与个性化' : 
+               activeTab === 'map' ? 'GIS 地理引擎' : '消息与通知通道' }}
+          </h2>
+          <el-button type="primary" @click="handleBatchSave" size="large" class="save-btn">
+            <el-icon style="margin-right: 6px;"><Check /></el-icon> 保存更改
+          </el-button>
+        </div>
+
+        <div class="setting-card" v-show="activeTab === 'basic'">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">平台全局名称</div>
+              <div class="setting-desc">将显示在浏览器标签页、登录页以及左上角导航栏的主标题。</div>
+            </div>
+            <div class="setting-action">
+              <el-input v-model="formData['sys.site.title']" placeholder="如：信创工业综合治理平台" size="large" />
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">企业品牌 Logo</div>
+              <div class="setting-desc">支持输入外部 URL 或上传到对象存储后的相对路径。建议使用透明底的 PNG 或 SVG 格式。</div>
+            </div>
+            <div class="setting-action">
+              <el-input v-model="formData['sys.site.logo']" placeholder="/logo.png" size="large" />
+            </div>
           </div>
         </div>
-      </template>
+
+        <div class="setting-card" v-show="activeTab === 'theme'">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">平台主色调 (Primary Color)</div>
+              <div class="setting-desc">覆盖全站的按钮、标签、激活态菜单等核心交互元素的颜色。</div>
+            </div>
+            <div class="setting-action">
+              <el-color-picker v-model="themeColor" @change="handleThemeChange" size="large" />
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">强制深色模式 (Dark Mode)</div>
+              <div class="setting-desc">开启后全站界面将立即切换至黑色背景，适合指挥大屏或夜间监控环境使用。</div>
+            </div>
+            <div class="setting-action">
+              <el-switch v-model="isDark" @change="toggleDark" size="large" />
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-card" v-show="activeTab === 'map'">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">地图底图供应商</div>
+              <div class="setting-desc">选择用于管网拓扑、巡检轨迹等模块的 2D/3D 瓦片地图服务商。</div>
+            </div>
+            <div class="setting-action">
+              <el-select v-model="formData['sys.map.source']" placeholder="选择地图底层" size="large" style="width: 100%;">
+                <el-option label="高德地图 (Amap)" value="amap" />
+                <el-option label="百度地图 (Baidu)" value="baidu" />
+                <el-option label="天地图 (Tianditu)" value="tianditu" />
+                <el-option label="离线内网自建瓦片服务" value="offline" />
+              </el-select>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">默认中心坐标 (Center Point)</div>
+              <div class="setting-desc">初始化地图时视角的默认聚焦位置经纬度。</div>
+            </div>
+            <div class="setting-action">
+              <el-input v-model="formData['sys.map.center']" placeholder="[118.67, 24.87]" size="large" />
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-card" v-show="activeTab === 'notification'">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">报警邮件发件服务器 (SMTP)</div>
+              <div class="setting-desc">当产生致命级报警时，系统用于对外下发通知邮件的通道配置。</div>
+            </div>
+            <div class="setting-action">
+              <el-input v-model="formData['sys.mail.smtp']" placeholder="如：smtp.exmail.qq.com" size="large" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 
       <el-form :model="formData" label-width="150px" class="config-form">
         <el-tabs v-model="activeTab" class="config-tabs" type="border-card">
@@ -82,7 +207,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { Setting, Check } from '@element-plus/icons-vue';
+import { Setting, Check, Brush, Location, Message } from '@element-plus/icons-vue';
 import { getGlobalConfig, batchUpdateConfig } from '@/api/system/config';
 import { useConfigStore } from '@/store/config';
 
@@ -162,49 +287,139 @@ const handleBatchSave = async () => {
 };
 </script>
 
+
 <style scoped>
 .config-container {
-  padding: 24px;
-  background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-
-.box-card {
+  padding: 0;
   display: flex;
   flex-direction: column;
-  background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-  padding: 24px;
+  height: 100%;
 }
 
-.card-header {
+.settings-layout {
+  display: flex;
+  height: 100%;
+  background: var(--el-bg-color);
+}
+
+.settings-sidebar {
+  width: 240px;
+  background: var(--el-bg-color-page);
+  border-right: 1px solid var(--el-border-color-light);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-title {
+  font-size: 20px;
   font-weight: 600;
-  font-size: 16px;
   color: var(--el-text-color-primary);
+  margin-bottom: 24px;
+  padding-left: 8px;
+}
+
+.nav-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--el-text-color-regular);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-item:hover {
+  background: var(--el-fill-color-light);
+}
+
+.nav-item.active {
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-weight: 600;
+}
+
+html.dark .nav-item.active {
+  background: var(--el-color-primary-dark-2);
+}
+
+.nav-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.settings-content {
+  flex: 1;
+  padding: 40px 60px;
+  overflow-y: auto;
+}
+
+.section-header {
+  margin-bottom: 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  padding-bottom: 16px;
 }
 
-.config-form {
-  margin-top: 24px;
-  }
-
-
-
-
-
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0;
 }
-.box-card:hover {
-  box-shadow: var(--el-box-shadow);
-  transform: translateY(-2px);
+
+.setting-card {
+  background: var(--el-fill-color-blank);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-row:first-child {
+  padding-top: 0;
+}
+
+.setting-info {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.setting-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin-bottom: 6px;
+}
+
+.setting-desc {
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  line-height: 1.5;
+}
+
+.setting-action {
+  width: 300px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
+

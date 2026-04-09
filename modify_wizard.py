@@ -1,4 +1,10 @@
+import os
 
+path = '/workspace/frontend/src/views/system/wizard.vue'
+with open(path, 'r', encoding='utf-8') as f:
+    content = f.read()
+
+new_template = """
 <template>
   <div class="app-container">
     <div class="page-header">
@@ -123,84 +129,9 @@
     </el-collapse>
   </div>
 </template>
+"""
 
-
-      <el-steps :active="activeStep" finish-status="success" align-center class="wizard-steps">
-        <el-step title="准备数据" description="下载标准化 Excel 模板并填入组织架构、资产台账等基础数据" />
-        <el-step title="全量备份与切片校验" description="系统在接收文件前自动触发 MySQL 全量灾备，并对 Excel 格式进行预校验" />
-        <el-step title="覆盖导入执行" description="执行原子级事务覆盖导入" />
-        <el-step title="完成发布" description="初始化完毕，平台开箱即用" />
-      </el-steps>
-
-      <div class="step-content">
-        <!-- 步骤 1 -->
-        <div v-show="activeStep === 0" class="step-panel">
-          <h3>第一步：下载初始化数据模板</h3>
-          <p>请下载以下基础模板，根据规范填入实施数据。包含 <code>Dept(部门)</code>、<code>Role(角色)</code> 等多个 Sheet 页。</p>
-          <el-button type="success" size="large" @click="downloadTemplate">
-            <el-icon style="margin-right: 6px;"><Download /></el-icon>下载标准化模板 (V1.0)
-          </el-button>
-          <div class="next-btn">
-            <el-button type="primary" size="large" @click="nextStep">
-              我已填好数据，下一步 <el-icon ><Right /></el-icon>
-            </el-button>
-          </div>
-        </div>
-
-        <!-- 步骤 2 & 3 -->
-        <div v-show="activeStep === 1 || activeStep === 2" class="step-panel">
-          <h3>上传合并好的全量初始化 Excel 文件</h3>
-          <el-alert 
-            title="危险操作预警：覆盖导入前，系统将强制执行一次数据库全量备份！" 
-            type="warning" 
-            show-icon 
-            :closable="false"
-            style="margin-bottom: 20px"
-          />
-          <el-upload
-            class="upload-demo"
-            drag
-            :action="uploadUrl"
-            :headers="headers"
-            :on-success="handleSuccess"
-            :on-error="handleError"
-            :before-upload="beforeUpload"
-            accept=".xlsx, .xls"
-          >
-            <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
-            <div class="el-upload__text">
-              拖拽大文件到此处，或 <em>点击选择文件</em><br/>
-              <span style="font-size: 12px; color: var(--el-text-color-secondary); margin-top: 8px; display: inline-block;">
-                (前端支持大文件切片上传，确保百兆 BIM 模型及台账包不断连)
-              </span>
-            </div>
-          </el-upload>
-          
-          <div class="next-btn">
-            <el-button @click="activeStep = 0" size="large">
-              <el-icon style="margin-right: 6px;"><ArrowLeft /></el-icon> 返回上一步
-            </el-button>
-          </div>
-        </div>
-
-        <!-- 步骤 4 -->
-        <div v-show="activeStep === 3" class="step-panel text-center">
-          <el-result icon="success" title="系统初始化完成" sub-title="所有基础数据已成功覆盖入库。你可以在各业务模块查看。" />
-          <ul class="result-log">
-            <li v-for="(log, idx) in resultLogs" :key="idx">{{ log }}</li>
-          </ul>
-          <div class="next-btn">
-            <el-button type="primary" size="large" @click="goHome">
-              <el-icon style="margin-right: 6px;"><HomeFilled /></el-icon> 返回首页
-            </el-button>
-          </div>
-        </div>
-      </div>
-    </el-card>
-  </div>
-</template>
-
-
+new_script = """
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
@@ -228,9 +159,9 @@ const handleSuccess = (res: any) => {
 const handleError = () => { activeStep.value = 1; };
 const goHome = () => { router.push('/dashboard'); };
 </script>
+"""
 
-
-
+new_style = """
 <style scoped>
 .page-header {
   margin-bottom: 24px;
@@ -334,4 +265,13 @@ html.dark .step-icon {
 .step-content { min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
 .step-panel { width: 100%; max-width: 600px; text-align: center; }
 </style>
+"""
 
+import re
+content = re.sub(r'<template>.*?</template>', new_template, content, flags=re.DOTALL)
+content = re.sub(r'<script setup lang="ts">.*?</script>', new_script, content, flags=re.DOTALL)
+content = re.sub(r'<style scoped>.*?</style>', new_style, content, flags=re.DOTALL)
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(content)
+print("Updated wizard.vue with pipeline workflow guide")

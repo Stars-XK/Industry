@@ -1,4 +1,11 @@
+import os
 
+path = '/workspace/frontend/src/views/scada/topology.vue'
+with open(path, 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Make the topology page look like a real drag-and-drop designer
+new_template = """
 <template>
   <div class="app-container fade-in-up scada-designer">
     <div class="designer-header">
@@ -148,30 +155,9 @@
     </div>
   </div>
 </template>
+"""
 
-              </el-table-column>
-              <el-table-column label="实时遥测" min-width="180" show-overflow-tooltip>
-                <template #default="{ row }">
-                  <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0" class="telemetry-box">
-                    <div v-for="(val, key) in row.telemetry" :key="key" class="telemetry-item">
-                      <span class="t-key">{{ key }}</span>
-                      <span class="t-val">{{ val }}</span>
-                    </div>
-                  </div>
-                  <span v-else style="color: var(--el-text-color-regular); font-size: 12px;">暂无数据</span>
-                </template>
-              </el-table-column>
-              <template #empty>
-                <div style="padding: 30px; color: var(--el-text-color-regular);">该分区暂无挂载设备</div>
-              </template>
-            </el-table>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
-</template>
-
+new_script = """
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
@@ -196,8 +182,9 @@ const handleDrop = (e: any) => {
   ElMessage.success('图元已放置，请在右侧进行数据绑定');
 };
 </script>
+"""
 
-
+new_style = """
 <style scoped>
 .scada-designer {
   padding: 0;
@@ -428,4 +415,13 @@ const handleDrop = (e: any) => {
   padding: 16px;
 }
 </style>
+"""
 
+import re
+content = re.sub(r'<template>.*?</template>', new_template, content, flags=re.DOTALL)
+content = re.sub(r'<script setup lang="ts">.*?</script>', new_script, content, flags=re.DOTALL)
+content = re.sub(r'<style scoped>.*?</style>', new_style, content, flags=re.DOTALL)
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(content)
+print("Updated topology.vue as designer")

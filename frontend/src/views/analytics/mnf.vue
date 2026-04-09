@@ -5,8 +5,13 @@
         <h1 class="page-title">夜间最小流量分析</h1>
         <p class="page-subtitle">Minimum Night Flow (MNF) Analysis</p>
       </div>
-      <div class="header-actions">
-        <el-button >生成听漏工单</el-button>
+      <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
+        <el-select v-model="selectedZone" placeholder="选择分区" style="width: 160px;" @change="loadData">
+          <el-option label="东海园区" value="zone_1" />
+          <el-option label="丰泽二期" value="zone_2" />
+          <el-option label="新港高新区" value="zone_3" />
+        </el-select>
+        <el-button type="primary">生成听漏工单</el-button>
       </div>
     </div>
     <el-row :gutter="24" v-loading="loading">
@@ -37,6 +42,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { WarningFilled } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { getMNFData } from '@/api/analytics'
+const selectedZone = ref('zone_1')
 const loading = ref(false)
 const hasAnomaly = ref(false)
 const anomalyZone = ref('未知分区')
@@ -95,11 +101,27 @@ const loadData = async () => {
     }
   } catch (error) {
     // Fallback if API is missing
-    hasAnomaly.value = true
-    anomalyZone.value = '东海园区'
-    nextTick(() => {
-      initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [12, 11, 13, 25, 28, 26, 29], [10, 10, 10, 10, 10, 10, 10])
-    })
+    
+    // Simulate data based on zone
+    if (selectedZone.value === 'zone_1') {
+      hasAnomaly.value = true
+      anomalyZone.value = '东海园区'
+      nextTick(() => {
+        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [12, 11, 13, 25, 28, 26, 29], [10, 10, 10, 10, 10, 10, 10])
+      })
+    } else if (selectedZone.value === 'zone_2') {
+      hasAnomaly.value = false
+      anomalyZone.value = '丰泽二期'
+      nextTick(() => {
+        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [8, 9, 8.5, 9, 8, 9.2, 8.8], [10, 10, 10, 10, 10, 10, 10])
+      })
+    } else {
+      hasAnomaly.value = false
+      anomalyZone.value = '新港高新区'
+      nextTick(() => {
+        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [15, 14.5, 16, 15, 14, 15.5, 15], [18, 18, 18, 18, 18, 18, 18])
+      })
+    }
   } finally {
     loading.value = false
   }
@@ -110,7 +132,7 @@ onMounted(() => loadData())
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  min-flex: 1;
   display: flex;
   flex-direction: column;
   flex: 1;

@@ -9,9 +9,9 @@
         <el-tag effect="dark" class="status-tag pulse-tag">安防监控在线</el-tag>
       </div>
     </div>
-    <el-row :gutter="24">
-      <el-col :span="16">
-        <div class="box-card" style="padding: 20px; height: calc(100vh - 160px);">
+    <el-row :gutter="12" style="flex: 1; min-height: 0;">
+      <el-col :span="18" style="display: flex; flex-direction: column;">
+        <div class="box-card" style="padding: 20px; flex: 1;">
           <div class="panel-header">
             <div class="panel-title">RTSP 视频矩阵 <span>Video Matrix</span></div>
             <div class="panel-extra">
@@ -38,7 +38,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="6" style="display: flex; flex-direction: column;">
         <div class="box-card" style="padding: 20px; margin-bottom: 24px;">
           <div class="panel-header">
             <div class="panel-title">环境指标实时数据 <span>Environment</span></div>
@@ -119,39 +119,35 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+
 .app-container {
-  padding: 24px;
-  background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  padding: 12px;
+  background-color: var(--el-bg-color);
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;
   width: 100%;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--el-border-color-light);
 }
 
 .page-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
-  color: var(--el-text-color-primary);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .page-subtitle {
-  font-size: 15px;
-  color: var(--el-text-color-regular);
-  margin: 0;
-  letter-spacing: 0.5px;
+  display: none;
 }
+
 
 .box-card {
   display: flex;
@@ -196,7 +192,7 @@ onMounted(() => {
 /* RTSP 矩阵 */
 .video-matrix {
   display: grid;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
   min-height: 0;
 }

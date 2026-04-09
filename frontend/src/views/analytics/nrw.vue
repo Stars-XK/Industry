@@ -27,9 +27,9 @@
         </el-button>
       </div>
     </div>
-    <el-row :gutter="24" style="margin-bottom: 24px;">
-      <el-col :span="10">
-        <div class="box-card" v-loading="loading" >
+    <el-row :gutter="24" style="margin-bottom: 24px; flex-wrap: wrap;">
+      <el-col :xs="24" :lg="8" :xl="7">
+        <div class="box-card" v-loading="loading" style="min-height: 500px; margin-bottom: 24px;" >
           <div class="panel-header">
             <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
           </div>
@@ -55,8 +55,8 @@
           </el-table>
         </div>
       </el-col>
-      <el-col :span="14">
-        <div class="box-card" v-loading="sankeyLoading" >
+      <el-col :xs="24" :lg="16" :xl="17">
+        <div class="box-card" v-loading="sankeyLoading" style="min-height: 500px; margin-bottom: 24px;" >
           <div class="panel-header">
             <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
             <el-tag type="info" effect="dark" class="dark-tag">{{ currentZoneName || '未选择' }}</el-tag>
@@ -230,7 +230,7 @@ onBeforeUnmount(() => {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  min-flex: 1;
   display: flex;
   flex-direction: column;
   flex: 1;

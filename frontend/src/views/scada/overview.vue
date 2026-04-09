@@ -11,8 +11,8 @@
     </div>
     <!-- 核心 KPI 概览 -->
     <el-row :gutter="24">
-      <el-col :span="6" v-for="(item, index) in metrics" :key="index">
-        <div class="box-card">
+      <el-col :xs="24" :sm="12" :lg="6" v-for="(item, index) in metrics" :key="index" style="margin-bottom: 24px;">
+        <div class="box-card kpi-card">
           <div class="metric-icon-wrap" :style="{ color: item.color, boxShadow: `0 0 20px ${item.color}30` }">
             <el-icon class="metric-icon"><component :is="item.icon" /></el-icon>
           </div>
@@ -27,8 +27,8 @@
       </el-col>
     </el-row>
     <!-- 水质综合看板与能耗趋势 -->
-    <el-row :gutter="24" style="margin-top: 24px;">
-      <el-col :span="12">
+    <el-row :gutter="24">
+      <el-col :xs="24" :lg="12" style="margin-bottom: 24px;">
         <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">水质综合看板 <span>Water Quality</span></div>
@@ -41,7 +41,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :lg="12" style="margin-bottom: 24px;">
         <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">能耗折标煤趋势 <span>Energy Trend</span></div>
@@ -57,8 +57,8 @@
       </el-col>
     </el-row>
     <!-- 供水漏损趋势与报警列表 -->
-    <el-row :gutter="24" style="margin-top: 24px;">
-      <el-col :span="16">
+    <el-row :gutter="24">
+      <el-col :xs="24" :lg="16" style="margin-bottom: 24px;">
         <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">供水与漏损趋势 <span>Supply & Leakage</span></div>
@@ -69,7 +69,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :xs="24" :lg="8" style="margin-bottom: 24px;">
         <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">活跃异常报警 <span>Active Alarms</span></div>
@@ -299,7 +299,7 @@ onMounted(() => {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  min-flex: 1;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -463,12 +463,24 @@ onMounted(() => {
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 
-@media (max-width: 1400px) {
-  .el-col {
-    width: 100% ;
-    flex: 0 0 100% ;
-    max-width: 100% ;
-    margin-bottom: 24px;
-  }
+
+
+.kpi-card {
+  flex-direction: row;
+  align-items: center;
+  height: 120px;
+  padding: 0 24px;
 }
+.kpi-card .metric-icon-wrap {
+  margin-bottom: 0;
+  margin-right: 20px;
+  width: 56px;
+  height: 56px;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.kpi-card .metric-info {
+  justify-content: center;
+}
+
 </style>

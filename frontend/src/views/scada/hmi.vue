@@ -13,15 +13,43 @@
       </div>
     </div>
     
-    <div class="hmi-content">
-      <div class="box-card">
+
+    <div class="hmi-content" style="display: flex; gap: 24px; flex: 1; min-height: 0;">
+      <!-- 左侧：站点列表 -->
+      <div class="box-card" style="width: 280px; flex: none; overflow-y: auto;">
+        <div class="panel-header">
+          <div class="header-title">工艺站点导航</div>
+        </div>
+        <el-menu :default-active="activeStation" class="station-menu" @select="handleStationSelect">
+          <el-menu-item index="1">
+            <el-icon><DataBoard /></el-icon>
+            <span>1# 进水泵房</span>
+          </el-menu-item>
+          <el-menu-item index="2">
+            <el-icon><Operation /></el-icon>
+            <span>2# 变频主泵组</span>
+          </el-menu-item>
+          <el-menu-item index="3">
+            <el-icon><Filter /></el-icon>
+            <span>3# 污泥脱水机房</span>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <el-icon><Setting /></el-icon>
+            <span>4# 加药车间</span>
+          </el-menu-item>
+        </el-menu>
+      </div>
+
+      <!-- 右侧：组态画面 -->
+      <div class="box-card" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
         <div class="panel-header">
           <div>
-            <div class="header-title">工艺流程监控</div>
+            <div class="header-title">{{ stationName }} 工艺流程监控</div>
             <div class="header-subtitle">Process Flow Monitoring</div>
           </div>
         </div>
-        <div class="hmi-canvas">
+        <div class="hmi-canvas" v-loading="loadingStation">
+
           <!-- 模拟组态背景图 -->
           <div class="tank-container">
             <div class="tank">
@@ -69,11 +97,14 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Setting, SwitchButton, Operation, Loading, Filter, CircleClose } from '@element-plus/icons-vue'
+import { Setting, SwitchButton, Operation, Loading, Filter, CircleClose, DataBoard } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { io, Socket } from 'socket.io-client'
 // 绑定变量
+const activeStation = ref('2')
+const stationName = ref('2# 变频主泵组')
+const loadingStation = ref(false)
 const tankLevel = ref(65.5)
 const pumpStatus = ref(0)
 const pumpFreq = ref(0.0)
@@ -103,6 +134,28 @@ const initWebSocket = () => {
     }
   })
 }
+
+const handleStationSelect = (index: string) => {
+  activeStation.value = index
+  loadingStation.value = true
+  const names: Record<string, string> = {
+    '1': '1# 进水泵房',
+    '2': '2# 变频主泵组',
+    '3': '3# 污泥脱水机房',
+    '4': '4# 加药车间'
+  }
+  stationName.value = names[index] || ''
+  
+  // Simulate fetching new station data and changing graphics
+  setTimeout(() => {
+    tankLevel.value = Math.random() * 50 + 30
+    pumpStatus.value = Math.random() > 0.5 ? 1 : 0
+    pumpFreq.value = pumpStatus.value === 1 ? (Math.random() * 20 + 30).toFixed(1) as any : 0.0
+    pumpPower.value = pumpStatus.value === 1 ? (Math.random() * 10 + 15).toFixed(1) as any : 0.0
+    loadingStation.value = false
+  }, 600)
+}
+
 const handleControl = (targetStatus: number) => {
   const actionText = targetStatus === 1 ? '开机' : '停机'
   ElMessageBox.prompt(`危险操作预警：确定要对 [丰泽2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！\n请输入操作密码：`, '安全反控确认', {
@@ -158,7 +211,7 @@ onUnmounted(() => {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  min-flex: 1;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -379,5 +432,21 @@ onUnmounted(() => {
   font-size: 12px;
   margin-top: 8px;
   font-weight: 500;
+}
+
+.station-menu {
+  border-right: none;
+  background: transparent;
+}
+.station-menu .el-menu-item {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  height: 48px;
+  line-height: 48px;
+}
+.station-menu .el-menu-item.is-active {
+  background-color: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-weight: 600;
 }
 </style>

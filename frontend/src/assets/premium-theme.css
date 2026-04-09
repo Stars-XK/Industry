@@ -52,12 +52,12 @@ body {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 100px);
+  box-sizing: border-box;
   width: 100%;
 }
 
 .box-card {
-  min-height: calc(100vh - 140px);
   display: flex;
   flex-direction: column;
 }

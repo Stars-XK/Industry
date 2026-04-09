@@ -521,10 +521,14 @@ onMounted(() => {
   flex-direction: column;
   position: relative;
   pointer-events: auto;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 /* 核心路由层: 各个业务组件在这里决定自己的尺寸和位置 */
 .app-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   position: relative;
   pointer-events: auto;

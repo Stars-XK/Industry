@@ -364,7 +364,7 @@ onUnmounted(() => {
 .gis-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 60px); /* Adjust based on your layout header */
+  flex: 1; /* Adjust based on your layout header */
   background: var(--el-bg-color-page);
   overflow: hidden;
   pointer-events: auto; /* Ensure map and internal elements receive pointer events */

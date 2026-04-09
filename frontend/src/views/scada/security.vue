@@ -120,14 +120,7 @@ onMounted(() => {
 </script>
 <style scoped>
 
-.app-container {
-  padding: 12px;
-  background-color: var(--el-bg-color);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
+
 
 .page-header {
   display: flex;

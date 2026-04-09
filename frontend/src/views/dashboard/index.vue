@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="app-container wide-panel">
     <!-- Full-bleed background map -->
     <div id="twin-map" class="map-container"></div>
 

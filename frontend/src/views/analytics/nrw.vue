@@ -227,14 +227,7 @@ onBeforeUnmount(() => {
 })
 </script>
 <style scoped>
-.app-container {
-  padding: 24px;
-  background-color: var(--el-bg-color-page);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  width: 100%;
-}
+
 
 .page-header {
   display: flex;

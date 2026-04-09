@@ -12,7 +12,7 @@ import { Response } from 'express';
 
 const execPromise = util.promisify(exec);
 
-@Controller('backup')
+@Controller('system/backup')
 export class BackupController {
   private readonly backupDir = path.join(process.cwd(), 'backups');
 

@@ -40,27 +40,20 @@
           >
             <template #default="{ node, data }">
               <div class="tree-node">
-                <div class="node-icon" :class="data.level">
-                  <!-- Org Building Icon -->
-                  <svg v-if="data.level === 'org'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>
-                  
+                <div class="node-icon zone">
                   <!-- Zone Map/Area Icon -->
-                  <svg v-else-if="data.level === 'zone'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
-                  
-                  <!-- Site / Factory Icon -->
-                  <svg v-else-if="data.level === 'site'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M17 18h1"></path><path d="M13 18h1"></path><path d="M9 18h1"></path></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
-                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
-                <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
+                <span class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
                     <el-icon><More /></el-icon>
                   </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item v-if="data.level === 'org'" command="addZone">添加子分区</el-dropdown-item>
-                      <el-dropdown-item v-if="data.level === 'zone'" command="addSite">添加物理站点</el-dropdown-item>
+                      <el-dropdown-item command="addZone">添加子分区</el-dropdown-item>
+                      <el-dropdown-item command="addSite">添加物理站点</el-dropdown-item>
                       <el-dropdown-item command="edit">编辑节点信息</el-dropdown-item>
                       <el-dropdown-item command="delete" divided class="text-danger">删除该节点</el-dropdown-item>
                     </el-dropdown-menu>
@@ -231,15 +224,9 @@ const filterNode = (value: string, data: any) => {
 }
 
 const handleNodeClick = (data: any) => {
-  if (data.level === 'site') {
-    currentSiteName.value = data.label
-    currentSiteId.value = data.realId
-    fetchDevices(data.realId)
-  } else {
-    currentSiteName.value = ''
-    currentSiteId.value = null
-    deviceList.value = []
-  }
+  currentSiteName.value = data.label
+  currentSiteId.value = data.realId
+  fetchDevices(data.realId)
 }
 
 const handleCommand = (command: string, data: any) => {

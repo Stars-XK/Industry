@@ -1,23 +1,25 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">角色与权限体系</h1>
-        <p class="page-subtitle">Role-Based Access Control (RBAC)</p>
-      </div>
-      <div class="header-actions">
-        <el-button class="neon-btn" @click="handleAdd">新增角色</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
-      </div>
-    </div>
+  <div class="app-container fade-in-up">
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><Lock /></el-icon>角色与权限体系 (RBAC)</span>
+          <div class="toolbar">
+            <el-button type="primary" @click="handleAdd">
+              <el-icon style="margin-right: 4px;"><Plus /></el-icon> 新增角色
+            </el-button>
+            <el-button @click="showImport = true">
+              <el-icon style="margin-right: 4px;"><Upload /></el-icon> 批量导入
+            </el-button>
+          </div>
+        </div>
+      </template>
 
-    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
-      <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" v-loading="loading"
-        element-loading-background="rgba(15,23,42,0.8)">
+      <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="role_name" label="角色名称" min-width="150">
           <template #default="{ row }">
-            <span style="color: #e2e8f0; font-weight: 500;">{{ row.role_name }}</span>
+            <span style="font-weight: 500;">{{ row.role_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="role_key" label="角色标识" width="150">
@@ -28,59 +30,61 @@
         <el-table-column prop="role_sort" label="排序" width="80" align="center" />
         <el-table-column prop="data_scope" label="数据范围" width="120">
           <template #default="{ row }">
-            <el-tag v-if="row.data_scope === 1" effect="dark" class="danger-tag" style="border: none;">全部数据</el-tag>
-            <el-tag v-else-if="row.data_scope === 2" effect="dark" class="warning-tag" style="border: none;">本部门</el-tag>
-            <el-tag v-else-if="row.data_scope === 3" effect="dark" class="dark-tag" style="border: none;">自定义</el-tag>
+            <el-tag v-if="row.data_scope === 1" type="danger" effect="light">全部数据</el-tag>
+            <el-tag v-else-if="row.data_scope === 2" type="warning" effect="light">本部门</el-tag>
+            <el-tag v-else-if="row.data_scope === 3" type="info" effect="light">自定义</el-tag>
             <span v-else>未知</span>
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :class="row.status === 1 ? 'success-tag' : 'danger-tag'" effect="dark" style="border: none;">
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="light">
               {{ row.status === 1 ? '正常' : '停用' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="创建时间" width="180">
           <template #default="{ row }">
-            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
+            <span class="time-text">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right" align="center">
           <template #default="{ row }">
-            <div class="action-btns" style="justify-content: center;">
-              <el-button class="action-btn text-cyan" link size="small" @click="handleEdit(row)">编辑</el-button>
-              <el-button class="action-btn text-rose" link size="small" @click="handleDelete(row)">删除</el-button>
-            </div>
+            <el-button link type="primary" @click="handleEdit(row)">
+              <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑
+            </el-button>
+            <el-button link type="danger" @click="handleDelete(row)">
+              <el-icon style="margin-right: 2px;"><Delete /></el-icon> 删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-card>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" class="glass-dialog" :show-close="false">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" class="dark-form" label-position="left">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" label-position="right">
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="角色名称" prop="role_name">
-              <el-input v-model="form.role_name" placeholder="请输入角色名称" class="glass-input" />
+              <el-input v-model="form.role_name" placeholder="请输入角色名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色标识" prop="role_key">
-              <el-input v-model="form.role_key" placeholder="如 admin" class="glass-input" />
+              <el-input v-model="form.role_key" placeholder="如 admin" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="显示顺序" prop="role_sort">
-              <el-input-number v-model="form.role_sort" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
+              <el-input-number v-model="form.role_sort" :min="0" style="width: 100%" controls-position="right" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态" prop="status">
-              <el-radio-group v-model="form.status" class="dark-radio-group">
+              <el-radio-group v-model="form.status">
                 <el-radio 
                   v-for="dict in sys_normal_disable" 
                   :key="dict.dict_value" 
@@ -91,7 +95,7 @@
           </el-col>
         </el-row>
         <el-form-item label="数据范围" prop="data_scope">
-          <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+          <el-select v-model="form.data_scope" placeholder="请选择数据范围" style="width: 100%">
             <el-option 
               v-for="dict in sys_data_scope" 
               :key="dict.dict_value" 
@@ -101,25 +105,24 @@
           </el-select>
         </el-form-item>
         <el-form-item label="菜单权限">
-          <div class="glass-tree-container custom-scrollbar">
+          <div class="tree-container">
             <el-tree
               ref="menuTreeRef"
               :data="menuOptions"
               show-checkbox
               node-key="id"
               :props="{ label: 'menu_name', children: 'children' }"
-              class="dark-tree"
             />
           </div>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" class="glass-input" />
+          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button class="neon-btn" @click="submitForm">确认保存</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm">确认保存</el-button>
         </div>
       </template>
     </el-dialog>
@@ -276,157 +279,75 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
-}
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
-}
-.highlight-text {
-  color: #00d8ff;
-  font-family: "SF Mono", monospace;
-  font-weight: 600;
-}
-.success-tag {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-}
-.danger-tag {
-  background-color: rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
-}
-.warning-tag {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-.dark-tag {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
-}
-.action-btns {
+
+.toolbar {
   display: flex;
   gap: 12px;
 }
-.action-btn {
-  font-weight: 600;
-  transition: all 0.2s;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-.action-btn:hover {
-  text-shadow: 0 0 8px currentColor;
-  transform: translateY(-1px);
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
-.text-cyan { color: #00d8ff; }
-.text-rose { color: #f43f5e; }
-/* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-/* Dialog Styles */
-:deep(.glass-dialog) {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-/* Form Styles */
-:deep(.dark-form .el-form-item__label) {
-  color: #94a3b8;
+
+/* 标签样式优化 */
+.el-tag {
+  border-radius: 4px;
+  padding: 4px 8px;
   font-weight: 500;
 }
-:deep(.glass-input .el-input__wrapper),
-:deep(.glass-input-number .el-input__wrapper),
-:deep(.glass-input .el-textarea__inner) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  color: #e2e8f0;
+
+.time-text {
+  color: var(--el-text-color-regular);
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
 }
-:deep(.glass-input .el-input__wrapper:hover),
-:deep(.glass-input-number .el-input__wrapper:hover),
-:deep(.glass-input .el-textarea__inner:hover) {
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
+
+.highlight-text {
+  font-family: "SF Mono", monospace;
+  font-weight: 500;
 }
-:deep(.glass-input .el-input__wrapper.is-focus),
-:deep(.glass-input-number .el-input__wrapper.is-focus),
-:deep(.glass-input .el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #00d8ff inset !important;
-}
-:deep(.glass-select .el-input__wrapper) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-:deep(.glass-select .el-input__inner),
-:deep(.glass-input .el-input__inner),
-:deep(.glass-input-number .el-input__inner) {
-  color: #e2e8f0;
-}
-:deep(.el-input-number__decrease),
-:deep(.el-input-number__increase) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-:deep(.el-input-number__decrease:hover),
-:deep(.el-input-number__increase:hover) {
-  color: #00d8ff !important;
-}
-:deep(.dark-radio-group .el-radio) {
-  color: #94a3b8;
-}
-:deep(.dark-radio-group .el-radio__input.is-checked + .el-radio__label) {
-  color: #00d8ff;
-}
-:deep(.dark-radio-group .el-radio__input.is-checked .el-radio__inner) {
-  border-color: #00d8ff;
-  background: #00d8ff;
-}
-.glass-tree-container {
+
+.tree-container {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--el-fill-color-blank);
   max-height: 300px;
   overflow-y: auto;
-}
-.dark-tree {
-  background-color: transparent !important;
-  color: #e2e8f0;
-}
-:deep(.dark-tree .el-tree-node__content:hover) {
-  background-color: rgba(0, 216, 255, 0.1);
-}
-:deep(.dark-tree .el-tree-node:focus > .el-tree-node__content) {
-  background-color: transparent;
 }
 </style>

@@ -1,9 +1,16 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
-      <div class="toolbar">
-        <el-button type="primary" class="neon-btn" @click="handleAdd(0)">新增顶级菜单</el-button>
-      </div>
+  <div class="app-container fade-in-up">
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><Menu /></el-icon>菜单与导航配置</span>
+          <div class="toolbar">
+            <el-button type="primary" @click="handleAdd(0)">
+              <el-icon style="margin-right: 4px;"><Plus /></el-icon> 新增顶级菜单
+            </el-button>
+          </div>
+        </div>
+      </template>
 
       <el-table
         :data="tableData"
@@ -11,11 +18,9 @@
         default-expand-all
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         style="width: 100%"
-        class="dark-table"
+        class="custom-table"
         v-loading="loading"
-        element-loading-text="Thinking..."
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
+        stripe highlight-current-row
       >
         <el-table-column prop="menu_name" label="菜单名称" width="200" />
         <el-table-column prop="icon" label="图标" width="80" />
@@ -41,18 +46,24 @@
             {{ row.status === 1 ? '正常' : '停用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column label="操作" width="250" fixed="right" align="center">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleAdd(row.id)">新增子项</el-button>
-            <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+            <el-button link type="success" @click="handleAdd(row.id)">
+              <el-icon style="margin-right: 2px;"><Plus /></el-icon> 新增子项
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑
+            </el-button>
+            <el-button link type="danger" @click="handleDelete(row)">
+              <el-icon style="margin-right: 2px;"><Delete /></el-icon> 删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-card>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" custom-class="glass-dialog">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-row :gutter="20">
           <el-col :span="24">
@@ -64,7 +75,6 @@
                 check-strictly
                 placeholder="请选择上级菜单"
                 style="width: 100%"
-                class="dark-input"
               />
             </el-form-item>
           </el-col>
@@ -173,8 +183,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-        <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -183,6 +193,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Menu, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
 
@@ -313,7 +324,76 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .toolbar {
-  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.status-dot.success {
+  background-color: #10b981;
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.status-dot.danger {
+  background-color: #ef4444;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+}
+
+.status-dot.warning {
+  background-color: #f59e0b;
+  box-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
+}
+
+.status-dot.info {
+  background-color: #3b82f6;
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
 }
 </style>

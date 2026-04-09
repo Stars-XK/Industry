@@ -174,7 +174,7 @@ const defaultProps = {
 const fetchTreeData = async () => {
   try {
     // 调用后端刚刚写好的 tree 接口
-    const res = await request.get('/api/v1/system/asset/tree')
+    const res = await request.get('/api/v1/system/zone/tree')
     siteTree.value = res.data || []
   } catch (error) {
     console.error('Failed to fetch asset tree:', error)

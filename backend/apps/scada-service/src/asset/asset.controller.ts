@@ -4,6 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { AstDevice } from '../../../../libs/entities/src/ast-device.entity';
+import { DmaZone } from '../../../../libs/entities/src/dma-zone.entity';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('全域物理资产与设备台账')
@@ -14,92 +15,10 @@ export class AssetController {
   constructor(
     @InjectRepository(AstDevice)
     private readonly deviceRepo: Repository<AstDevice>,
+    @InjectRepository(DmaZone)
+    private readonly dmaZoneRepo: Repository<DmaZone>,
     private dataSource: DataSource
   ) {}
-
-  @Get('tree')
-  @ApiOperation({ summary: '获取物理站点与组织架构树' })
-  async getAssetTree() {
-    // 1. 获取部门作为最顶层
-    const depts = await this.dataSource.query(`SELECT id, parent_id, dept_name as label FROM sys_dept WHERE status = 1 ORDER BY sort_order ASC`);
-    
-    // 2. 获取DMA分区
-    const zones = await this.dataSource.query(`SELECT id, parent_id, zone_name as label FROM dma_zone`);
-
-    // 3. 获取物理站点
-    const sites = await this.dataSource.query(`SELECT id, site_name as label, site_type, zone_id, dept_id FROM ast_site`);
-
-    // 4. 统计设备数量
-    const siteDeviceCounts = await this.dataSource.query(`
-      SELECT site_id, COUNT(id) as cnt 
-      FROM ast_device 
-      WHERE status != 0 
-      GROUP BY site_id
-    `);
-    const countMap = new Map();
-    siteDeviceCounts.forEach((r: any) => countMap.set(r.site_id, Number(r.cnt)));
-
-    // 构建树形逻辑 (部门 -> 分区 -> 站点)
-    // 简化处理：由于这里需要拼装多张表，直接返回平铺数据，前端拼装，或者后端拼装
-    // 这里采用后端拼装
-    
-    const tree = [];
-    const deptMap = new Map();
-    const zoneMap = new Map();
-
-    depts.forEach((d: any) => {
-      const node = { id: `dept_${d.id}`, realId: d.id, label: d.label, level: 'org', children: [] };
-      deptMap.set(d.id, node);
-    });
-
-    zones.forEach((z: any) => {
-      const node = { id: `zone_${z.id}`, realId: z.id, label: z.label, level: 'zone', children: [] };
-      zoneMap.set(z.id, node);
-    });
-
-    sites.forEach((s: any) => {
-      const node = { 
-        id: `site_${s.id}`, 
-        realId: s.id, 
-        label: s.label, 
-        level: 'site', 
-        type: s.site_type,
-        deviceCount: countMap.get(s.id) || 0 
-      };
-      
-      // 挂载到对应的父节点
-      if (s.zone_id && zoneMap.has(s.zone_id)) {
-        zoneMap.get(s.zone_id).children.push(node);
-      } else if (s.dept_id && deptMap.has(s.dept_id)) {
-        deptMap.get(s.dept_id).children.push(node);
-      }
-    });
-
-    // 组装分区到部门，由于需求没有写死分区一定在哪个部门下，这里假设分区挂载在根节点或其他
-    zones.forEach((z: any) => {
-      // 简单处理：没有 parent_id 的挂到顶级
-      if (z.parent_id && zoneMap.has(z.parent_id)) {
-        zoneMap.get(z.parent_id).children.push(zoneMap.get(z.id));
-      } else {
-        // 挂载到默认部门或者顶级
-        if (deptMap.has(1)) {
-          deptMap.get(1).children.push(zoneMap.get(z.id));
-        } else {
-          tree.push(zoneMap.get(z.id));
-        }
-      }
-    });
-
-    depts.forEach((d: any) => {
-      if (d.parent_id && deptMap.has(d.parent_id)) {
-        deptMap.get(d.parent_id).children.push(deptMap.get(d.id));
-      } else {
-        tree.push(deptMap.get(d.id));
-      }
-    });
-
-    return tree;
-  }
 
   @Get('devices')
   @ApiOperation({ summary: '分页获取站点下的设备列表' })

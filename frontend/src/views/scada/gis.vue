@@ -354,6 +354,10 @@ onUnmounted(() => {
   0% { transform: scale(0.5); opacity: 0.8; }
   100% { transform: scale(2); opacity: 0; }
 }
+.box-card:hover {
+  box-shadow: var(--el-box-shadow);
+  transform: translateY(-2px);
+}
 </style>
 
 <style scoped>
@@ -603,5 +607,9 @@ h3 {
 @keyframes fadeInLeft {
   from { opacity: 0; transform: translateX(-20px); }
   to { opacity: 1; transform: translateX(0); }
+}
+.box-card:hover {
+  box-shadow: var(--el-box-shadow);
+  transform: translateY(-2px);
 }
 </style>

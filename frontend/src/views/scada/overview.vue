@@ -297,16 +297,13 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  padding: 40px;
+  padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 60px);
-  color: var(--el-text-color-primary);
-  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  }
 
 .page-header {
   display: flex;
@@ -333,18 +330,18 @@ onMounted(() => {
 }
 
 .box-card {
-  background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 16px;
-  padding: 24px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 24px;
 }
 
 .box-card:hover {
-  box-shadow: var(--el-box-shadow-light);
+  box-shadow: var(--el-box-shadow);
   transform: translateY(-2px);
 }
 
@@ -435,8 +432,7 @@ onMounted(() => {
 .chart-container {
   flex: 1;
   min-height: 300px;
-  width: 100%;
-}
+  }
 
 .chart {
   width: 100%;

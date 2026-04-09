@@ -172,15 +172,12 @@ const handleBatchSave = async () => {
 .box-card {
   display: flex;
   flex-direction: column;
-  flex: 1;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 24px;
 }
 
 .card-header {
@@ -194,8 +191,7 @@ const handleBatchSave = async () => {
 
 .config-form {
   margin-top: 24px;
-  width: 100%;
-}
+  }
 
 
 
@@ -206,5 +202,9 @@ const handleBatchSave = async () => {
   padding: 8px 16px;
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.box-card:hover {
+  box-shadow: var(--el-box-shadow);
+  transform: translateY(-2px);
 }
 </style>

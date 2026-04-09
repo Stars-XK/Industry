@@ -137,26 +137,22 @@ const saveConfig = async () => {
 </script>
 <style scoped>
 .app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   flex: 1;
+  }
+.box-card {
+  display: flex;
+  flex-direction: column;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 24px;
 }
 .card-header {
   font-weight: 600;
@@ -246,7 +242,7 @@ const saveConfig = async () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--el-bg-color-overlay);
   position: relative;
 }
 .toolbar {
@@ -276,7 +272,7 @@ const saveConfig = async () => {
   justify-content: center;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px var(--el-box-shadow-light);
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 .canvas-element:hover {
@@ -285,7 +281,7 @@ const saveConfig = async () => {
 }
 .canvas-element.active {
   border-color: var(--el-color-primary);
-  box-shadow: 0 0 0 1px var(--el-color-primary-light-8), 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 1px var(--el-color-primary-light-8), 0 4px 12px var(--el-box-shadow);
 }
 .element-content {
   text-align: center;
@@ -317,5 +313,9 @@ const saveConfig = async () => {
 }
 .props-content {
   padding: 20px;
+}
+.box-card:hover {
+  box-shadow: var(--el-box-shadow);
+  transform: translateY(-2px);
 }
 </style>

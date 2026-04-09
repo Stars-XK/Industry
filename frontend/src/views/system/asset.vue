@@ -204,26 +204,22 @@ const assets = ref([
 </script>
 <style scoped>
 .app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   flex: 1;
+  }
+.box-card {
+  display: flex;
+  flex-direction: column;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 24px;
 }
 .card-header {
   font-weight: 600;
@@ -273,13 +269,13 @@ const assets = ref([
 .text-cyan { color: var(--el-color-primary); }
 .danger-btn {
   background: var(--el-fill-color-blank);
-  border: 1px solid #f43f5e;
+  border: 1px solid var(--el-color-danger);
   color: var(--el-color-danger);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
 .danger-btn:hover {
-  background: rgba(244, 63, 94, 0.1);
-  box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+  background: var(--el-color-danger-light-9);
+  box-shadow: 0 0 15px var(--el-color-danger-light-7);
   color: var(--el-text-color-primary);
 }
 /* Table styles */
@@ -306,5 +302,9 @@ const assets = ref([
   font-size: 13px;
   color: var(--el-text-color-regular);
   margin: 0;
+}
+.box-card:hover {
+  box-shadow: var(--el-box-shadow);
+  transform: translateY(-2px);
 }
 </style>

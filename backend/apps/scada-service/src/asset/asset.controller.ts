@@ -21,10 +21,10 @@ export class AssetController {
   @ApiOperation({ summary: '获取物理站点与组织架构树' })
   async getAssetTree() {
     // 1. 获取部门作为最顶层
-    const depts = await this.dataSource.query(`SELECT id, parent_id, dept_name as label FROM sys_dept WHERE is_deleted IS NULL ORDER BY order_num ASC`);
+    const depts = await this.dataSource.query(`SELECT id, parent_id, dept_name as label FROM sys_dept WHERE status = 1 ORDER BY sort_order ASC`);
     
     // 2. 获取DMA分区
-    const zones = await this.dataSource.query(`SELECT id, parent_id, zone_name as label FROM dma_zone WHERE is_deleted IS NULL`);
+    const zones = await this.dataSource.query(`SELECT id, parent_id, zone_name as label FROM dma_zone`);
 
     // 3. 获取物理站点
     const sites = await this.dataSource.query(`SELECT id, site_name as label, site_type, zone_id, dept_id FROM ast_site`);

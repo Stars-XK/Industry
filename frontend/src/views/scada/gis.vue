@@ -178,7 +178,7 @@ const renderLayers = () => {
   alarmGroup.value?.clearLayers();
 
   // Render Pipes
-  pipelines.forEach(path => {
+  pipelines.value.forEach(path => {
     const polyline = L.polyline(path as L.LatLngExpression[], { 
       color: '#00d8ff', 
       weight: 3, 

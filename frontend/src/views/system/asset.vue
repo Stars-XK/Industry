@@ -138,8 +138,8 @@
 
         <div v-else class="empty-state">
           <div class="empty-icon"><el-icon><DataBoard /></el-icon></div>
-          <h3>未选择站点</h3>
-          <p>请在左侧的架构树中选择一个具体的物理站点，以查看并管理其挂载的设备与测点台账。</p>
+          <h3>未选择分区</h3>
+          <p>请在左侧的架构树中选择一个具体的 DMA 分区，以查看并管理其挂载的设备与测点台账。</p>
         </div>
       </main>
     </div>
@@ -168,19 +168,19 @@ const fetchTreeData = async () => {
   try {
     // 调用后端刚刚写好的 tree 接口
     const res = await request.get('/api/v1/system/zone/tree')
-    siteTree.value = res.data || []
+    siteTree.value = res || []
   } catch (error) {
     console.error('Failed to fetch asset tree:', error)
   }
 }
 
-const fetchDevices = async (siteId: number) => {
+const fetchDevices = async (id: number) => {
   try {
     const res = await request.get(`/api/v1/system/asset/devices`, {
-      params: { siteId, page: 1, size: 50 }
+      params: { zoneId: id, page: 1, size: 50 }
     })
     // 映射后端字段到前端需要展示的结构
-    deviceList.value = (res.data?.list || []).map((d: any) => ({
+    deviceList.value = (res?.list || []).map((d: any) => ({
       id: d.id,
       deviceCode: d.device_code,
       deviceName: d.device_name,

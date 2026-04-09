@@ -21,32 +21,43 @@ export class AssetController {
   ) {}
 
   @Get('devices')
-  @ApiOperation({ summary: '分页获取站点下的设备列表' })
+  @ApiOperation({ summary: '分页获取分区或站点下的设备列表' })
   async getDevices(@Query() query: any) {
-    const { siteId, page = 1, size = 20, keyword = '' } = query;
-    let sql = `SELECT * FROM ast_device WHERE status != 0`;
+    const { siteId, zoneId, page = 1, size = 20, keyword = '' } = query;
+    
+    let sql = `SELECT d.* FROM ast_device d `;
+    let countSql = `SELECT COUNT(*) as total FROM ast_device d `;
     const params: any[] = [];
+    const countParams: any[] = [];
+
+    if (zoneId) {
+      sql += ` JOIN dma_device_rel r ON d.id = r.device_id WHERE d.status != 0 AND r.zone_id = ?`;
+      countSql += ` JOIN dma_device_rel r ON d.id = r.device_id WHERE d.status != 0 AND r.zone_id = ?`;
+      params.push(zoneId);
+      countParams.push(zoneId);
+    } else {
+      sql += ` WHERE d.status != 0`;
+      countSql += ` WHERE d.status != 0`;
+    }
 
     if (siteId) {
-      sql += ` AND site_id = ?`;
+      sql += ` AND d.site_id = ?`;
+      countSql += ` AND d.site_id = ?`;
       params.push(siteId);
+      countParams.push(siteId);
     }
+    
     if (keyword) {
-      sql += ` AND (device_name LIKE ? OR device_code LIKE ?)`;
+      sql += ` AND (d.device_name LIKE ? OR d.device_code LIKE ?)`;
+      countSql += ` AND (d.device_name LIKE ? OR d.device_code LIKE ?)`;
       params.push(`%${keyword}%`, `%${keyword}%`);
+      countParams.push(`%${keyword}%`, `%${keyword}%`);
     }
 
-    sql += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+    sql += ` ORDER BY d.id DESC LIMIT ? OFFSET ?`;
     params.push(Number(size), (Number(page) - 1) * Number(size));
 
     const list = await this.dataSource.query(sql, params);
-
-    // 统计总数
-    let countSql = `SELECT COUNT(*) as total FROM ast_device WHERE status != 0`;
-    const countParams: any[] = [];
-    if (siteId) { countSql += ` AND site_id = ?`; countParams.push(siteId); }
-    if (keyword) { countSql += ` AND (device_name LIKE ? OR device_code LIKE ?)`; countParams.push(`%${keyword}%`, `%${keyword}%`); }
-    
     const countRes = await this.dataSource.query(countSql, countParams);
     
     // 获取每个设备的测点

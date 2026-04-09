@@ -25,9 +25,11 @@ import { GovDatasourceConfig } from '../../../libs/entities/src/gov-datasource-c
 import { EnergyController } from './billing/energy.controller';
 import { RecipeController } from './governance/recipe.controller';
 import { GovernanceTaskService } from './tasks/governance.task';
+import { TDengineModule } from '@app/database/tdengine/tdengine.module';
 
 @Module({
   imports: [
+    TDengineModule,
     PassportModule,
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({

@@ -149,29 +149,6 @@
   </div>
 </template>
 
-              </el-table-column>
-              <el-table-column label="实时遥测" min-width="180" show-overflow-tooltip>
-                <template #default="{ row }">
-                  <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0" class="telemetry-box">
-                    <div v-for="(val, key) in row.telemetry" :key="key" class="telemetry-item">
-                      <span class="t-key">{{ key }}</span>
-                      <span class="t-val">{{ val }}</span>
-                    </div>
-                  </div>
-                  <span v-else style="color: var(--el-text-color-regular); font-size: 12px;">暂无数据</span>
-                </template>
-              </el-table-column>
-              <template #empty>
-                <div style="padding: 30px; color: var(--el-text-color-regular);">该分区暂无挂载设备</div>
-              </template>
-            </el-table>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';

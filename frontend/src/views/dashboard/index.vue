@@ -69,9 +69,9 @@ let mapChart: any = null
 let pressureChart: any = null
 let energyChart: any = null
 
-const kpi = ref({ supply: 124532, sales: 112410, nrw: 9.73 })
+const kpi = ref<Record<string, number>>({ supply: 124532, sales: 112410, nrw: 9.73 })
 
-const alarms = ref([
+const alarms = ref<Record<string, string>[]>([
   { time: '14:23:11', level: 'HH', desc: '一厂区出水压力超高限' },
   { time: '14:15:02', level: 'H', desc: '鲤城泵站余氯偏高' },
   { time: '13:45:55', level: 'L', desc: '东海园区流量异常下降' },
@@ -106,9 +106,9 @@ const fetchAlarms = async () => {
     console.error('获取报警失败:', e)
     // 降级假数据
     alarms.value = [
-      { content: '[丰泽] 东海园区主干管瞬时压力突降 15%', type: 'critical' },
-      { content: '[鲤城] 地下泵站环境湿度偏高 85%', type: 'warning' },
-      { content: '[核心] 2号水泵变频器通讯心跳延迟', type: 'warning' }
+      { time: '14:23:11', level: 'HH', desc: '[丰泽] 东海园区主干管瞬时压力突降 15%' },
+      { time: '14:15:02', level: 'H', desc: '[鲤城] 地下泵站环境湿度偏高 85%' },
+      { time: '13:45:55', level: 'L', desc: '[核心] 2号水泵变频器通讯心跳延迟' }
     ]
   }
 }
@@ -128,10 +128,10 @@ const initCharts = () => {
   pressureChart.setOption({
     tooltip: { trigger: 'axis' },
     grid: { left: '10%', right: '5%', top: '10%', bottom: '15%' },
-    xAxis: { type: 'category', data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#ccc' } } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#333' } }, axisLabel: { color: '#ccc' } },
+    xAxis: { type: 'category', data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: 'var(--el-text-color-regular)' } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: 'var(--el-border-color-light)' } }, axisLabel: { color: 'var(--el-text-color-regular)' } },
     series: [
-      { name: '管网平均压力', type: 'line', smooth: true, data: [0.32, 0.35, 0.45, 0.41, 0.43, 0.38, 0.33], itemStyle: { color: '#00d8ff' }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: 'rgba(0,216,255,0.5)'}, {offset: 1, color: 'rgba(0,216,255,0)'}]) } }
+      { name: '管网平均压力', type: 'line', smooth: true, data: [0.32, 0.35, 0.45, 0.41, 0.43, 0.38, 0.33], itemStyle: { color: 'var(--el-color-primary)' }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: 'var(--el-color-primary-light-5)'}, {offset: 1, color: 'transparent'}]) } }
     ]
   })
 
@@ -144,8 +144,8 @@ const initCharts = () => {
         name: '能耗占比',
         type: 'pie',
         radius: ['40%', '70%'],
-        itemStyle: { borderRadius: 10, borderColor: '#0b142b', borderWidth: 2 },
-        label: { color: '#ccc' },
+        itemStyle: { borderRadius: 10, borderColor: 'var(--el-bg-color-overlay)', borderWidth: 2 },
+        label: { color: 'var(--el-text-color-regular)' },
         data: [
           { value: 1048, name: '1号泵房' },
           { value: 735, name: '2号泵房' },
@@ -175,7 +175,7 @@ const initCharts = () => {
     series: [{
       type: 'effectScatter',
       symbolSize: 15,
-      itemStyle: { color: '#00d8ff', shadowBlur: 10, shadowColor: '#00d8ff' },
+      itemStyle: { color: 'var(--el-color-primary)', shadowBlur: 10, shadowColor: 'var(--el-color-primary-light-5)' },
       data: [
         [50, 50, '中心泵站'], [20, 80, 'A区供水点'], [80, 20, 'B区出水点'], [30, 30, 'C区管网节点'], [70, 70, 'D区阀门井']
       ],
@@ -186,8 +186,8 @@ const initCharts = () => {
     {
       type: 'lines',
       coordinateSystem: 'cartesian2d',
-      lineStyle: { color: '#00d8ff', width: 2, opacity: 0.4, curveness: 0.2 },
-      effect: { show: true, period: 4, symbolSize: 5, color: '#fff', trailLength: 0.1 },
+      lineStyle: { color: 'var(--el-color-primary)', width: 2, opacity: 0.4, curveness: 0.2 },
+      effect: { show: true, period: 4, symbolSize: 5, color: 'var(--el-color-primary-light-9)', trailLength: 0.1 },
       data: [
         { coords: [[50, 50], [20, 80]] },
         { coords: [[50, 50], [80, 20]] },
@@ -224,8 +224,8 @@ onUnmounted(() => {
 .dashboard-container {
   width: 100vw;
   height: 100vh;
-  background-color: #050a15;
-  background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
+  background-color: var(--el-bg-color-page);
+  background-image: radial-gradient(circle at 50% 50%, var(--el-fill-color-darker) 0%, var(--el-bg-color-page) 100%);
   color: var(--el-text-color-primary);
   overflow: hidden;
   display: flex;
@@ -234,8 +234,8 @@ onUnmounted(() => {
 }
 .header {
   height: 80px;
-  background: linear-gradient(180deg, rgba(0, 216, 255, 0.1) 0%, transparent 100%);
-  border-bottom: 1px solid rgba(0, 216, 255, 0.1);
+  background: linear-gradient(180deg, var(--el-color-primary-light-9) 0%, transparent 100%);
+  border-bottom: 1px solid var(--el-border-color-light);
   position: relative;
   display: flex;
   justify-content: center;
@@ -246,7 +246,7 @@ onUnmounted(() => {
   font-weight: 600;
   letter-spacing: 4px;
   color: var(--el-text-color-primary);
-  text-shadow: 0 0 20px rgba(0, 216, 255, 0.4);
+  text-shadow: 0 0 20px var(--el-color-primary-light-5);
 }
 .time {
   position: absolute;
@@ -263,14 +263,14 @@ onUnmounted(() => {
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
-  border: 1px solid rgba(0, 216, 255, 0.4);
+  border: 1px solid var(--el-color-primary-light-5);
   color: var(--el-color-primary);
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 .exit-btn:hover {
-  background: rgba(0, 216, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0, 216, 255, 0.2);
+  background: var(--el-color-primary-light-9);
+  box-shadow: 0 0 15px var(--el-color-primary-light-5);
 }
 .main-content {
   flex: 1;
@@ -280,14 +280,14 @@ onUnmounted(() => {
 }
 .panel {
   width: 25%;
-  background: rgba(8, 15, 30, 0.7);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(10px);
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--el-box-shadow);
 }
 .panel-title {
   font-size: 16px;
@@ -303,17 +303,17 @@ onUnmounted(() => {
   display: inline-block;
   width: 4px;
   height: 16px;
-  background: #00d8ff;
+  background: var(--el-color-primary);
   margin-right: 12px;
   border-radius: 2px;
-  box-shadow: 0 0 8px #00d8ff;
+  box-shadow: 0 0 8px var(--el-color-primary-light-5);
 }
 .center-panel {
   width: 50%;
   position: relative;
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
-  background: rgba(8, 15, 30, 0.4);
+  background: var(--el-fill-color-light);
   overflow: hidden;
 }
 .map-container {
@@ -326,15 +326,15 @@ onUnmounted(() => {
   gap: 16px;
 }
 .kpi-item {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
-  border-left: 1px solid var(--el-border-color-light);
+  background: var(--el-fill-color-light);
+  border-left: 2px solid var(--el-border-color-light);
   padding: 16px 20px;
   border-radius: 4px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s, border-color 0.3s;
 }
 .kpi-item:hover {
   transform: translateX(4px);
-  background: linear-gradient(90deg, rgba(0,216,255,0.05) 0%, transparent 100%);
+  background: var(--el-color-primary-light-9);
   border-left-color: var(--el-color-primary);
 }
 .kpi-label {
@@ -349,9 +349,9 @@ onUnmounted(() => {
   font-weight: 300;
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
-.text-blue { color: var(--el-color-primary); text-shadow: 0 0 10px rgba(0,216,255,0.3); }
-.text-green { color: #00ffaa; text-shadow: 0 0 10px rgba(0,255,170,0.3); }
-.text-yellow { color: #ffb800; text-shadow: 0 0 10px rgba(255,184,0,0.3); }
+.text-blue { color: var(--el-color-primary); text-shadow: 0 0 10px var(--el-color-primary-light-5); }
+.text-green { color: var(--el-color-success); text-shadow: 0 0 10px var(--el-color-success-light-5); }
+.text-yellow { color: var(--el-color-warning); text-shadow: 0 0 10px var(--el-color-warning-light-5); }
 .chart-box {
   flex: 1;
   width: 100%;
@@ -372,25 +372,25 @@ onUnmounted(() => {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 .alarm-item:hover {
-  background: var(--el-fill-color-light);
+  background: var(--el-color-primary-light-9);
 }
 .alarm-time { width: 65px; color: var(--el-text-color-regular); font-size: 12px; font-family: monospace; }
 .alarm-level { width: 36px; font-weight: 600; text-align: center; font-size: 12px; border-radius: 4px; padding: 2px 0; margin-right: 12px; }
 .alarm-desc { flex: 1; font-size: 13px; color: var(--el-text-color-regular); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.HH { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
-.H { background: rgba(255, 184, 0, 0.15); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.3); }
-.L { background: rgba(0, 216, 255, 0.15); color: var(--el-color-primary); border: 1px solid rgba(0, 216, 255, 0.3); }
+.HH { background: var(--el-color-danger-light-9); color: var(--el-color-danger); border: 1px solid var(--el-color-danger-light-5); }
+.H { background: var(--el-color-warning-light-9); color: var(--el-color-warning); border: 1px solid var(--el-color-warning-light-5); }
+.L { background: var(--el-color-primary-light-9); color: var(--el-color-primary); border: 1px solid var(--el-color-primary-light-5); }
 .map-overlay {
   position: absolute;
   top: 24px;
   left: 24px;
   z-index: 10;
-  background: rgba(8, 15, 30, 0.8);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(10px);
   padding: 16px 20px;
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  box-shadow: var(--el-box-shadow-light);
 }
 .stat-item {
   font-size: 13px;
@@ -408,7 +408,7 @@ onUnmounted(() => {
   border-radius: 50%;
   margin-right: 12px;
 }
-.dot.green { background-color: #00ffaa; box-shadow: 0 0 8px #00ffaa; }
-.dot.red { background-color: #ff3366; box-shadow: 0 0 8px #ff3366; }
-.dot.yellow { background-color: #ffb800; box-shadow: 0 0 8px #ffb800; }
+.dot.green { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success-light-5); }
+.dot.red { background-color: var(--el-color-danger); box-shadow: 0 0 8px var(--el-color-danger-light-5); }
+.dot.yellow { background-color: var(--el-color-warning); box-shadow: 0 0 8px var(--el-color-warning-light-5); }
 </style>

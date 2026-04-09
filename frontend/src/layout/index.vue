@@ -99,7 +99,7 @@ const userStore = useUserStore();
 const configStore = useConfigStore();
 
 const currentPath = ref(route.path);
-const hoverMenu = ref<number | null>(null);
+const hoverMenu = ref<any>(null);
 const activeTopMenuIndex = ref<number>(0);
 const isSidebarCollapsed = ref<boolean>(false);
 
@@ -152,7 +152,7 @@ const dynamicMenuTree = computed(() => {
   const menus = userStore.menus || [];
   
   // Create static base
-  const tree = [
+  const tree: any[] = [
     { name: '数字大屏', path: '/dashboard', icon: 'Odometer' }
   ];
 

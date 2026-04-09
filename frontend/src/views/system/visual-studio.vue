@@ -128,14 +128,10 @@ const saveConfig = async () => {
     if (res.code === 200) {
       ElMessage.success('组态画面保存并发布成功')
     }
-  } catch (error) {
-    // fallback
-    setTimeout(() => {
-      saving.value = false
-      ElMessage.success('组态画面保存并发布成功')
-    }, 1000)
+  } catch (err) {
+    ElMessage.error('发布失败')
   } finally {
-    if(!error) saving.value = false
+    saving.value = false
   }
 }
 </script>

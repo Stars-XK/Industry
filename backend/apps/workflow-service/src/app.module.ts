@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '@app/common';
-import { TDengineModule } from '@app/database';
+import { TDengineModule } from '@app/database/tdengine/tdengine.module';
 
 import { AlarmController } from './alarm/alarm.controller';
 import { SopController } from './sop/sop.controller';

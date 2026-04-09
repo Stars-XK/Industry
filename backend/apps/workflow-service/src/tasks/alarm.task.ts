@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
-import { TDengineService } from '@app/database/tdengine.service';
+import { TDengineService } from '@app/database/tdengine/tdengine.service';
 
 @Injectable()
 export class AlarmTaskService {

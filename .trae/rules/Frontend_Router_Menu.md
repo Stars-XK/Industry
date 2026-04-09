@@ -12,7 +12,6 @@
 ├── /dashboard               [登录与门户] 沉浸式数字孪生大屏 (Digital Twin Dashboard)
 ├── /scada                   [综合业务监控台] (SCADA & Monitor)
 │   ├── /scada/overview        - 全局态势感知 (Overview Dashboard)
-│   ├── /scada/topology        - 2D 拓扑与 DMA 分区导航 (Topology & DMA)
 │   ├── /scada/hmi             - 工业 SCADA 工艺组态 (SCADA HMI)
 │   └── /scada/security        - 安防与环境空间监控 (Security & Environment)
 ├── /analytics               [多维统计与数据分析] (Data Analytics)
@@ -66,7 +65,6 @@
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
 |---|---|---|---|---|
 | 全局态势感知 | `/scada/overview` | `views/scada/overview.vue` | `scada:overview` | KPI 卡片概览、水质综合看板、能耗趋势折线图 |
-| 2D拓扑与分区导航 | `/scada/topology` | `views/scada/topology.vue` | `scada:topology` | 无限级 2D 拓扑画布、节点展开折叠、红黄绿状态概览 |
 | 工业SCADA组态 | `/scada/hmi` | `views/scada/hmi.vue` | `scada:hmi` | 动态工艺图纸加载、设备启停/阀门PID无级调节、双向握手验证 |
 | 安防与环境空间 | `/scada/security` | `views/scada/security.vue` | `scada:security` | RTSP 视频矩阵分屏、BIM 视频贴图(盲区展示)、密闭空间环境曲线及门禁联锁 |
 
@@ -104,7 +102,7 @@
 ### 2.6 系统设置与台账权限 (System & Security)
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
 |---|---|---|---|---|
-| 资产与设备台账 | `/system/asset` | `views/system/asset.vue` | `sys:asset` | 型号/保修期记录、"老表止码+新表起码"强制接续表单(防负流) |
+| 资产与设备台账 | `/system/asset` | `views/system/asset.vue` | `sys:asset` | 无限级 2D 拓扑与资产挂载、型号/保修期记录、强制接续表单(防负流) |
 | 备品备件与仓储 | `/system/inventory` | `views/system/inventory.vue`| `sys:inventory` | 安全库存红绿灯预警、扫码出库与工单成本绑定报表 |
 | 组织架构与人员 | `/system/org` | `views/system/org.vue` | `sys:org` | 集团-厂区无限级拖拽树、人员账号分配与重置 |
 | 角色与权限体系 | `/system/rbac` | `views/system/rbac.vue` | `sys:rbac` | 菜单/按钮细粒度勾选授权、数据范围隔离(如下拉选择"仅本人/本厂区") |

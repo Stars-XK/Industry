@@ -189,61 +189,93 @@ const handleNodeClick = (data: any) => {
   }
 }
 
-// 模拟数据：部门 -> 分区 -> 站点
+// 模拟数据：部门 -> 分区 -> 站点 (与 mysql_seed.sql 保持完全一致)
 const siteTree = ref([
   {
     id: 1,
-    label: '水务集团 (用户/部门)',
+    label: '泉州水务集团',
     level: 'org',
     children: [
       {
-        id: 11,
-        label: '一厂区 (分区 DMA)',
-        level: 'zone',
+        id: 2,
+        label: '丰泽区供水分公司',
+        level: 'org',
         children: [
-          { id: 111, label: '一厂制水车间 (水厂站点)', level: 'site' },
-          { id: 112, label: '东区二供泵房 (二供站点)', level: 'site' },
-          { id: 113, label: 'DN800主管网监测点 (管网站点)', level: 'site' }
+          {
+            id: 102,
+            label: '丰泽区 (DMA分区)',
+            level: 'zone',
+            children: [
+              {
+                id: 201,
+                label: '东海科技园区DMA',
+                level: 'zone',
+                children: [
+                  { id: 1, label: '东海园区进水泵站 (加压泵站)', level: 'site' }
+                ]
+              },
+              {
+                id: 202,
+                label: '泉港新片区DMA',
+                level: 'zone',
+                children: [
+                  { id: 3, label: '西湖水质监测点 (管网监测点)', level: 'site' }
+                ]
+              },
+              { id: 2, label: '丰泽2号加压泵站', level: 'site' }
+            ]
+          }
         ]
       },
       {
-        id: 12,
-        label: '二厂区 (分区 DMA)',
-        level: 'zone',
+        id: 4,
+        label: '鲤城区供水分公司',
+        level: 'org',
         children: [
-          { id: 121, label: '二厂加压泵站 (加压站点)', level: 'site' }
+          {
+            id: 104,
+            label: '鲤城区 (DMA分区)',
+            level: 'zone',
+            children: [
+              {
+                id: 204,
+                label: '洛江开发区DMA',
+                level: 'zone',
+                children: [
+                  { id: 4, label: '鲤城地下泵房 (二供泵房)', level: 'site' }
+                ]
+              }
+            ]
+          }
         ]
       }
     ]
   }
 ])
 
-// 模拟数据：设备与测点列表
+// 模拟数据：设备与测点列表 (匹配 mysql_seed.sql 真实数据)
 const deviceList = ref([
   {
-    id: 'dev-101',
-    deviceCode: 'PUMP-01',
-    deviceName: '1号变频离心泵',
-    deviceType: '水泵',
-    installDate: '2022-05-20',
-    status: '在线',
-    points: [
-      { pointCode: 'PT-101-FREQ', pointName: '运行频率', pointType: '状态值', unit: 'Hz', updateTime: '2026-04-09 10:00:00' },
-      { pointCode: 'PT-101-CURR', pointName: '工作电流', pointType: '状态值', unit: 'A', updateTime: '2026-04-09 10:00:00' }
-    ]
-  },
-  {
-    id: 'dev-102',
-    deviceCode: 'FM-MAIN-OUT',
-    deviceName: 'DN800出厂总管流量计',
+    id: '1',
+    deviceCode: 'METER_IN_01',
+    deviceName: '东海园区总进水管表',
     deviceType: '智能水表',
     installDate: '2023-01-15',
     status: '在线',
     points: [
-      { pointCode: 'PT-FM-INST', pointName: '瞬时流量', pointType: '瞬时流量', unit: 'm³/h', updateTime: '2026-04-09 10:00:05' },
-      { pointCode: 'PT-FM-CUM', pointName: '累计流量', pointType: '累计流量', unit: 'm³', updateTime: '2026-04-09 10:00:05' },
-      { pointCode: 'PT-FM-PRESS', pointName: '管网压力', pointType: '压力', unit: 'MPa', updateTime: '2026-04-09 10:00:05' }
+      { pointCode: 'PLC.S7.Temp', pointName: '温度', pointType: '温度', unit: '°C', updateTime: '2026-04-09 10:00:00' },
+      { pointCode: 'PLC.S7.Pressure', pointName: '水压', pointType: '压力', unit: 'MPa', updateTime: '2026-04-09 10:00:00' },
+      { pointCode: 'PLC.S7.FlowRate', pointName: '瞬时流量', pointType: '瞬时流量', unit: 'm³/h', updateTime: '2026-04-09 10:00:00' }
     ]
+  },
+  {
+    id: '203',
+    deviceCode: 'PRESS_01',
+    deviceName: '东海末端管网压力计',
+    deviceType: '压力计',
+    installDate: '2022-05-20',
+    status: '在线',
+    points: []
   }
 ])
 

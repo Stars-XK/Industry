@@ -43,11 +43,10 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- 2. 综合业务监控台
 (10, 0, '综合业务监控台', 2, '/scada', 'Layout', 0, 0, '', 'M', 1, 1, 'Monitor', '', 1),
 (11, 10, '全局态势感知', 1, 'overview', 'scada/overview', 0, 0, 'scada:overview', 'C', 1, 1, 'View', '', 1),
-(12, 10, '2D拓扑与分区导航', 2, 'topology', 'scada/topology', 0, 0, 'scada:topology', 'C', 1, 1, 'Connection', '', 1),
-(13, 10, '工业SCADA工艺组态', 3, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
-(14, 10, '安防与环境空间监控', 4, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'VideoCamera', '', 1),
-(15, 10, 'DMA 拓扑树配置', 5, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
-(16, 10, 'GIS 管网与资产调度', 6, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 0, 1, 'Location', '测试隐藏的GIS菜单', 1),
+(13, 10, '工业SCADA工艺组态', 2, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
+(14, 10, '安防与环境空间监控', 3, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'VideoCamera', '', 1),
+(15, 10, 'DMA 拓扑树配置', 4, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
+(16, 10, 'GIS 管网与资产调度', 5, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 0, 1, 'Location', '测试隐藏的GIS菜单', 1),
 
 -- 3. 多维统计与数据分析
 (20, 0, '多维统计与数据分析', 3, '/analytics', 'Layout', 0, 0, '', 'M', 1, 1, 'DataAnalysis', '', 1),
@@ -151,12 +150,20 @@ INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (205, 110, '紫竹高新区DMA', 3, 1),
 (206, 112, '嘉定汽车城DMA', 3, 1);
 
+-- 3.1 物理站点测试数据
+INSERT IGNORE INTO ast_site (id, site_code, site_name, site_type, zone_id, dept_id) VALUES
+(1, 'SITE_DH_01', '东海园区进水泵站', 2, 201, 2),
+(2, 'SITE_FZ_02', '丰泽2号加压泵站', 2, 102, 2),
+(3, 'SITE_XH_01', '西湖水质监测点', 4, 202, 3),
+(4, 'SITE_LC_01', '鲤城地下泵房', 3, 204, 4);
+
 -- 4. 设备资产测试数据 (匹配泉州市DMA)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (1, 'METER_IN_01', '东海园区总进水管表', 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (2, 'PUMP_01', '丰泽2号泵站主泵', 4);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '东海末端管网压力计', 2);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (3, 'WQ_01', '西湖水质监测仪', 3);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (4, 'ENV_01', '鲤城地下泵站环境传感器', 5);
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, site_id) VALUES 
+(1, 'METER_IN_01', '东海园区总进水管表', 1, 1),
+(2, 'PUMP_01', '丰泽2号泵站主泵', 3, 2),
+(203, 'PRESS_01', '东海末端管网压力计', 2, 1),
+(3, 'WQ_01', '西湖水质监测仪', 4, 3),
+(4, 'ENV_01', '鲤城地下泵站环境传感器', 5, 4);
 
 -- 5. DMA 与 设备资产 绑定关系
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 东海
@@ -180,6 +187,9 @@ INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, 
 ('智能水表', '1', 'sys_device_type', 1, 1),
 ('压力计', '2', 'sys_device_type', 2, 1),
 ('水泵', '3', 'sys_device_type', 3, 1),
+('水质监测仪', '4', 'sys_device_type', 4, 1),
+('环境传感器', '5', 'sys_device_type', 5, 1),
+('阀门', '6', 'sys_device_type', 6, 1),
 ('待接单', '10', 'wf_order_status', 1, 1),
 ('处理中', '20', 'wf_order_status', 2, 1),
 ('已闭环', '30', 'wf_order_status', 3, 1),
@@ -259,10 +269,10 @@ INSERT IGNORE INTO biz_meter_reading (id, account_id, device_id, reading_period,
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
-(1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16),
+(1, 10), (1, 11), (1, 13), (1, 14), (1, 15), (1, 16),
 (1, 30), (1, 31), (1, 32), (1, 35),
-(2, 10), (2, 11), (2, 12), (2, 13), (2, 16),
-(3, 10), (3, 11), (3, 12), (3, 16),
+(2, 10), (2, 11), (2, 13), (2, 16),
+(3, 10), (3, 11), (3, 16),
 (3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP
 
 -- 11. 第四阶段 初始数据

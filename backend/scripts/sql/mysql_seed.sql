@@ -108,21 +108,21 @@ INSERT IGNORE INTO `iot_gateway` (`id`, `gateway_sn`, `protocol`, `is_online`, `
 (1, 'GW-SH-PD-001', 'MQTT', 1, 15.2, 12, '丰泽东海网关'),
 (2, 'GW-SH-XH-002', 'Modbus', 0, 0, 0, '鲤城洛江网关');
 
-INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
-(1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 'float', '°C', 1.0, 1, '东海园区温度监控'),
-(1, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 'float', 'MPa', 1.0, 1, '东海园区水压'),
-(1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '东海园区瞬时流量'),
-(2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '丰泽2号泵站运行状态(1=开,0=关)'),
-(2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '丰泽2号泵站变频器频率'),
-(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '丰泽2号泵站功率'),
-(3, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 'float', 'NTU', 1.0, 1, '西湖水质浊度'),
-(3, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 'float', 'mg/L', 1.0, 1, '西湖余氯'),
-(3, 1, 'WQ.PH', '40024', 'ph', 0.05, 'float', '', 1.0, 1, '西湖pH值'),
-(4, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 'float', '°C', 1.0, 1, '鲤城地下泵站环境温度'),
-(4, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 'float', '%', 1.0, 1, '鲤城地下泵站环境湿度'),
-(4, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站硫化氢浓度'),
-(4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
-(4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, '鲤城地下泵站PM2.5');
+INSERT IGNORE INTO `iot_tag_mapping` (`id`, `point_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `scaling_factor`, `is_active`, `remark`) VALUES
+(1, 1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 1.0, 1, '东海园区温度监控'),
+(2, 2, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 1.0, 1, '东海园区水压'),
+(3, 3, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 1.0, 1, '东海园区瞬时流量'),
+(4, 5, 2, 'Pump.Status', '10001', 'status', 0.0, 1.0, 1, '丰泽2号泵站运行状态'),
+(5, 6, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 1.0, 1, '丰泽2号泵站变频器频率'),
+(6, 7, 2, 'Pump.Power', '40012', 'power', 0.5, 1.0, 1, '丰泽2号泵站功率'),
+(7, 8, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 1.0, 1, '西湖水质浊度'),
+(8, 9, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 1.0, 1, '西湖余氯'),
+(9, 10, 1, 'WQ.PH', '40024', 'ph', 0.05, 1.0, 1, '西湖pH值'),
+(10, 11, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 1.0, 1, '鲤城地下泵站环境温度'),
+(11, 12, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 1.0, 1, '鲤城地下泵站环境湿度'),
+(12, 13, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 1.0, 1, '鲤城地下泵站硫化氢浓度'),
+(13, 14, 2, 'ENV.CO', '40036', 'co', 0.1, 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
+(14, 15, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 1.0, 1, '鲤城地下泵站PM2.5');
 -- 3. DMA分区测试数据 (以泉州市进行设计分区)
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (101, 0, '泉州市供水总管网', 1, 1),
@@ -165,7 +165,23 @@ INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, site_i
 (3, 'WQ_01', '西湖水质监测仪', 4, 3),
 (4, 'ENV_01', '鲤城地下泵站环境传感器', 5, 4);
 
--- 5. DMA 与 设备资产 绑定关系
+-- 4.1 物理测点测试数据 (为设备赋予业务测点属性)
+INSERT IGNORE INTO ast_measuring_point (id, device_id, point_code, point_name, point_category, data_type, unit) VALUES 
+(1, 1, 'METER_IN_01_TEMP', '进水温度', 4, 'float', '°C'),
+(2, 1, 'METER_IN_01_PRESS', '进水压力', 2, 'float', 'MPa'),
+(3, 1, 'METER_IN_01_FLOW', '进水瞬时流量', 1, 'float', 'm³/h'),
+(4, 1, 'METER_IN_01_TOTAL', '进水累计流量', 1, 'float', 'm³'),
+(5, 2, 'PUMP_01_STATUS', '主泵运行状态', 4, 'int', ''),
+(6, 2, 'PUMP_01_FREQ', '主泵运行频率', 4, 'float', 'Hz'),
+(7, 2, 'PUMP_01_POWER', '主泵运行功率', 5, 'float', 'kW'),
+(8, 3, 'WQ_01_TURB', '水质浊度', 3, 'float', 'NTU'),
+(9, 3, 'WQ_01_CHL', '余氯', 3, 'float', 'mg/L'),
+(10, 3, 'WQ_01_PH', 'pH值', 3, 'float', ''),
+(11, 4, 'ENV_01_TEMP', '环境温度', 4, 'float', '°C'),
+(12, 4, 'ENV_01_HUM', '环境湿度', 4, 'float', '%'),
+(13, 4, 'ENV_01_H2S', '硫化氢浓度', 4, 'float', 'ppm'),
+(14, 4, 'ENV_01_CO', '一氧化碳浓度', 4, 'float', 'ppm'),
+(15, 4, 'ENV_01_PM25', 'PM2.5', 4, 'float', 'ug/m³');
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 东海
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 丰泽
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 东海

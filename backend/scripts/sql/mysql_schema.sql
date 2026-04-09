@@ -6,7 +6,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, ast_site, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, ast_site, ast_measuring_point, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -189,6 +189,22 @@ CREATE TABLE IF NOT EXISTS ast_device (
     FOREIGN KEY (site_id) REFERENCES ast_site(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 7.1 物理测点表 (`ast_measuring_point`)
+CREATE TABLE IF NOT EXISTS ast_measuring_point (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id BIGINT NOT NULL COMMENT '所属设备ID',
+    point_code VARCHAR(50) NOT NULL COMMENT '测点编码',
+    point_name VARCHAR(100) NOT NULL COMMENT '测点名称 (如: 瞬时流量, 累计流量)',
+    point_category SMALLINT NOT NULL COMMENT '1-流量, 2-压力, 3-水质, 4-状态值, 5-电量',
+    data_type VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
+    unit VARCHAR(50) DEFAULT '' COMMENT '物理单位',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    UNIQUE KEY `uk_device_point` (device_id, point_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理设备输出测点表';
+
 -- 7.1 分区与设备关联表
 CREATE TABLE IF NOT EXISTS `dma_device_rel` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -217,22 +233,20 @@ CREATE TABLE `iot_gateway` (
 DROP TABLE IF EXISTS `iot_tag_mapping`;
 CREATE TABLE `iot_tag_mapping` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `device_id` BIGINT NOT NULL COMMENT '关联的资产设备ID',
+  `point_id` BIGINT NOT NULL COMMENT '关联的物理测点ID',
   `gateway_id` INT DEFAULT NULL COMMENT '关联的边缘网关ID',
   `tag_name` VARCHAR(100) NOT NULL COMMENT '原始测点标签名 (如 PLC.S7.Temp)',
   `plc_address` VARCHAR(100) DEFAULT '' COMMENT 'PLC寄存器地址',
-  `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名 (如 temperature)',
+  `standard_name` VARCHAR(100) NOT NULL COMMENT '时序库全局标签名 (如 PUMP_01_PRESS)',
   `deadband` FLOAT DEFAULT 0.0 COMMENT '死区过滤阈值',
-  `data_type` VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
-  `unit` VARCHAR(50) DEFAULT '' COMMENT '单位 (如 °C, MPa)',
   `scaling_factor` FLOAT DEFAULT 1.0 COMMENT '缩放因子',
   `is_active` TINYINT(1) DEFAULT 1 COMMENT '是否启用',
   `remark` VARCHAR(255) DEFAULT '' COMMENT '备注说明',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `uk_tag_device` (`device_id`, `tag_name`),
+  UNIQUE KEY `uk_tag_point` (`point_id`, `tag_name`),
   CONSTRAINT `fk_tag_gateway` FOREIGN KEY (`gateway_id`) REFERENCES `iot_gateway` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_tag_device` FOREIGN KEY (`device_id`) REFERENCES `ast_device` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_tag_point` FOREIGN KEY (`point_id`) REFERENCES `ast_measuring_point` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='物联网测点与标准属性映射表';
 
 -- 8. 字典类型表

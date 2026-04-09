@@ -85,18 +85,39 @@
 
 ### 2.2 资产、设备与物联网网关元数据 (Assets & IoT)
 
-**4. 设备台账表 (`ast_device`)**
+**6. 物理站点台账表 (`ast_site`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `id` | BIGINT | - | N | 主键 | 唯一标识 |
-| `device_code` | VARCHAR | 50 | N | - | 设备唯一编码 (关联 TDengine `device_id`) |
+| `site_code` | VARCHAR | 50 | N | - | 站点唯一编码 |
+| `site_name` | VARCHAR | 100 | N | - | 站点名称 |
+| `site_type` | SMALLINT | - | N | - | 1-水厂, 2-加压泵站, 3-二供泵房, 4-管网监测点 |
+| `zone_id` | BIGINT | - | Y | NULL | 所属DMA分区ID |
+| `dept_id` | BIGINT | - | Y | NULL | 所属归管部门ID |
+
+**7. 设备台账表 (`ast_device`)**
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|---|---|---|---|---|---|
+| `id` | BIGINT | - | N | 主键 | 唯一标识 |
+| `device_code` | VARCHAR | 50 | N | - | 设备唯一编码 |
 | `device_name` | VARCHAR | 200 | N | - | 设备名称 |
-| `device_type` | SMALLINT | - | N | - | 字典: 1-水表, 2-阀门, 3-泵, 4-压力计 |
+| `device_type` | SMALLINT | - | N | - | 字典: 1-智能水表, 2-压力计, 3-水泵 |
+| `site_id` | BIGINT | - | Y | NULL | 关联的站点 ID |
 | `install_date` | DATE | - | Y | - | 安装日期 |
-| `gis_coord` | VARCHAR | 100 | Y | - | GIS 坐标 (Lng, Lat, Alt) |
 | `status` | SMALLINT | - | N | 1 | 状态: 1-在线, 2-离线, 3-维修中 |
 
-**5. 网关表 (`iot_gateway`)**
+**7.1 物理测点表 (`ast_measuring_point`)**
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|---|---|---|---|---|---|
+| `id` | BIGINT | - | N | 主键 | 唯一标识 |
+| `device_id` | BIGINT | - | N | - | 归属的设备 ID |
+| `point_code`| VARCHAR | 50 | N | - | 测点编码 (如 `METER_IN_01_FLOW`) |
+| `point_name`| VARCHAR | 100 | N | - | 测点名称 (如: 瞬时流量, 累计流量, 压力) |
+| `point_category` | SMALLINT | - | N | - | 1-流量, 2-压力, 3-水质, 4-状态值, 5-电量 |
+| `data_type` | VARCHAR | 50 | Y | 'float' | 数据类型 |
+| `unit` | VARCHAR | 50 | Y | '' | 物理单位 (如 m³/h, MPa) |
+
+**8. 网关表 (`iot_gateway`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `id` | BIGINT | - | N | 主键 | 唯一标识 |
@@ -104,14 +125,15 @@
 | `protocol` | VARCHAR | 50 | N | 'MQTT' | 接入协议: MQTT/Modbus/OPC |
 | `is_online` | SMALLINT | - | N | 0 | 在线状态: 1-在线, 0-离线 |
 
-**6. 测点与时序标签映射表 (`iot_tag_mapping`)**
+**9. 测点与时序标签映射表 (`iot_tag_mapping`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `id` | BIGINT | - | N | 主键 | 唯一标识 |
-| `device_id` | BIGINT | - | N | - | 关联设备 ID |
+| `point_id` | BIGINT | - | N | - | 关联物理测点 ID (`ast_measuring_point`) |
 | `gateway_id`| BIGINT | - | Y | - | 关联网关 ID |
 | `plc_address`| VARCHAR | 100 | Y | - | 底层寄存器地址 (如 `40001`) |
-| `ts_tag_name`| VARCHAR | 100 | N | - | 时序库全局标签 (如 `PUMP_01_PRESS`) |
+| `tag_name` | VARCHAR | 100 | N | - | 原始标签名 |
+| `standard_name` | VARCHAR | 100 | N | - | 时序库全局标签 (如 `PUMP_01_PRESS`) |
 | `deadband` | DECIMAL | 10,4 | Y | 0 | 死区/毛刺过滤阈值 |
 
 ### 2.3 拓扑与 DMA 分区 (Topology & DMA)

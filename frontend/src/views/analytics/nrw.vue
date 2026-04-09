@@ -105,7 +105,7 @@ const customColors = [
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/v1/data-center/analytics/nrw', { params: { month: month.value } })
+    const res = await request.get('/api/v1/data-center/analytics/nrw', { params: { month: dateRange.value[0].getMonth() + 1 } })
     tableData.value = res || []
     if (tableData.value.length > 0) {
       handleRowClick(tableData.value[0])

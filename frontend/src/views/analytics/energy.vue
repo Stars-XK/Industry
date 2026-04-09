@@ -248,4 +248,8 @@ onMounted(() => {
   border-radius: 12px;
   overflow: hidden;
 }
+
+.success-tag { background-color: var(--el-color-success-light-9); color: var(--el-color-success); font-weight: bold; }
+.warning-tag { background-color: var(--el-color-warning-light-9); color: var(--el-color-warning); font-weight: bold; }
+.danger-tag { background-color: var(--el-color-danger-light-9); color: var(--el-color-danger); font-weight: bold; }
 </style>

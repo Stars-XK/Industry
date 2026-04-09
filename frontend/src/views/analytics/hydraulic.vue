@@ -174,7 +174,7 @@ onMounted(() => {
   flex: 1;
 }
 .industrial-section {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-bg-color);
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   overflow: hidden;
@@ -188,7 +188,7 @@ onMounted(() => {
   font-size: 15px;
   color: var(--el-text-color-primary);
   border-bottom: 1px solid var(--el-border-color-light);
-  background: var(--el-bg-color-overlay);
+  background: var(--el-bg-color);
   letter-spacing: 0.5px;
 }
 .section-content {
@@ -199,7 +199,7 @@ onMounted(() => {
 .result-panel {
   margin-top: 32px;
   padding: 24px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-light);
   border-left: 4px solid var(--el-color-primary);
@@ -227,7 +227,7 @@ onMounted(() => {
 .text-warning { color: var(--el-color-warning); }
 .text-neon { color: var(--el-color-primary); }
 .map-placeholder {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-bg-color);
   height: 100%;
   min-height: 500px;
   border-radius: 12px;

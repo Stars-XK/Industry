@@ -245,7 +245,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: var(--el-fill-color-light);
+  background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-light);
   overflow: hidden;
@@ -259,8 +259,8 @@ onUnmounted(() => {
   border-top: none;
   border-radius: 0 0 10px 10px;
   position: relative;
-  background: var(--el-fill-color-dark);
-  box-shadow: inset 0 -10px 30px var(--el-color-primary-light-8);
+  background: var(--el-fill-color-lighter);
+  box-shadow: inset 0 -10px 20px var(--el-color-primary-light-9);
 }
 .water-level {
   position: absolute;
@@ -285,7 +285,7 @@ onUnmounted(() => {
 .pipe-horizontal {
   width: 100px;
   height: 20px;
-  background: var(--el-fill-color-light);
+  background: var(--el-bg-color);
   border-top: 1px solid var(--el-color-primary-light-8);
   border-bottom: 1px solid var(--el-color-primary-light-8);
   position: relative;
@@ -341,7 +341,7 @@ onUnmounted(() => {
 }
 /* 数据面板 */
 .data-panel {
-  background: var(--el-fill-color-dark);
+  background: var(--el-fill-color-lighter);
   padding: 15px;
   border-radius: 8px;
   width: 100%;

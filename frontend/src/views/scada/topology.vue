@@ -326,7 +326,7 @@ onUnmounted(() => {
   flex: 1;
   width: 100%;
   position: relative;
-  background: var(--el-fill-color-light);
+  background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-light);
   overflow: hidden;
@@ -379,7 +379,7 @@ onUnmounted(() => {
   justify-content: space-between;
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
-  background: var(--el-fill-color-light);
+  background: var(--el-bg-color);
   padding: 4px 8px;
   border-radius: 6px;
   border: 1px solid var(--el-border-color-light);

@@ -253,7 +253,7 @@ onMounted(() => {
   font-weight: 600;
   font-family: "SF Mono", Consolas, monospace;
 }
-.text-white { color: var(--el-text-color-primary); }
+.text-white { color: var(--el-text-color-regular); }
 .text-blue { color: var(--el-color-primary); }
 .text-green { color: var(--el-color-success); }
 .action-col {

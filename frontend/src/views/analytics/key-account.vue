@@ -280,7 +280,7 @@ onMounted(() => {
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
 }
 
@@ -294,7 +294,7 @@ onMounted(() => {
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
-  background: var(--el-fill-color-light);
+  background: var(--el-fill-color-lighter);
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid var(--el-border-color-light);

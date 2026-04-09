@@ -195,11 +195,11 @@ const saveConfig = async () => {
   height: 600px;
   border-top: 1px solid var(--el-border-color-light);
   overflow: hidden;
-  background: var(--el-box-shadow-light);
+  background: var(--el-bg-color);
 }
 .panel-subtitle {
   padding: 16px 20px;
-  background-color: var(--el-box-shadow);
+  background-color: var(--el-fill-color-blank);
   border-bottom: 1px solid var(--el-border-color-light);
   font-weight: 600;
   font-size: 14px;
@@ -208,7 +208,7 @@ const saveConfig = async () => {
 .components-panel {
   width: 240px;
   border-right: 1px solid var(--el-border-color-light);
-  background-color: var(--el-fill-color-light);
+  background-color: var(--el-fill-color-blank);
 }
 .component-list {
   padding: 16px;
@@ -222,7 +222,7 @@ const saveConfig = async () => {
   border-radius: 6px;
   cursor: grab;
   text-align: center;
-  background-color: var(--el-fill-color-light);
+  background-color: var(--el-fill-color-blank);
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   color: var(--el-text-color-regular);
   font-size: 13px;
@@ -247,7 +247,7 @@ const saveConfig = async () => {
 }
 .toolbar {
   padding: 12px 20px;
-  background-color: var(--el-fill-color-light);
+  background-color: var(--el-fill-color-blank);
   border-bottom: 1px solid var(--el-border-color-light);
   display: flex;
   gap: 12px;
@@ -301,7 +301,7 @@ const saveConfig = async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--el-border-color);
+  color: var(--el-text-color-secondary);
   font-size: 14px;
   letter-spacing: 1px;
   pointer-events: none;
@@ -309,7 +309,7 @@ const saveConfig = async () => {
 .props-panel {
   width: 320px;
   border-left: 1px solid var(--el-border-color-light);
-  background-color: var(--el-fill-color-light);
+  background-color: var(--el-fill-color-blank);
 }
 .props-content {
   padding: 20px;

@@ -40,20 +40,21 @@
           >
             <template #default="{ node, data }">
               <div class="tree-node">
-                <div class="node-icon zone">
-                  <!-- Zone Map/Area Icon -->
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                <div class="node-icon" :class="data.level">
+                  <el-icon v-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
+                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
-                <span class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
+                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
+                <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
                     <el-icon><More /></el-icon>
                   </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item command="addZone">添加子分区</el-dropdown-item>
-                      <el-dropdown-item command="addSite">添加物理站点</el-dropdown-item>
+                      <el-dropdown-item v-if="data.level === 'zone'" command="addZone">添加子分区</el-dropdown-item>
+                      <el-dropdown-item v-if="data.level === 'zone'" command="addSite">添加物理站点</el-dropdown-item>
                       <el-dropdown-item command="edit">编辑节点信息</el-dropdown-item>
                       <el-dropdown-item command="delete" divided class="text-danger">删除该节点</el-dropdown-item>
                     </el-dropdown-menu>
@@ -149,7 +150,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
+import { MapLocation, HomeFilled, Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 
 const filterText = ref('')

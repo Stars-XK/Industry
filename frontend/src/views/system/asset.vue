@@ -41,9 +41,9 @@
             <template #default="{ node, data }">
               <div class="tree-node">
                 <div class="node-icon" :class="data.level">
-                  <el-icon v-if="data.level === 'org'" :size="14"><OfficeBuilding /></el-icon>
-                  <el-icon v-else-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
-                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
+                  <el-icon v-if="data.level === 'org'" :size="10"><OfficeBuilding /></el-icon>
+                  <el-icon v-else-if="data.level === 'zone'" :size="10"><MapLocation /></el-icon>
+                  <el-icon v-else-if="data.level === 'site'" :size="10"><HomeFilled /></el-icon>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
@@ -271,8 +271,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 50px);
-  padding: 16px;
-  background-color: var(--el-bg-color-page);
+  padding: 2%;
   color: #11181c;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -282,7 +281,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #fcfcfc;
+  background-color: #ffffff;
   border: 1px solid #eaeaea;
   border-radius: 12px;
   overflow: hidden;
@@ -390,8 +389,10 @@ const getPointColorClass = (type: string) => {
   border-radius: 6px;
   margin-bottom: 2px;
 }
+.sleek-tree :deep(.el-tree-node__content:hover) {
+  background-color: transparent;
+}
 .sleek-tree :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
   font-weight: 500;
 }
@@ -434,7 +435,7 @@ const getPointColorClass = (type: string) => {
 /* Right Main Content */
 .ledger-content {
   flex: 1;
-  background: #fcfcfc;
+  background: #ffffff;
   overflow-y: auto;
   padding: 24px;
 }
@@ -448,7 +449,7 @@ const getPointColorClass = (type: string) => {
   color: #889096;
 }
 .empty-icon {
-  font-size: 48px;
+  font-size: 32px;
   margin-bottom: 16px;
   opacity: 0.5;
 }

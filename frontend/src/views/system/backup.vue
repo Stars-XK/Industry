@@ -64,10 +64,10 @@
                 <el-button type="danger" link :disabled="scope.row.status !== 1">
                   <el-icon style="margin-right: 2px;"><RefreshLeft /></el-icon> 一键恢复
                 </el-button>
-                      </div>
-      </template>
+              </template>
             </el-popconfirm>
-          </template>
+          </div>
+        </template>
         </el-table-column>
       </el-table>
       <div class="pagination-container">

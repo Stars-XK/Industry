@@ -1,13 +1,20 @@
 <template>
   <div class="app-container fade-in-up scada-topology">
-    <el-row :gutter="24" style="height: 100%;">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">2D拓扑与分区导航</h1>
+        <p class="page-subtitle">2D Topology & DMA Navigation</p>
+      </div>
+    </div>
+    
+    <el-row :gutter="24" class="topology-content">
       <!-- 左侧 2D 拓扑画布 -->
-      <el-col :span="14" style="height: 100%;">
-        <div class="box-card" style="height: 100%;">
+      <el-col :span="14" class="full-height">
+        <div class="box-card">
           <div class="panel-header">
             <div>
               <div class="header-title">供水 DMA 拓扑全景导航</div>
-              <div class="header-subtitle">2D Topology Canvas (Scroll to zoom, drag to pan)</div>
+              <div class="header-subtitle">Scroll to zoom, drag to pan</div>
             </div>
           </div>
           <div class="canvas-container" v-loading="loading">
@@ -16,8 +23,8 @@
         </div>
       </el-col>
       <!-- 右侧详情/设备列表区 -->
-      <el-col :span="10" style="height: 100%;">
-        <div class="box-card" style="height: 100%;">
+      <el-col :span="10" class="full-height">
+        <div class="box-card">
           <div class="panel-header">
             <div>
               <div class="header-title">分区设备关联信息</div>
@@ -41,7 +48,7 @@
                 </el-tag>
               </el-descriptions-item>
             </el-descriptions>
-            <div class="section-title" style="margin-top: 24px; margin-bottom: 12px; color: var(--el-text-color-primary); font-weight: 600;">挂载设备清单及实时遥测数据</div>
+            <div class="section-title">挂载设备清单及实时遥测数据</div>
             <el-table
               :data="deviceList"
               style="width: 100%;"
@@ -235,50 +242,97 @@ onUnmounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  min-height: calc(100vh - 60px);
+  color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   flex-direction: column;
-  padding: 20px;
 }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.topology-content {
+  flex: 1;
+  min-height: 0; /* needed for flex children to scroll properly */
+}
+
+.full-height {
+  height: 100%;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
 .header-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
+
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid var(--el-border-color-light);
-  padding-bottom: 16px;
 }
+
 .header-subtitle {
-  font-size: 12px;
-  color: var(--el-text-color-regular);
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .canvas-container {
   flex: 1;
   width: 100%;
   position: relative;
   background: var(--el-fill-color-light);
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--el-border-color-light);
+  overflow: hidden;
 }
+
 .chart {
   width: 100%;
   height: 100%;
@@ -286,44 +340,61 @@ onUnmounted(() => {
   top: 0;
   left: 0;
 }
+
 .empty-tip {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .detail-content {
   flex: 1;
   overflow: auto;
+  padding-right: 8px;
 }
+
+.section-title {
+  margin-top: 32px;
+  margin-bottom: 16px;
+  color: var(--el-text-color-primary);
+  font-weight: 600;
+  font-size: 15px;
+}
+
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-primary);
 }
+
 .telemetry-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
+
 .telemetry-item {
   display: flex;
   justify-content: space-between;
   font-family: "SF Mono", Consolas, monospace;
-  font-size: 12px;
+  font-size: 13px;
   background: var(--el-fill-color-light);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
   border: 1px solid var(--el-border-color-light);
 }
+
 .telemetry-item .t-key {
   color: var(--el-text-color-regular);
 }
+
 .telemetry-item .t-val {
   color: var(--el-color-primary);
   font-weight: 600;
 }
+
 .industrial-tag {
   border: none;
 }

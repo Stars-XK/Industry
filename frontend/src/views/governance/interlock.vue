@@ -158,11 +158,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -222,7 +232,7 @@ onMounted(() => {
   background: var(--el-bg-color-overlay);
 }
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-regular);
@@ -237,16 +247,16 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 .cause-text {
-  background: rgba(230, 162, 60, 0.05);
-  color: #E6A23C;
-  border: 1px solid rgba(230, 162, 60, 0.2);
-  box-shadow: inset 0 0 10px rgba(230, 162, 60, 0.05);
+  background: var(--el-color-warning-light-9);
+  color: var(--el-color-warning);
+  border: 1px solid var(--el-color-warning-light-8);
+  box-shadow: inset 0 0 10px var(--el-color-warning-light-9);
 }
 .effect-text {
-  background: rgba(103, 194, 58, 0.05);
-  color: #67C23A;
-  border: 1px solid rgba(103, 194, 58, 0.2);
-  box-shadow: inset 0 0 10px rgba(103, 194, 58, 0.05);
+  background: var(--el-color-success-light-9);
+  color: var(--el-color-success);
+  border: 1px solid var(--el-color-success-light-8);
+  box-shadow: inset 0 0 10px var(--el-color-success-light-9);
 }
 .delay-tag {
   font-family: "SF Mono", Consolas, monospace;
@@ -259,12 +269,12 @@ onMounted(() => {
 }
 .link-icon {
   font-size: 16px;
-  color: #475569;
+  color: var(--el-border-color-light);
   vertical-align: middle;
 }
 .-danger {
-  background: transparent;
-  border: 1px solid rgba(245, 108, 108, 0.5);
+  background: var(--el-fill-color-blank);
+  border: 1px solid var(--el-color-danger-light-5);
   color: var(--el-color-danger);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   font-family: "SF Pro Display", sans-serif;
@@ -273,7 +283,7 @@ onMounted(() => {
   cursor: pointer;
 }
 .-danger:hover {
-  background: rgba(245, 108, 108, 0.1);
+  background: var(--el-color-danger-light-9);
   box-shadow: 0 0 15px var(--el-color-danger-light-5);
   border-color: var(--el-color-danger);
 }

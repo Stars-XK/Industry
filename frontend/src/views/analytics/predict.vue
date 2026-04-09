@@ -1,18 +1,18 @@
 <template>
   <div class="app-container fade-in-up">
-    <div class="box-card">
-      <div class="panel-header">
-        <div>
-          <div class="header-title">AI 用水趋势预测分析 (ARIMA / LSTM)</div>
-          <div class="header-subtitle">Predictive Analytics & Forecasting</div>
-        </div>
-        <div class="header-actions">
-          <el-select v-model="listQuery.zoneId" @change="fetchData" class="industrial-select" style="width: 240px" placeholder="选择预测区域">
-            <el-option label="东海科技园区" value="201" />
-            <el-option label="洛江开发区" value="202" />
-          </el-select>
-        </div>
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">AI 用水趋势预测分析 (ARIMA / LSTM)</h1>
+        <p class="page-subtitle">Predictive Analytics & Forecasting</p>
       </div>
+      <div class="header-actions">
+        <el-select v-model="listQuery.zoneId" @change="fetchData" class="industrial-select" style="width: 240px" placeholder="选择预测区域">
+          <el-option label="东海科技园区" value="201" />
+          <el-option label="洛江开发区" value="202" />
+        </el-select>
+      </div>
+    </div>
+    <div class="box-card">
       <div class="model-info" v-if="predictData" v-loading="loading">
         <el-row :gutter="24">
           <el-col :span="6">
@@ -80,7 +80,7 @@ const initChart = () => {
       legend: {
         data: ['实际用量', 'AI 预测曲线', '置信区间'],
         bottom: 0,
-        textStyle: { color: '#94a3b8' }
+        textStyle: { color: 'var(--el-text-color-secondary)' }
       },
       grid: { left: '3%', right: '4%', bottom: '10%', top: '15%', containLabel: true },
       xAxis: {
@@ -88,16 +88,16 @@ const initChart = () => {
         boundaryGap: false,
         data: dates,
         axisLine: { lineStyle: { color: 'var(--el-border-color-light)' } },
-        axisLabel: { color: '#94a3b8' },
+        axisLabel: { color: 'var(--el-text-color-secondary)' },
         splitLine: { show: false }
       },
       yAxis: {
         type: 'value',
         name: '水量 (m³)',
-        nameTextStyle: { color: '#94a3b8' },
+        nameTextStyle: { color: 'var(--el-text-color-secondary)' },
         scale: true,
         axisLine: { show: false },
-        axisLabel: { color: '#94a3b8' },
+        axisLabel: { color: 'var(--el-text-color-secondary)' },
         splitLine: { lineStyle: { color: 'var(--el-border-color-extra-light)', type: 'dashed' } }
       },
       series: [
@@ -122,7 +122,7 @@ const initChart = () => {
           name: '实际用量',
           type: 'line',
           data: actualData,
-          itemStyle: { color: '#67C23A' },
+          itemStyle: { color: 'var(--el-color-success)' },
           lineStyle: { width: 3, shadowColor: 'var(--el-color-success-light-5)', shadowBlur: 10 },
           symbolSize: 8
         },
@@ -130,7 +130,7 @@ const initChart = () => {
           name: 'AI 预测曲线',
           type: 'line',
           data: predData,
-          itemStyle: { color: '#00d8ff' },
+          itemStyle: { color: 'var(--el-color-primary)' },
           lineStyle: { type: 'dashed', width: 2, shadowColor: 'var(--el-color-primary-light-5)', shadowBlur: 10 },
           symbol: 'emptyCircle',
           symbolSize: 6
@@ -180,70 +180,63 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 }
-.toolbar, .header-actions {
-  display: flex;
-  gap: 12px;
-}
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-.panel-header {
+
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--el-border-color-light);
-  padding-bottom: 16px;
 }
-.header-title {
-  font-size: 20px;
-  font-weight: 600;
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
   color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
   letter-spacing: 0.5px;
 }
-.header-subtitle {
-  font-size: 12px;
-  color: var(--el-text-color-regular);
-  margin-top: 4px;
-  font-family: "SF Mono", Consolas, monospace;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
 .model-info {
   background: var(--el-bg-color-overlay);
-  padding: 24px;
-  border-radius: 8px;
+  padding: 24px 32px;
+  border-radius: 12px;
   margin-bottom: 24px;
   border: 1px solid var(--el-border-color-light);
 }
+
 .stat-item {
   display: flex;
   flex-direction: column;
@@ -262,24 +255,18 @@ onMounted(() => {
   font-family: "SF Mono", Consolas, monospace;
 }
 .text-white { color: var(--el-text-color-primary); }
-.text-blue { 
-  color: var(--el-color-primary); 
-  text-shadow: 0 0 15px var(--el-color-primary-light-5);
-}
-.text-green { 
-  color: #67C23A; 
-  text-shadow: 0 0 15px var(--el-color-success-light-5);
-}
+.text-blue { color: var(--el-color-primary); }
+.text-green { color: var(--el-color-success); }
 .action-col {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 .chart-container {
-  height: 500px;
+  min-height: 400px;
   padding: 20px;
   border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--el-bg-color-overlay);
   flex: 1;
 }

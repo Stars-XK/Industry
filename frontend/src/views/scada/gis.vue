@@ -180,7 +180,7 @@ const renderLayers = () => {
   // Render Pipes
   pipelines.value.forEach(path => {
     const polyline = L.polyline(path as L.LatLngExpression[], { 
-      color: '#00d8ff', 
+      color: 'var(--el-color-primary)', 
       weight: 3, 
       opacity: 0.6,
       dashArray: '5, 10',
@@ -192,9 +192,9 @@ const renderLayers = () => {
 
   // Render Markers
   assets.value.forEach(asset => {
-    let color = '#00d8ff'; // default blue for pumps
-    if (asset.type === 'pressure') color = '#10b981'; // green
-    if (asset.type === 'alarm' && asset.status === 'critical') color = '#ef4444'; // red
+    let color = 'var(--el-color-primary)'; // default blue for pumps
+    if (asset.type === 'pressure') color = 'var(--el-color-success)'; // green
+    if (asset.type === 'alarm' && asset.status === 'critical') color = 'var(--el-color-danger)'; // red
     if (asset.type === 'alarm' && asset.status === 'warning') color = 'var(--el-color-warning)'; // yellow
 
     const markerHtml = `
@@ -279,7 +279,7 @@ onUnmounted(() => {
 <style>
 /* Global Leaflet Overrides for Dark Theme */
 .leaflet-container {
-  background: var(--el-bg-color-page) !important;
+  background: var(--el-bg-color-page) ;
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
 .dark-popup-wrapper .leaflet-popup-content-wrapper {
@@ -296,7 +296,7 @@ onUnmounted(() => {
   border: 1px solid var(--el-color-primary-light-8);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
-  color: var(--el-text-color-regular) !important;
+  color: var(--el-text-color-regular) ;
 }
 .industrial-popup {
   padding: 16px;
@@ -309,7 +309,7 @@ onUnmounted(() => {
 }
 .industrial-popup .divider {
   height: 1px;
-  background: linear-gradient(90deg, rgba(0,216,255,0.3), transparent);
+  background: linear-gradient(90deg, var(--el-color-primary-light-8), transparent);
   margin-bottom: 12px;
 }
 .industrial-popup p {
@@ -324,7 +324,7 @@ onUnmounted(() => {
 }
 .industrial-tooltip {
   background: var(--el-bg-color-overlay);
-  border: 1px solid #1e293b;
+  border: 1px solid var(--el-bg-color-overlay);
   color: var(--el-text-color-primary);
   font-family: monospace;
   font-size: 12px;
@@ -471,7 +471,7 @@ h3 {
 
 .desc {
   margin: 0 0 16px 0;
-  color: #64748b;
+  color: var(--el-border-color);
   font-size: 13px;
 }
 
@@ -510,14 +510,14 @@ h3 {
   height: 10px;
   border-radius: 50%;
 }
-.pump-dot { background: #00d8ff; box-shadow: 0 0 8px #00d8ff; }
-.pressure-dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
-.alarm-dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+.pump-dot { background: var(--el-color-primary); box-shadow: 0 0 8px var(--el-color-primary); }
+.pressure-dot { background: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success); }
+.alarm-dot { background: var(--el-color-danger); box-shadow: 0 0 8px var(--el-color-danger); }
 
 .line-icon {
   width: 14px;
   height: 3px;
-  background: #00d8ff;
+  background: var(--el-color-primary);
   opacity: 0.8;
 }
 
@@ -570,9 +570,9 @@ h3 {
   justify-content: center;
   font-size: 16px;
 }
-.asset-icon.pump { background: rgba(0, 216, 255, 0.1); color: var(--el-color-primary); }
-.asset-icon.pressure { background: rgba(16, 185, 129, 0.1); color: var(--el-color-success); }
-.asset-icon.alarm { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.asset-icon.pump { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
+.asset-icon.pressure { background: var(--el-color-success-light-9); color: var(--el-color-success); }
+.asset-icon.alarm { background: var(--el-color-danger-light-9); color: var(--el-color-danger); }
 
 .asset-info h4 {
   margin: 0 0 4px 0;
@@ -586,8 +586,8 @@ h3 {
   font-family: monospace;
 }
 .status.normal { color: var(--el-color-success); }
-.status.warning { color: #f59e0b; }
-.status.critical { color: #ef4444; }
+.status.warning { color: var(--el-color-warning); }
+.status.critical { color: var(--el-color-danger); }
 
 /* Animations */
 .fade-in-down {

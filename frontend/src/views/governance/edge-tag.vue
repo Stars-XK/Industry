@@ -147,7 +147,7 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
+        <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
         <el-button  @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
@@ -320,11 +320,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -390,7 +400,7 @@ onMounted(() => {
 }
 .offline-card {
   opacity: 0.6;
-  border-color: rgba(245, 108, 108, 0.2);
+  border-color: var(--el-color-danger-light-8);
 }
 .gw-header {
   display: flex;
@@ -426,8 +436,8 @@ onMounted(() => {
   color: var(--el-color-primary);
 }
 .high-latency {
-  color: #F56C6C !important;
-  text-shadow: 0 0 10px rgba(245, 108, 108, 0.5);
+  color: var(--el-color-danger) ;
+  text-shadow: 0 0 10px var(--el-color-danger-light-5);
 }
 .gw-actions {
   text-align: right;
@@ -456,28 +466,28 @@ onMounted(() => {
   flex: 1;
 }
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-regular);
 }
 .-warning {
   border-color: var(--el-color-warning-light-5);
-  color: #E6A23C;
+  color: var(--el-color-warning);
 }
 .-warning:hover:not(:disabled) {
   background: var(--el-color-warning-light-9);
   box-shadow: 0 0 15px var(--el-color-warning-light-5);
-  border-color: #E6A23C;
+  border-color: var(--el-color-warning);
 }
 .-success {
   border-color: var(--el-color-success-light-5);
-  color: #67C23A;
+  color: var(--el-color-success);
 }
 .-success:hover:not(:disabled) {
   background: var(--el-color-success-light-9);
   box-shadow: 0 0 15px var(--el-color-success-light-5);
-  border-color: #67C23A;
+  border-color: var(--el-color-success);
 }
 .text-neon {
   color: var(--el-color-primary);

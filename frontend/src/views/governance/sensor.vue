@@ -50,7 +50,7 @@
                 </el-table-column>
                 <el-table-column prop="battery" label="电池剩余电量" min-width="150">
                   <template #default="{ row }">
-                    <el-progress :percentage="row.battery" :color="row.battery < 20 ? '#F56C6C' : '#00d8ff'" class="industrial-progress" />
+                    <el-progress :percentage="row.battery" :color="row.battery < 20 ? 'var(--el-color-danger)' : 'var(--el-color-primary)'" class="industrial-progress" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="life" label="预计寿命" width="100" align="center">
@@ -77,11 +77,21 @@ const sensors = ref([
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -162,7 +172,7 @@ const sensors = ref([
   flex: 1;
 }
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-regular);

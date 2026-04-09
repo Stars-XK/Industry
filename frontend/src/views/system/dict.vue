@@ -213,11 +213,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -274,7 +284,7 @@ onMounted(() => {
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--el-border-color-light);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--el-box-shadow-light);
 }
 .panel-title {
   font-size: 16px;
@@ -301,8 +311,8 @@ onMounted(() => {
   background: var(--el-fill-color-light);
 }
 .type-list li.active {
-  background: rgba(0, 216, 255, 0.1);
-  border-right: 3px solid #00d8ff;
+  background: var(--el-color-primary-light-9);
+  border-right: 3px solid var(--el-color-primary);
 }
 .type-name {
   color: var(--el-text-color-primary);

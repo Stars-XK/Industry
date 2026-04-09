@@ -120,77 +120,84 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px ;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-.pulse-tag {
-  animation: pulse 2s infinite;
-  background-color: var(--el-color-success-light-8);
-  border-color: var(--el-color-success-light-5);
-  color: var(--el-color-success);
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 var(--el-color-success-light-5); }
-  70% { box-shadow: 0 0 0 6px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
-}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-end;
+  margin-bottom: 24px;
 }
+
 .panel-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
+
 .panel-title span {
-  font-size: 12px;
-  color: var(--el-text-color-regular);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
+/* RTSP 矩阵 */
 .video-matrix {
   display: grid;
   gap: 16px;
   flex: 1;
-  height: calc(100% - 40px);
+  min-height: 0;
 }
 .grid-4 {
   grid-template-columns: repeat(2, 1fr);
@@ -201,47 +208,45 @@ onMounted(() => {
   grid-template-rows: repeat(3, 1fr);
 }
 .video-cell {
-  border: 1px solid var(--el-border-color-darker);
-  border-radius: 8px;
   position: relative;
   background: var(--el-fill-color-dark);
-  overflow: hidden;
-  box-shadow: inset 0 0 30px var(--el-color-black);
+  border: 1px solid var(--el-border-color-darker);
+  border-radius: 12px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 30px var(--el-color-black);
+  overflow: hidden;
 }
 .video-title {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, var(--el-color-black) 0%, transparent 100%);
-  color: var(--el-text-color-regular);
   padding: 12px 16px 24px;
+  background: linear-gradient(180deg, var(--el-color-black) 0%, transparent 100%);
+  color: #fff;
   font-size: 13px;
-  letter-spacing: 0.5px;
-  z-index: 2;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
+  z-index: 2;
+  letter-spacing: 0.5px;
 }
 .cam-status {
   width: 8px;
   height: 8px;
-  background-color: var(--el-color-success);
+  background: var(--el-color-success);
   border-radius: 50%;
   box-shadow: 0 0 8px var(--el-color-success);
 }
 .video-placeholder {
-  color: var(--el-text-color-regular);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 12px;
-  font-size: 14px;
-  letter-spacing: 1px;
+  color: var(--el-text-color-regular);
 }
 .cam-icon {
   font-size: 32px;
@@ -254,10 +259,11 @@ onMounted(() => {
   color: var(--el-color-danger);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1px;
+  padding: 2px 8px;
   display: flex;
   align-items: center;
   gap: 4px;
+  z-index: 2;
 }
 .video-overlay::before {
   content: '';
@@ -270,8 +276,10 @@ onMounted(() => {
 }
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50% { opacity: 0.4; }
 }
+
+/* 环境指标 */
 .env-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -280,33 +288,41 @@ onMounted(() => {
 .env-card {
   background: var(--el-fill-color-light);
   border: 1px solid var(--el-border-color-light);
+  padding: 20px;
   border-radius: 12px;
-  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.env-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--el-color-primary-light-5);
 }
 .env-label {
   font-size: 13px;
   color: var(--el-text-color-regular);
+  font-weight: 500;
 }
 .env-value {
-  font-size: 24px;
-  font-weight: 700;
-  font-family: "SF Mono", monospace;
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: "SF Mono", Consolas, monospace;
 }
 .env-unit {
-  font-size: 12px;
-  font-weight: 500;
-  color: #64748b;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
   font-family: "SF Pro Display", sans-serif;
+  margin-left: 4px;
 }
-.text-emerald { color: var(--el-color-success); }
 .text-cyan { color: var(--el-color-primary); }
-.bg-emerald { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success); }
+.text-emerald { color: var(--el-color-success); }
+.text-red { color: var(--el-color-danger); }
+.bg-emerald { background-color: var(--el-color-success); }
+.bg-red { background-color: var(--el-color-danger); }
+
+/* 门禁列表 */
 .access-list {
   display: flex;
   flex-direction: column;
@@ -316,58 +332,46 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
   background: var(--el-fill-color-light);
   border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 12px;
 }
 .access-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 .access-name {
   font-size: 14px;
-  color: var(--el-text-color-primary);
   font-weight: 500;
+  color: var(--el-text-color-primary);
 }
 .access-status {
-  font-size: 12px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .dot {
+  display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
 }
-.danger-btn {
-  background: transparent;
-  border: 1px solid var(--el-color-danger-light-5);
-  color: var(--el-color-danger);
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+.pulse-tag {
+  animation: pulse 2s infinite;
+  background-color: var(--el-color-success-light-9);
+  border-color: var(--el-color-success-light-5);
+  color: var(--el-color-success);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
 }
-.danger-btn:hover {
-  background: var(--el-color-danger-light-9);
-  box-shadow: 0 0 15px var(--el-color-danger-light-5);
-  color: var(--el-text-color-primary);
-}
-.page-header {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  margin: 0 0 8px 0;
-}
-.header-content p {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  margin: 0;
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 var(--el-color-success-light-5); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 </style>

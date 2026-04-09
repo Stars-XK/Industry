@@ -42,7 +42,7 @@
             <div v-if="scope.row.handler_name" class="handler-badge">
               <el-icon><User /></el-icon> {{ scope.row.handler_name }}
             </div>
-            <span v-else style="color: #64748b;">待派发</span>
+            <span v-else style="color: var(--el-border-color);">待派发</span>
           </template>
         </el-table-column>
         <el-table-column prop="status" label="流转状态" width="120">
@@ -195,46 +195,71 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  flex: 1;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
 .custom-table {
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  margin-top: 20px;
+  background: var(--el-fill-color-blank) ;
+  --el-table-header-text-color: var(--el-text-color-regular);
+  --el-table-tr-bg-color: transparent;
+  --el-table-text-color: var(--el-text-color-regular);
+  border: 1px solid var(--el-border-color-light);
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
+
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
+
 .status-indicator {
   display: flex;
   align-items: center;
@@ -247,12 +272,13 @@ onMounted(() => {
   height: 8px;
   border-radius: 50%;
 }
-.status-warning { color: #f59e0b; }
-.status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.status-warning { color: var(--el-color-warning); }
+.status-warning .dot { background-color: var(--el-color-warning); box-shadow: 0 0 8px var(--el-color-warning-light-5); }
 .status-primary { color: var(--el-color-primary); }
-.status-primary .dot { background-color: var(--el-color-primary); box-shadow: 0 0 8px #00d8ff; }
+.status-primary .dot { background-color: var(--el-color-primary); box-shadow: 0 0 8px var(--el-color-primary-light-5); }
 .status-success { color: var(--el-color-success); }
-.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
+.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success-light-5); }
+
 .priority-indicator {
   display: flex;
   align-items: center;
@@ -266,51 +292,34 @@ onMounted(() => {
   border-radius: 50%;
 }
 .priority-high { color: var(--el-color-danger); }
-.priority-high .dot { background-color: var(--el-color-danger); box-shadow: 0 0 6px #f43f5e; }
-.priority-medium { color: #f59e0b; }
-.priority-medium .dot { background-color: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.priority-high .dot { background-color: var(--el-color-danger); box-shadow: 0 0 6px var(--el-color-danger-light-5); }
+.priority-medium { color: var(--el-color-warning); }
+.priority-medium .dot { background-color: var(--el-color-warning); box-shadow: 0 0 6px var(--el-color-warning-light-5); }
 .priority-low { color: var(--el-text-color-regular); }
 .priority-low .dot { background-color: var(--el-text-color-regular); }
+
 .handler-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--el-color-success-light-9);
+  border: 1px solid var(--el-color-success-light-5);
   color: var(--el-color-success);
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
 }
+
 .action-btns {
   display: flex;
   gap: 12px;
 }
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
-/* Table styles */
-/* Dialog Styles */
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-}
-/* Form Styles */
-.page-header {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  margin: 0 0 8px 0;
-}
-.header-content p {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  margin: 0;
 }
 </style>

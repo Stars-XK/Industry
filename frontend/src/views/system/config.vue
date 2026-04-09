@@ -91,7 +91,7 @@ const configStore = useConfigStore();
 const activeTab = ref('basic');
 
 // 主题与深色模式相关
-const themeColor = ref(localStorage.getItem('theme-color') || '#3b82f6');
+const themeColor = ref(localStorage.getItem('theme-color') || 'var(--el-color-primary)');
 const isDark = ref(localStorage.getItem('theme-dark') === 'true' || document.documentElement.classList.contains('dark'));
 
 const toggleDark = (val: boolean) => {
@@ -170,6 +170,12 @@ const handleBatchSave = async () => {
 }
 
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);

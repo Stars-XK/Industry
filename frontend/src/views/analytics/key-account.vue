@@ -1,14 +1,16 @@
 <template>
   <div class="app-container fade-in-up">
-    <div class="box-card">
-      <div class="panel-header">
-        <div>
-          <div class="header-title">大用户档案与重点企业画像</div>
-          <div class="header-subtitle">Key Account & Enterprise Profile Management</div>
-        </div>
-        <el-button  @click="handleAdd">新增档案</el-button>
-          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">大用户档案与重点企业画像</h1>
+        <p class="page-subtitle">Key Account & Enterprise Profile Management</p>
       </div>
+      <div class="header-actions">
+        <el-button type="primary" @click="handleAdd">新增档案</el-button>
+        <el-button @click="showImport = true" icon="Upload">批量导入</el-button>
+      </div>
+    </div>
+    <div class="box-card">
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
           <el-table-column prop="account_no" label="大用户编号" width="150">
@@ -107,7 +109,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
+          <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
           <el-button  @click="submitForm">确定</el-button>
         </span>
       </template>
@@ -226,92 +228,85 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 }
-.toolbar, .header-actions {
-  display: flex;
-  gap: 12px;
-}
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-.panel-header {
+
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--el-border-color-light);
-  padding-bottom: 16px;
 }
-.header-title {
-  font-size: 20px;
-  font-weight: 600;
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
   color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
   letter-spacing: 0.5px;
 }
-.header-subtitle {
-  font-size: 12px;
-  color: var(--el-text-color-regular);
-  margin-top: 4px;
-  font-family: "SF Mono", Consolas, monospace;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.table-container {
+
+.box-card {
+  background: var(--el-bg-color);
   border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
+.table-container {
+  flex: 1;
+  border-radius: 12px;
   overflow: hidden;
   background: var(--el-bg-color-overlay);
-  flex: 1;
+  border: 1px solid var(--el-border-color-light);
 }
+
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-regular);
 }
+
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-light);
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid var(--el-border-color-light);
 }
+
 .text-neon { color: var(--el-color-primary); }
 .text-danger { color: var(--el-color-danger); }
-.industrial-tag {
-  border: none;
-}
+.industrial-tag { border: none; }
 .industrial-tag-plain {
-  background: var(--el-bg-color-overlay) !important;
-  border: 1px solid var(--el-border-color-light) !important;
-  color: var(--el-text-color-regular) !important;
+  background: var(--el-fill-color-light) ;
+  border: 1px solid var(--el-border-color-light) ;
+  color: var(--el-text-color-regular) ;
 }
 </style>

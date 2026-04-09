@@ -91,7 +91,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="zoneDialogVisible = false">取消</el-button>
+          <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="zoneDialogVisible = false">取消</el-button>
           <el-button  @click="submitZoneForm">确定</el-button>
         </span>
       </template>
@@ -119,7 +119,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="bindDialogVisible = false">取消</el-button>
+          <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="bindDialogVisible = false">取消</el-button>
           <el-button  @click="submitBindForm">确定挂载</el-button>
         </span>
       </template>
@@ -288,11 +288,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -359,7 +369,7 @@ onMounted(() => {
   padding: 16px;
 }
 .industrial-tree {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   color: var(--el-text-color-primary);
 }
 .custom-tree-node {
@@ -394,23 +404,23 @@ onMounted(() => {
   flex: 1;
 }
 .industrial-table {
-  background: transparent !important;
+  background: var(--el-fill-color-blank) ;
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
   --el-table-text-color: var(--el-text-color-regular);
 }
 .-success {
   border-color: var(--el-color-success-light-5);
-  color: #67C23A;
+  color: var(--el-color-success);
 }
 .-success:hover {
   background: var(--el-color-success-light-9);
   box-shadow: 0 0 15px var(--el-color-success-light-5);
-  border-color: #67C23A;
+  border-color: var(--el-color-success);
 }
 .text-neon { color: var(--el-color-primary); }
 .text-danger { color: var(--el-color-danger); }
-.text-warning { color: #E6A23C; }
+.text-warning { color: var(--el-color-warning); }
 .industrial-tag {
   border: none;
 }

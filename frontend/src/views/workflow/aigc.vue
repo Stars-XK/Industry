@@ -48,7 +48,7 @@
               </div>
               <ul class="location-list">
                 <li class="location-item" v-for="loc in locations" :key="loc.id">
-                  <el-icon class="loc-icon" :color="loc.type === 'person' ? '#00ffaa' : '#00d8ff'">
+                  <el-icon class="loc-icon" :color="loc.type === 'person' ? '#00ffaa' : 'var(--el-color-primary)'">
                     <Location v-if="loc.type === 'person'" />
                     <Van v-else />
                   </el-icon>
@@ -130,73 +130,86 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  flex: 1;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 0 0 16px 0;
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--el-border-color-light);
-  background: rgba(0, 0, 0, 0.2);
 }
 .panel-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--el-text-color-primary);
 }
+
 .chat-container {
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   height: 600px;
-  background: rgba(8, 15, 30, 0.4);
-  box-shadow: inset 0 0 0 1px var(--el-color-primary-light-9);
+  background: var(--el-bg-color-overlay);
   overflow: hidden;
 }
 .chat-history {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
-  background-color: transparent;
 }
 .chat-input {
   padding: 20px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--el-fill-color-light);
   border-top: 1px solid var(--el-border-color-light);
 }
 .input-actions {
@@ -215,19 +228,17 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #00d8ff, #0088ff);
-  color: var(--el-text-color-primary);
+  background: var(--el-color-primary);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px var(--el-color-primary-light-5);
 }
 .message.user .avatar {
-  background: linear-gradient(135deg, #00ffaa, #00aa66);
+  background: var(--el-color-success);
   margin-left: 16px;
-  box-shadow: 0 4px 12px rgba(0, 255, 170, 0.3);
 }
 .message.system .avatar {
   margin-right: 16px;
@@ -238,8 +249,6 @@ onMounted(() => {
   border-radius: 12px;
   border-top-left-radius: 4px;
   background: var(--el-fill-color-light);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   line-height: 1.6;
   font-size: 14px;
   color: var(--el-text-color-primary);
@@ -248,21 +257,20 @@ onMounted(() => {
 .message.user .bubble {
   border-top-left-radius: 12px;
   border-top-right-radius: 4px;
-  background: rgba(0, 255, 170, 0.1);
-  border: 1px solid rgba(0, 255, 170, 0.2);
-  color: var(--el-text-color-primary);
+  background: var(--el-color-success-light-9);
+  border: 1px solid var(--el-color-success-light-5);
 }
 .typing-bubble {
   color: var(--el-text-color-regular);
   font-style: italic;
 }
 .action-bubble {
-  background: rgba(234, 179, 8, 0.1);
-  border: 1px solid rgba(234, 179, 8, 0.2);
+  background: var(--el-color-warning-light-9);
+  border: 1px solid var(--el-color-warning-light-5);
 }
 .bubble-title {
   font-weight: 600;
-  color: #ffb800;
+  color: var(--el-color-warning);
   margin-bottom: 12px;
   font-size: 15px;
 }
@@ -280,7 +288,7 @@ onMounted(() => {
 .side-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
-  background: rgba(8, 15, 30, 0.4);
+  background: var(--el-bg-color-overlay);
   height: 600px;
   display: flex;
   flex-direction: column;
@@ -291,7 +299,7 @@ onMounted(() => {
   font-size: 14px;
   color: var(--el-text-color-primary);
   border-bottom: 1px solid var(--el-border-color-light);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--el-fill-color-light);
 }
 .side-content {
   padding: 20px;
@@ -301,7 +309,7 @@ onMounted(() => {
 }
 .map-placeholder {
   height: 300px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--el-fill-color-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,7 +317,7 @@ onMounted(() => {
   border: 1px dashed var(--el-border-color-light);
 }
 .placeholder-text {
-  color: #64748b;
+  color: var(--el-text-color-regular);
   font-size: 13px;
   letter-spacing: 1px;
 }
@@ -331,6 +339,7 @@ onMounted(() => {
 .loc-icon {
   font-size: 18px;
   margin-right: 12px;
+  color: var(--el-text-color-secondary);
 }
 .loc-name {
   flex: 1;

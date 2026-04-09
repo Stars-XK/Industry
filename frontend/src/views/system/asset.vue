@@ -204,11 +204,21 @@ const assets = ref([
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -257,12 +267,12 @@ const assets = ref([
   border-radius: 50%;
 }
 .status-success { color: var(--el-color-success); }
-.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
-.status-warning { color: #f59e0b; }
-.status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success); }
+.status-warning { color: var(--el-color-warning); }
+.status-warning .dot { background-color: var(--el-color-warning); box-shadow: 0 0 8px var(--el-color-warning); }
 .text-cyan { color: var(--el-color-primary); }
 .danger-btn {
-  background: transparent;
+  background: var(--el-fill-color-blank);
   border: 1px solid #f43f5e;
   color: var(--el-color-danger);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;

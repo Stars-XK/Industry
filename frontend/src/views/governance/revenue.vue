@@ -96,11 +96,21 @@ const handleRecalc = () => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -177,12 +187,12 @@ const handleRecalc = () => {
   padding: 24px;
 }
 .danger-section {
-  border-color: rgba(245, 108, 108, 0.2);
-  background: rgba(245, 108, 108, 0.02);
+  border-color: var(--el-color-danger-light-8);
+  background: var(--el-color-danger-light-9);
 }
 .danger-section .section-title {
-  background: rgba(245, 108, 108, 0.05);
-  border-bottom-color: rgba(245, 108, 108, 0.1);
+  background: var(--el-color-danger-light-9);
+  border-bottom-color: var(--el-color-danger-light-9);
 }
 .text-danger {
   color: var(--el-color-danger);
@@ -194,21 +204,21 @@ const handleRecalc = () => {
 }
 .danger-desc {
   padding: 16px;
-  background: rgba(245, 108, 108, 0.05);
+  background: var(--el-color-danger-light-9);
   border-radius: 8px;
   color: var(--el-text-color-primary);
   line-height: 1.6;
   font-size: 14px;
   margin-bottom: 24px;
-  border-left: 4px solid #F56C6C;
-  box-shadow: inset 0 0 20px rgba(245, 108, 108, 0.02);
+  border-left: 4px solid var(--el-color-danger);
+  box-shadow: inset 0 0 20px var(--el-color-danger-light-9);
 }
 .-danger {
-  border-color: rgba(245, 108, 108, 0.5);
+  border-color: var(--el-color-danger-light-5);
   color: var(--el-color-danger);
 }
 .-danger:hover {
-  background: rgba(245, 108, 108, 0.1);
+  background: var(--el-color-danger-light-9);
   box-shadow: 0 0 15px var(--el-color-danger-light-5);
   border-color: var(--el-color-danger);
 }

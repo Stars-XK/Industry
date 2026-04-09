@@ -303,11 +303,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -351,15 +361,15 @@ onMounted(() => {
   box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
 .status-dot.danger {
-  background-color: #ef4444;
+  background-color: var(--el-color-danger);
   box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
 }
 .status-dot.warning {
-  background-color: #f59e0b;
+  background-color: var(--el-color-warning);
   box-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
 }
 .status-dot.info {
-  background-color: #3b82f6;
+  background-color: var(--el-color-primary);
   box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
 }
 </style>

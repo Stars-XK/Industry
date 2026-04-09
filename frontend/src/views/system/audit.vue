@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column label="耗时(ms)" width="100" align="center">
           <template #default="{ row }">
-            <span :style="{ color: row.execution_time > 1000 ? 'var(--el-color-danger)' : '#10b981', fontFamily: 'SF Mono, monospace' }">
+            <span :style="{ color: row.execution_time > 1000 ? 'var(--el-color-danger)' : 'var(--el-color-success)', fontFamily: 'SF Mono, monospace' }">
               {{ row.execution_time }} ms
             </span>
           </template>
@@ -127,11 +127,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -167,9 +177,9 @@ onMounted(() => {
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-.cyan-tag { background: rgba(0, 216, 255, 0.1); color: var(--el-color-primary); border: none; }
-.emerald-tag { background: rgba(16, 185, 129, 0.1); color: var(--el-color-success); border: none; }
-.amber-tag { background: var(--el-color-warning-light-9); color: #f59e0b; border: none; }
+.cyan-tag { background: var(--el-color-primary-light-9); color: var(--el-color-primary); border: none; }
+.emerald-tag { background: var(--el-color-success-light-9); color: var(--el-color-success); border: none; }
+.amber-tag { background: var(--el-color-warning-light-9); color: var(--el-color-warning); border: none; }
 .rose-tag { background: rgba(244, 63, 94, 0.1); color: var(--el-color-danger); border: none; }
 .text-cyan { color: var(--el-color-primary); }
 /* Table styles */

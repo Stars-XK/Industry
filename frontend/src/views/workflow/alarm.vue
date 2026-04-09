@@ -38,7 +38,7 @@
         <el-table-column prop="sop_name" label="SOP 预案" width="200">
           <template #default="scope">
             <el-tag v-if="scope.row.sop_name" class="dark-tag" effect="dark">{{ scope.row.sop_name }}</el-tag>
-            <span v-else style="color: #64748b;">无预案</span>
+            <span v-else style="color: var(--el-border-color);">无预案</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
@@ -209,46 +209,71 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  flex: 1;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
 .custom-table {
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  margin-top: 20px;
+  background: var(--el-fill-color-blank) ;
+  --el-table-header-text-color: var(--el-text-color-regular);
+  --el-table-tr-bg-color: transparent;
+  --el-table-text-color: var(--el-text-color-regular);
+  border: 1px solid var(--el-border-color-light);
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
+
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
+
 .status-indicator {
   display: flex;
   align-items: center;
@@ -262,47 +287,29 @@ onMounted(() => {
   border-radius: 50%;
 }
 .status-danger { color: var(--el-color-danger); }
-.status-danger .dot { background-color: var(--el-color-danger); box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
-.status-warning { color: #f59e0b; }
-.status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.status-danger .dot { background-color: var(--el-color-danger); box-shadow: 0 0 8px var(--el-color-danger-light-5); animation: pulse-danger 2s infinite; }
+.status-warning { color: var(--el-color-warning); }
+.status-warning .dot { background-color: var(--el-color-warning); box-shadow: 0 0 8px var(--el-color-warning-light-5); }
 .status-success { color: var(--el-color-success); }
-.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
+.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success-light-5); }
 @keyframes pulse-danger {
-  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+  0% { box-shadow: 0 0 0 0 var(--el-color-danger-light-5); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
+
 .action-btns {
   display: flex;
   gap: 12px;
 }
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
-.text-amber { color: #f59e0b; }
+.text-amber { color: var(--el-color-warning); }
 .text-rose { color: var(--el-color-danger); }
-/* Table styles */
-/* Dialog Styles */
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-}
-/* Form Styles */
-.page-header {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  margin: 0 0 8px 0;
-}
-.header-content p {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  margin: 0;
 }
 </style>

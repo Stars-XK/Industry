@@ -53,7 +53,7 @@
         <el-table-column label="库存情况" align="center" width="160">
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center;">
-              <span :style="{ color: row.is_low_stock ? 'var(--el-color-danger)' : '#10b981', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
+              <span :style="{ color: row.is_low_stock ? 'var(--el-color-danger)' : 'var(--el-color-success)', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
                 {{ row.stock_quantity }} <span style="font-size: 12px; font-weight: normal;">{{ row.unit }}</span>
               </span>
               <div v-if="row.is_low_stock" style="font-size: 12px; color: var(--el-color-danger); margin-top: 4px;">低于安全库存: {{ row.safe_stock }}</div>
@@ -196,7 +196,7 @@
         </el-table-column>
         <el-table-column prop="quantity" label="变动数量" width="100" align="right">
           <template #default="{ row }">
-            <span :style="{ color: row.change_type === 1 ? '#10b981' : 'var(--el-color-danger)', fontWeight: 600, fontFamily: 'SF Mono, monospace' }">
+            <span :style="{ color: row.change_type === 1 ? 'var(--el-color-success)' : 'var(--el-color-danger)', fontWeight: 600, fontFamily: 'SF Mono, monospace' }">
               {{ row.change_type === 1 ? '+' : '-' }}{{ row.quantity }}
             </span>
           </template>
@@ -371,11 +371,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -417,10 +427,10 @@ onMounted(() => {
 }
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
-.text-amber { color: #f59e0b; }
+.text-amber { color: var(--el-color-warning); }
 .text-rose { color: var(--el-color-danger); }
 .danger-btn {
-  background: transparent;
+  background: var(--el-fill-color-blank);
   border: 1px solid #f43f5e;
   color: var(--el-color-danger);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;

@@ -137,11 +137,21 @@ const saveConfig = async () => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -189,11 +199,11 @@ const saveConfig = async () => {
   height: 600px;
   border-top: 1px solid var(--el-border-color-light);
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--el-box-shadow-light);
 }
 .panel-subtitle {
   padding: 16px 20px;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--el-box-shadow);
   border-bottom: 1px solid var(--el-border-color-light);
   font-weight: 600;
   font-size: 14px;
@@ -228,7 +238,7 @@ const saveConfig = async () => {
 .component-item:hover {
   border-color: var(--el-color-primary);
   color: var(--el-color-primary);
-  background-color: rgba(0, 216, 255, 0.1);
+  background-color: var(--el-color-primary-light-9);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px var(--el-color-primary-light-8);
 }
@@ -257,7 +267,7 @@ const saveConfig = async () => {
   position: absolute;
   width: 120px;
   height: 64px;
-  background-color: rgba(30, 41, 59, 0.8);
+  background-color: var(--el-bg-color-overlay);
   backdrop-filter: blur(8px);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -270,12 +280,12 @@ const saveConfig = async () => {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 .canvas-element:hover {
-  box-shadow: 0 6px 16px rgba(0,216,255,0.2);
+  box-shadow: 0 6px 16px var(--el-color-primary-light-8);
   border-color: var(--el-color-primary-light-5);
 }
 .canvas-element.active {
   border-color: var(--el-color-primary);
-  box-shadow: 0 0 0 1px rgba(0,216,255,0.5), 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 1px var(--el-color-primary-light-8), 0 4px 12px rgba(0,0,0,0.3);
 }
 .element-content {
   text-align: center;
@@ -295,7 +305,7 @@ const saveConfig = async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #64748b;
+  color: var(--el-border-color);
   font-size: 14px;
   letter-spacing: 1px;
   pointer-events: none;

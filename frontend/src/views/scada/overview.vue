@@ -82,7 +82,7 @@
                 v-for="(activity, index) in alarms"
                 :key="index"
                 :type="activity.type"
-                :color="activity.color || '#00d8ff'"
+                :color="activity.color || 'var(--el-color-primary)'"
                 :size="activity.size || 'large'"
                 :timestamp="activity.timestamp"
                 placement="top"
@@ -111,9 +111,9 @@ const energyTrendRange = ref('7days')
 const complianceRate = ref(99.8)
 const metrics = ref([
   { title: '今日总供水量', value: 0, unit: 'm³', icon: markRaw(Odometer), color: '#409EFF' },
-  { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: '#E6A23C' },
-  { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: '#67C23A' },
-  { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: '#F56C6C' },
+  { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: 'var(--el-color-warning)' },
+  { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: 'var(--el-color-success)' },
+  { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: 'var(--el-color-danger)' },
 ])
 const trendOption = ref({
   tooltip: { trigger: 'axis', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
@@ -156,7 +156,7 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 5,
-      axisLine: { lineStyle: { width: 10, color: [[0.2, '#10b981'], [0.8, 'var(--el-color-warning)'], [1, '#ef4444']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.2, 'var(--el-color-success)'], [0.8, 'var(--el-color-warning)'], [1, 'var(--el-color-danger)']] } },
       pointer: { itemStyle: { color: 'auto' } },
       axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
       splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
@@ -172,7 +172,7 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 2,
-      axisLine: { lineStyle: { width: 10, color: [[0.15, '#ef4444'], [0.8, '#10b981'], [1, 'var(--el-color-warning)']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.15, 'var(--el-color-danger)'], [0.8, 'var(--el-color-success)'], [1, 'var(--el-color-warning)']] } },
       pointer: { itemStyle: { color: 'auto' } },
       axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
       splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
@@ -188,7 +188,7 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 14,
-      axisLine: { lineStyle: { width: 10, color: [[0.45, '#ef4444'], [0.6, '#10b981'], [1, '#ef4444']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.45, 'var(--el-color-danger)'], [0.6, 'var(--el-color-success)'], [1, 'var(--el-color-danger)']] } },
       pointer: { itemStyle: { color: 'auto' } },
       axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
       splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
@@ -297,6 +297,10 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 40px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 60px);
@@ -464,9 +468,9 @@ onMounted(() => {
 
 @media (max-width: 1400px) {
   .el-col {
-    width: 100% !important;
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
+    width: 100% ;
+    flex: 0 0 100% ;
+    max-width: 100% ;
     margin-bottom: 24px;
   }
 }

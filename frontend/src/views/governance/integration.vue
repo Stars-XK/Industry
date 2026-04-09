@@ -19,7 +19,7 @@
             </div>
             <div class="channel-stat">
               <span style="color: var(--el-text-color-secondary)">堆积</span>
-              <span style="font-weight: 500" :style="{ color: channel.lag > 0 ? '#ef4444' : 'inherit' }">{{ channel.lag }}</span>
+              <span style="font-weight: 500" :style="{ color: channel.lag > 0 ? 'var(--el-color-danger)' : 'inherit' }">{{ channel.lag }}</span>
             </div>
             <div class="channel-stat">
               <span style="color: var(--el-text-color-secondary)">在线时长</span>
@@ -160,11 +160,21 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
 .box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
@@ -192,10 +202,10 @@ onMounted(() => {
   box-shadow: var(--el-box-shadow);
 }
 .status-card.connected {
-  border-left: 4px solid #10b981; /* Emerald 500 */
+  border-left: 4px solid var(--el-color-success); /* Emerald 500 */
 }
 .status-card.warning {
-  border-left: 4px solid #f59e0b; /* Amber 500 */
+  border-left: 4px solid var(--el-color-warning); /* Amber 500 */
 }
 .channel-title {
   font-size: 16px;

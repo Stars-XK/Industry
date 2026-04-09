@@ -51,7 +51,7 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
       borderColor: 'var(--el-border-color-light)',
       textStyle: { color: 'var(--el-text-color-primary)' }
     },
-    legend: { textStyle: { color: '#94a3b8' } },
+    legend: { textStyle: { color: 'var(--el-text-color-secondary)' } },
     xAxis: {
       type: 'category',
       data: dates,
@@ -77,7 +77,7 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
         name: 'AI 正常基线',
         type: 'line',
         data: baselineData,
-        lineStyle: { type: 'dashed', color: '#10b981', width: 2 }
+        lineStyle: { type: 'dashed', color: 'var(--el-color-success)', width: 2 }
       }
     ]
   })
@@ -108,41 +108,79 @@ onMounted(() => loadData())
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
+  padding: 24px ;
   display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
+
+.panel-title span {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
+
 .warning-banner {
   display: flex;
   align-items: flex-start;
@@ -150,68 +188,36 @@ onMounted(() => loadData())
   background: var(--el-color-warning-light-9);
   border: 1px solid var(--el-color-warning-light-5);
   border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
+  padding: 20px 24px;
+  margin-bottom: 32px;
 }
 .banner-icon {
-  font-size: 24px;
-  color: #f59e0b;
+  font-size: 28px;
+  color: var(--el-color-warning);
   margin-top: 2px;
+}
+.banner-content {
+  flex: 1;
 }
 .banner-title {
   font-size: 16px;
   font-weight: 600;
-  color: #fcd34d;
-  margin-bottom: 4px;
+  color: var(--el-color-warning);
+  margin-bottom: 6px;
 }
 .banner-desc {
-  font-size: 13px;
-  color: #fbbf24;
-  opacity: 0.8;
+  font-size: 14px;
+  color: var(--el-color-warning);
+  opacity: 0.9;
 }
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.panel-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.panel-title span {
-  font-size: 12px;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+
 .chart-wrapper {
   height: 460px;
   width: 100%;
+  flex: 1;
 }
 .chart-inner {
   width: 100%;
   height: 100%;
-}
-.page-header {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  margin: 0 0 8px 0;
-}
-.header-content p {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  margin: 0;
 }
 </style>

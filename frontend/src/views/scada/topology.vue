@@ -107,9 +107,9 @@ const chartOption = ref<any>({
   tooltip: {
     trigger: 'item',
     triggerOn: 'mousemove',
-    backgroundColor: 'var(--el-bg-color-overlay)',
-    borderColor: 'var(--el-color-primary-light-5)',
-    textStyle: { color: 'var(--el-text-color-primary)' },
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderColor: 'rgba(59, 130, 246, 0.5)',
+    textStyle: { color: '#303133' },
     formatter: (params: any) => {
       const data = params.data
       return `${data.name}<br/><span style="color: var(--el-text-color-regular);font-size:12px;">层级: ${data.level}级分区</span>`
@@ -130,7 +130,7 @@ const chartOption = ref<any>({
         verticalAlign: 'middle',
         align: 'right',
         fontSize: 14,
-        color: 'var(--el-text-color-primary)',
+        color: '#303133',
         fontFamily: 'SF Pro Display'
       },
       leaves: {
@@ -145,12 +145,12 @@ const chartOption = ref<any>({
       animationDuration: 550,
       animationDurationUpdate: 750,
       itemStyle: {
-        color: 'var(--el-color-primary)',
-        borderColor: 'var(--el-bg-color)',
+        color: '#3b82f6',
+        borderColor: '#ffffff',
         borderWidth: 2
       },
       lineStyle: {
-        color: 'var(--el-border-color-darker)',
+        color: '#c0c4cc',
         width: 2,
         curveness: 0.5
       }
@@ -161,17 +161,17 @@ const mapTreeDataForEcharts = (nodes: any[]): any[] => {
   return nodes.map(node => {
     const isAlarm = node.status === 'alarm';
     const itemStyle = isAlarm ? {
-      color: 'var(--el-color-danger)',
-      borderColor: 'var(--el-bg-color)',
+      color: '#ef4444',
+      borderColor: '#ffffff',
       borderWidth: 2,
       shadowBlur: 15,
-      shadowColor: 'var(--el-color-danger-light-5)'
+      shadowColor: 'rgba(239, 68, 68, 0.5)'
     } : {
-      color: 'var(--el-color-primary)',
-      borderColor: 'var(--el-bg-color)',
+      color: '#3b82f6',
+      borderColor: '#ffffff',
       borderWidth: 2,
       shadowBlur: 10,
-      shadowColor: 'var(--el-color-primary-light-5)'
+      shadowColor: 'rgba(59, 130, 246, 0.5)'
     };
     return {
       name: node.label,

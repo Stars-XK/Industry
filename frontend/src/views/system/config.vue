@@ -91,7 +91,7 @@ const configStore = useConfigStore();
 const activeTab = ref('basic');
 
 // 主题与深色模式相关
-const themeColor = ref(localStorage.getItem('theme-color') || 'var(--el-color-primary)');
+const themeColor = ref(localStorage.getItem('theme-color') || '#3b82f6');
 const isDark = ref(localStorage.getItem('theme-dark') === 'true' || document.documentElement.classList.contains('dark'));
 
 const toggleDark = (val: boolean) => {

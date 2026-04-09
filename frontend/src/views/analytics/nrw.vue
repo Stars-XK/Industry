@@ -99,9 +99,9 @@ const trendChartRef = ref<HTMLElement | null>(null)
 let sankeyInstance: echarts.ECharts | null = null
 let trendInstance: echarts.ECharts | null = null
 const customColors = [
-  { color: 'var(--el-color-success)', percentage: 10 },
-  { color: 'var(--el-color-warning)', percentage: 15 },
-  { color: 'var(--el-color-danger)', percentage: 20 },
+  { color: '#10b981', percentage: 10 },
+  { color: '#f59e0b', percentage: 15 },
+  { color: '#ef4444', percentage: 20 },
 ]
 const exportReport = () => {
   // dummy export
@@ -150,7 +150,7 @@ const renderSankey = (nodes: any[], links: any[]) => {
   }
   if (!sankeyInstance) return
   const option = {
-    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
+    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
     series: [
       {
         type: 'sankey',
@@ -161,12 +161,12 @@ const renderSankey = (nodes: any[], links: any[]) => {
         label: {
           position: 'right',
           formatter: '{b} \n ({c} m³)',
-          color: 'var(--el-text-color-primary)',
+          color: '#303133',
           fontFamily: 'SF Pro Display'
         },
         itemStyle: {
           borderWidth: 1,
-          borderColor: 'var(--el-border-color-darker)'
+          borderColor: '#c0c4cc'
         }
       }
     ]
@@ -189,21 +189,21 @@ const renderTrend = (months: string[], ratios: number[]) => {
   }
   if (!trendInstance) return
   const option = {
-    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
+    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
-    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: 'var(--el-text-color-regular)' }, axisLabel: { formatter: '{value} %', color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
+    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: '#606266' }, axisLine: { lineStyle: { color: '#c0c4cc' } } },
+    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: '#606266' }, axisLabel: { formatter: '{value} %', color: '#606266' }, splitLine: { lineStyle: { color: '#e4e7ed', type: 'dashed' } } },
     series: [
       {
         name: '产销差率',
         type: 'line',
         data: ratios,
         smooth: true,
-        itemStyle: { color: 'var(--el-color-warning)' },
-        lineStyle: { width: 3, shadowColor: 'var(--el-color-warning-light-5)', shadowBlur: 10 },
+        itemStyle: { color: '#f59e0b' },
+        lineStyle: { width: 3, shadowColor: 'rgba(230, 162, 60, 0.5)', shadowBlur: 10 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'var(--el-color-warning-light-5)' },
+            { offset: 0, color: 'rgba(230, 162, 60, 0.5)' },
             { offset: 1, color: 'transparent' }
           ])
         }

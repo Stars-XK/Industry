@@ -180,7 +180,7 @@ const renderLayers = () => {
   // Render Pipes
   pipelines.value.forEach(path => {
     const polyline = L.polyline(path as L.LatLngExpression[], { 
-      color: 'var(--el-color-primary)', 
+      color: '#3b82f6', 
       weight: 3, 
       opacity: 0.6,
       dashArray: '5, 10',
@@ -192,10 +192,10 @@ const renderLayers = () => {
 
   // Render Markers
   assets.value.forEach(asset => {
-    let color = 'var(--el-color-primary)'; // default blue for pumps
-    if (asset.type === 'pressure') color = 'var(--el-color-success)'; // green
-    if (asset.type === 'alarm' && asset.status === 'critical') color = 'var(--el-color-danger)'; // red
-    if (asset.type === 'alarm' && asset.status === 'warning') color = 'var(--el-color-warning)'; // yellow
+    let color = '#3b82f6'; // default blue for pumps
+    if (asset.type === 'pressure') color = '#10b981'; // green
+    if (asset.type === 'alarm' && asset.status === 'critical') color = '#ef4444'; // red
+    if (asset.type === 'alarm' && asset.status === 'warning') color = '#f59e0b'; // yellow
 
     const markerHtml = `
       <div class="custom-marker" style="background-color: ${color}; box-shadow: 0 0 15px ${color}">

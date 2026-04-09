@@ -130,10 +130,10 @@ const initCharts = () => {
   pressureChart.setOption({
     tooltip: { trigger: 'axis' },
     grid: { left: '10%', right: '5%', top: '10%', bottom: '15%' },
-    xAxis: { type: 'category', data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: 'var(--el-text-color-regular)' } } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: 'var(--el-border-color-light)' } }, axisLabel: { color: 'var(--el-text-color-regular)' } },
+    xAxis: { type: 'category', data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#606266' } } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#e4e7ed' } }, axisLabel: { color: '#606266' } },
     series: [
-      { name: '管网平均压力', type: 'line', smooth: true, data: [0.32, 0.35, 0.45, 0.41, 0.43, 0.38, 0.33], itemStyle: { color: 'var(--el-color-primary)' }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: 'var(--el-color-primary-light-5)'}, {offset: 1, color: 'transparent'}]) } }
+      { name: '管网平均压力', type: 'line', smooth: true, data: [0.32, 0.35, 0.45, 0.41, 0.43, 0.38, 0.33], itemStyle: { color: '#3b82f6' }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: 'rgba(59, 130, 246, 0.5)'}, {offset: 1, color: 'transparent'}]) } }
     ]
   })
 
@@ -146,8 +146,8 @@ const initCharts = () => {
         name: '能耗占比',
         type: 'pie',
         radius: ['40%', '70%'],
-        itemStyle: { borderRadius: 10, borderColor: 'var(--el-bg-color-overlay)', borderWidth: 2 },
-        label: { color: 'var(--el-text-color-regular)' },
+        itemStyle: { borderRadius: 10, borderColor: 'transparent', borderWidth: 2 },
+        label: { color: '#606266' },
         data: [
           { value: 1048, name: '1号泵房' },
           { value: 735, name: '2号泵房' },
@@ -177,7 +177,7 @@ const initCharts = () => {
     series: [{
       type: 'effectScatter',
       symbolSize: 15,
-      itemStyle: { color: 'var(--el-color-primary)', shadowBlur: 10, shadowColor: 'var(--el-color-primary-light-5)' },
+      itemStyle: { color: '#3b82f6', shadowBlur: 10, shadowColor: 'rgba(59, 130, 246, 0.5)' },
       data: [
         [50, 50, '中心泵站'], [20, 80, 'A区供水点'], [80, 20, 'B区出水点'], [30, 30, 'C区管网节点'], [70, 70, 'D区阀门井']
       ],
@@ -188,8 +188,8 @@ const initCharts = () => {
     {
       type: 'lines',
       coordinateSystem: 'cartesian2d',
-      lineStyle: { color: 'var(--el-color-primary)', width: 2, opacity: 0.4, curveness: 0.2 },
-      effect: { show: true, period: 4, symbolSize: 5, color: 'var(--el-color-primary-light-9)', trailLength: 0.1 },
+      lineStyle: { color: '#3b82f6', width: 2, opacity: 0.4, curveness: 0.2 },
+      effect: { show: true, period: 4, symbolSize: 5, color: '#d9e8ff', trailLength: 0.1 },
       data: [
         { coords: [[50, 50], [20, 80]] },
         { coords: [[50, 50], [80, 20]] },

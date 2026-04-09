@@ -53,23 +53,23 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
   chart.setOption({
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'var(--el-bg-color-overlay)',
-      borderColor: 'var(--el-border-color-light)',
-      textStyle: { color: 'var(--el-text-color-primary)' }
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderColor: '#e4e7ed',
+      textStyle: { color: '#303133' }
     },
-    legend: { textStyle: { color: 'var(--el-text-color-secondary)' } },
+    legend: { textStyle: { color: '#909399' } },
     xAxis: {
       type: 'category',
       data: dates,
-      axisLabel: { color: 'var(--el-text-color-regular)' },
-      axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } }
+      axisLabel: { color: '#606266' },
+      axisLine: { lineStyle: { color: '#c0c4cc' } }
     },
     yAxis: {
       type: 'value',
       name: '水量 m³',
-      nameTextStyle: { color: 'var(--el-text-color-regular)' },
-      axisLabel: { color: 'var(--el-text-color-regular)' },
-      splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } }
+      nameTextStyle: { color: '#606266' },
+      axisLabel: { color: '#606266' },
+      splitLine: { lineStyle: { color: '#e4e7ed', type: 'dashed' } }
     },
     series: [
       {
@@ -77,13 +77,13 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
         type: 'scatter',
         data: actualData,
         symbolSize: 12,
-        itemStyle: { color: 'var(--el-color-danger)', shadowColor: 'var(--el-color-danger-light-5)', shadowBlur: 10 }
+        itemStyle: { color: '#ef4444', shadowColor: 'rgba(239, 68, 68, 0.5)', shadowBlur: 10 }
       },
       {
         name: 'AI 正常基线',
         type: 'line',
         data: baselineData,
-        lineStyle: { type: 'dashed', color: 'var(--el-color-success)', width: 2 }
+        lineStyle: { type: 'dashed', color: '#10b981', width: 2 }
       }
     ]
   })

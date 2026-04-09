@@ -68,37 +68,37 @@ const initChart = () => {
       title: { 
         text: '未来 7 天供水预测量 (m³)', 
         left: 'center',
-        textStyle: { color: 'var(--el-text-color-primary)', fontSize: 16, fontWeight: 'normal', fontFamily: 'SF Pro Display' }
+        textStyle: { color: '#303133', fontSize: 16, fontWeight: 'normal', fontFamily: 'SF Pro Display' }
       },
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'cross', label: { backgroundColor: 'var(--el-border-color-light)' } },
-        backgroundColor: 'var(--el-bg-color-overlay)',
-        borderColor: 'var(--el-color-primary-light-5)',
-        textStyle: { color: 'var(--el-text-color-primary)' }
+        axisPointer: { type: 'cross', label: { backgroundColor: '#e4e7ed' } },
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderColor: 'rgba(59, 130, 246, 0.5)',
+        textStyle: { color: '#303133' }
       },
       legend: {
         data: ['实际用量', 'AI 预测曲线', '置信区间'],
         bottom: 0,
-        textStyle: { color: 'var(--el-text-color-secondary)' }
+        textStyle: { color: '#909399' }
       },
       grid: { left: '3%', right: '4%', bottom: '10%', top: '15%', containLabel: true },
       xAxis: {
         type: 'category',
         boundaryGap: false,
         data: dates,
-        axisLine: { lineStyle: { color: 'var(--el-border-color-light)' } },
-        axisLabel: { color: 'var(--el-text-color-secondary)' },
+        axisLine: { lineStyle: { color: '#e4e7ed' } },
+        axisLabel: { color: '#909399' },
         splitLine: { show: false }
       },
       yAxis: {
         type: 'value',
         name: '水量 (m³)',
-        nameTextStyle: { color: 'var(--el-text-color-secondary)' },
+        nameTextStyle: { color: '#909399' },
         scale: true,
         axisLine: { show: false },
-        axisLabel: { color: 'var(--el-text-color-secondary)' },
-        splitLine: { lineStyle: { color: 'var(--el-border-color-extra-light)', type: 'dashed' } }
+        axisLabel: { color: '#909399' },
+        splitLine: { lineStyle: { color: '#f2f6fc', type: 'dashed' } }
       },
       series: [
         {
@@ -114,7 +114,7 @@ const initChart = () => {
           type: 'line',
           data: lowerBounds,
           lineStyle: { opacity: 0 },
-          areaStyle: { color: 'var(--el-color-primary-light-8)' },
+          areaStyle: { color: 'rgba(59, 130, 246, 0.2)' },
           stack: 'confidence-band',
           symbol: 'none'
         },
@@ -122,16 +122,16 @@ const initChart = () => {
           name: '实际用量',
           type: 'line',
           data: actualData,
-          itemStyle: { color: 'var(--el-color-success)' },
-          lineStyle: { width: 3, shadowColor: 'var(--el-color-success-light-5)', shadowBlur: 10 },
+          itemStyle: { color: '#10b981' },
+          lineStyle: { width: 3, shadowColor: 'rgba(16, 185, 129, 0.5)', shadowBlur: 10 },
           symbolSize: 8
         },
         {
           name: 'AI 预测曲线',
           type: 'line',
           data: predData,
-          itemStyle: { color: 'var(--el-color-primary)' },
-          lineStyle: { type: 'dashed', width: 2, shadowColor: 'var(--el-color-primary-light-5)', shadowBlur: 10 },
+          itemStyle: { color: '#3b82f6' },
+          lineStyle: { type: 'dashed', width: 2, shadowColor: 'rgba(59, 130, 246, 0.5)', shadowBlur: 10 },
           symbol: 'emptyCircle',
           symbolSize: 6
         }

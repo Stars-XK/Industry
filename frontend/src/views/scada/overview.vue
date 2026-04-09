@@ -111,28 +111,28 @@ const energyTrendRange = ref('7days')
 const complianceRate = ref(99.8)
 const metrics = ref([
   { title: '今日总供水量', value: 0, unit: 'm³', icon: markRaw(Odometer), color: '#409EFF' },
-  { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: 'var(--el-color-warning)' },
-  { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: 'var(--el-color-success)' },
-  { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: 'var(--el-color-danger)' },
+  { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: '#f59e0b' },
+  { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: '#10b981' },
+  { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: '#ef4444' },
 ])
 const trendOption = ref({
-  tooltip: { trigger: 'axis', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
-  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: 'var(--el-text-color-regular)' } },
+  tooltip: { trigger: 'axis', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
+  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: '#606266' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
-  yAxis: { type: 'value', axisLabel: { color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
+  xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: '#606266' }, axisLine: { lineStyle: { color: '#c0c4cc' } } },
+  yAxis: { type: 'value', axisLabel: { color: '#606266' }, splitLine: { lineStyle: { color: '#e4e7ed', type: 'dashed' } } },
   series: [
     {
       name: '供水量 (m³/h)',
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: 'var(--el-color-primary)' },
-      lineStyle: { width: 3, shadowColor: 'var(--el-color-primary-light-5)', shadowBlur: 10 },
+      itemStyle: { color: '#3b82f6' },
+      lineStyle: { width: 3, shadowColor: 'rgba(59, 130, 246, 0.5)', shadowBlur: 10 },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'var(--el-color-primary-light-5)' }, { offset: 1, color: 'transparent' }]
+          colorStops: [{ offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, { offset: 1, color: 'transparent' }]
         }
       }
     },
@@ -141,13 +141,13 @@ const trendOption = ref({
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: 'var(--el-color-warning)' },
-      lineStyle: { width: 3, shadowColor: 'var(--el-color-warning-light-5)', shadowBlur: 10 }
+      itemStyle: { color: '#f59e0b' },
+      lineStyle: { width: 3, shadowColor: 'rgba(230, 162, 60, 0.5)', shadowBlur: 10 }
     }
   ]
 })
 const waterQualityOption = ref({
-  tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'var(--el-bg-color-overlay)', textStyle: { color: 'var(--el-text-color-primary)' }, borderColor: 'var(--el-border-color-light)' },
+  tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'rgba(255, 255, 255, 0.9)', textStyle: { color: '#303133' }, borderColor: '#e4e7ed' },
   series: [
     {
       name: '浊度 (NTU)',
@@ -156,14 +156,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 5,
-      axisLine: { lineStyle: { width: 10, color: [[0.2, 'var(--el-color-success)'], [0.8, 'var(--el-color-warning)'], [1, 'var(--el-color-danger)']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.2, '#10b981'], [0.8, '#f59e0b'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
-      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value} NTU', color: 'var(--el-text-color-primary)' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#ffffff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#ffffff', width: 2 } },
+      axisLabel: { color: '#606266', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} NTU', color: '#303133' },
       data: [{ value: 0, name: '浊度' }],
-      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: '#606266', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: '余氯 (mg/L)',
@@ -172,14 +172,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 2,
-      axisLine: { lineStyle: { width: 10, color: [[0.15, 'var(--el-color-danger)'], [0.8, 'var(--el-color-success)'], [1, 'var(--el-color-warning)']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.15, '#ef4444'], [0.8, '#10b981'], [1, '#f59e0b']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
-      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value} mg/L', color: 'var(--el-text-color-primary)' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#ffffff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#ffffff', width: 2 } },
+      axisLabel: { color: '#606266', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} mg/L', color: '#303133' },
       data: [{ value: 0, name: '余氯' }],
-      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: '#606266', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: 'pH值',
@@ -188,27 +188,27 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 14,
-      axisLine: { lineStyle: { width: 10, color: [[0.45, 'var(--el-color-danger)'], [0.6, 'var(--el-color-success)'], [1, 'var(--el-color-danger)']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.45, '#ef4444'], [0.6, '#10b981'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
-      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value}', color: 'var(--el-text-color-primary)' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: '#ffffff', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: '#ffffff', width: 2 } },
+      axisLabel: { color: '#606266', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value}', color: '#303133' },
       data: [{ value: 0, name: 'pH值' }],
-      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: '#606266', fontSize: 12, offsetCenter: [0, '70%'] }
     }
   ]
 })
 const energyTrendOption = ref({
-  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
-  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: 'var(--el-text-color-regular)' } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
+  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: '#606266' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: [], axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
-  yAxis: { type: 'value', name: 'kgce', nameTextStyle: { color: 'var(--el-text-color-regular)' }, axisLabel: { color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
+  xAxis: { type: 'category', data: [], axisLabel: { color: '#606266' }, axisLine: { lineStyle: { color: '#c0c4cc' } } },
+  yAxis: { type: 'value', name: 'kgce', nameTextStyle: { color: '#606266' }, axisLabel: { color: '#606266' }, splitLine: { lineStyle: { color: '#e4e7ed', type: 'dashed' } } },
   series: [
-    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-primary)', borderRadius: [0, 0, 0, 0] } },
-    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-success)', borderRadius: [0, 0, 0, 0] } },
-    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-warning)', borderRadius: [4, 4, 0, 0] } }
+    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#3b82f6', borderRadius: [0, 0, 0, 0] } },
+    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#10b981', borderRadius: [0, 0, 0, 0] } },
+    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] } }
   ]
 })
 const alarms = ref<any[]>([])

@@ -72,6 +72,17 @@
 | `config_type` | CHAR | 1 | Y | 'N' | 系统内置: Y-是, N-否 |
 | `remark` | VARCHAR | 500 | Y | NULL | 备注说明 |
 
+**3.2 数据库备份记录表 (`sys_backup_log`)**
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|---|---|---|---|---|---|
+| `id` | BIGINT | - | N | 主键 | 唯一标识 |
+| `file_name` | VARCHAR | 255 | N | - | 备份文件名称 (如 `backup_20260409_0800.sql.gz`) |
+| `file_path` | VARCHAR | 500 | N | - | 物理存储路径 |
+| `file_size` | BIGINT | - | N | 0 | 文件大小 (字节) |
+| `backup_type` | SMALLINT | - | N | 1 | 备份类型: 1-自动定时, 2-手动(如向导导入前) |
+| `status` | SMALLINT | - | N | 1 | 状态: 1-成功, 0-失败 |
+| `remark` | VARCHAR | 500 | Y | NULL | 备注 (可记录失败原因) |
+
 ### 2.2 资产、设备与物联网网关元数据 (Assets & IoT)
 
 **4. 设备台账表 (`ast_device`)**

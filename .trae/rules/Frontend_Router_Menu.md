@@ -46,7 +46,8 @@
     ├── /system/audit          - 安全审计与脱敏日志 (Audit Logs)
     ├── /system/visual-studio  - 低代码可视化组态工作台 (Visual Studio)
     ├── /system/config         - 系统参数配置 (System Configuration)
-    └── /system/setup-wizard   - 快速系统发布与初始化向导 (Quick Setup Wizard)
+    ├── /system/setup-wizard   - 快速发布初始化与覆盖导入 (Quick Setup & Override)
+    └── /system/backup         - 数据库备份与恢复 (Database Backup)
 ```
 
 ---
@@ -110,8 +111,9 @@
 | 数据字典管理 | `/system/dict` | `views/system/dict.vue` | `sys:dict` | 全局枚举值动态配置中心(设备类型、管材、工单状态等) |
 | 安全审计与脱敏 | `/system/audit` | `views/system/audit.vue` | `sys:audit` | 防篡改请求记录与 JSON Diff 对比、敏感信息(手机号/金额)默认动态掩码展示 |
 | 低代码组态工作台 | `/system/visual-studio`| `views/system/visual.vue` | `sys:visual` | 内置 ISA 图元与 Echarts 的拖拽画布、属性与标签绑定配置面板、发布管理 |
-| 系统参数配置 | `/system/config` | `views/system/config.vue` | `sys:config` | 网站标题、地图来源、邮箱短信配置等基础环境参数管理 |
-| 快速初始化向导 | `/system/setup-wizard` | `views/system/wizard.vue` | `sys:wizard` | 分步引导式 UI、基础数据（人员/字典/分区/资产）批量 Excel 导入发布 |
+| 系统参数配置 | `/system/config` | `views/system/config.vue` | `sys:config` | 网站标题、地图来源、邮箱短信配置等基础环境参数管理 (动态状态更新，无刷新生效) |
+| 快速覆盖导入 | `/system/setup-wizard` | `views/system/wizard.vue` | `sys:wizard` | 大文件切片上传、断点续传、Excel数据覆盖与导入前强制自动备份 |
+| 数据库备份恢复 | `/system/backup` | `views/system/backup.vue` | `sys:backup` | 定时备份策略设置、备份记录下载与一键 SQL 恢复 |
 
 ---
 

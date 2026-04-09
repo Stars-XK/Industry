@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Module, Global } from '@nestjs/common';
 import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis';
 import { RedisService } from './redis.service';
@@ -6,13 +9,19 @@ import { RedisService } from './redis.service';
 @Module({
   imports: [
     NestRedisModule.forRootAsync({
-      useFactory: () => ({
-        type: 'single',
-        url: process.env.REDIS_URL || 'redis://139.224.26.134:6379/0',
-        options: {
-          password: process.env.REDIS_PASSWORD || '',
-        },
-      }),
+      useFactory: () => {
+        const host = process.env.REDIS_HOST || 'localhost';
+        const port = process.env.REDIS_PORT || '6379';
+        const db = process.env.REDIS_DB || '0';
+        
+        return {
+          type: 'single',
+          url: `redis://${host}:${port}/${db}`,
+          options: {
+            password: process.env.REDIS_PWD || '',
+          },
+        };
+      },
     }),
   ],
   providers: [RedisService],

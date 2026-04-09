@@ -41,12 +41,26 @@
             <template #default="{ node, data }">
               <div class="tree-node">
                 <div class="node-icon" :class="data.level">
-                  <el-icon v-if="data.level === 'org'" :size="10"><OfficeBuilding /></el-icon>
-                  <el-icon v-else-if="data.level === 'zone'" :size="10"><MapLocation /></el-icon>
-                  <el-icon v-else-if="data.level === 'site'" :size="10"><HomeFilled /></el-icon>
+                  <el-icon v-if="data.level === 'org'" :size="14"><OfficeBuilding /></el-icon>
+                  <el-icon v-else-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
+                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
+                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType }}</span>
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
+                <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
+                  <span class="node-actions" @click.stop>
+                    <el-icon><More /></el-icon>
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item v-if="data.level === 'org'" command="addZone">添加子分区</el-dropdown-item>
+                      <el-dropdown-item v-if="data.level === 'zone'" command="addSite">添加物理站点</el-dropdown-item>
+                      <el-dropdown-item command="edit">编辑节点信息</el-dropdown-item>
+                      <el-dropdown-item command="delete" divided class="text-danger">删除该节点</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </div>
             </template>
           </el-tree>
@@ -78,7 +92,8 @@
                 <div class="device-actions">
                   <span class="install-date">安装日期: {{ device.installDate }}</span>
                   <el-button link class="text-action">编辑信息</el-button>
-                  <el-button link class="text-action danger">换表接续</el-button>
+                  <el-button link class="text-action">换表接续</el-button>
+                  <el-button link class="text-action danger">删除设备</el-button>
                 </div>
               </div>
               
@@ -136,7 +151,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { OfficeBuilding, MapLocation, HomeFilled, Search, Plus, Filter, DataBoard } from '@element-plus/icons-vue'
+import { OfficeBuilding, MapLocation, HomeFilled, Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
 
 const filterText = ref('')
 const treeRef = ref<any>(null)
@@ -164,6 +179,11 @@ const handleNodeClick = (data: any) => {
   }
 }
 
+const handleCommand = (command: string, data: any) => {
+  console.log(`Command: ${command}, Node:`, data)
+  // TODO: implement modals for creation and editing
+}
+
 // 模拟数据：部门 -> 分区 -> 站点 (与 mysql_seed.sql 保持完全一致)
 const siteTree = ref([
   {
@@ -178,13 +198,15 @@ const siteTree = ref([
         children: [
           {
             id: 102,
-            label: '丰泽区 (DMA分区)',
+            label: '丰泽区',
             level: 'zone',
+            zoneType: '行政大区',
             children: [
               {
                 id: 201,
                 label: '东海科技园区DMA',
                 level: 'zone',
+                zoneType: '工业园区',
                 children: [
                   { id: 1, label: '东海园区进水泵站', level: 'site', deviceCount: 2 }
                 ]
@@ -193,6 +215,7 @@ const siteTree = ref([
                 id: 202,
                 label: '泉港新片区DMA',
                 level: 'zone',
+                zoneType: '居民区',
                 children: [
                   { id: 3, label: '西湖水质监测点', level: 'site', deviceCount: 1 }
                 ]
@@ -209,13 +232,15 @@ const siteTree = ref([
         children: [
           {
             id: 104,
-            label: '鲤城区 (DMA分区)',
+            label: '鲤城区',
             level: 'zone',
+            zoneType: '行政大区',
             children: [
               {
                 id: 204,
                 label: '洛江开发区DMA',
                 level: 'zone',
+                zoneType: '工业园区',
                 children: [
                   { id: 4, label: '鲤城地下泵房', level: 'site', deviceCount: 3 }
                 ]
@@ -430,6 +455,33 @@ const getPointColorClass = (type: string) => {
   border-radius: 12px;
   margin-right: 8px;
   font-weight: 600;
+}
+
+.node-type-badge {
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-weight: 500;
+  border: 1px solid var(--el-color-primary-light-5);
+}
+
+.node-actions {
+  display: none;
+  cursor: pointer;
+  color: #889096;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.node-actions:hover {
+  background: #eaeaea;
+  color: #11181c;
+}
+.sleek-tree :deep(.el-tree-node__content:hover) .node-actions {
+  display: flex;
+  align-items: center;
 }
 
 /* Right Main Content */

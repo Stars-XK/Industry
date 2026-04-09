@@ -9,6 +9,7 @@ import { TransformInterceptor, JwtStrategy, AuditLogInterceptor } from '@app/com
 import { TopologyController } from './topology/topology.controller';
 import { HmiController } from './hmi/hmi.controller';
 import { SecurityController } from './security/security.controller';
+import { AssetController } from './asset/asset.controller';
 import { HmiGateway } from './hmi/hmi.gateway';
 import { DmaZone } from '../../../libs/entities/src/dma-zone.entity';
 import { AstDevice } from '../../../libs/entities/src/ast-device.entity';
@@ -31,7 +32,7 @@ import { AuditLog } from '../../../libs/entities/src/audit-log.entity';
     }),
     TypeOrmModule.forFeature([DmaZone, AstDevice, AuditLog])
   ],
-  controllers: [TopologyController, HmiController, SecurityController],
+  controllers: [TopologyController, HmiController, SecurityController, AssetController],
   providers: [
     JwtStrategy,
     HmiGateway,

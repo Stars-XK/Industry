@@ -1,0 +1,14 @@
+{
+  "name": "data-simulator",
+  "version": "1.0.0",
+  "description": "独立的数据模拟推送工程 (定时向 API 或 TDengine 塞假数据)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3"
+  }
+}

@@ -10,9 +10,11 @@ import { SystemModule } from './system/system.module';
 import { AuditLogInterceptor } from '@app/common';
 import { AuditLog } from '@app/entities/audit-log.entity';
 import { DeptController } from './system/dept.controller';
+import { RedisModule } from '@app/redis';
 
 @Module({
   imports: [
+    RedisModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || '139.224.26.134',

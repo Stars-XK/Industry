@@ -98,9 +98,9 @@ export class WizardController {
         for (const row of depts as any[]) {
           const dept = new Dept();
           dept.id = row.id;
-          dept.parentId = row.parent_id;
-          dept.deptName = row.dept_name;
-          dept.orderNum = row.order_num;
+          dept.parent_id = row.parent_id;
+          dept.dept_name = row.dept_name;
+          dept.sort_order = row.order_num || 0;
           await queryRunner.manager.save(dept);
         }
         resultLog.push(`成功导入部门 ${depts.length} 条`);
@@ -114,8 +114,8 @@ export class WizardController {
         for (const row of roles as any[]) {
           const role = new Role();
           role.id = row.id;
-          role.roleName = row.role_name;
-          role.roleKey = row.role_key;
+          role.role_name = row.role_name;
+          role.role_key = row.role_key;
           await queryRunner.manager.save(role);
         }
         resultLog.push(`成功导入角色 ${roles.length} 条`);

@@ -52,7 +52,7 @@
               @mouseleave="hoverMenu = null"
             >
               <!-- 图标区 (如果没有配置专属图标，使用通用图标) -->
-              <div class="menu-icon-box" :class="{ active: currentPath === child.path }" @click="handleNavigate(child)">
+              <div class="menu-icon-box" :class="{ active: currentPath === child.path }" @click="handleNavigate(child)" tabindex="0" @keydown.enter="handleNavigate(child)" @keydown.space.prevent="handleNavigate(child)">
                 <div v-html="child.icon || icons.defaultSub" class="svg-icon"></div>
               </div>
 
@@ -368,7 +368,7 @@ onMounted(() => {
   color: var(--el-text-color-regular);
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
   border-bottom: 2px solid transparent;
 }
 .top-menu-item:hover {
@@ -410,7 +410,7 @@ onMounted(() => {
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
 
 .tutorial-btn:hover {
@@ -426,7 +426,7 @@ onMounted(() => {
   border: 1px solid var(--el-color-danger-light-5);
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
   font-weight: 500;
 }
 .logout-btn:hover {
@@ -477,7 +477,7 @@ onMounted(() => {
   color: var(--el-text-color-regular);
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
 .menu-icon-box:hover {
   background-color: var(--el-fill-color-light);
@@ -547,7 +547,7 @@ onMounted(() => {
 /* 页面过渡动画 */
 .fade-transform-enter-active,
 .fade-transform-leave-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .fade-transform-enter-from {
   opacity: 0;

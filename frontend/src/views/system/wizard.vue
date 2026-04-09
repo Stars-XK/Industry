@@ -100,7 +100,7 @@ const uploadUrl = '/api/v1/system/wizard/import';
 const headers = { Authorization: 'Bearer ' + userStore.token };
 
 const downloadTemplate = () => {
-  ElMessage.info('开始下载标准模板...');
+  ElMessage.info('开始下载标准模板…');
   // 此处可换成真实的模板下载链接
   window.open('/template/setup_template_v1.xlsx', '_blank');
 };
@@ -111,7 +111,7 @@ const nextStep = () => {
 
 const beforeUpload = (file: File) => {
   activeStep.value = 2; // 进入上传执行步骤
-  ElMessage.warning('正在强制触发全量系统备份，请耐心等待...');
+  ElMessage.warning('正在强制触发全量系统备份，请耐心等待…');
   return true;
 };
 
@@ -147,7 +147,7 @@ const goHome = () => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 .card-header {
   font-weight: 600;

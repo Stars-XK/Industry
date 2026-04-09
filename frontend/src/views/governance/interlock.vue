@@ -178,7 +178,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -208,7 +208,7 @@ onMounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .panel-header {
@@ -289,7 +289,7 @@ onMounted(() => {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
   color: #F56C6C;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   font-family: "SF Pro Display", sans-serif;
   padding: 8px 16px;
   border-radius: 4px;

@@ -92,7 +92,7 @@
     <el-dialog title="工单闭环" v-model="closeDialogVisible" width="500px"  :show-close="false">
       <el-form label-width="80px"  label-position="top">
         <el-form-item label="处理结果">
-          <el-input type="textarea" v-model="closeResultDesc" :rows="4" placeholder="请详细描述故障原因及修复过程..."  />
+          <el-input type="textarea" v-model="closeResultDesc" :rows="4" placeholder="请详细描述故障原因及修复过程…"  />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -226,7 +226,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -256,7 +256,7 @@ onMounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 

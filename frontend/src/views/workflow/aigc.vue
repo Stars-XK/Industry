@@ -18,7 +18,7 @@
               </div>
               <div class="message system" v-if="isTyping">
                 <div class="avatar"><el-icon class="is-loading"><Loading /></el-icon></div>
-                <div class="bubble typing-bubble">正在深度分析全局数据模型...</div>
+                <div class="bubble typing-bubble">正在深度分析全局数据模型…</div>
               </div>
               <div class="message system" v-if="hasAnswered && aiResponse">
                 <div class="avatar"><el-icon><ChatDotRound /></el-icon></div>
@@ -32,7 +32,7 @@
               </div>
             </div>
             <div class="chat-input">
-              <el-input v-model="question" type="textarea" :rows="3" placeholder="输入您的调度指令..." resize="none" class="dark-input" @keyup.enter="ask" />
+              <el-input v-model="question" type="textarea" :rows="3" placeholder="输入您的调度指令…" resize="none" class="dark-input" @keyup.enter="ask" />
               <div class="input-actions">
                 <el-button type="primary"  @click="ask" :disabled="!question || isTyping">发送指令</el-button>
               </div>
@@ -148,7 +148,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -178,7 +178,7 @@ onMounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .panel-header {

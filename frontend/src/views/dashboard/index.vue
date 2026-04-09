@@ -266,7 +266,7 @@ onUnmounted(() => {
   border: 1px solid rgba(0, 216, 255, 0.4);
   color: var(--el-color-primary);
   border-radius: 4px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 .exit-btn:hover {
   background: rgba(0, 216, 255, 0.1);
@@ -369,7 +369,7 @@ onUnmounted(() => {
   padding: 12px 16px;
   border-radius: 6px;
   border-left: 2px solid transparent;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 .alarm-item:hover {
   background: rgba(255, 255, 255, 0.05);

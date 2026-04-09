@@ -338,12 +338,12 @@ label {
   padding: 14px 16px;
   border-radius: 8px;
   font-size: 15px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   box-sizing: border-box;
 }
 
 .input-field input:focus {
-  outline: none;
+  outline: 2px solid transparent; outline-offset: 2px;;
   border-color: var(--el-color-primary);
   box-shadow: 0 0 0 3px rgba(0, 216, 255, 0.1);
   background: #152038;
@@ -374,7 +374,7 @@ label {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;

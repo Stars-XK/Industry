@@ -129,7 +129,7 @@ const handleControl = (targetStatus: number) => {
         tag: 'Pump.Status',
         value: targetStatus
       })
-      ElMessage.success(`指令下发成功！等待设备响应...`)
+      ElMessage.success(`指令下发成功！等待设备响应…`)
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
@@ -148,7 +148,7 @@ const handleSetFreq = () => {
         tag: 'Pump.Freq',
         value: parseFloat(value)
       })
-      ElMessage.success(`变频指令 [${value} Hz] 下发成功！等待设备响应...`)
+      ElMessage.success(`变频指令 [${value} Hz] 下发成功！等待设备响应…`)
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
@@ -177,7 +177,7 @@ onUnmounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -207,7 +207,7 @@ onUnmounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .panel-header {
@@ -313,7 +313,7 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.3);
   text-align: center;
   margin-bottom: 20px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 .pump.running {
   color: #00ffaa;
@@ -374,7 +374,7 @@ onUnmounted(() => {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
   color: #F56C6C;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   font-family: "SF Pro Display", sans-serif;
   border-radius: 4px;
   padding: 8px 16px;

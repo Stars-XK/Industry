@@ -355,7 +355,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -385,7 +385,7 @@ onMounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .panel-header {
@@ -412,7 +412,7 @@ onMounted(() => {
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 8px;
   padding: 16px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -45,7 +45,7 @@
       <div class="panel-section">
         <h3>关键资产目录</h3>
         <div class="search-box">
-          <el-input v-model="searchQuery" placeholder="搜索资产 ID 或名称..." prefix-icon="Search" />
+          <el-input v-model="searchQuery" placeholder="搜索资产 ID 或名称…" prefix-icon="Search" />
         </div>
         <div class="asset-list">
           <div 
@@ -53,7 +53,7 @@
             :key="asset.id" 
             class="asset-card"
             @click="focusAsset(asset)"
-          >
+           tabindex="0" @keydown.enter="focusAsset(asset)" @keydown.space.prevent="focusAsset(asset)">
             <div class="asset-icon" :class="asset.type">
               <el-icon v-if="asset.type === 'pump'"><Connection /></el-icon>
               <el-icon v-else-if="asset.type === 'alarm'"><Warning /></el-icon>
@@ -488,7 +488,7 @@ h3 {
   font-size: 14px;
   color: var(--el-text-color-regular);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
   padding: 8px 12px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.02);
@@ -553,7 +553,7 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
 .asset-card:hover {
   background: rgba(255, 255, 255, 0.06);

@@ -158,7 +158,7 @@ const fetchData = async () => {
     })
     
     // axios 拦截器已经去掉了 { code, data, msg } 结构，直接返回的是后端控制器给的 `data` 对象
-    // 但后端 predict.controller.ts 是这么写的： return { code: 200, data: { dates, actualData... } }
+    // 但后端 predict.controller.ts 是这么写的： return { code: 200, data: { dates, actualData… } }
     // 如果拦截器拦截了 code，那么 res 实际上就是 { dates, actualData, predictData, upperBounds, lowerBounds }
     
     if (res && res.dates) {
@@ -203,7 +203,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .card-header {
@@ -233,7 +233,7 @@ onMounted(() => {
   border-radius: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .panel-header {

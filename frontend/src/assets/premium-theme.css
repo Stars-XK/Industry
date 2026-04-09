@@ -135,7 +135,7 @@ body {
   font-weight: 500;
   border-radius: 6px;
   padding: 8px 16px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   letter-spacing: -0.01em;
 }
 
@@ -153,7 +153,7 @@ body {
   box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
   background-color: var(--el-fill-color-blank);
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 
 .el-input__wrapper:hover, .el-textarea__inner:hover {

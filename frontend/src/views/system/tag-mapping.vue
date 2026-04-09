@@ -7,7 +7,7 @@
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
-        <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID"  width="80" />
         <el-table-column prop="device_name" label="关联物理设备" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
@@ -26,7 +26,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="deadband" label="死区过滤阈值" width="150"  show-overflow-tooltip />
-        <el-table-column label="操作" width="150" fixed="right" show-overflow-tooltip>
+        <el-table-column label="操作" fixed="right" width="160">
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>

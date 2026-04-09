@@ -37,13 +37,13 @@
         <el-table-column prop="dict_label" label="字典标签 (Label)"  show-overflow-tooltip  />
         <el-table-column prop="dict_value" label="字典键值 (Value)"  show-overflow-tooltip  />
         <el-table-column prop="dict_sort" label="排序" width="80"  show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ row.status === 1 ? '正常' : '禁用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right" show-overflow-tooltip>
+        <el-table-column label="操作" fixed="right" width="100">
           <template #default="{ row }">
             <el-button link type="danger" @click="handleDeleteData(row)">删除</el-button>
           </template>

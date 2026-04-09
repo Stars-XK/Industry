@@ -18,7 +18,7 @@
     </div>
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
-        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID" align="center"  width="80" />
         <el-table-column prop="record_date" label="记录日期" width="150" align="center" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ scope.row.record_date.split('T')[0] }}</span>
@@ -47,7 +47,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="100" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="100">
           <template #default="scope">
             <el-button size="small" class="action-btn text-rose" link @click="handleDelete(scope.row)">删除</el-button>
           </template>

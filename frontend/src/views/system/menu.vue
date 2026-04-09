@@ -45,7 +45,7 @@
             {{ row.status === 1 ? '正常' : '停用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="220">
           <template #default="{ row }">
             <el-button link type="success" @click="handleAdd(row.id)">
               <el-icon style="margin-right: 2px;"><Plus /></el-icon> 新增子项

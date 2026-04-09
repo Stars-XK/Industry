@@ -15,7 +15,7 @@
         </div>
       </template>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID" align="center"  width="80" />
         <el-table-column prop="role_name" label="角色名称" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="font-weight: 500;">{{ row.role_name }}</span>
@@ -35,7 +35,7 @@
             <span v-else>未知</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" align="center" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="light">
               {{ row.status === 1 ? '正常' : '停用' }}
@@ -47,7 +47,7 @@
             <span class="time-text">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑

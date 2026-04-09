@@ -10,7 +10,7 @@
       </div>
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
-          <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+          <el-table-column prop="id" label="ID"  width="80" />
           <el-table-column prop="recipe_name" label="配方名称" width="220"  show-overflow-tooltip />
           <el-table-column prop="process_type" label="工艺类型" width="120" align="center" show-overflow-tooltip>
             <template #default="scope">
@@ -26,12 +26,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
+          <el-table-column prop="status" label="状态" align="center" width="100">
             <template #default="scope">
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" align="center" show-overflow-tooltip>
+          <el-table-column label="操作" align="center" fixed="right" width="220">
             <template #default="scope">
               <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
               <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>

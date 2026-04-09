@@ -12,7 +12,7 @@
         </div>
       </template>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID" align="center"  width="80" />
         <el-table-column prop="username" label="登录名"  show-overflow-tooltip  />
         <el-table-column prop="nickname" label="用户昵称"  show-overflow-tooltip  />
         <el-table-column prop="gender" label="性别" width="80" show-overflow-tooltip>
@@ -34,7 +34,7 @@
             <span v-if="!scope.row.roles || scope.row.roles.length === 0" style="color: var(--el-text-color-placeholder)">未分配</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="80" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ row.status === 1 ? '正常' : '禁用' }}
@@ -45,7 +45,7 @@
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="160">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑

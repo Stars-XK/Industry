@@ -44,7 +44,7 @@
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" align="center" fixed="right" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="100">
           <template #default="{ row }">
             <el-button class="action-btn text-cyan" link @click="showDetail(row)">查看参数</el-button>
           </template>

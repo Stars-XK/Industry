@@ -26,7 +26,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="sort_order" label="排序" width="80" align="center"  show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" align="center" width="100">
           <template #default="{ row }">
             <el-tag :class="row.status === 1 ? 'success-tag' : 'danger-tag'" effect="dark" style="border: none;">
               {{ row.status === 1 ? '正常' : '停用' }}
@@ -48,7 +48,7 @@
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="220">
           <template #default="{ row }">
             <div class="action-btns" style="justify-content: center;">
               <el-button class="action-btn text-emerald" link size="small" @click="handleAdd(row.id)">新增子部门</el-button>

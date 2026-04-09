@@ -60,7 +60,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" show-overflow-tooltip>
+        <el-table-column label="操作" fixed="right" width="220">
           <template #default="scope">
             <div class="action-btns">
               <el-button v-if="scope.row.status === 10" size="small" class="action-btn text-cyan" link @click="handleAccept(scope.row)">指派</el-button>

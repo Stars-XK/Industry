@@ -57,7 +57,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="120" align="center" show-overflow-tooltip>
+              <el-table-column label="操作" align="center" fixed="right" width="100">
                 <template #default="scope">
                   <el-button size="small" class="text-danger" link @click="handleUnbindDevice(scope.row)">解绑移出</el-button>
                 </template>

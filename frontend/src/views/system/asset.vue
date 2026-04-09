@@ -48,7 +48,7 @@
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.install_date }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <div class="status-indicator" :class="row.status === '在线' ? 'status-success' : 'status-warning'">
               <span class="dot"></span>
@@ -68,7 +68,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="220">
           <template #default="{ row }">
             <el-button link type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-button link type="warning" @click="handleReplace(row)">换表接续</el-button>

@@ -11,7 +11,7 @@
     </div>
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
-        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID" align="center"  width="80" />
         <el-table-column prop="sop_name" label="预案名称" min-width="250" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ scope.row.sop_name }}</span>
@@ -29,12 +29,12 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120" align="center" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" align="center" width="100">
           <template #default="scope">
             <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" style="--el-switch-on-color: var(--el-color-success); --el-switch-off-color: var(--el-border-color-light);" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="160">
           <template #default="scope">
             <div class="action-btns" style="justify-content: center;">
               <el-button size="small" class="action-btn text-cyan" link @click="handleEdit(scope.row)">编辑</el-button>

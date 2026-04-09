@@ -32,14 +32,14 @@
               <span class="money-text">￥{{ scope.row.total_amount }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
+          <el-table-column prop="status" label="状态" align="center" width="100">
             <template #default="scope">
               <el-tag :type="scope.row.status === 'paid' ? 'success' : 'danger'" effect="dark" class="industrial-tag">
                 {{ scope.row.status === 'paid' ? '已缴费' : '未缴费' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
+          <el-table-column label="操作" align="center" fixed="right" width="100">
             <template #default="scope">
               <el-button 
                 v-if="scope.row.status === 'unpaid'" 

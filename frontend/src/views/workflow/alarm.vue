@@ -11,7 +11,7 @@
     </div>
     <div class="box-card" v-loading="loading" >
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" row-key="id">
-        <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID"  width="80" />
         <el-table-column prop="device_name" label="报警设备" min-width="200" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}]</span> 
@@ -27,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="alarm_desc" label="报警描述" min-width="250" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="120" show-overflow-tooltip>
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
             <div class="status-indicator" :class="getStatusClass(scope.row.status)">
               <span class="dot"></span>
@@ -41,7 +41,7 @@
             <span v-else style="color: var(--el-border-color);">无预案</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="280" fixed="right" show-overflow-tooltip>
+        <el-table-column label="操作" fixed="right" width="280">
           <template #default="scope">
             <div class="action-btns">
               <el-button v-if="scope.row.status === 0" size="small" class="action-btn text-cyan" link @click="handleConfirm(scope.row)">确认</el-button>

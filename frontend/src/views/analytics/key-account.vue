@@ -48,7 +48,7 @@
               <el-tag type="info" effect="plain" class="industrial-tag-plain" v-else>未绑定</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
+          <el-table-column label="操作" align="center" fixed="right" width="160">
             <template #default="scope">
               <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
               <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>

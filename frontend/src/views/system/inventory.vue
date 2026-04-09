@@ -30,7 +30,7 @@
     </div>
     <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
-        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="id" label="ID" align="center"  width="80" />
         <el-table-column prop="part_code" label="备件编码" width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="highlight-text">{{ row.part_code }}</span>
@@ -66,7 +66,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="location" label="仓库位置" width="150"  show-overflow-tooltip />
-        <el-table-column label="操作" width="280" fixed="right" align="center" show-overflow-tooltip>
+        <el-table-column label="操作" align="center" fixed="right" width="340">
           <template #default="{ row }">
             <div class="action-btns" style="justify-content: center;">
               <el-button class="action-btn text-emerald" link size="small" @click="handleStock(row, 1)">入库</el-button>

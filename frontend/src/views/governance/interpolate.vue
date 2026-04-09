@@ -29,7 +29,7 @@
                   <el-switch v-model="row.is_negative_allow" class="industrial-switch" />
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="100" align="center" show-overflow-tooltip>
+              <el-table-column label="操作" align="center" fixed="right" width="100">
                 <template #default="{ row }">
                   <el-button  size="small">保存策略</el-button>
                 </template>

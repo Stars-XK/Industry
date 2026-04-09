@@ -18,84 +18,45 @@ export class ZoneController {
   ) {}
 
   @Get('tree')
-  @ApiOperation({ summary: '获取物理站点与组织架构、DMA分区的聚合树' })
-  async getZoneTree() {
-    // 1. 获取部门作为最顶层
-    const depts = await this.dataSource.query(`SELECT id, parent_id, dept_name as label FROM sys_dept WHERE status = 1 ORDER BY sort_order ASC`);
+  @ApiOperation({ summary: '获取DMA分区树' })
+  async getZoneTree(@Request() req: any) {
+    const userId = req.user?.userId;
     
-    // 2. 获取DMA分区 (使用 DmaZone 实体)
-    const zones = await this.dmaZoneRepo.find({ where: { is_deleted: null } });
+    // 构建查询条件，基于当前登录用户进行权限过滤 (超级管理员 userId=1 查看全部)
+    const whereCondition: any = { is_deleted: null };
+    if (userId && userId !== 1) {
+      whereCondition.created_by = userId;
+    }
 
-    // 3. 获取物理站点
-    const sites = await this.dataSource.query(`SELECT id, site_name as label, site_type, zone_id, dept_id FROM ast_site`);
-
-    // 4. 统计设备数量
-    const siteDeviceCounts = await this.dataSource.query(`
-      SELECT site_id, COUNT(id) as cnt 
-      FROM ast_device 
-      WHERE status != 0 
-      GROUP BY site_id
-    `);
-    const countMap = new Map();
-    siteDeviceCounts.forEach((r: any) => countMap.set(r.site_id, Number(r.cnt)));
-
-    // 构建树形逻辑 (部门 -> 分区 -> 站点)
-    const tree = [];
-    const deptMap = new Map();
-    const zoneMap = new Map();
-
-    depts.forEach((d: any) => {
-      const node = { id: `dept_${d.id}`, realId: d.id, label: d.label, level: 'org', children: [] };
-      deptMap.set(d.id, node);
+    // 1. 获取带有权限过滤的 DMA 分区
+    const zones = await this.dmaZoneRepo.find({ 
+      where: whereCondition,
+      order: { id: 'ASC' }
     });
 
+    const tree = [];
+    const zoneMap = new Map();
+
+    // 2. 转换为树节点格式
     zones.forEach((z: any) => {
-      const node = { id: `zone_${z.id}`, realId: z.id, label: z.zone_name, level: 'zone', children: [] };
+      const node = { 
+        id: `zone_${z.id}`, 
+        realId: z.id, 
+        label: z.zone_name, 
+        level: 'zone', 
+        children: [] 
+      };
       zoneMap.set(z.id, node);
     });
 
-    sites.forEach((s: any) => {
-      const node = { 
-        id: `site_${s.id}`, 
-        realId: s.id, 
-        label: s.label, 
-        level: 'site', 
-        type: s.site_type,
-        deviceCount: countMap.get(s.id) || 0 
-      };
-      
-      // 挂载到对应的父节点
-      if (s.zone_id && zoneMap.has(s.zone_id)) {
-        zoneMap.get(s.zone_id).children.push(node);
-      } else if (s.dept_id && deptMap.has(s.dept_id)) {
-        deptMap.get(s.dept_id).children.push(node);
-      }
-    });
-
-    // 组装分区到部门 (这里假设 parent_id 对应的如果是部门则在 deptMap 里，如果也是分区则在 zoneMap 里)
+    // 3. 组装分区层级
     zones.forEach((z: any) => {
       const parentId = Number(z.parent_id);
-      if (parentId) {
-        if (zoneMap.has(parentId)) {
-          zoneMap.get(parentId).children.push(zoneMap.get(z.id));
-        } else if (deptMap.has(parentId)) {
-          deptMap.get(parentId).children.push(zoneMap.get(z.id));
-        } else {
-          // 如果找不到父节点，默认推到顶层
-          tree.push(zoneMap.get(z.id));
-        }
+      if (parentId && zoneMap.has(parentId)) {
+        zoneMap.get(parentId).children.push(zoneMap.get(z.id));
       } else {
-        // 没有 parent_id 的作为顶层分区
+        // 没有 parent_id 或找不到 parent_id 的作为顶层分区
         tree.push(zoneMap.get(z.id));
-      }
-    });
-
-    depts.forEach((d: any) => {
-      const parentId = Number(d.parent_id);
-      if (parentId && deptMap.has(parentId)) {
-        deptMap.get(parentId).children.push(deptMap.get(d.id));
-      } else {
-        tree.push(deptMap.get(d.id));
       }
     });
 

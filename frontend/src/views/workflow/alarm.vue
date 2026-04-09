@@ -41,9 +41,9 @@
             <span v-else style="color: var(--el-border-color);">无预案</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="280">
+        <el-table-column label="操作" fixed="right" width="220">
           <template #default="scope">
-            <div class="action-btns">
+            <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <el-button v-if="scope.row.status === 0" size="small" class="action-btn text-cyan" link @click="handleConfirm(scope.row)">确认</el-button>
               <el-button v-if="scope.row.status !== 2" size="small" class="action-btn text-emerald" link @click="handleRecover(scope.row)">恢复</el-button>
               <el-button v-if="scope.row.status !== 2" size="small" class="action-btn text-amber" link @click="handleCreateOrder(scope.row)">转工单</el-button>

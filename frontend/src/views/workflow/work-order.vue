@@ -60,9 +60,9 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="220">
+        <el-table-column label="操作" fixed="right" width="160">
           <template #default="scope">
-            <div class="action-btns">
+            <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <el-button v-if="scope.row.status === 10" size="small" class="action-btn text-cyan" link @click="handleAccept(scope.row)">指派</el-button>
               <el-button v-if="scope.row.status === 20" size="small" class="action-btn text-emerald" link @click="handleClose(scope.row)">闭环</el-button>
               <el-button size="small" class="action-btn" style="color: var(--el-text-color-regular);" link @click="viewDetail(scope.row)">详情</el-button>

@@ -36,15 +36,17 @@
               <el-switch v-model="row.status" :disabled="row.bypass" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column label="高级运维" width="180" align="center" show-overflow-tooltip>
+          <el-table-column label="高级运维" fixed="right" width="220" align="center">
             <template #default="{ row }">
-              <el-button
-                :class="row.bypass ? '-danger' : ''"
-                size="small"
-                @click="toggleBypass(row)"
-              >
-                {{ row.bypass ? '解除旁路 (Bypass)' : '开启强制旁路' }}
-              </el-button>
+              <div class="action-btns" style="display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap;">
+                <el-button
+                  :class="row.bypass ? '-danger' : ''"
+                  size="small"
+                  @click="toggleBypass(row)"
+                >
+                  {{ row.bypass ? '解除旁路 (Bypass)' : '开启强制旁路' }}
+                </el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>

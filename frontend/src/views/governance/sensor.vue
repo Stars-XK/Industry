@@ -48,7 +48,7 @@
                     <span :class="row.online < 90 ? 'text-danger' : 'text-success'">{{ row.online }}%</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="battery" label="电池剩余电量" min-width="150" show-overflow-tooltip>
+                <el-table-column prop="battery" label="电池剩余电量" min-width="150">
                   <template #default="{ row }">
                     <el-progress :percentage="row.battery" :color="row.battery < 20 ? 'var(--el-color-danger)' : 'var(--el-color-primary)'" class="industrial-progress" />
                   </template>

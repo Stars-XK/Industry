@@ -85,7 +85,7 @@ const activeStep = ref(0);
 const resultLogs = ref<string[]>([]);
 
 // 这个地址对应刚才我们写的 auth-service 里的 WizardController
-const uploadUrl = import.meta.env.VITE_APP_BASE_API + '/system/wizard/import';
+const uploadUrl = '/api/v1/system/wizard/import';
 const headers = { Authorization: 'Bearer ' + userStore.token };
 
 const downloadTemplate = () => {

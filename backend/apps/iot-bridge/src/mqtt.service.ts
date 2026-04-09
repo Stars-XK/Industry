@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as mqtt from 'mqtt';
-import axios from 'axios';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
+import { TDengineService } from '@app/database/tdengine/tdengine.service';
 
 @Injectable()
 export class MqttService implements OnModuleInit, OnModuleDestroy {
@@ -11,14 +11,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   private tagMap: Map<string, IotTagMapping> = new Map();
   private readonly logger = new Logger(MqttService.name);
 
-  private readonly tdengineUrl = 'http://localhost:6041/rest/sql';
-  private readonly tdengineDb = 'dma';
-  private readonly tdengineAuth = 'Basic ' + Buffer.from('root:taosdata').toString('base64');
-
   constructor(
     @InjectRepository(IotTagMapping)
     private tagMappingRepo: Repository<IotTagMapping>,
-    private dataSource: DataSource
+    private tdengineService: TDengineService
   ) {}
 
   async onModuleInit() {
@@ -77,7 +73,6 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
         if (isNaN(deviceId) || !msg.data) return;
 
         const timestamp = msg.timestamp || Date.now();
-        const recordsToInsert = [];
         const tdengineSqls = [];
 
         for (const [tagName, rawValue] of Object.entries(msg.data)) {
@@ -86,57 +81,21 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
             const parsedVal = parseFloat(rawValue as string);
             if (!isNaN(parsedVal)) {
               const scaledValue = parsedVal * mapping.scaling_factor;
-
-              // MySQL 数据集
-              recordsToInsert.push({
-                device_id: deviceId,
-                tag_name: tagName,
-                standard_name: mapping.standard_name,
-                value: scaledValue,
-                timestamp: timestamp
-              });
-
               // TDengine 自动建子表逻辑 (子表名: dev_{deviceId}_{standard_name})
-              // 使用 device_raw 超级表, TAGS (device_id, zone_id, device_type)
-              // 这里简化 zone_id='zone_1', device_type=1 仅做演示
               const tableName = `dev_${deviceId}_${mapping.standard_name}`;
-              tdengineSqls.push(`INSERT INTO ${this.tdengineDb}.${tableName} USING ${this.tdengineDb}.device_raw TAGS ('${deviceId}', 'zone_1', 1) VALUES (${timestamp}, ${scaledValue})`);
+              tdengineSqls.push(`INSERT INTO ${tableName} USING device_raw TAGS ('${deviceId}', 'zone_1', 1) VALUES (${timestamp}, ${scaledValue});`);
             }
           }
         }
 
-        if (recordsToInsert.length > 0) {
-          // 1. 尝试写入 TDengine (符合路线图要求)
-          let tdengineSuccess = false;
-          try {
-            const batchSql = tdengineSqls.join(' ');
-            await axios.post(this.tdengineUrl, batchSql, {
-              headers: { Authorization: this.tdengineAuth }
-            });
-            tdengineSuccess = true;
-            this.logger.debug(`成功将 ${recordsToInsert.length} 条数据写入 TDengine 超级表`);
-          } catch (tdErr) {
-            // 静默处理，因为沙箱环境可能没装 TDengine
-            // this.logger.warn('TDengine 写入失败，将降级写入 MySQL');
-          }
-
-          // 2. 如果 TDengine 失败，或者为了保证系统能跑，同时写入 MySQL
-          if (!tdengineSuccess) {
-            const queryRunner = this.dataSource.createQueryRunner();
-            await queryRunner.connect();
-            try {
-              const valuesStr = recordsToInsert.map(r => `(${r.device_id}, '${r.tag_name}', '${r.standard_name}', ${r.value}, ${r.timestamp})`).join(',');
-              await queryRunner.query(`INSERT INTO device_raw (device_id, tag_name, standard_name, value, timestamp) VALUES ${valuesStr}`);
-              // this.logger.debug(`降级写入 ${recordsToInsert.length} 条数据到 MySQL`);
-            } catch (dbErr) {
-              this.logger.error('写入 MySQL 数据库失败', dbErr);
-            } finally {
-              await queryRunner.release();
-            }
-          }
+        if (tdengineSqls.length > 0) {
+          // 纯 TDengine 写入，不再降级 MySQL！
+          const batchSql = tdengineSqls.join(' ');
+          await this.tdengineService.query(batchSql);
+          this.logger.debug(`成功将 ${tdengineSqls.length} 条数据写入 TDengine`);
         }
       } catch (err) {
-        this.logger.warn('解析 MQTT 消息失败:', err.message);
+        this.logger.warn('解析 MQTT 或写入 TDengine 失败:', err.message);
       }
     });
 

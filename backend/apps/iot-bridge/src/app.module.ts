@@ -5,9 +5,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { MqttService } from './mqtt.service';
+import { TDengineModule } from '@app/database/tdengine/tdengine.module';
 
 @Module({
   imports: [
+    TDengineModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || '139.224.26.134',

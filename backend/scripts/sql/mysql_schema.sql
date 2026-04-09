@@ -524,3 +524,22 @@ CREATE TABLE IF NOT EXISTS biz_recipe (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='工业工艺配方库表';
+
+-- ----------------------------
+-- 15. 多源异构数据源接入配置表
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `gov_datasource_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `source_name` varchar(100) NOT NULL COMMENT '数据源名称',
+  `source_type` varchar(50) NOT NULL COMMENT '类型: http, kafka, mysql, pg, oracle, dm',
+  `connection_config` text COMMENT '连接配置(JSON格式)',
+  `cron_expression` varchar(50) DEFAULT NULL COMMENT '定时采集表达式',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '状态: 1-启用, 0-停用',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `created_by` bigint(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_by` bigint(20) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='多源异构数据源接入配置表';

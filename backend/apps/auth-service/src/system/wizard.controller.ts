@@ -9,6 +9,7 @@ import { Role } from '../../../../libs/entities/src/role.entity';
 import { DictType } from '../../../../libs/entities/src/dict-type.entity';
 import { DictData } from '../../../../libs/entities/src/dict-data.entity';
 import { SysBackupLog } from '../../../../libs/entities/src/sys-backup-log.entity';
+import { AuditLog } from '../../../../libs/entities/src/audit-log.entity';
 import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -17,7 +18,7 @@ import { exec } from 'child_process';
 
 const execPromise = util.promisify(exec);
 
-@Controller('wizard')
+@Controller('system/wizard')
 export class WizardController {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
@@ -26,6 +27,7 @@ export class WizardController {
     @InjectRepository(DictType) private dictTypeRepository: Repository<DictType>,
     @InjectRepository(DictData) private dictDataRepository: Repository<DictData>,
     @InjectRepository(SysBackupLog) private backupRepository: Repository<SysBackupLog>,
+    @InjectRepository(AuditLog) private auditLogRepository: Repository<AuditLog>,
     private dataSource: DataSource
   ) {}
 
@@ -76,8 +78,20 @@ export class WizardController {
   async importData(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
     if (!file) throw new HttpException('文件不能为空', HttpStatus.BAD_REQUEST);
 
+    const userId = req.user?.userId || 1;
+
+    // 0. 保存上传的文件到磁盘
+    const uploadDir = path.join(process.cwd(), 'uploads', 'wizard');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+    const savedFileName = `wizard_import_${timestamp}_${file.originalname}`;
+    const savedFilePath = path.join(uploadDir, savedFileName);
+    fs.writeFileSync(savedFilePath, file.buffer);
+
     // 1. 强制备份
-    await this.triggerPreImportBackup(req.user?.userId);
+    await this.triggerPreImportBackup(userId);
 
     // 2. 解析 Excel
     const workbook = xlsx.read(file.buffer, { type: 'buffer' });
@@ -93,7 +107,6 @@ export class WizardController {
       if (workbook.SheetNames.includes('Dept')) {
         const deptSheet = workbook.Sheets['Dept'];
         const depts = xlsx.utils.sheet_to_json(deptSheet);
-        // 这里只是演示清除重写，实际中可以做 upsert
         await queryRunner.manager.clear(Dept);
         for (const row of depts as any[]) {
           const dept = new Dept();
@@ -122,9 +135,30 @@ export class WizardController {
       }
 
       await queryRunner.commitTransaction();
+
+      // 3. 记录审计日志
+      const auditLog = this.auditLogRepository.create({
+        req_url: '/api/v1/system/wizard/import',
+        req_method: 'POST',
+        user_id: userId,
+        ip_address: req.ip || req.connection.remoteAddress,
+        req_body: { result: resultLog, file: savedFilePath }
+      });
+      await this.auditLogRepository.save(auditLog);
+
       return { code: 200, message: '导入并覆盖成功', data: resultLog };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      
+      const auditLog = this.auditLogRepository.create({
+        req_url: '/api/v1/system/wizard/import',
+        req_method: 'POST',
+        user_id: userId,
+        ip_address: req.ip || req.connection.remoteAddress,
+        req_body: { error: error.message, file: savedFilePath }
+      });
+      await this.auditLogRepository.save(auditLog);
+
       throw new HttpException('导入解析失败: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
       await queryRunner.release();

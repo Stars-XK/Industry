@@ -1,219 +1,168 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">异构设备与数据源接入网关</h1>
-        <p class="page-subtitle">Heterogeneous Device & Data Source Integration Gateway</p>
-      </div>
-      <div class="header-actions">
-        <el-tag effect="dark" class="status-tag pulse-tag">中间件运行正常</el-tag>
-      </div>
-    </div>
-
-    <el-row :gutter="24" style="flex: 1; display: flex;">
-      <el-col :span="14" style="display: flex; flex-direction: column;">
-        <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
-          <div class="panel-header">
-            <div class="panel-title">边缘网关协议通道 <span>Edge Protocol Channels</span></div>
-          </div>
-          <el-table :data="channels" style="width: 100%" class="dark-table custom-scrollbar">
-            <el-table-column prop="name" label="通道名称" min-width="150">
-              <template #default="{ row }">
-                <span style="color: #e2e8f0; font-weight: 500;">{{ row.name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="protocol" label="接入协议" width="120">
-              <template #default="{ row }">
-                <span class="highlight-text">{{ row.protocol }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="status" label="状态" width="100">
-              <template #default="{ row }">
-                <div class="status-indicator" :class="row.status === '在线' ? 'status-success' : 'status-danger'">
-                  <span class="dot"></span>
-                  {{ row.status }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="qps" label="QPS" width="100" align="right">
-              <template #default="{ row }">
-                <span style="color: #00d8ff; font-weight: 600; font-family: 'SF Mono', monospace;">{{ row.qps }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
+  <div class="app-container">
+    <el-card class="box-card dark-card">
+      <template #header>
+        <div class="card-header">
+          <span>多源异构数据源接入配置</span>
+          <el-button type="primary" @click="handleAdd">新增接入</el-button>
         </div>
-      </el-col>
+      </template>
 
-      <el-col :span="10" style="display: flex; flex-direction: column;">
-        <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
-          <div class="panel-header">
-            <div class="panel-title">MQTT 代理中间件状态 <span>Broker Status</span></div>
-          </div>
-          <div class="metrics-grid">
-            <div class="metric-cell">
-              <div class="metric-label">Broker IP</div>
-              <div class="metric-val" style="color: #94a3b8;">192.168.1.100</div>
-            </div>
-            <div class="metric-cell">
-              <div class="metric-label">端口</div>
-              <div class="metric-val" style="color: #94a3b8;">1883 / 8883</div>
-            </div>
-            <div class="metric-cell highlight-cell">
-              <div class="metric-label text-cyan">当前连接数</div>
-              <div class="metric-val text-cyan large-val">1,425</div>
-            </div>
-            <div class="metric-cell highlight-cell">
-              <div class="metric-label text-emerald">每秒吞吐 (Msg/s)</div>
-              <div class="metric-val text-emerald large-val">4,200</div>
-            </div>
-            <div class="metric-cell">
-              <div class="metric-label">鉴权插件</div>
-              <div class="metric-val" style="color: #e2e8f0;">Webhook Token</div>
-            </div>
-            <div class="metric-cell">
-              <div class="metric-label">离线缓存队列</div>
-              <div class="metric-val" style="color: #f59e0b;">12 MB</div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
+      <el-row :gutter="20" style="margin-bottom: 20px;">
+        <el-col :span="6" v-for="channel in statusData.channels" :key="channel.protocol">
+          <el-card shadow="hover" class="status-card" :class="channel.status">
+            <div class="channel-title">{{ channel.protocol }}</div>
+            <div class="channel-stat">QPS: {{ channel.currentQps }}</div>
+            <div class="channel-stat">堆积: {{ channel.lag }}</div>
+            <div class="channel-stat">在线时长: {{ channel.uptime }}</div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <el-table :data="tableData" border style="width: 100%" class="dark-table" v-loading="loading">
+        <el-table-column prop="id" label="ID" width="60" align="center" />
+        <el-table-column prop="sourceName" label="数据源名称" />
+        <el-table-column prop="sourceType" label="接入类型" width="120" />
+        <el-table-column prop="cronExpression" label="定时采集频率" width="150" />
+        <el-table-column prop="status" label="状态" width="100" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">
+              {{ scope.row.status === 1 ? '启用' : '停用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150" align="center">
+          <template #default="scope">
+            <el-button link type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+        <el-form-item label="数据源名称" prop="sourceName">
+          <el-input v-model="form.sourceName" placeholder="如: 外部 ERP HTTP 接口" />
+        </el-form-item>
+        <el-form-item label="接入类型" prop="sourceType">
+          <el-select v-model="form.sourceType" style="width: 100%;">
+            <el-option label="HTTP API" value="http" />
+            <el-option label="Kafka 消息队列" value="kafka" />
+            <el-option label="MySQL 数据库" value="mysql" />
+            <el-option label="PostgreSQL" value="pg" />
+            <el-option label="Oracle" value="oracle" />
+            <el-option label="达梦数据库 (DM)" value="dm" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="定时表达式" prop="cronExpression">
+          <el-input v-model="form.cronExpression" placeholder="如: */10 * * * * *" />
+        </el-form-item>
+        <el-form-item label="连接配置 (JSON)" prop="connectionConfig">
+          <el-input type="textarea" v-model="form.connectionConfig" :rows="4" placeholder='{"url": "http://api.erp.com/data", "token": "xxx"}' />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="form.remark" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref } from 'vue'
-const channels = ref([
-  { name: '一水厂主网关', protocol: 'Modbus TCP', status: '在线', qps: 120 },
-  { name: '西区泵站数据站', protocol: 'OPC UA', status: '在线', qps: 85 },
-  { name: '第三方环保系统', protocol: 'HTTP API', status: '离线', qps: 0 }
-])
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import request from '@/utils/request';
+
+const loading = ref(false);
+const statusData = ref({ channels: [] });
+const tableData = ref([]);
+
+const dialogVisible = ref(false);
+const dialogTitle = ref('');
+const formRef = ref();
+const form = ref<any>({
+  status: 1
+});
+
+const rules = {
+  sourceName: [{ required: true, message: '请输入数据源名称', trigger: 'blur' }],
+  sourceType: [{ required: true, message: '请选择类型', trigger: 'change' }]
+};
+
+const getStatus = async () => {
+  try {
+    const res = await request.get('/api/v1/data-center/governance/integration/status');
+    statusData.value = res || { channels: [] };
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const getList = async () => {
+  loading.value = true;
+  try {
+    const res: any = await request.get('/api/v1/data-center/governance/integration/list');
+    tableData.value = res.list || [];
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleAdd = () => {
+  dialogTitle.value = '新增数据源接入';
+  form.value = { status: 1 };
+  dialogVisible.value = true;
+};
+
+const handleEdit = (row: any) => {
+  dialogTitle.value = '编辑数据源';
+  form.value = { ...row };
+  dialogVisible.value = true;
+};
+
+const handleDelete = (row: any) => {
+  ElMessageBox.confirm('确认删除该数据源吗?', '提示', { type: 'warning' }).then(async () => {
+    await request.delete('/api/v1/data-center/governance/integration/' + row.id);
+    ElMessage.success('删除成功');
+    getList();
+  }).catch(() => {});
+};
+
+const submitForm = async () => {
+  await formRef.value.validate();
+  if (form.value.id) {
+    await request.put('/api/v1/data-center/governance/integration', form.value);
+    ElMessage.success('修改成功');
+  } else {
+    await request.post('/api/v1/data-center/governance/integration', form.value);
+    ElMessage.success('新增成功');
+  }
+  dialogVisible.value = false;
+  getList();
+};
+
+onMounted(() => {
+  getStatus();
+  getList();
+});
 </script>
+
 <style scoped>
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-}
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
-}
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
-}
-.pulse-tag {
-  animation: pulse 2s infinite;
-  background-color: rgba(16, 185, 129, 0.2);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #34d399;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.panel-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #e2e8f0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.panel-title span {
-  font-size: 12px;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.highlight-text {
-  color: #00d8ff;
-  font-family: "SF Mono", monospace;
-  font-weight: 600;
-}
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
-}
-.status-indicator .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.status-success { color: #10b981; }
-.status-success .dot { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-.status-danger { color: #f43f5e; }
-.status-danger .dot { background-color: #f43f5e; box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
-@keyframes pulse-danger {
-  0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
-}
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  flex: 1;
-}
-.metric-cell {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.highlight-cell {
-  background: rgba(0, 216, 255, 0.03);
-  border-color: rgba(0, 216, 255, 0.1);
-  box-shadow: inset 0 0 20px rgba(0, 216, 255, 0.02);
-}
-.metric-label {
-  font-size: 13px;
-  color: #94a3b8;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-.metric-val {
-  font-size: 16px;
-  font-weight: 600;
-  font-family: "SF Mono", monospace;
-}
-.large-val {
-  font-size: 32px;
-  line-height: 1;
-}
-.text-cyan { color: #00d8ff; }
-.text-emerald { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.3); }
-/* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+.app-container { padding: 20px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; }
+.status-card { text-align: center; }
+.status-card.connected { border-left: 4px solid #67c23a; }
+.status-card.warning { border-left: 4px solid #e6a23c; }
+.channel-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+.channel-stat { font-size: 13px; color: #888; line-height: 1.8; }
 </style>

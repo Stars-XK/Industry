@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Query, UseGuards, Req, Res, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Query, UseGuards, Req, Res, Body, HttpException, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SysBackupLog } from '../../../../libs/entities/src/sys-backup-log.entity';
@@ -7,6 +8,7 @@ import { exec } from 'child_process';
 import * as util from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Response } from 'express';
 
 const execPromise = util.promisify(exec);
 
@@ -122,5 +124,48 @@ export class BackupController {
       console.error('恢复失败:', error);
       throw new HttpException('恢复执行失败', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  // 4. 下载备份文件
+  @UseGuards(AuthGuard('jwt'))
+  @Get('download')
+  async downloadBackup(@Query('id') id: number, @Res() res: Response) {
+    const log = await this.backupRepository.findOne({ where: { id } });
+    if (!log || log.status !== 1) {
+      throw new HttpException('无效的备份记录', HttpStatus.BAD_REQUEST);
+    }
+    if (!fs.existsSync(log.filePath)) {
+      throw new HttpException('备份文件不存在', HttpStatus.NOT_FOUND);
+    }
+    res.download(log.filePath, log.fileName);
+  }
+
+  // 5. 上传备份文件并恢复
+  @UseGuards(AuthGuard('jwt'))
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadBackup(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+    if (!file) {
+      throw new HttpException('文件不能为空', HttpStatus.BAD_REQUEST);
+    }
+
+    const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+    const fileName = `upload_${timestamp}_${file.originalname}`;
+    const filePath = path.join(this.backupDir, fileName);
+
+    fs.writeFileSync(filePath, file.buffer);
+
+    const log = this.backupRepository.create({
+      fileName,
+      filePath,
+      fileSize: file.size,
+      backupType: 2, // 手动上传
+      status: 1,
+      remark: '用户上传的备份文件',
+      createdBy: req.user?.userId
+    });
+
+    await this.backupRepository.save(log);
+    return { code: 200, message: '上传成功', data: { id: log.id } };
   }
 }

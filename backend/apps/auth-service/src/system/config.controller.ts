@@ -3,13 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SysConfig } from '../../../../libs/entities/src/sys-config.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { RedisService } from '@app/redis';
 
-@Controller('config')
+@Controller('system/config')
 export class ConfigController {
   constructor(
     @InjectRepository(SysConfig)
     private readonly configRepository: Repository<SysConfig>,
+    private readonly redisService: RedisService,
   ) {}
+
+  private readonly REDIS_KEY = 'sys:global:config';
 
   // 1. 获取所有配置列表（供后台管理表格使用）
   @UseGuards(AuthGuard('jwt'))
@@ -41,12 +45,24 @@ export class ConfigController {
   // 2. 获取公开的全局配置（供前端应用初始化，无需 Token）
   @Get('global')
   async getGlobalConfig() {
+    const cachedConfig = await this.redisService.get(this.REDIS_KEY);
+    if (cachedConfig) {
+      return {
+        code: 200,
+        data: JSON.parse(cachedConfig),
+        message: 'success (from redis cache)'
+      };
+    }
+
     const configs = await this.configRepository.find();
     // 转换为前端好读取的 key-value 对象
     const configMap: Record<string, string> = {};
     configs.forEach(c => {
       configMap[c.configKey] = c.configValue;
     });
+
+    // 存入 Redis 缓存，过期时间可设为 1 天
+    await this.redisService.set(this.REDIS_KEY, JSON.stringify(configMap), 86400);
 
     return {
       code: 200,
@@ -72,6 +88,7 @@ export class ConfigController {
       createdBy: req.user?.userId
     });
     await this.configRepository.save(newConfig);
+    await this.redisService.del(this.REDIS_KEY);
     return { code: 200, message: '新增成功' };
   }
 
@@ -84,6 +101,7 @@ export class ConfigController {
       ...body,
       updatedBy: req.user?.userId
     });
+    await this.redisService.del(this.REDIS_KEY);
     return { code: 200, message: '修改成功' };
   }
 
@@ -101,6 +119,7 @@ export class ConfigController {
         { configValue: item.configValue, updatedBy: req.user?.userId }
       );
     }
+    await this.redisService.del(this.REDIS_KEY);
     return { code: 200, message: '批量保存成功' };
   }
 
@@ -110,6 +129,7 @@ export class ConfigController {
   async deleteConfig(@Param('ids') ids: string) {
     const idArray = ids.split(',').map(id => parseInt(id));
     await this.configRepository.delete(idArray);
+    await this.redisService.del(this.REDIS_KEY);
     return { code: 200, message: '删除成功' };
   }
 }

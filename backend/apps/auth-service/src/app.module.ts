@@ -3,6 +3,7 @@ dotenv.config();
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { MenuModule } from './menu/menu.module';
@@ -15,6 +16,7 @@ import { RedisModule } from '@app/redis';
 @Module({
   imports: [
     RedisModule,
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || '139.224.26.134',

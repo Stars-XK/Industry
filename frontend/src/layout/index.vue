@@ -10,7 +10,7 @@
     <header class="top-navbar glass-effect">
       <div class="logo-area">
         <span class="logo-icon">智</span>
-        <span class="logo-text">信创工业治理</span>
+        <span class="logo-text">{{ configStore.sysTitle || '信创工业治理' }}</span>
       </div>
       
       <!-- 一级菜单区域 -->
@@ -85,6 +85,7 @@ import { ref, watch, onMounted, computed } from 'vue';
 
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
+import { useConfigStore } from '@/store/config';
 import { QuestionFilled } from '@element-plus/icons-vue';
 import { useTutorial } from '@/hooks/useTutorial';
 
@@ -93,6 +94,7 @@ const { startTutorial } = useTutorial();
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+const configStore = useConfigStore();
 
 const currentPath = ref(route.path);
 const hoverMenu = ref<number | null>(null);

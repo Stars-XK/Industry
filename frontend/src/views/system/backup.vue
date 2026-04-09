@@ -4,7 +4,16 @@
       <template #header>
         <div class="card-header">
           <span>数据库备份与恢复</span>
-          <div class="header-actions">
+          <div class="header-actions" style="display: flex; gap: 10px;">
+            <el-upload
+              action="/api/v1/system/backup/upload"
+              :headers="uploadHeaders"
+              :show-file-list="false"
+              :on-success="handleUploadSuccess"
+              :on-error="handleUploadError"
+            >
+              <el-button type="success" :loading="loading">上传外部SQL备份</el-button>
+            </el-upload>
             <el-button type="primary" :loading="loading" @click="handleCreateBackup">执行手动备份</el-button>
           </div>
         </div>
@@ -33,8 +42,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="createdAt" label="备份时间" width="180" />
-        <el-table-column label="操作" width="150" align="center">
+        <el-table-column label="操作" width="200" align="center">
           <template #default="scope">
+            <el-button type="primary" link :disabled="scope.row.status !== 1" @click="handleDownload(scope.row)">下载</el-button>
             <el-popconfirm
               title="确定要使用该备份文件恢复整个数据库吗？此操作不可逆！"
               @confirm="handleRestore(scope.row)"
@@ -76,6 +86,10 @@ const queryParams = ref({
   pageSize: 10
 });
 
+const uploadHeaders = {
+  Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+};
+
 const formatSize = (bytes: number) => {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -88,7 +102,7 @@ const getList = async () => {
   loading.value = true;
   try {
     const res: any = await request({
-      url: '/system/backup/list',
+      url: '/api/v1/system/backup/list',
       method: 'get',
       params: queryParams.value
     });
@@ -105,7 +119,7 @@ const handleCreateBackup = async () => {
   loading.value = true;
   try {
     await request({
-      url: '/system/backup/create',
+      url: '/api/v1/system/backup/create',
       method: 'post'
     });
     ElMessage.success('备份成功');
@@ -121,7 +135,7 @@ const handleRestore = async (row: any) => {
   loading.value = true;
   try {
     await request({
-      url: '/system/backup/restore',
+      url: '/api/v1/system/backup/restore',
       method: 'post',
       data: { id: row.id }
     });
@@ -131,6 +145,23 @@ const handleRestore = async (row: any) => {
   } finally {
     loading.value = false;
   }
+};
+
+const handleDownload = (row: any) => {
+  window.open(`/api/v1/system/backup/download?id=${row.id}&token=${localStorage.getItem('token')}`);
+};
+
+const handleUploadSuccess = (response: any) => {
+  if (response.code === 200) {
+    ElMessage.success('上传成功');
+    getList();
+  } else {
+    ElMessage.error(response.message || '上传失败');
+  }
+};
+
+const handleUploadError = () => {
+  ElMessage.error('上传文件失败');
 };
 
 onMounted(() => {

@@ -18,9 +18,11 @@ import { DictData } from '../../../../libs/entities/src/dict-data.entity';
 import { AuditLog } from '../../../../libs/entities/src/audit-log.entity';
 import { SysConfig } from '../../../../libs/entities/src/sys-config.entity';
 import { SysBackupLog } from '../../../../libs/entities/src/sys-backup-log.entity';
+import { BackupService } from './backup.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Role, Dept, Menu, DictType, DictData, AuditLog, SysConfig, SysBackupLog])],
   controllers: [UserController, RoleController, DeptController, SystemMenuController, DictController, AuditLogController, ConfigController, BackupController, WizardController],
+  providers: [BackupService],
 })
 export class SystemModule {}

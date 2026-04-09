@@ -21,6 +21,7 @@ import { SensorController } from './governance/sensor.controller';
 import { IntegrationController } from './governance/integration.controller';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { IotGateway } from '../../../libs/entities/src/iot-gateway.entity';
+import { GovDatasourceConfig } from '../../../libs/entities/src/gov-datasource-config.entity';
 import { EnergyController } from './billing/energy.controller';
 import { RecipeController } from './governance/recipe.controller';
 import { GovernanceTaskService } from './tasks/governance.task';
@@ -41,7 +42,7 @@ import { GovernanceTaskService } from './tasks/governance.task';
       keepConnectionAlive: true,
       extra: { connectionLimit: 10, enableKeepAlive: true, keepAliveInitialDelay: 10000 },
     }),
-    TypeOrmModule.forFeature([IotTagMapping, IotGateway])
+    TypeOrmModule.forFeature([IotTagMapping, IotGateway, GovDatasourceConfig])
   ],
   controllers: [
     EdgeTagController, OverviewController, DashboardController, 

@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AuthGuard } from '@nestjs/passport';
+import { GovDatasourceConfig } from '../../../../libs/entities/src/gov-datasource-config.entity';
 
 @Controller('governance/integration')
 export class IntegrationController {
-  
+  constructor(
+    @InjectRepository(GovDatasourceConfig)
+    private readonly configRepository: Repository<GovDatasourceConfig>,
+  ) {}
+
   @Get('status')
   async getChannelStatus() {
-    // 真实业务逻辑:
-    // 从 Prometheus 或 Gateway Metrics API 聚合各个外部协议通道的连通率、QPS、堆积消息等
     return {
       code: 200,
       data: {
@@ -21,5 +27,54 @@ export class IntegrationController {
       },
       message: 'success'
     };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('list')
+  async getList(@Query() query: any) {
+    const page = parseInt(query.pageNum || '1');
+    const size = parseInt(query.pageSize || '10');
+    
+    const queryBuilder = this.configRepository.createQueryBuilder('config');
+    queryBuilder.where('config.isDeleted = 0');
+    
+    if (query.sourceName) {
+      queryBuilder.andWhere('config.sourceName LIKE :name', { name: `%${query.sourceName}%` });
+    }
+
+    const [list, total] = await queryBuilder
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
+
+    return { code: 200, data: { list, total }, message: 'success' };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  async create(@Body() body: Partial<GovDatasourceConfig>, @Req() req: any) {
+    const config = this.configRepository.create({
+      ...body,
+      createdBy: req.user?.userId
+    });
+    await this.configRepository.save(config);
+    return { code: 200, message: '新增数据源成功' };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put()
+  async update(@Body() body: Partial<GovDatasourceConfig>, @Req() req: any) {
+    await this.configRepository.update(body.id, {
+      ...body,
+      updatedBy: req.user?.userId
+    });
+    return { code: 200, message: '更新数据源成功' };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  async remove(@Param('id') id: number, @Req() req: any) {
+    await this.configRepository.update(id, { isDeleted: 1, updatedBy: req.user?.userId });
+    return { code: 200, message: '删除成功' };
   }
 }

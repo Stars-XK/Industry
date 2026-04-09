@@ -45,8 +45,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (11, 10, '全局态势感知', 1, 'overview', 'scada/overview', 0, 0, 'scada:overview', 'C', 1, 1, 'View', '', 1),
 (13, 10, '工业SCADA工艺组态', 2, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
 (14, 10, '安防与环境空间监控', 3, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'VideoCamera', '', 1),
-(15, 10, 'DMA 拓扑树配置', 4, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
-(16, 10, 'GIS 管网与资产调度', 5, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 0, 1, 'Location', '测试隐藏的GIS菜单', 1),
 
 -- 3. 多维统计与数据分析
 (20, 0, '多维统计与数据分析', 3, '/analytics', 'Layout', 0, 0, '', 'M', 1, 1, 'DataAnalysis', '', 1),
@@ -57,7 +55,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (25, 20, '综合能效优化与动态成本核算', 5, 'energy', 'analytics/energy', 0, 0, 'analytics:energy', 'C', 1, 1, 'Lightning', '', 1),
 (26, 20, '用量与能耗AI预测分析', 6, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'Cpu', '', 1),
 (28, 20, '在线水力模型推演', 7, 'hydraulic', 'analytics/hydraulic', 0, 0, 'analytics:hydraulic', 'C', 1, 1, 'Connection', '', 1),
-(128, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
 
 -- 4. 运维治理与协同闭环
 (30, 0, '运维治理与协同闭环', 4, '/workflow', 'Layout', 0, 0, '', 'M', 1, 1, 'Tools', '', 1),
@@ -79,7 +76,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 
 -- 6. 系统设置与台账权限
 (50, 0, '系统设置与台账权限', 6, '/system', 'Layout', 0, 0, '', 'M', 1, 1, 'Setting', '', 1),
-(58, 50, '用户与账号管理', 1, 'user', 'system/user', 0, 0, 'sys:user', 'C', 1, 1, 'User', '', 1),
 (53, 50, '组织架构与部门管理', 2, 'org', 'system/org', 0, 0, 'sys:org', 'C', 1, 1, 'OfficeBuilding', '', 1),
 (54, 50, '角色与权限体系', 3, 'rbac', 'system/rbac', 0, 0, 'sys:rbac', 'C', 1, 1, 'Avatar', '', 1),
 (55, 50, '数据字典管理', 4, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
@@ -285,10 +281,13 @@ INSERT IGNORE INTO biz_meter_reading (id, account_id, device_id, reading_period,
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
-(1, 10), (1, 11), (1, 13), (1, 14), (1, 15), (1, 16),
-(1, 30), (1, 31), (1, 32), (1, 35),
-(2, 10), (2, 11), (2, 13), (2, 16),
-(3, 10), (3, 11), (3, 16),
+(1, 10), (1, 11), (1, 13), (1, 14),
+(1, 20), (1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26), (1, 28),
+(1, 30), (1, 31), (1, 32), (1, 33), (1, 34), (1, 35),
+(1, 40), (1, 41), (1, 42), (1, 43), (1, 44), (1, 45), (1, 46), (1, 47),
+(1, 50), (1, 51), (1, 52), (1, 53), (1, 54), (1, 55), (1, 56), (1, 57), (1, 59), (1, 60), (1, 61),
+(2, 10), (2, 11), (2, 13),
+(3, 10), (3, 11),
 (3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP
 
 -- 11. 第四阶段 初始数据

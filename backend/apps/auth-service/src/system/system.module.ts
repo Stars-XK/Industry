@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { RoleController } from './role.controller';
 import { DeptController } from './dept.controller';
-import { SystemMenuController } from './menu.controller';
 import { DictController } from './dict.controller';
 import { AuditLogController } from './audit-log.controller';
 import { ConfigController } from './config.controller';
@@ -22,7 +21,7 @@ import { BackupService } from './backup.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Role, Dept, Menu, DictType, DictData, AuditLog, SysConfig, SysBackupLog])],
-  controllers: [UserController, RoleController, DeptController, SystemMenuController, DictController, AuditLogController, ConfigController, BackupController, WizardController],
+  controllers: [UserController, RoleController, DeptController, DictController, AuditLogController, ConfigController, BackupController, WizardController],
   providers: [BackupService],
 })
 export class SystemModule {}

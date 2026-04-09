@@ -13,42 +13,42 @@
     <div class="box-card">
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
-          <el-table-column prop="account_no" label="大用户编号" width="150">
+          <el-table-column prop="account_no" label="大用户编号" width="150" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text">{{ row.account_no }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="account_name" label="企业名称" width="250">
+          <el-table-column prop="account_name" label="企业名称" width="250" show-overflow-tooltip>
             <template #default="{ row }">
               <span style="font-weight: 600; color: var(--el-text-color-primary);">{{ row.account_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="industry_type" label="行业分类" width="150" align="center">
+          <el-table-column prop="industry_type" label="行业分类" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tag type="info" effect="dark" class="industrial-tag">{{ scope.row.industry_type }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="contact" label="联系人" width="120" />
-          <el-table-column prop="phone" label="联系电话" width="150">
+          <el-table-column prop="contact" label="联系人" width="120"  show-overflow-tooltip />
+          <el-table-column prop="phone" label="联系电话" width="150" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text" style="color: var(--el-text-color-regular);">{{ row.phone }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="address" label="企业地址" show-overflow-tooltip />
-          <el-table-column prop="tariff_name" label="适用费率" width="150" align="center">
+          <el-table-column prop="address" label="企业地址" show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="tariff_name" label="适用费率" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tooltip :content="`单价: ￥${scope.row.price_per_m3} / m³`" placement="top" effect="dark">
                 <el-tag effect="plain" class="industrial-tag-plain">{{ scope.row.tariff_name }}</el-tag>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="meter_device_name" label="绑定水表" width="180" align="center">
+          <el-table-column prop="meter_device_name" label="绑定水表" width="180" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tag type="success" effect="dark" class="industrial-tag" v-if="scope.row.meter_device_id">{{ scope.row.meter_device_name || '已绑定' }}</el-tag>
               <el-tag type="info" effect="plain" class="industrial-tag-plain" v-else>未绑定</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center">
+          <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
               <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>

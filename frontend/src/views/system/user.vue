@@ -12,10 +12,10 @@
         </div>
       </template>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="username" label="登录名" />
-        <el-table-column prop="nickname" label="用户昵称" />
-        <el-table-column prop="gender" label="性别" width="80">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="username" label="登录名"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="nickname" label="用户昵称"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="gender" label="性别" width="80" show-overflow-tooltip>
           <template #default="{ row }">
             <span v-if="row.gender === 1" class="status-dot info"></span>
             <span v-else-if="row.gender === 2" class="status-dot danger"></span>
@@ -23,10 +23,10 @@
             {{ row.gender === 1 ? '男' : (row.gender === 2 ? '女' : '未知') }}
           </template>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号" />
-        <el-table-column prop="email" label="邮箱" />
-        <el-table-column prop="dept_id" label="部门ID" width="80" />
-        <el-table-column label="分配角色" width="180">
+        <el-table-column prop="phone" label="手机号"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="email" label="邮箱"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="dept_id" label="部门ID" width="80"  show-overflow-tooltip />
+        <el-table-column label="分配角色" width="180" show-overflow-tooltip>
           <template #default="scope">
             <el-tag v-for="role in scope.row.roles" :key="role.id" size="small" type="info" effect="light" style="margin-right:4px; margin-bottom:4px;">
               {{ role.role_name }}
@@ -34,18 +34,18 @@
             <span v-if="!scope.row.roles || scope.row.roles.length === 0" style="color: var(--el-text-color-placeholder)">未分配</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="80">
+        <el-table-column prop="status" label="状态" width="80" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ row.status === 1 ? '正常' : '禁用' }}
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="180">
+        <el-table-column prop="created_at" label="创建时间" width="180" show-overflow-tooltip>
           <template #default="{ row }">
             {{ new Date(row.created_at).toLocaleString() }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right" align="center">
+        <el-table-column label="操作" width="180" fixed="right" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑

@@ -28,29 +28,29 @@
     </div>
     <el-card class="box-card">
       <el-table :data="tableData" v-loading="loading" style="width: 100%" class="custom-table" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="fileName" label="备份文件名" min-width="250" />
-        <el-table-column prop="fileSize" label="文件大小" width="120">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="fileName" label="备份文件名" min-width="250"  show-overflow-tooltip />
+        <el-table-column prop="fileSize" label="文件大小" width="120" show-overflow-tooltip>
           <template #default="scope">
             {{ formatSize(scope.row.fileSize) }}
           </template>
         </el-table-column>
-        <el-table-column prop="backupType" label="备份类型" width="100" align="center">
+        <el-table-column prop="backupType" label="备份类型" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-tag :type="scope.row.backupType === 1 ? 'info' : 'success'">
               {{ scope.row.backupType === 1 ? '自动定时' : '手动备份' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center">
+        <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">
               {{ scope.row.status === 1 ? '成功' : '失败' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="备份时间" width="180" />
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column prop="createdAt" label="备份时间" width="180"  show-overflow-tooltip />
+        <el-table-column label="操作" width="200" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-button type="primary" link :disabled="scope.row.status !== 1" @click="handleDownload(scope.row)">
               <el-icon style="margin-right: 2px;"><Download /></el-icon> 下载

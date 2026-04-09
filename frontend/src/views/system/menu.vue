@@ -21,31 +21,31 @@
         v-loading="loading"
         stripe highlight-current-row
       >
-        <el-table-column prop="menu_name" label="菜单名称" width="200" />
-        <el-table-column prop="icon" label="图标" width="80" />
-        <el-table-column prop="sort_order" label="排序" width="80" />
-        <el-table-column prop="menu_type" label="类型" width="80">
+        <el-table-column prop="menu_name" label="菜单名称" width="200"  show-overflow-tooltip />
+        <el-table-column prop="icon" label="图标" width="80"  show-overflow-tooltip />
+        <el-table-column prop="sort_order" label="排序" width="80"  show-overflow-tooltip />
+        <el-table-column prop="menu_type" label="类型" width="80" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="'status-dot ' + (row.menu_type === 'M' ? 'info' : (row.menu_type === 'C' ? 'success' : 'warning'))"></span>
             {{ row.menu_type === 'M' ? '目录' : (row.menu_type === 'C' ? '菜单' : '按钮') }}
           </template>
         </el-table-column>
-        <el-table-column prop="path" label="路由路径" />
-        <el-table-column prop="component" label="组件路径" />
-        <el-table-column prop="perm_code" label="权限标识" />
-        <el-table-column prop="visible" label="显示状态" width="100">
+        <el-table-column prop="path" label="路由路径"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="component" label="组件路径"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="perm_code" label="权限标识"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="visible" label="显示状态" width="100" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="row.visible === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ row.visible === 1 ? '显示' : '隐藏' }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="菜单状态" width="100">
+        <el-table-column prop="status" label="菜单状态" width="100" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="row.status === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ row.status === 1 ? '正常' : '停用' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250" fixed="right" align="center">
+        <el-table-column label="操作" width="250" fixed="right" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-button link type="success" @click="handleAdd(row.id)">
               <el-icon style="margin-right: 2px;"><Plus /></el-icon> 新增子项

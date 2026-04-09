@@ -13,33 +13,33 @@
     <div class="box-card">
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
-          <el-table-column prop="id" label="账单编号" width="100" />
-          <el-table-column prop="account_no" label="大用户号" width="150" />
-          <el-table-column prop="account_name" label="用户名称" />
-          <el-table-column prop="billing_period" label="账期" width="120" align="center">
+          <el-table-column prop="id" label="账单编号" width="100"  show-overflow-tooltip />
+          <el-table-column prop="account_no" label="大用户号" width="150"  show-overflow-tooltip />
+          <el-table-column prop="account_name" label="用户名称"  show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="billing_period" label="账期" width="120" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text">{{ row.billing_period }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="usage_m3" label="核算用水量(m³)" width="150" align="right">
+          <el-table-column prop="usage_m3" label="核算用水量(m³)" width="150" align="right" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="value-text">{{ row.usage_m3 }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="tariff_name" label="适用费率" width="150" align="center" />
-          <el-table-column prop="total_amount" label="总金额 (元)" width="150" align="right">
+          <el-table-column prop="tariff_name" label="适用费率" width="150" align="center"  show-overflow-tooltip />
+          <el-table-column prop="total_amount" label="总金额 (元)" width="150" align="right" show-overflow-tooltip>
             <template #default="scope">
               <span class="money-text">￥{{ scope.row.total_amount }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100" align="center">
+          <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tag :type="scope.row.status === 'paid' ? 'success' : 'danger'" effect="dark" class="industrial-tag">
                 {{ scope.row.status === 'paid' ? '已缴费' : '未缴费' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center">
+          <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-button 
                 v-if="scope.row.status === 'unpaid'" 

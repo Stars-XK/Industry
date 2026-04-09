@@ -28,27 +28,27 @@
     </div>
     <div class="box-card" style="flex: 1; padding: 20px;">
       <el-table :data="assets" style="width: 100%" class="custom-table custom-scrollbar">
-        <el-table-column prop="code" label="设备编码" width="180">
+        <el-table-column prop="code" label="设备编码" width="180" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="highlight-text">[{{ row.code }}]</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="设备名称" min-width="200">
+        <el-table-column prop="name" label="设备名称" min-width="200" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="类型" width="120">
+        <el-table-column prop="type" label="类型" width="120" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag effect="dark" class="dark-tag">{{ row.type }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="install_date" label="安装日期" width="140">
+        <el-table-column prop="install_date" label="安装日期" width="140" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.install_date }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="status" label="状态" width="120" show-overflow-tooltip>
           <template #default="{ row }">
             <div class="status-indicator" :class="row.status === '在线' ? 'status-success' : 'status-warning'">
               <span class="dot"></span>
@@ -56,19 +56,19 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="warranty" label="保修期至" width="140">
+        <el-table-column prop="warranty" label="保修期至" width="140" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.warranty }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="3D模型绑定" width="160" align="center">
+        <el-table-column label="3D模型绑定" width="160" align="center" show-overflow-tooltip>
           <template #default>
             <el-button size="small" class="action-btn text-cyan" link>
               <el-icon style="margin-right: 4px;"><View /></el-icon> 孪生挂载点
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center">
+        <el-table-column label="操作" width="220" fixed="right" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-button link type="primary" @click="dialogVisible = true">编辑</el-button>
             <el-button link type="warning" @click="handleReplace(row)">换表接续</el-button>

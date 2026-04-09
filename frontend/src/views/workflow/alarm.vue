@@ -11,15 +11,15 @@
     </div>
     <div class="box-card" v-loading="loading" >
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" row-key="id">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="device_name" label="报警设备" min-width="200">
+        <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+        <el-table-column prop="device_name" label="报警设备" min-width="200" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}]</span> 
             <span style="color: var(--el-text-color-primary); margin-left: 8px;">{{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="alarm_type" label="报警类型" width="180" />
-        <el-table-column prop="alarm_level" label="级别" width="100">
+        <el-table-column prop="alarm_type" label="报警类型" width="180"  show-overflow-tooltip />
+        <el-table-column prop="alarm_level" label="级别" width="100" show-overflow-tooltip>
           <template #default="scope">
             <el-tag effect="dark" :class="scope.row.alarm_level === 'HH' ? 'danger-tag' : 'warning-tag'" style="border: none;">
               {{ scope.row.alarm_level }}
@@ -27,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="alarm_desc" label="报警描述" min-width="250" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="status" label="状态" width="120" show-overflow-tooltip>
           <template #default="scope">
             <div class="status-indicator" :class="getStatusClass(scope.row.status)">
               <span class="dot"></span>
@@ -35,13 +35,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="sop_name" label="SOP 预案" width="200">
+        <el-table-column prop="sop_name" label="SOP 预案" width="200" show-overflow-tooltip>
           <template #default="scope">
             <el-tag v-if="scope.row.sop_name" class="dark-tag" effect="dark">{{ scope.row.sop_name }}</el-tag>
             <span v-else style="color: var(--el-border-color);">无预案</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right" show-overflow-tooltip>
           <template #default="scope">
             <div class="action-btns">
               <el-button v-if="scope.row.status === 0" size="small" class="action-btn text-cyan" link @click="handleConfirm(scope.row)">确认</el-button>

@@ -42,18 +42,18 @@
             <div class="section-title">传感器寿命预警看板</div>
             <div class="table-container">
               <el-table :data="sensors" style="width: 100%" class="industrial-table">
-                <el-table-column prop="name" label="传感器测点" min-width="150" />
-                <el-table-column prop="online" label="本周在线率" width="100" align="center">
+                <el-table-column prop="name" label="传感器测点" min-width="150"  show-overflow-tooltip />
+                <el-table-column prop="online" label="本周在线率" width="100" align="center" show-overflow-tooltip>
                   <template #default="{ row }">
                     <span :class="row.online < 90 ? 'text-danger' : 'text-success'">{{ row.online }}%</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="battery" label="电池剩余电量" min-width="150">
+                <el-table-column prop="battery" label="电池剩余电量" min-width="150" show-overflow-tooltip>
                   <template #default="{ row }">
                     <el-progress :percentage="row.battery" :color="row.battery < 20 ? 'var(--el-color-danger)' : 'var(--el-color-primary)'" class="industrial-progress" />
                   </template>
                 </el-table-column>
-                <el-table-column prop="life" label="预计寿命" width="100" align="center">
+                <el-table-column prop="life" label="预计寿命" width="100" align="center" show-overflow-tooltip>
                   <template #default="{ row }">
                     <span :class="row.battery < 20 ? 'text-danger' : ''">{{ row.life }}</span>
                   </template>

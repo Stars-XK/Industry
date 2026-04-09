@@ -11,32 +11,32 @@
       </div>
       <div class="table-container">
         <el-table :data="matrix" style="width: 100%" class="industrial-table custom-table" v-loading="loading">
-          <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
+          <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text cause-text">{{ row.cause }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="联动" width="60" align="center">
+          <el-table-column label="联动" width="60" align="center" show-overflow-tooltip>
             <template #default>
               <el-icon class="link-icon"><Right /></el-icon>
             </template>
           </el-table-column>
-          <el-table-column prop="effect" label="执行动作 (Effect)" min-width="280">
+          <el-table-column prop="effect" label="执行动作 (Effect)" min-width="280" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text effect-text">{{ row.effect }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="delay" label="延迟执行" width="120" align="center">
+          <el-table-column prop="delay" label="延迟执行" width="120" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="delay-tag">{{ row.delay }}s</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="策略状态" width="100" align="center">
+          <el-table-column prop="status" label="策略状态" width="100" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <el-switch v-model="row.status" :disabled="row.bypass" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column label="高级运维" width="180" align="center">
+          <el-table-column label="高级运维" width="180" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <el-button
                 :class="row.bypass ? '-danger' : ''"

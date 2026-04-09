@@ -15,19 +15,19 @@
         </div>
       </template>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="role_name" label="角色名称" min-width="150">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="role_name" label="角色名称" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="font-weight: 500;">{{ row.role_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="role_key" label="角色标识" width="150">
+        <el-table-column prop="role_key" label="角色标识" width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="highlight-text">{{ row.role_key }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="role_sort" label="排序" width="80" align="center" />
-        <el-table-column prop="data_scope" label="数据范围" width="120">
+        <el-table-column prop="role_sort" label="排序" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="data_scope" label="数据范围" width="120" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag v-if="row.data_scope === 1" type="danger" effect="light">全部数据</el-tag>
             <el-tag v-else-if="row.data_scope === 2" type="warning" effect="light">本部门</el-tag>
@@ -35,19 +35,19 @@
             <span v-else>未知</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center">
+        <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'" effect="light">
               {{ row.status === 1 ? '正常' : '停用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="180">
+        <el-table-column prop="created_at" label="创建时间" width="180" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="time-text">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right" align="center">
+        <el-table-column label="操作" width="180" fixed="right" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑

@@ -11,30 +11,30 @@
     </div>
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="sop_name" label="预案名称" min-width="250">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="sop_name" label="预案名称" min-width="250" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ scope.row.sop_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="alarm_type" label="触发报警类型" width="200">
+        <el-table-column prop="alarm_type" label="触发报警类型" width="200" show-overflow-tooltip>
           <template #default="scope">
             <el-tag effect="dark" class="danger-tag" style="border: none; font-family: 'SF Mono', monospace;">{{ scope.row.alarm_type }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="steps_json" label="执行步骤" width="160">
+        <el-table-column prop="steps_json" label="执行步骤" width="160" show-overflow-tooltip>
           <template #default="scope">
             <el-button size="small" class="action-btn text-cyan" link @click="viewSteps(scope.row.steps_json)">
               <el-icon style="margin-right: 4px;"><View /></el-icon> 查看执行流
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120" align="center">
+        <el-table-column prop="status" label="状态" width="120" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" style="--el-switch-on-color: var(--el-color-success); --el-switch-off-color: var(--el-border-color-light);" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right" align="center">
+        <el-table-column label="操作" width="150" fixed="right" align="center" show-overflow-tooltip>
           <template #default="scope">
             <div class="action-btns" style="justify-content: center;">
               <el-button size="small" class="action-btn text-cyan" link @click="handleEdit(scope.row)">编辑</el-button>

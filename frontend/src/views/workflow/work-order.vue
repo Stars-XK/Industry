@@ -11,17 +11,17 @@
     </div>
     <div class="box-card" style="padding: 20px; flex: 1;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
-        <el-table-column prop="order_sn" label="工单编号" width="180">
+        <el-table-column prop="order_sn" label="工单编号" width="180" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">{{ scope.row.order_sn }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="任务标题" min-width="220">
+        <el-table-column prop="title" label="任务标题" min-width="220" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ scope.row.title }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="order_type" label="类型" width="100">
+        <el-table-column prop="order_type" label="类型" width="100" show-overflow-tooltip>
           <template #default="scope">
             <el-tag v-if="scope.row.order_type === 1" effect="dark" class="dark-tag">巡检</el-tag>
             <el-tag v-else-if="scope.row.order_type === 2" effect="dark" class="danger-tag">抢修</el-tag>
@@ -29,7 +29,7 @@
             <el-tag v-else effect="dark" class="dark-tag">保养</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="priority" label="优先级" width="100">
+        <el-table-column prop="priority" label="优先级" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="priority-indicator" :class="scope.row.priority >= 4 ? 'priority-high' : (scope.row.priority === 3 ? 'priority-medium' : 'priority-low')">
               <span class="dot"></span>
@@ -37,7 +37,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="handler_name" label="当前处理人" width="140">
+        <el-table-column prop="handler_name" label="当前处理人" width="140" show-overflow-tooltip>
           <template #default="scope">
             <div v-if="scope.row.handler_name" class="handler-badge">
               <el-icon><User /></el-icon> {{ scope.row.handler_name }}
@@ -45,7 +45,7 @@
             <span v-else style="color: var(--el-border-color);">待派发</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="流转状态" width="120">
+        <el-table-column prop="status" label="流转状态" width="120" show-overflow-tooltip>
           <template #default="scope">
             <div class="status-indicator" :class="getStatusClass(scope.row.status)">
               <span class="dot"></span>
@@ -53,14 +53,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" width="160">
+        <el-table-column prop="created_at" label="创建时间" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">
               {{ new Date(scope.row.created_at).toLocaleString() }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right" show-overflow-tooltip>
           <template #default="scope">
             <div class="action-btns">
               <el-button v-if="scope.row.status === 10" size="small" class="action-btn text-cyan" link @click="handleAccept(scope.row)">指派</el-button>

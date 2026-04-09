@@ -47,17 +47,17 @@
           </div>
           <div class="table-container">
             <el-table :data="deviceData" style="width: 100%" v-loading="loadingDevices" class="industrial-table">
-              <el-table-column prop="device_code" label="设备编码" width="150" />
-              <el-table-column prop="name" label="设备名称" width="200" />
-              <el-table-column prop="type_name" label="设备类型" width="120" />
-              <el-table-column prop="direction_name" label="进出方向" width="120" align="center">
+              <el-table-column prop="device_code" label="设备编码" width="150"  show-overflow-tooltip />
+              <el-table-column prop="name" label="设备名称" width="200"  show-overflow-tooltip />
+              <el-table-column prop="type_name" label="设备类型" width="120"  show-overflow-tooltip />
+              <el-table-column prop="direction_name" label="进出方向" width="120" align="center" show-overflow-tooltip>
                 <template #default="scope">
                   <el-tag :type="scope.row.direction === 1 ? 'success' : (scope.row.direction === -1 ? 'danger' : 'warning')" effect="dark" class="industrial-tag">
                     {{ scope.row.direction_name }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="120" align="center">
+              <el-table-column label="操作" width="120" align="center" show-overflow-tooltip>
                 <template #default="scope">
                   <el-button size="small" class="text-danger" link @click="handleUnbindDevice(scope.row)">解绑移出</el-button>
                 </template>

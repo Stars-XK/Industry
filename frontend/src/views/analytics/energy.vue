@@ -18,36 +18,36 @@
     </div>
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="record_date" label="记录日期" width="150" align="center">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="record_date" label="记录日期" width="150" align="center" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ scope.row.record_date.split('T')[0] }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="device_name" label="耗能设备 (泵组)">
+        <el-table-column prop="device_name" label="耗能设备 (泵组)" show-overflow-tooltip min-width="120">
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}]</span>
             <span style="color: var(--el-text-color-primary); margin-left: 8px;">{{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="power_kwh" label="日耗电量 (kWh)" width="160" align="right">
+        <el-table-column prop="power_kwh" label="日耗电量 (kWh)" width="160" align="right" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-color-warning); font-weight: 600; font-family: 'SF Mono', monospace;">{{ scope.row.power_kwh }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="water_pumped_m3" label="日泵水量 (m³)" width="160" align="right">
+        <el-table-column prop="water_pumped_m3" label="日泵水量 (m³)" width="160" align="right" show-overflow-tooltip>
           <template #default="scope">
             <span style="color: var(--el-color-primary); font-weight: 600; font-family: 'SF Mono', monospace;">{{ scope.row.water_pumped_m3 }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="energy_efficiency" label="吨水百米能耗" width="200" align="center">
+        <el-table-column prop="energy_efficiency" label="吨水百米能耗" width="200" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-tag :class="scope.row.energy_efficiency > 3.4 ? 'danger-tag' : (scope.row.energy_efficiency > 3.2 ? 'warning-tag' : 'success-tag')" effect="dark" style="border: none;">
               {{ parseFloat(scope.row.energy_efficiency).toFixed(2) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="100" align="center">
+        <el-table-column label="操作" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-button size="small" class="action-btn text-rose" link @click="handleDelete(scope.row)">删除</el-button>
           </template>

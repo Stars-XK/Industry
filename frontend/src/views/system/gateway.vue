@@ -7,25 +7,25 @@
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="gateway_sn" label="网关序列号 (SN)" width="250">
+        <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+        <el-table-column prop="gateway_sn" label="网关序列号 (SN)" width="250" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">{{ scope.row.gateway_sn }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="protocol" label="通信协议" width="150">
+        <el-table-column prop="protocol" label="通信协议" width="150" show-overflow-tooltip>
           <template #default="scope">
             <el-tag type="warning" effect="plain" class="custom-tag">{{ scope.row.protocol }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="is_online" label="在线状态" width="150">
+        <el-table-column prop="is_online" label="在线状态" width="150" show-overflow-tooltip>
           <template #default="scope">
             <span :class="scope.row.is_online === 1 ? 'status-dot success' : 'status-dot danger'"></span>
             {{ scope.row.is_online === 1 ? '在线 (Connected)' : '离线 (Offline)' }}
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注说明" />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column prop="remark" label="备注说明"  show-overflow-tooltip  min-width="120" />
+        <el-table-column label="操作" width="150" fixed="right" show-overflow-tooltip>
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>

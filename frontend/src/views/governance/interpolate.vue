@@ -9,8 +9,8 @@
         <el-col :span="24">
           <div class="table-container">
             <el-table :data="rules" style="width: 100%" class="industrial-table">
-              <el-table-column prop="rule_name" label="设备类型/场景" />
-              <el-table-column prop="interp_method" label="插值补偿算法">
+              <el-table-column prop="rule_name" label="设备类型/场景"  show-overflow-tooltip  min-width="120" />
+              <el-table-column prop="interp_method" label="插值补偿算法" show-overflow-tooltip min-width="120">
                 <template #default="{ row }">
                   <el-select v-model="row.interp_method" size="small" class="industrial-select">
                     <el-option label="PCHIP (三次埃尔米特)" value="pchip" />
@@ -19,17 +19,17 @@
                   </el-select>
                 </template>
               </el-table-column>
-              <el-table-column prop="max_gap_hours" label="允许最大断点时长(小时)" align="center">
+              <el-table-column prop="max_gap_hours" label="允许最大断点时长(小时)" align="center" show-overflow-tooltip min-width="120">
                 <template #default="{ row }">
                   <el-input-number v-model="row.max_gap_hours" size="small" :min="1" class="industrial-input-number" />
                 </template>
               </el-table-column>
-              <el-table-column prop="is_negative_allow" label="允许负流量倒转" align="center">
+              <el-table-column prop="is_negative_allow" label="允许负流量倒转" align="center" show-overflow-tooltip min-width="120">
                 <template #default="{ row }">
                   <el-switch v-model="row.is_negative_allow" class="industrial-switch" />
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="100" align="center">
+              <el-table-column label="操作" width="100" align="center" show-overflow-tooltip>
                 <template #default="{ row }">
                   <el-button  size="small">保存策略</el-button>
                 </template>

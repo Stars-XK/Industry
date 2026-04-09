@@ -10,25 +10,25 @@
       </div>
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
-          <el-table-column prop="id" label="ID" width="80" />
-          <el-table-column prop="tariff_code" label="费率编码" width="180">
+          <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+          <el-table-column prop="tariff_code" label="费率编码" width="180" show-overflow-tooltip>
             <template #default="scope">
               <span class="logic-text">{{ scope.row.tariff_code }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="tariff_name" label="费率名称" width="200" />
-          <el-table-column prop="price_per_m3" label="单价 (元/m³)" width="150" align="right">
+          <el-table-column prop="tariff_name" label="费率名称" width="200"  show-overflow-tooltip />
+          <el-table-column prop="price_per_m3" label="单价 (元/m³)" width="150" align="right" show-overflow-tooltip>
             <template #default="scope">
               <span class="money-text">￥{{ scope.row.price_per_m3 }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="description" label="适用说明" />
-          <el-table-column prop="status" label="状态" width="100" align="center">
+          <el-table-column prop="description" label="适用说明"  show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" align="center">
+          <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
               <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>

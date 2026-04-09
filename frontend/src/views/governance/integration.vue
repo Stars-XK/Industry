@@ -29,18 +29,18 @@
         </el-col>
       </el-row>
       <el-table :data="tableData" border style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
-        <el-table-column prop="id" label="ID" width="60" align="center" />
-        <el-table-column prop="sourceName" label="数据源名称" />
-        <el-table-column prop="sourceType" label="接入类型" width="120" />
-        <el-table-column prop="cronExpression" label="定时采集频率" width="150" />
-        <el-table-column prop="status" label="状态" width="100" align="center">
+        <el-table-column prop="id" label="ID" width="60" align="center"  show-overflow-tooltip />
+        <el-table-column prop="sourceName" label="数据源名称"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="sourceType" label="接入类型" width="120"  show-overflow-tooltip />
+        <el-table-column prop="cronExpression" label="定时采集频率" width="150"  show-overflow-tooltip />
+        <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">
               {{ scope.row.status === 1 ? '启用' : '停用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column label="操作" width="180" align="center" show-overflow-tooltip>
           <template #default="scope">
             <el-button link type="primary" @click="handleEdit(scope.row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑

@@ -11,40 +11,40 @@
     </div>
     <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
-        <el-table-column prop="id" label="日志ID" width="100" align="center" />
-        <el-table-column prop="user_id" label="操作人ID" width="100" align="center">
+        <el-table-column prop="id" label="日志ID" width="100" align="center"  show-overflow-tooltip />
+        <el-table-column prop="user_id" label="操作人ID" width="100" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="highlight-text">{{ row.user_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="ip_address" label="来源 IP" width="150">
+        <el-table-column prop="ip_address" label="来源 IP" width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.ip_address }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="req_method" label="请求方法" width="100" align="center">
+        <el-table-column prop="req_method" label="请求方法" width="100" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag :class="getMethodClass(row.req_method)" effect="dark" style="border: none; font-family: 'SF Mono', monospace;">{{ row.req_method }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="req_url" label="请求路径">
+        <el-table-column prop="req_url" label="请求路径" show-overflow-tooltip min-width="120">
           <template #default="{ row }">
             <span style="color: var(--el-text-color-primary); font-family: 'SF Mono', monospace;">{{ row.req_url }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="耗时(ms)" width="100" align="center">
+        <el-table-column label="耗时(ms)" width="100" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <span :style="{ color: row.execution_time > 1000 ? 'var(--el-color-danger)' : 'var(--el-color-success)', fontFamily: 'SF Mono, monospace' }">
               {{ row.execution_time }} ms
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="操作时间" width="180" align="center">
+        <el-table-column prop="created_at" label="操作时间" width="180" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" align="center" fixed="right">
+        <el-table-column label="操作" width="120" align="center" fixed="right" show-overflow-tooltip>
           <template #default="{ row }">
             <el-button class="action-btn text-cyan" link @click="showDetail(row)">查看参数</el-button>
           </template>

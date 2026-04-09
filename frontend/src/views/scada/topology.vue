@@ -55,17 +55,17 @@
               class="industrial-table"
               v-loading="deviceLoading"
             >
-              <el-table-column prop="id" label="内部ID" width="70" />
-              <el-table-column prop="device_code" label="资产编号" width="140" />
-              <el-table-column prop="name" label="设备名称" />
-              <el-table-column prop="direction" label="流向" width="80" align="center">
+              <el-table-column prop="id" label="内部ID" width="70"  show-overflow-tooltip />
+              <el-table-column prop="device_code" label="资产编号" width="140"  show-overflow-tooltip />
+              <el-table-column prop="name" label="设备名称"  show-overflow-tooltip  min-width="120" />
+              <el-table-column prop="direction" label="流向" width="80" align="center" show-overflow-tooltip>
                 <template #default="{ row }">
                   <el-tag v-if="row.direction === '流入'" type="success" effect="dark" class="industrial-tag">流入</el-tag>
                   <el-tag v-else-if="row.direction === '流出'" type="danger" effect="dark" class="industrial-tag">流出</el-tag>
                   <el-tag v-else type="warning" effect="dark" class="industrial-tag">内部</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="实时遥测" min-width="180">
+              <el-table-column label="实时遥测" min-width="180" show-overflow-tooltip>
                 <template #default="{ row }">
                   <div v-if="row.telemetry && Object.keys(row.telemetry).length > 0" class="telemetry-box">
                     <div v-for="(val, key) in row.telemetry" :key="key" class="telemetry-item">

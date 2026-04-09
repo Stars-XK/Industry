@@ -30,18 +30,18 @@
     </div>
     <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="part_code" label="备件编码" width="150">
+        <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
+        <el-table-column prop="part_code" label="备件编码" width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span class="highlight-text">{{ row.part_code }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="part_name" label="备件名称" min-width="180">
+        <el-table-column prop="part_name" label="备件名称" min-width="180" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ row.part_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="category" label="分类" width="120">
+        <el-table-column prop="category" label="分类" width="120" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag v-if="row.category === 'valve'" effect="dark" class="dark-tag">阀门类</el-tag>
             <el-tag v-else-if="row.category === 'meter'" effect="dark" class="success-tag">仪表类</el-tag>
@@ -49,8 +49,8 @@
             <el-tag v-else effect="dark" class="dark-tag">其他</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="specification" label="规格型号" width="150" />
-        <el-table-column label="库存情况" align="center" width="160">
+        <el-table-column prop="specification" label="规格型号" width="150"  show-overflow-tooltip />
+        <el-table-column label="库存情况" align="center" width="160" show-overflow-tooltip>
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center;">
               <span :style="{ color: row.is_low_stock ? 'var(--el-color-danger)' : 'var(--el-color-success)', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
@@ -60,13 +60,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="unit_price" label="单价(元)" width="120" align="right">
+        <el-table-column prop="unit_price" label="单价(元)" width="120" align="right" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.unit_price }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="location" label="仓库位置" width="150" />
-        <el-table-column label="操作" width="280" fixed="right" align="center">
+        <el-table-column prop="location" label="仓库位置" width="150"  show-overflow-tooltip />
+        <el-table-column label="操作" width="280" fixed="right" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <div class="action-btns" style="justify-content: center;">
               <el-button class="action-btn text-emerald" link size="small" @click="handleStock(row, 1)">入库</el-button>
@@ -182,32 +182,32 @@
     <!-- 流水记录弹窗 -->
     <el-dialog title="出入库流水记录" v-model="logsDialogVisible" width="800px"  :show-close="false">
       <el-table :data="logs" style="width: 100%" height="400" class="custom-table custom-scrollbar">
-        <el-table-column prop="created_at" label="发生时间" width="180">
+        <el-table-column prop="created_at" label="发生时间" width="180" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作类型" width="100" align="center">
+        <el-table-column label="操作类型" width="100" align="center" show-overflow-tooltip>
           <template #default="{ row }">
             <el-tag v-if="row.change_type === 1" effect="dark" class="success-tag" style="border: none;">入库</el-tag>
             <el-tag v-else-if="row.change_type === -1" effect="dark" class="danger-tag" style="border: none;">出库</el-tag>
             <el-tag v-else effect="dark" class="dark-tag" style="border: none;">盘点</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="quantity" label="变动数量" width="100" align="right">
+        <el-table-column prop="quantity" label="变动数量" width="100" align="right" show-overflow-tooltip>
           <template #default="{ row }">
             <span :style="{ color: row.change_type === 1 ? 'var(--el-color-success)' : 'var(--el-color-danger)', fontWeight: 600, fontFamily: 'SF Mono, monospace' }">
               {{ row.change_type === 1 ? '+' : '-' }}{{ row.quantity }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="after_stock" label="结余库存" width="100" align="right">
+        <el-table-column prop="after_stock" label="结余库存" width="100" align="right" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-color-primary); font-weight: 600; font-family: 'SF Mono', monospace;">{{ row.after_stock }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="operator_name" label="操作人" width="120" align="center" />
-        <el-table-column prop="order_sn" label="关联单号" width="140" />
+        <el-table-column prop="operator_name" label="操作人" width="120" align="center"  show-overflow-tooltip />
+        <el-table-column prop="order_sn" label="关联单号" width="140"  show-overflow-tooltip />
         <el-table-column prop="remark" label="备注" min-width="150" show-overflow-tooltip />
       </el-table>
       <template #footer>

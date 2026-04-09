@@ -10,28 +10,28 @@
       </div>
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
-          <el-table-column prop="id" label="ID" width="80" />
-          <el-table-column prop="recipe_name" label="配方名称" width="220" />
-          <el-table-column prop="process_type" label="工艺类型" width="120" align="center">
+          <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
+          <el-table-column prop="recipe_name" label="配方名称" width="220"  show-overflow-tooltip />
+          <el-table-column prop="process_type" label="工艺类型" width="120" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tag :type="scope.row.process_type === 'DOSE' ? 'success' : 'warning'" effect="dark" class="industrial-tag">
                 {{ scope.row.process_type === 'DOSE' ? '加药 (DOSE)' : '曝气 (AERATE)' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="parameters_json" label="工艺参数">
+          <el-table-column prop="parameters_json" label="工艺参数" show-overflow-tooltip min-width="120">
             <template #default="scope">
               <div class="json-viewer">
                 {{ JSON.stringify(scope.row.parameters_json) }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100" align="center">
+          <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" align="center">
+          <el-table-column label="操作" width="180" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-button size="small" class="text-neon" link @click="handleEdit(scope.row)">编辑</el-button>
               <el-button size="small" class="text-danger" link @click="handleDelete(scope.row)">删除</el-button>

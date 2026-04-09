@@ -1,25 +1,36 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card dark-card">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>多源异构数据源接入配置</span>
-          <el-button type="primary" @click="handleAdd">新增接入</el-button>
+          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><Connection /></el-icon>多源异构数据源接入配置</span>
+          <el-button type="primary" @click="handleAdd">
+            <el-icon style="margin-right: 4px;"><Plus /></el-icon> 新增接入
+          </el-button>
         </div>
       </template>
 
-      <el-row :gutter="20" style="margin-bottom: 20px;">
+      <el-row :gutter="20" style="margin-bottom: 24px;">
         <el-col :span="6" v-for="channel in statusData.channels" :key="channel.protocol">
           <el-card shadow="hover" class="status-card" :class="channel.status">
             <div class="channel-title">{{ channel.protocol }}</div>
-            <div class="channel-stat">QPS: {{ channel.currentQps }}</div>
-            <div class="channel-stat">堆积: {{ channel.lag }}</div>
-            <div class="channel-stat">在线时长: {{ channel.uptime }}</div>
+            <div class="channel-stat">
+              <span style="color: var(--el-text-color-secondary)">QPS</span>
+              <span style="font-weight: 500">{{ channel.currentQps }}</span>
+            </div>
+            <div class="channel-stat">
+              <span style="color: var(--el-text-color-secondary)">堆积</span>
+              <span style="font-weight: 500" :style="{ color: channel.lag > 0 ? '#ef4444' : 'inherit' }">{{ channel.lag }}</span>
+            </div>
+            <div class="channel-stat">
+              <span style="color: var(--el-text-color-secondary)">在线时长</span>
+              <span style="font-weight: 500">{{ channel.uptime }}</span>
+            </div>
           </el-card>
         </el-col>
       </el-row>
 
-      <el-table :data="tableData" border style="width: 100%" class="dark-table" v-loading="loading">
+      <el-table :data="tableData" border style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="60" align="center" />
         <el-table-column prop="sourceName" label="数据源名称" />
         <el-table-column prop="sourceType" label="接入类型" width="120" />
@@ -31,10 +42,14 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
+        <el-table-column label="操作" width="180" align="center">
           <template #default="scope">
-            <el-button link type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button link type="primary" @click="handleEdit(scope.row)">
+              <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑
+            </el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)">
+              <el-icon style="margin-right: 2px;"><Delete /></el-icon> 删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,6 +94,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Connection, Plus, Edit, Delete } from '@element-plus/icons-vue';
 import request from '@/utils/request';
 
 const loading = ref(false);
@@ -158,11 +174,95 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container { padding: 20px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; }
-.status-card { text-align: center; }
-.status-card.connected { border-left: 4px solid #67c23a; }
-.status-card.warning { border-left: 4px solid #e6a23c; }
-.channel-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
-.channel-stat { font-size: 13px; color: #888; line-height: 1.8; }
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-card {
+  text-align: center;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--el-fill-color-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.status-card.connected {
+  border-left: 4px solid #10b981; /* Emerald 500 */
+}
+
+.status-card.warning {
+  border-left: 4px solid #f59e0b; /* Amber 500 */
+}
+
+.channel-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--el-text-color-primary);
+}
+
+.channel-stat {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  line-height: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 24px;
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.el-button--primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.el-button--primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+/* 标签样式优化 */
+.el-tag {
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: 500;
+}
 </style>

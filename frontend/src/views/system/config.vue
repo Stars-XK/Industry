@@ -1,11 +1,13 @@
 <template>
   <div class="app-container config-container">
-    <el-card class="box-card dark-card">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>系统参数配置 (System Configuration)</span>
+          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><Setting /></el-icon>系统参数配置 (System Configuration)</span>
           <div class="header-actions">
-            <el-button type="primary" @click="handleBatchSave">批量保存并动态生效</el-button>
+            <el-button type="primary" @click="handleBatchSave">
+              <el-icon style="margin-right: 4px;"><Check /></el-icon> 批量保存并动态生效
+            </el-button>
           </div>
         </div>
       </template>
@@ -60,6 +62,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { Setting, Check } from '@element-plus/icons-vue';
 import { getGlobalConfig, batchUpdateConfig } from '@/api/system/config';
 import { useConfigStore } from '@/store/config';
 
@@ -104,19 +107,59 @@ const handleBatchSave = async () => {
 
 <style scoped>
 .config-container {
-  padding: 20px;
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
 }
+
+.box-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
 .card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .config-form {
-  margin-top: 20px;
+  margin-top: 24px;
+  max-width: 900px;
 }
-.dark-card {
-  background-color: #1e1e2f;
-  color: #fff;
-  border: 1px solid #333;
+
+:deep(.el-divider__text) {
+  background-color: var(--el-bg-color);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 500;
+  color: var(--el-text-color-regular);
+}
+
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.el-button--primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.el-button--primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 </style>

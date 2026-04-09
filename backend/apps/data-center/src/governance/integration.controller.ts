@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { GovDatasourceConfig } from '../../../../libs/entities/src/gov-datasource-config.entity';
 
-@Controller('governance/integration')
+@Controller('data-center/governance/integration')
 export class IntegrationController {
   constructor(
     @InjectRepository(GovDatasourceConfig)

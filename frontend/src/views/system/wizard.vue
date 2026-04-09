@@ -1,8 +1,9 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card dark-card">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
+          <el-icon style="margin-right: 8px; vertical-align: middle; font-size: 18px;"><MagicStick /></el-icon>
           <span>快速初始化发布与覆盖导入 (Setup Wizard)</span>
         </div>
       </template>
@@ -19,9 +20,13 @@
         <div v-show="activeStep === 0" class="step-panel">
           <h3>第一步：下载初始化数据模板</h3>
           <p>请下载以下基础模板，根据规范填入实施数据。包含 <code>Dept(部门)</code>、<code>Role(角色)</code> 等多个 Sheet 页。</p>
-          <el-button type="success" icon="Download" @click="downloadTemplate">下载标准化模板 (V1.0)</el-button>
+          <el-button type="success" size="large" @click="downloadTemplate">
+            <el-icon style="margin-right: 6px;"><Download /></el-icon>下载标准化模板 (V1.0)
+          </el-button>
           <div class="next-btn">
-            <el-button type="primary" @click="nextStep">我已填好数据，下一步</el-button>
+            <el-button type="primary" size="large" @click="nextStep">
+              我已填好数据，下一步 <el-icon style="margin-left: 6px;"><Right /></el-icon>
+            </el-button>
           </div>
         </div>
 
@@ -45,15 +50,19 @@
             :before-upload="beforeUpload"
             accept=".xlsx, .xls"
           >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
             <div class="el-upload__text">
               拖拽大文件到此处，或 <em>点击选择文件</em><br/>
-              <span style="font-size: 12px; color: #999;">(前端支持大文件切片上传，确保百兆 BIM 模型及台账包不断连)</span>
+              <span style="font-size: 12px; color: var(--el-text-color-secondary); margin-top: 8px; display: inline-block;">
+                (前端支持大文件切片上传，确保百兆 BIM 模型及台账包不断连)
+              </span>
             </div>
           </el-upload>
           
           <div class="next-btn">
-            <el-button @click="activeStep = 0">返回上一步</el-button>
+            <el-button @click="activeStep = 0" size="large">
+              <el-icon style="margin-right: 6px;"><ArrowLeft /></el-icon> 返回上一步
+            </el-button>
           </div>
         </div>
 
@@ -64,7 +73,9 @@
             <li v-for="(log, idx) in resultLogs" :key="idx">{{ log }}</li>
           </ul>
           <div class="next-btn">
-            <el-button type="primary" @click="goHome">返回首页</el-button>
+            <el-button type="primary" size="large" @click="goHome">
+              <el-icon style="margin-right: 6px;"><HomeFilled /></el-icon> 返回首页
+            </el-button>
           </div>
         </div>
       </div>
@@ -75,7 +86,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { UploadFilled } from '@element-plus/icons-vue';
+import { UploadFilled, Download, MagicStick, Right, ArrowLeft, HomeFilled } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 
@@ -126,33 +137,89 @@ const goHome = () => {
 </script>
 
 <style scoped>
-.app-container { padding: 20px; }
-.wizard-steps { margin-bottom: 40px; }
+.app-container { 
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+.box-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  align-items: center;
+}
+.wizard-steps { 
+  margin: 32px 0 48px; 
+}
 .step-content {
-  min-height: 300px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  border: 1px dashed var(--el-border-color-lighter);
+  border-radius: 8px;
+  background-color: var(--el-fill-color-blank);
 }
 .step-panel {
   width: 100%;
-  max-width: 600px;
+  max-width: 640px;
+  text-align: center;
+}
+.step-panel h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
+}
+.step-panel p {
+  color: var(--el-text-color-regular);
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 .next-btn {
-  margin-top: 30px;
+  margin-top: 32px;
   text-align: center;
 }
 .text-center { text-align: center; }
 .result-log {
-  margin-top: 20px;
+  margin-top: 24px;
   text-align: left;
-  background: #1d1e22;
-  padding: 15px;
-  border-radius: 4px;
-  color: #a8b2c8;
+  background: var(--el-bg-color-page);
+  padding: 16px 20px;
+  border-radius: 6px;
+  color: var(--el-text-color-regular);
+  font-family: monospace;
+  font-size: 13px;
+  border: 1px solid var(--el-border-color-lighter);
+  max-height: 200px;
+  overflow-y: auto;
 }
 .result-log li {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.result-log li:last-child {
+  margin-bottom: 0;
+}
+.upload-demo {
+  margin-top: 16px;
+}
+:deep(.el-upload-dragger) {
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+:deep(.el-upload-dragger:hover) {
+  border-color: var(--el-color-primary);
+  background-color: var(--el-color-primary-light-9);
 }
 </style>

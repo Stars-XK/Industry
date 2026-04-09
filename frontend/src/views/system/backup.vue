@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card dark-card">
+    <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>数据库备份与恢复</span>
-          <div class="header-actions" style="display: flex; gap: 10px;">
+          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><DataLine /></el-icon>数据库备份与恢复</span>
+          <div class="header-actions">
             <el-upload
               action="/api/v1/system/backup/upload"
               :headers="uploadHeaders"
@@ -12,14 +12,18 @@
               :on-success="handleUploadSuccess"
               :on-error="handleUploadError"
             >
-              <el-button type="success" :loading="loading">上传外部SQL备份</el-button>
+              <el-button type="success" :loading="loading">
+                <el-icon style="margin-right: 4px;"><Upload /></el-icon> 上传外部SQL备份
+              </el-button>
             </el-upload>
-            <el-button type="primary" :loading="loading" @click="handleCreateBackup">执行手动备份</el-button>
+            <el-button type="primary" :loading="loading" @click="handleCreateBackup">
+              <el-icon style="margin-right: 4px;"><DocumentAdd /></el-icon> 执行手动备份
+            </el-button>
           </div>
         </div>
       </template>
 
-      <el-table :data="tableData" v-loading="loading" border style="width: 100%" class="dark-table">
+      <el-table :data="tableData" v-loading="loading" border style="width: 100%" class="custom-table" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="fileName" label="备份文件名" min-width="250" />
         <el-table-column prop="fileSize" label="文件大小" width="120">
@@ -44,13 +48,17 @@
         <el-table-column prop="createdAt" label="备份时间" width="180" />
         <el-table-column label="操作" width="200" align="center">
           <template #default="scope">
-            <el-button type="primary" link :disabled="scope.row.status !== 1" @click="handleDownload(scope.row)">下载</el-button>
+            <el-button type="primary" link :disabled="scope.row.status !== 1" @click="handleDownload(scope.row)">
+              <el-icon style="margin-right: 2px;"><Download /></el-icon> 下载
+            </el-button>
             <el-popconfirm
               title="确定要使用该备份文件恢复整个数据库吗？此操作不可逆！"
               @confirm="handleRestore(scope.row)"
             >
               <template #reference>
-                <el-button type="danger" link :disabled="scope.row.status !== 1">一键恢复</el-button>
+                <el-button type="danger" link :disabled="scope.row.status !== 1">
+                  <el-icon style="margin-right: 2px;"><RefreshLeft /></el-icon> 一键恢复
+                </el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -75,6 +83,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { DataLine, Upload, DocumentAdd, Download, RefreshLeft } from '@element-plus/icons-vue';
 import request from '@/utils/request';
 
 const loading = ref(false);
@@ -171,16 +180,77 @@ onMounted(() => {
 
 <style scoped>
 .app-container {
-  padding: 20px;
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
 }
+
+.box-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
 }
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+  padding: 10px 0;
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.el-button--success {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.el-button--success:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.el-button--primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.el-button--primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+/* 标签样式优化 */
+.el-tag {
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: 500;
 }
 </style>

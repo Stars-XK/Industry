@@ -9,8 +9,10 @@
               <div class="header-title">DMA 拓扑树管理</div>
               <div class="header-subtitle">DMA Topology Tree</div>
             </div>
-            <el-button  size="small" @click="handleAddZone(0)">新增顶级分区</el-button>
-          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
+            <div style="display: flex; gap: 8px;">
+              <el-button size="small" @click="handleAddZone(0)">新增顶级分区</el-button>
+              <el-button size="small" @click="showImport = true" icon="Upload">批量导入</el-button>
+            </div>
           </div>
           <div class="tree-container" v-loading="loadingTree">
             <el-tree
@@ -43,13 +45,13 @@
               <div class="header-title">已挂载的物理设备</div>
               <div class="header-subtitle">Mounted Physical Devices in Zone [{{ currentZone.label }}]</div>
             </div>
-            <el-button class=" -success" size="small" @click="handleBindDevice">挂载新设备</el-button>
+            <el-button class="-success" size="small" @click="handleBindDevice">挂载新设备</el-button>
           </div>
           <div class="table-container">
             <el-table :data="deviceData" style="width: 100%" v-loading="loadingDevices" class="industrial-table">
-              <el-table-column prop="device_code" label="设备编码" width="150"  show-overflow-tooltip />
-              <el-table-column prop="name" label="设备名称" width="200"  show-overflow-tooltip />
-              <el-table-column prop="type_name" label="设备类型" width="120"  show-overflow-tooltip />
+              <el-table-column prop="device_code" label="设备编码" width="150" show-overflow-tooltip />
+              <el-table-column prop="name" label="设备名称" min-width="120" show-overflow-tooltip />
+              <el-table-column prop="type_name" label="设备类型" width="120" show-overflow-tooltip />
               <el-table-column prop="direction_name" label="进出方向" width="120" align="center" show-overflow-tooltip>
                 <template #default="scope">
                   <el-tag :type="scope.row.direction === 1 ? 'success' : (scope.row.direction === -1 ? 'danger' : 'warning')" effect="dark" class="industrial-tag">
@@ -59,10 +61,10 @@
               </el-table-column>
               <el-table-column label="操作" align="center" fixed="right" width="100">
                 <template #default="scope">
-        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                  <el-button size="small" class="text-danger" link @click="handleUnbindDevice(scope.row)">解绑移出</el-button>
-                        </div>
-      </template>
+                  <div class="action-btns" style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                    <el-button size="small" class="text-danger" link @click="handleUnbindDevice(scope.row)">解绑移出</el-button>
+                  </div>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -72,6 +74,7 @@
         </div>
       </el-col>
     </el-row>
+
     <!-- 分区配置弹窗 -->
     <el-dialog :title="zoneDialogTitle" v-model="zoneDialogVisible" width="500px" @close="resetZoneForm" custom-class="industrial-dialog">
       <el-form ref="zoneFormRef" :model="zoneForm" :rules="zoneRules" label-width="120px" class="industrial-form">
@@ -93,11 +96,12 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="zoneDialogVisible = false">取消</el-button>
-          <el-button  @click="submitZoneForm">确定</el-button>
+          <el-button style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="zoneDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitZoneForm">确定</el-button>
         </span>
       </template>
     </el-dialog>
+
     <!-- 挂载设备弹窗 -->
     <el-dialog title="挂载物理设备" v-model="bindDialogVisible" width="600px" @close="resetBindForm" custom-class="industrial-dialog">
       <el-form ref="bindFormRef" :model="bindForm" :rules="bindRules" label-width="100px" class="industrial-form">
@@ -121,12 +125,12 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="bindDialogVisible = false">取消</el-button>
-          <el-button  @click="submitBindForm">确定挂载</el-button>
+          <el-button style="border-color: var(--el-border-color); color: var(--el-text-color-regular)" @click="bindDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitBindForm">确定挂载</el-button>
         </span>
       </template>
     </el-dialog>
-  </div>
+
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -135,16 +139,22 @@
       :templateColumns="['上级分区ID', '分区名称', '分级(1/2/3)', '关联经纬度', '备注']"
       @success="fetchTree"
     />
+  </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import { Upload } from '@element-plus/icons-vue'
+
 // ----- 拓扑树相关 -----
 const treeData = ref([])
 const loadingTree = ref(false)
 const currentZone = ref<any>(null)
+const showImport = ref(false)
+
 const fetchTree = async () => {
   loadingTree.value = true
   try {
@@ -154,6 +164,7 @@ const fetchTree = async () => {
     loadingTree.value = false
   }
 }
+
 // ----- 分区 CRUD -----
 const zoneDialogVisible = ref(false)
 const zoneDialogTitle = ref('新增分区')
@@ -169,16 +180,19 @@ const zoneForm = ref({
 const zoneRules = {
   zone_name: [{ required: true, message: '必填', trigger: 'blur' }]
 }
+
 const handleAddZone = (parentId: number, parentLevel: number = 0) => {
   zoneDialogTitle.value = '新增分区'
   zoneForm.value = { id: '', parent_id: parentId, zone_name: '', level: parentLevel + 1, boundary_gis: '', mnf_baseline: 0 }
   zoneDialogVisible.value = true
 }
+
 const handleEditZone = (data: any) => {
   zoneDialogTitle.value = '编辑分区'
   zoneForm.value = { id: data.id, parent_id: data.parent_id || 0, zone_name: data.label, level: data.level, boundary_gis: data.boundary_gis, mnf_baseline: data.mnf_baseline }
   zoneDialogVisible.value = true
 }
+
 const submitZoneForm = async () => {
   if (!zoneFormRef.value) return
   await zoneFormRef.value.validate(async (valid: boolean) => {
@@ -199,6 +213,7 @@ const submitZoneForm = async () => {
     }
   })
 }
+
 const handleDeleteZone = (data: any) => {
   ElMessageBox.confirm(`确定删除分区 [${data.label}] 吗？如果存在子分区或挂载设备将拒绝删除。`, '警告', {
     type: 'warning',
@@ -215,9 +230,11 @@ const handleDeleteZone = (data: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
+
 const resetZoneForm = () => {
   if (zoneFormRef.value) zoneFormRef.value.resetFields()
 }
+
 // ----- 挂载设备相关 -----
 const deviceData = ref([])
 const loadingDevices = ref(false)
@@ -231,10 +248,12 @@ const bindForm = ref({
 const bindRules = {
   device_id: [{ required: true, message: '请选择设备', trigger: 'change' }]
 }
+
 const handleNodeClick = (data: any) => {
   currentZone.value = data
   fetchDevices()
 }
+
 const fetchDevices = async () => {
   if (!currentZone.value) return
   loadingDevices.value = true
@@ -245,16 +264,19 @@ const fetchDevices = async () => {
     loadingDevices.value = false
   }
 }
+
 const fetchAvailableAssets = async () => {
   try {
     const res = await request.get('/api/v1/scada/topology/assets/available')
     availableAssets.value = res || []
   } catch (e) { /* fallback */ }
 }
+
 const handleBindDevice = async () => {
   await fetchAvailableAssets()
   bindDialogVisible.value = true
 }
+
 const submitBindForm = async () => {
   if (!bindFormRef.value) return
   await bindFormRef.value.validate(async (valid: boolean) => {
@@ -268,6 +290,7 @@ const submitBindForm = async () => {
     }
   })
 }
+
 const handleUnbindDevice = (row: any) => {
   ElMessageBox.confirm(`确定将设备 [${row.name}] 从当前分区移出吗？`, '提示', {
     type: 'warning',
@@ -280,10 +303,12 @@ const handleUnbindDevice = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
+
 const resetBindForm = () => {
   if (bindFormRef.value) bindFormRef.value.resetFields()
-  bindForm.value = { device_id: null, direction: 1 }
+  bindForm.value = { device_id: null as any, direction: 1 }
 }
+
 onMounted(() => {
   fetchTree()
 })

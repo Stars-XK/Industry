@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -17,11 +20,11 @@ import { AigcController } from './aigc/aigc.controller';
     PassportModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST || '127.0.0.1',
-      port: parseInt(process.env.DB_PORT, 10) || 3306,
-      username: process.env.DB_USER || 'root',
-      password: process.env.DB_PWD || '',
-      database: process.env.DB_NAME || 'scada',
+      host: process.env.DB_HOST || '139.224.26.134',
+      port: parseInt(process.env.DB_PORT || '3306', 10),
+      username: process.env.DB_USER || 'Industry',
+      password: process.env.DB_PWD || 'nDTe2mNcSMadmY3S',
+      database: process.env.DB_NAME || 'Industry',
       synchronize: false,
       keepConnectionAlive: true,
       extra: { connectionLimit: 10, enableKeepAlive: true, keepAliveInitialDelay: 10000 },

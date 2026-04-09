@@ -1,303 +1,467 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="asset-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
-        <h1 class="page-title">资产与设备台账</h1>
-        <p class="page-subtitle">Asset Lifecycle Management & Digital Twin Binding</p>
-      </div>
-      <div class="header-actions">
-        <el-button  @click="dialogVisible = true">换表/拆表录入 (防负流)</el-button>
+        <h1 class="page-title">全域物理资产与设备台账 (Asset Ledger)</h1>
+        <p class="page-subtitle">从 部门 ➔ 分区 ➔ 站点 ➔ 设备 ➔ 测点 的全生命周期映射与 2D 关联图谱</p>
       </div>
     </div>
-    <div class="box-card" style="margin-bottom: 24px; padding: 16px 20px;">
-      <el-form :inline="true" class="dark-filter-form">
-        <el-form-item label="设备编码">
-          <el-input placeholder="SN / 资产号" clearable  />
-        </el-form-item>
-        <el-form-item label="设备类型">
-          <el-select placeholder="选择类型" clearable style="width: 160px"  popper-class="glass-dropdown">
-            <el-option label="智能水表" value="1" />
-            <el-option label="调节阀门" value="2" />
-            <el-option label="离心水泵" value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button >搜索台账</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="box-card" style="flex: 1; padding: 20px;">
-      <el-table :data="assets" style="width: 100%" class="custom-table custom-scrollbar">
-        <el-table-column prop="code" label="设备编码" width="180" show-overflow-tooltip>
-          <template #default="{ row }">
-            <span class="highlight-text">[{{ row.code }}]</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" label="设备名称" min-width="200" show-overflow-tooltip>
-          <template #default="{ row }">
-            <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="type" label="类型" width="120" show-overflow-tooltip>
-          <template #default="{ row }">
-            <el-tag effect="dark" class="dark-tag">{{ row.type }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="install_date" label="安装日期" width="140" show-overflow-tooltip>
-          <template #default="{ row }">
-            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.install_date }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <div class="status-indicator" :class="row.status === '在线' ? 'status-success' : 'status-warning'">
-              <span class="dot"></span>
-              {{ row.status }}
+
+    <el-tabs v-model="activeTab" class="custom-tabs" @tab-click="handleTabClick">
+      <el-tab-pane label="2D 资产桑基图 (Sankey 视图)" name="sankey">
+        <el-card shadow="hover" class="sankey-card">
+          <template #header>
+            <div class="card-header">
+              <span>全域资产层级拓扑与数据流向 (Org ➔ Zone ➔ Site ➔ Device ➔ Point ➔ TDengine ➔ NRW)</span>
+              <el-button type="primary" size="small" @click="initSankey">重新渲染 2D 桑基图</el-button>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column prop="warranty" label="保修期至" width="140" show-overflow-tooltip>
-          <template #default="{ row }">
-            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.warranty }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="3D模型绑定" width="160" align="center" show-overflow-tooltip>
-          <template #default>
-            <el-button size="small" class="action-btn text-cyan" link>
-              <el-icon style="margin-right: 4px;"><View /></el-icon> 孪生挂载点
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" fixed="right" width="220">
-          <template #default="{ row }">
-            <el-button link type="primary" @click="dialogVisible = true">编辑</el-button>
-            <el-button link type="warning" @click="handleReplace(row)">换表接续</el-button>
-            <el-button link type="success">二维码</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-        <el-form-item label="资产名称" prop="asset_name">
-          <el-input v-model="form.asset_name" placeholder="请输入资产名称" />
-        </el-form-item>
-        <el-form-item label="资产类型" prop="asset_type">
-          <el-select v-model="form.asset_type" placeholder="请选择类型" style="width: 100%">
-            <el-option label="智能水表" value="meter" />
-            <el-option label="水泵机组" value="pump" />
-            <el-option label="阀门设备" value="valve" />
-            <el-option label="传感器" value="sensor" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所在位置" prop="location">
-          <el-input v-model="form.location" placeholder="请输入安装位置" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio :value="1">在用</el-radio>
-            <el-radio :value="2">停用</el-radio>
-            <el-radio :value="3">报废</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
-      </template>
-    </el-dialog>
-    <!-- 换表/拆表专属弹窗 -->
-    <el-dialog title="设备更换/拆除 (Meter Replacement)" v-model="replaceDialogVisible" width="650px">
-      <el-alert title="强制约束：老表拆除止码必须小于或等于新表安装起码，防止时序库产生负流量突变" type="warning" show-icon style="margin-bottom: 20px" />
-      <el-form :model="replaceForm" label-width="130px">
-        <el-form-item label="当前设备">
-          <el-input v-model="replaceForm.old_asset_name" disabled />
-        </el-form-item>
-        <el-form-item label="老表拆除止码">
-          <el-input-number v-model="replaceForm.old_end_reading" :min="0" :precision="2" style="width: 100%" />
-        </el-form-item>
-        <el-divider />
-        <el-form-item label="新设备编号">
-          <el-input v-model="replaceForm.new_asset_code" placeholder="扫描或输入新设备条码" />
-        </el-form-item>
-        <el-form-item label="新表安装起码">
-          <el-input-number v-model="replaceForm.new_start_reading" :min="0" :precision="2" style="width: 100%" />
-        </el-form-item>
-        <el-form-item label="更换原因">
-          <el-input type="textarea" v-model="replaceForm.reason" rows="2" placeholder="请输入更换或拆除原因" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="replaceDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitReplace">确认更换</el-button>
-      </template>
-    </el-dialog>
-  </div>
-    <!-- Import Dialog -->
-    <ExcelImport
-      v-model="showImport"
-      title="导入资产与站点数据"
-      templateName="设备站点"
-      :templateColumns="['资产编码', '资产名称', '设备类型(1水表/2压力计/3水质仪/4泵站/5环境)', '型号', '供应商', '安装日期', '状态(0/1/2)']"
-    />
-</template>
-<script setup lang="ts">
-import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import ExcelImport from '@/components/ExcelImport/index.vue'
-import { View } from '@element-plus/icons-vue'
-const loading = ref(false)
-const dialogVisible = ref(false)
-const replaceDialogVisible = ref(false)
-const showImport = ref(false)
-const dialogTitle = ref('新增资产')
-const formRef = ref()
-const form = ref({
-  id: undefined,
-  asset_name: '',
-  asset_type: '',
-  location: '',
-  status: 1
-})
-const rules = ref({
-  asset_name: [{ required: true, message: '请输入资产名称', trigger: 'blur' }]
-})
-const replaceForm = ref({
-  old_asset_name: '',
-  old_end_reading: 0,
-  new_asset_code: '',
-  new_start_reading: 0,
-  reason: ''
-})
-const handleEdit = (row: any) => {
-  dialogTitle.value = '编辑资产'
-  form.value = { ...row }
-  dialogVisible.value = true
-}
-const handleReplace = (row: any) => {
-  replaceForm.value = {
-    old_asset_name: row.name || row.asset_name,
-    old_end_reading: 0,
-    new_asset_code: '',
-    new_start_reading: 0,
-    reason: ''
-  }
-  replaceDialogVisible.value = true
-}
-const submitForm = () => {
-  dialogVisible.value = false
-}
-const submitReplace = () => {
-  if (replaceForm.value.old_end_reading > replaceForm.value.new_start_reading) {
-    ElMessage.error('新表安装起码不能小于老表拆除止码！');
-    return;
-  }
-  ElMessage.success('设备更换记录已保存，时序数据已防负流接续');
-  replaceDialogVisible.value = false;
-}
-const assets = ref([
-  { code: 'M-DN100-01', name: '一厂区总出水表', type: '智能水表', install_date: '2023-01-15', status: '在线', warranty: '2028-01-15' },
-  { code: 'V-REG-02', name: '高位水池进水调节阀', type: '阀门', install_date: '2022-05-20', status: '在线', warranty: '2025-05-20' },
-  { code: 'P-MAIN-01', name: '1号变频离心泵', type: '水泵', install_date: '2021-11-11', status: '维修中', warranty: '2024-11-11' }
-])
-</script>
-<style scoped>
+          <div ref="sankeyRef" style="width: 100%; height: 700px;"></div>
+        </el-card>
+      </el-tab-pane>
 
-.box-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+      <el-tab-pane label="结构化层级管理列表" name="list">
+        <el-row :gutter="20">
+          <!-- 左侧：部门、分区与站点树 -->
+          <el-col :span="6">
+            <el-card shadow="hover" class="tree-card">
+              <template #header>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>空间与站点拓扑树</span>
+                  <el-button link type="primary" icon="Plus">新增</el-button>
+                </div>
+              </template>
+              <el-input v-model="filterText" placeholder="搜索部门 / 分区 / 站点" style="margin-bottom: 15px" />
+              <el-tree
+                ref="treeRef"
+                :data="siteTree"
+                :props="defaultProps"
+                :filter-node-method="filterNode"
+                default-expand-all
+                highlight-current
+                @node-click="handleNodeClick"
+              >
+                <template #default="{ node, data }">
+                  <span class="custom-tree-node">
+                    <el-icon v-if="data.level === 'org'" style="color: var(--el-color-primary)"><OfficeBuilding /></el-icon>
+                    <el-icon v-else-if="data.level === 'zone'" style="color: var(--el-color-success)"><MapLocation /></el-icon>
+                    <el-icon v-else-if="data.level === 'site'" style="color: var(--el-color-warning)"><HomeFilled /></el-icon>
+                    <span style="margin-left: 8px">{{ node.label }}</span>
+                  </span>
+                </template>
+              </el-tree>
+            </el-card>
+          </el-col>
+
+          <!-- 右侧：设备与测点列表 -->
+          <el-col :span="18">
+            <el-card shadow="hover" class="table-card">
+              <template #header>
+                <div class="header-actions">
+                  <span class="table-title">
+                    {{ currentSiteName ? `[${currentSiteName}] 下挂载的设备与测点` : '请在左侧选择站点 (如水厂/二供泵房)' }}
+                  </span>
+                  <div>
+                    <el-button type="primary" :disabled="!currentSiteName" icon="Plus">新增设备</el-button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- 仅在选中站点时显示 -->
+              <template v-if="currentSiteName">
+                <el-alert
+                  title="业务提示"
+                  type="info"
+                  description="请在此处维护设备台账。展开设备行即可配置该设备输出的数据类型（测点），以便与 TDEngine 实时数据清洗引擎对接。"
+                  show-icon
+                  style="margin-bottom: 16px;"
+                />
+
+                <el-table :data="deviceList" style="width: 100%" row-key="id" border stripe>
+                  <!-- 展开行：展示测点 -->
+                  <el-table-column type="expand">
+                    <template #default="props">
+                      <div class="point-list-wrapper">
+                        <div class="point-header">
+                          <h4><el-icon><Connection /></el-icon> 设备输出测点 (Measuring Points)</h4>
+                          <el-button class="add-point-btn" size="small" type="primary" plain icon="Plus">补充测点类型</el-button>
+                        </div>
+                        <el-table :data="props.row.points" size="small" border>
+                          <el-table-column prop="pointCode" label="测点编码" width="160" />
+                          <el-table-column prop="pointName" label="测点名称" />
+                          <el-table-column prop="pointType" label="数据类型" width="120">
+                            <template #default="scope">
+                              <el-tag size="small" :type="getPointTagType(scope.row.pointType)">
+                                {{ scope.row.pointType }}
+                              </el-tag>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="unit" label="单位" width="80" />
+                          <el-table-column prop="updateTime" label="更新时间" width="160" />
+                          <el-table-column label="操作" width="120" fixed="right">
+                            <template #default>
+                              <el-button link type="primary" size="small">配置规则</el-button>
+                              <el-button link type="danger" size="small">移除</el-button>
+                            </template>
+                          </el-table-column>
+                        </el-table>
+                      </div>
+                    </template>
+                  </el-table-column>
+
+                  <!-- 设备主信息 -->
+                  <el-table-column prop="deviceCode" label="设备编码" width="150" />
+                  <el-table-column prop="deviceName" label="设备名称" min-width="150" />
+                  <el-table-column prop="deviceType" label="设备类型" width="120">
+                    <template #default="scope">
+                      <el-tag effect="light">{{ scope.row.deviceType }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="installDate" label="安装日期" width="120" />
+                  <el-table-column prop="status" label="状态" width="100">
+                    <template #default="scope">
+                      <span :class="['status-dot', scope.row.status === '在线' ? 'online' : (scope.row.status === '维修中' ? 'warning' : 'offline')]"></span>
+                      {{ scope.row.status }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="160" fixed="right">
+                    <template #default>
+                      <el-button link type="primary" size="small">编辑</el-button>
+                      <el-button link type="primary" size="small">换表/接续</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+              
+              <!-- 未选择时的空状态 -->
+              <el-empty v-else description="请先在左侧树形结构中选择具体的 站点 节点" />
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, nextTick, watch } from 'vue'
+import * as echarts from 'echarts'
+import { OfficeBuilding, MapLocation, HomeFilled, Connection, Plus } from '@element-plus/icons-vue'
+
+// --- Tab 逻辑 ---
+const activeTab = ref('sankey')
+const sankeyRef = ref<HTMLElement | null>(null)
+let sankeyChart: echarts.ECharts | null = null
+
+const handleTabClick = (tab: any) => {
+  if (tab.paneName === 'sankey') {
+    nextTick(() => {
+      initSankey()
+    })
+  }
+}
+
+// --- 左侧树逻辑 ---
+const filterText = ref('')
+const treeRef = ref<any>(null)
+const currentSiteName = ref('')
+
+const defaultProps = {
+  children: 'children',
+  label: 'label',
+}
+
+watch(filterText, (val) => {
+  treeRef.value!.filter(val)
+})
+
+const filterNode = (value: string, data: any) => {
+  if (!value) return true
+  return data.label.includes(value)
+}
+
+const handleNodeClick = (data: any) => {
+  if (data.level === 'site') {
+    currentSiteName.value = data.label
+    // 实际项目中应在此根据 data.id 调用后端接口获取 deviceList
+  } else {
+    currentSiteName.value = ''
+  }
+}
+
+// 模拟数据：部门 -> 分区 -> 站点
+const siteTree = ref([
+  {
+    id: 1,
+    label: '水务集团 (用户/部门)',
+    level: 'org',
+    children: [
+      {
+        id: 11,
+        label: '一厂区 (分区 DMA)',
+        level: 'zone',
+        children: [
+          { id: 111, label: '一厂制水车间 (水厂站点)', level: 'site' },
+          { id: 112, label: '东区二供泵房 (二供站点)', level: 'site' },
+          { id: 113, label: 'DN800主管网监测点 (管网站点)', level: 'site' }
+        ]
+      },
+      {
+        id: 12,
+        label: '二厂区 (分区 DMA)',
+        level: 'zone',
+        children: [
+          { id: 121, label: '二厂加压泵站 (加压站点)', level: 'site' }
+        ]
+      }
+    ]
+  }
+])
+
+// 模拟数据：设备与测点列表
+const deviceList = ref([
+  {
+    id: 'dev-101',
+    deviceCode: 'PUMP-01',
+    deviceName: '1号变频离心泵',
+    deviceType: '水泵',
+    installDate: '2022-05-20',
+    status: '在线',
+    points: [
+      { pointCode: 'PT-101-FREQ', pointName: '运行频率', pointType: '状态值', unit: 'Hz', updateTime: '2026-04-09 10:00:00' },
+      { pointCode: 'PT-101-CURR', pointName: '工作电流', pointType: '状态值', unit: 'A', updateTime: '2026-04-09 10:00:00' }
+    ]
+  },
+  {
+    id: 'dev-102',
+    deviceCode: 'FM-MAIN-OUT',
+    deviceName: 'DN800出厂总管流量计',
+    deviceType: '智能水表',
+    installDate: '2023-01-15',
+    status: '在线',
+    points: [
+      { pointCode: 'PT-FM-INST', pointName: '瞬时流量', pointType: '瞬时流量', unit: 'm³/h', updateTime: '2026-04-09 10:00:05' },
+      { pointCode: 'PT-FM-CUM', pointName: '累计流量', pointType: '累计流量', unit: 'm³', updateTime: '2026-04-09 10:00:05' },
+      { pointCode: 'PT-FM-PRESS', pointName: '管网压力', pointType: '压力', unit: 'MPa', updateTime: '2026-04-09 10:00:05' }
+    ]
+  }
+])
+
+const getPointTagType = (type: string) => {
+  switch (type) {
+    case '瞬时流量': return 'warning'
+    case '累计流量': return 'success'
+    case '压力': return 'danger'
+    default: return 'info'
+  }
+}
+
+// --- 2D 桑基图逻辑 ---
+const initSankey = () => {
+  if (!sankeyRef.value) return
+  if (sankeyChart) sankeyChart.dispose()
+
+  sankeyChart = echarts.init(sankeyRef.value)
+  
+  // 严格遵循用户描述的完整链路数据节点
+  const data = [
+    // 1. 基础物理层
+    { name: '用户与部门', itemStyle: { color: '#5470c6' } },
+    { name: '分区(DMA)', itemStyle: { color: '#91cc75' } },
+    { name: '营收用户水卡', itemStyle: { color: '#fac858' } },
+    { name: '站点(水厂/泵站/监测点)', itemStyle: { color: '#ee6666' } },
+    { name: '设备(水表/水泵/阀门)', itemStyle: { color: '#73c0de' } },
+    
+    // 2. 测点输出层
+    { name: '瞬时流量测点', itemStyle: { color: '#3ba272' } },
+    { name: '累计流量测点', itemStyle: { color: '#fc8452' } },
+    { name: '状态测点(压力/pH/浊度)', itemStyle: { color: '#9a60b4' } },
+    
+    // 3. 时序数据清洗与聚合层
+    { name: '实时数据源定时抓取', itemStyle: { color: '#ea7ccc' } },
+    { name: 'TDengine (tgen) 时序底座清洗', itemStyle: { color: '#5470c6' } },
+    
+    // 4. 指标计算层 (供水端)
+    { name: '设备最新状态展示', itemStyle: { color: '#91cc75' } },
+    { name: '设备5分钟/1小时数据', itemStyle: { color: '#fac858' } },
+    { name: '2-4点分区夜间最小流量', itemStyle: { color: '#ee6666' } },
+    { name: '切割出设备日用量', itemStyle: { color: '#73c0de' } },
+    { name: '汇总出分区日/月供水量', itemStyle: { color: '#3ba272' } },
+
+    // 5. 指标计算层 (营收端)
+    { name: '营收数据源接入', itemStyle: { color: '#fc8452' } },
+    { name: '单个用户日/月用水量', itemStyle: { color: '#9a60b4' } },
+    { name: '汇总出分区日/月售水量', itemStyle: { color: '#ea7ccc' } },
+
+    // 6. 最终展现层
+    { name: '全域各分区产销差量', itemStyle: { color: '#d35400' } }
+  ]
+
+  const links = [
+    // 基础关系链路
+    { source: '用户与部门', target: '分区(DMA)', value: 20 },
+    { source: '分区(DMA)', target: '营收用户水卡', value: 6 },
+    { source: '分区(DMA)', target: '站点(水厂/泵站/监测点)', value: 14 },
+    { source: '站点(水厂/泵站/监测点)', target: '设备(水表/水泵/阀门)', value: 14 },
+    
+    // 设备产生测点
+    { source: '设备(水表/水泵/阀门)', target: '瞬时流量测点', value: 5 },
+    { source: '设备(水表/水泵/阀门)', target: '累计流量测点', value: 6 },
+    { source: '设备(水表/水泵/阀门)', target: '状态测点(压力/pH/浊度)', value: 3 },
+    
+    // 数据入库清洗
+    { source: '瞬时流量测点', target: '实时数据源定时抓取', value: 5 },
+    { source: '累计流量测点', target: '实时数据源定时抓取', value: 6 },
+    { source: '状态测点(压力/pH/浊度)', target: '实时数据源定时抓取', value: 3 },
+    { source: '实时数据源定时抓取', target: 'TDengine (tgen) 时序底座清洗', value: 14 },
+
+    // TDengine 计算分流 (供水测)
+    { source: 'TDengine (tgen) 时序底座清洗', target: '设备最新状态展示', value: 3 },
+    { source: 'TDengine (tgen) 时序底座清洗', target: '设备5分钟/1小时数据', value: 5 },
+    { source: 'TDengine (tgen) 时序底座清洗', target: '切割出设备日用量', value: 6 },
+    
+    { source: '设备5分钟/1小时数据', target: '2-4点分区夜间最小流量', value: 5 },
+    { source: '切割出设备日用量', target: '汇总出分区日/月供水量', value: 6 },
+    
+    // 营收售水测流转
+    { source: '营收数据源接入', target: '单个用户日/月用水量', value: 6 },
+    { source: '营收用户水卡', target: '单个用户日/月用水量', value: 6 },
+    { source: '单个用户日/月用水量', target: '汇总出分区日/月售水量', value: 6 },
+
+    // 产销差合流计算
+    { source: '汇总出分区日/月供水量', target: '全域各分区产销差量', value: 6 },
+    { source: '汇总出分区日/月售水量', target: '全域各分区产销差量', value: 6 }
+  ]
+
+  const option = {
+    title: {
+      text: '核心业务资产关联与工业数据流转 2D 桑基图 (Sankey)',
+      subtext: '完美展现从物理台账构建、时序清洗计算到全域产销差展现的完整闭环',
+      left: 'center',
+      top: 10
+    },
+    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    series: [
+      {
+        type: 'sankey',
+        layout: 'none',
+        top: 80,
+        bottom: 20,
+        left: 50,
+        right: 50,
+        nodeGap: 15,
+        nodeWidth: 20,
+        focusNodeAdjacency: true,
+        data: data,
+        links: links,
+        lineStyle: { color: 'source', curveness: 0.5, opacity: 0.4 },
+        label: {
+          position: 'right',
+          formatter: '{b}',
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#333'
+        }
+      }
+    ]
+  }
+  sankeyChart.setOption(option)
+}
+
+onMounted(() => {
+  if (activeTab.value === 'sankey') {
+    nextTick(() => initSankey())
+  }
+  
+  window.addEventListener('resize', () => {
+    if (sankeyChart) sankeyChart.resize()
+  })
+})
+</script>
+
+<style scoped>
+.asset-container {
   padding: 24px;
+  height: calc(100vh - 110px);
+  overflow-y: auto;
+  background: var(--el-bg-color-page);
 }
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--el-text-color-primary);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.toolbar, .header-actions {
-  display: flex;
-  gap: 12px;
-}
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-.highlight-text {
-  color: var(--el-color-primary);
-  font-family: "SF Mono", monospace;
-  font-weight: 600;
-}
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
-}
-.status-indicator .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.status-success { color: var(--el-color-success); }
-.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success); }
-.status-warning { color: var(--el-color-warning); }
-.status-warning .dot { background-color: var(--el-color-warning); box-shadow: 0 0 8px var(--el-color-warning); }
-.text-cyan { color: var(--el-color-primary); }
-.danger-btn {
-  background: var(--el-fill-color-blank);
-  border: 1px solid var(--el-color-danger);
-  color: var(--el-color-danger);
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
-}
-.danger-btn:hover {
-  background: var(--el-color-danger-light-9);
-  box-shadow: 0 0 15px var(--el-color-danger-light-7);
-  color: var(--el-text-color-primary);
-}
-/* Table styles */
-/* Dialog Styles */
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-/* Form Styles */
+
 .page-header {
   margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
   margin: 0 0 8px 0;
+  color: var(--el-text-color-primary);
 }
-.header-content p {
-  font-size: 13px;
+
+.page-subtitle {
+  font-size: 14px;
   color: var(--el-text-color-regular);
   margin: 0;
 }
-.box-card:hover {
-  box-shadow: var(--el-box-shadow);
-  transform: translateY(-2px);
+
+.custom-tabs :deep(.el-tabs__item) {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.card-header, .header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.tree-card {
+  min-height: 600px;
+}
+
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.status-dot.online { background-color: var(--el-color-success); }
+.status-dot.warning { background-color: var(--el-color-warning); }
+.status-dot.offline { background-color: var(--el-color-danger); }
+
+/* 展开行的测点样式 */
+.point-list-wrapper {
+  padding: 16px 24px;
+  background: var(--el-fill-color-light);
+  border-radius: 8px;
+  margin: 8px 16px;
+  border: 1px dashed var(--el-border-color);
+}
+.point-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.point-header h4 {
+  margin: 0;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 </style>

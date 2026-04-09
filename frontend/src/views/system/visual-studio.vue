@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift" v-loading="saving">
+  <div class="app-container fade-in-up">
+    <div class="box-card" v-loading="saving">
       <div class="panel-header">
         <span class="panel-title">低代码可视化组态工作台</span>
       </div>
@@ -31,8 +31,8 @@
         <!-- 中间画布 -->
         <div class="canvas-panel" @dragover.prevent @drop="onDrop">
           <div class="toolbar">
-            <el-button size="small" type="primary" class="neon-btn" @click="saveConfig" :loading="saving"><el-icon><Check /></el-icon> 保存发布</el-button>
-            <el-button size="small" class="glass-btn" @click="clearCanvas"><el-icon><Delete /></el-icon> 清空画布</el-button>
+            <el-button size="small" type="primary"  @click="saveConfig" :loading="saving"><el-icon><Check /></el-icon> 保存发布</el-button>
+            <el-button size="small"  @click="clearCanvas"><el-icon><Delete /></el-icon> 清空画布</el-button>
           </div>
 
           <div class="canvas-area" ref="canvasRef">
@@ -157,6 +157,51 @@ const saveConfig = async () => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -167,7 +212,7 @@ const saveConfig = async () => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .designer-container {
   display: flex;
@@ -182,7 +227,7 @@ const saveConfig = async () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-weight: 600;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .components-panel {
   width: 240px;
@@ -203,7 +248,7 @@ const saveConfig = async () => {
   text-align: center;
   background-color: rgba(255, 255, 255, 0.05);
   transition: all 0.2s ease;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -211,8 +256,8 @@ const saveConfig = async () => {
   gap: 8px;
 }
 .component-item:hover {
-  border-color: #00d8ff;
-  color: #00d8ff;
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
   background-color: rgba(0, 216, 255, 0.1);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 216, 255, 0.2);
@@ -259,18 +304,18 @@ const saveConfig = async () => {
   border-color: rgba(0, 216, 255, 0.5);
 }
 .canvas-element.active {
-  border-color: #00d8ff;
+  border-color: var(--el-color-primary);
   box-shadow: 0 0 0 1px rgba(0,216,255,0.5), 0 4px 12px rgba(0,0,0,0.3);
 }
 .element-content {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .bound-tag {
   font-size: 11px;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   margin-top: 6px;
   font-weight: 500;
   font-family: "SF Mono", Consolas, monospace;
@@ -293,8 +338,5 @@ const saveConfig = async () => {
 .props-content {
   padding: 20px;
 }
-:deep(.el-form-item__label) {
-  font-weight: 500;
-  color: #94a3b8;
-}
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">安防与环境空间监控</h1>
@@ -12,7 +12,7 @@
 
     <el-row :gutter="24">
       <el-col :span="16">
-        <div class="glass-panel hover-lift" style="padding: 20px; height: calc(100vh - 160px);">
+        <div class="box-card" style="padding: 20px; height: calc(100vh - 160px);">
           <div class="panel-header">
             <div class="panel-title">RTSP 视频矩阵 <span>Video Matrix</span></div>
             <div class="panel-extra">
@@ -41,7 +41,7 @@
       </el-col>
 
       <el-col :span="8">
-        <div class="glass-panel hover-lift" style="padding: 20px; margin-bottom: 24px;">
+        <div class="box-card" style="padding: 20px; margin-bottom: 24px;">
           <div class="panel-header">
             <div class="panel-title">环境指标实时数据 <span>Environment</span></div>
           </div>
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="glass-panel hover-lift" style="padding: 20px;">
+        <div class="box-card" style="padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">门禁与安防联锁 <span>Access Control</span></div>
           </div>
@@ -77,7 +77,7 @@
                   <span class="dot" :class="door.locked ? 'bg-emerald' : 'bg-red'"></span> {{ door.locked ? '正常锁定' : '异常开启' }}
                 </div>
               </div>
-              <el-button class="danger-neon-btn" size="small" @click="toggleDoor(door)">紧急锁死</el-button>
+              <el-button class="danger-" size="small" @click="toggleDoor(door)">紧急锁死</el-button>
             </div>
           </div>
         </div>
@@ -127,24 +127,54 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
@@ -165,7 +195,7 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -219,7 +249,7 @@ onMounted(() => {
 .cam-status {
   width: 8px;
   height: 8px;
-  background-color: #10b981;
+  background-color: var(--el-color-success);
   border-radius: 50%;
   box-shadow: 0 0 8px #10b981;
 }
@@ -278,7 +308,7 @@ onMounted(() => {
 }
 .env-label {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
 }
 .env-value {
   font-size: 24px;
@@ -294,9 +324,9 @@ onMounted(() => {
   color: #64748b;
   font-family: "SF Pro Display", sans-serif;
 }
-.text-emerald { color: #10b981; }
-.text-cyan { color: #00d8ff; }
-.bg-emerald { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+.text-emerald { color: var(--el-color-success); }
+.text-cyan { color: var(--el-color-primary); }
+.bg-emerald { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
 .access-list {
   display: flex;
   flex-direction: column;
@@ -318,7 +348,7 @@ onMounted(() => {
 }
 .access-name {
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   font-weight: 500;
 }
 .access-status {
@@ -332,29 +362,36 @@ onMounted(() => {
   height: 6px;
   border-radius: 50%;
 }
-.danger-neon-btn {
+.danger- {
   background: transparent;
   border: 1px solid #f43f5e;
-  color: #f43f5e;
+  color: var(--el-color-danger);
   transition: all 0.3s;
 }
-.danger-neon-btn:hover {
+.danger-:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
   color: #fff;
 }
-:deep(.el-radio-button__inner) {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
+
+
+
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.el-radio-button:first-child .el-radio-button__inner) {
-  border-left-color: rgba(255, 255, 255, 0.1);
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
-  background-color: #00d8ff;
-  border-color: #00d8ff;
-  color: #020617;
-  box-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

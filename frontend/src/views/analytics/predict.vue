@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div>
           <div class="header-title">AI 用水趋势预测分析 (ARIMA / LSTM)</div>
@@ -35,7 +35,7 @@
             </div>
           </el-col>
           <el-col :span="6" class="action-col">
-            <el-button class="neon-btn" :loading="loading" @click="fetchData">
+            <el-button  :loading="loading" @click="fetchData">
               重新训练预测模型
             </el-button>
           </el-col>
@@ -191,6 +191,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -207,7 +252,7 @@ onMounted(() => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -226,7 +271,7 @@ onMounted(() => {
 }
 .stat-label {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -237,9 +282,9 @@ onMounted(() => {
   font-weight: 600;
   font-family: "SF Mono", Consolas, monospace;
 }
-.text-white { color: #e2e8f0; }
+.text-white { color: var(--el-text-color-primary); }
 .text-blue { 
-  color: #00d8ff; 
+  color: var(--el-color-primary); 
   text-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
 }
 .text-green { 
@@ -263,16 +308,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 }
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
+
+
+
 </style>

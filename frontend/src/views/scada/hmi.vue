@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up hmi-container">
-    <div class="glass-panel hover-lift" style="height: 100%;">
+  <div class="app-container fade-in-up hmi-container">
+    <div class="box-card" style="height: 100%;">
       <div class="panel-header">
         <div>
           <div class="header-title">工业 SCADA 工艺组态监控 (丰泽2号泵站)</div>
@@ -42,14 +42,14 @@
 
           <div class="control-panel">
             <el-button 
-              :class="pumpStatus === 1 ? 'neon-btn-danger' : 'neon-btn'" 
+              :class="pumpStatus === 1 ? '-danger' : ''" 
               @click="handleControl(pumpStatus === 1 ? 0 : 1)"
               :icon="SwitchButton"
               :disabled="!isConnected"
             >
               {{ pumpStatus === 1 ? '远程停机' : '远程开机' }}
             </el-button>
-            <el-button class="neon-btn" @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
+            <el-button  @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
           </div>
         </div>
         
@@ -165,6 +165,51 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -176,12 +221,12 @@ onUnmounted(() => {
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -193,36 +238,36 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-fill-color-light);
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--el-border-color-light);
 }
 /* 模拟水池 */
 .tank-container {
   width: 150px;
   height: 200px;
-  border: 4px solid rgba(0, 216, 255, 0.3);
+  border: 4px solid var(--el-color-primary-light-3);
   border-top: none;
   border-radius: 0 0 10px 10px;
   position: relative;
-  background: rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 -10px 30px rgba(0, 216, 255, 0.1);
+  background: var(--el-fill-color-dark);
+  box-shadow: inset 0 -10px 30px var(--el-color-primary-light-8);
 }
 .water-level {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(180deg, rgba(0, 216, 255, 0.8), rgba(0, 100, 255, 0.9));
+  background: linear-gradient(180deg, var(--el-color-primary-light-3), var(--el-color-primary));
   transition: height 1s ease;
   border-radius: 0 0 6px 6px;
-  box-shadow: 0 -5px 15px rgba(0, 216, 255, 0.4);
+  box-shadow: 0 -5px 15px var(--el-color-primary-light-5);
 }
 .tank .label {
   position: absolute;
   top: -30px;
   width: 100%;
   text-align: center;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-weight: 500;
   letter-spacing: 1px;
   text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
@@ -307,7 +352,7 @@ onUnmounted(() => {
   margin-bottom: 0;
 }
 .val {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-weight: 600;
   font-size: 18px;
   text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
@@ -325,7 +370,7 @@ onUnmounted(() => {
 .valve .el-icon {
   filter: drop-shadow(0 0 8px rgba(230, 162, 60, 0.4));
 }
-.neon-btn-danger {
+.-danger {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
   color: #F56C6C;
@@ -335,7 +380,7 @@ onUnmounted(() => {
   padding: 8px 16px;
   cursor: pointer;
 }
-.neon-btn-danger:hover:not(:disabled) {
+.-danger:hover:not(:disabled) {
   background: rgba(245, 108, 108, 0.1);
   box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
   border-color: #F56C6C;

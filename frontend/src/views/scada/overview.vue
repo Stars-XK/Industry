@@ -1,5 +1,5 @@
 <template>
-  <div class="premium-container fade-in-up scada-overview">
+  <div class="app-container fade-in-up scada-overview">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">全局态势感知</h1>
@@ -13,7 +13,7 @@
     <!-- 核心 KPI 概览 -->
     <el-row :gutter="24">
       <el-col :span="6" v-for="(item, index) in metrics" :key="index">
-        <div class="glass-panel hover-lift metric-card">
+        <div class="box-card">
           <div class="metric-icon-wrap" :style="{ color: item.color, boxShadow: `0 0 20px ${item.color}30` }">
             <el-icon class="metric-icon"><component :is="item.icon" /></el-icon>
           </div>
@@ -31,20 +31,20 @@
     <!-- 水质综合看板与能耗趋势 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="12">
-        <div class="glass-panel hover-lift chart-card">
+        <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">水质综合看板 <span>Water Quality</span></div>
             <div class="panel-extra">
               <span class="highlight-text">达标率: {{ complianceRate }}%</span>
             </div>
           </div>
-          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
+          <div class="chart-container" v-loading="loading" >
             <v-chart class="chart" :option="waterQualityOption" autoresize />
           </div>
         </div>
       </el-col>
       <el-col :span="12">
-        <div class="glass-panel hover-lift chart-card">
+        <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">能耗折标煤趋势 <span>Energy Trend</span></div>
             <el-radio-group v-model="energyTrendRange" size="small" class="custom-radio" @change="fetchEnergyTrend">
@@ -52,7 +52,7 @@
               <el-radio-button value="30days">30天</el-radio-button>
             </el-radio-group>
           </div>
-          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
+          <div class="chart-container" v-loading="loading" >
             <v-chart class="chart" :option="energyTrendOption" autoresize />
           </div>
         </div>
@@ -62,21 +62,21 @@
     <!-- 供水漏损趋势与报警列表 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="16">
-        <div class="glass-panel hover-lift chart-card large-chart">
+        <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">供水与漏损趋势 <span>Supply & Leakage</span></div>
             <el-tag type="info" effect="dark" class="dark-tag">1h 聚合</el-tag>
           </div>
-          <div class="chart-container" v-loading="loading" element-loading-background="rgba(0,0,0,0.5)">
+          <div class="chart-container" v-loading="loading" >
             <v-chart class="chart" :option="trendOption" autoresize />
           </div>
         </div>
       </el-col>
       <el-col :span="8">
-        <div class="glass-panel hover-lift list-card">
+        <div class="box-card">
           <div class="panel-header">
             <div class="panel-title">活跃异常报警 <span>Active Alarms</span></div>
-            <el-button link class="neon-btn">处理</el-button>
+            <el-button link >处理</el-button>
           </div>
           <div class="alarm-list custom-scrollbar">
             <el-empty v-if="!metrics[3] || metrics[3].value === 0" description="运行正常" :image-size="60" />
@@ -315,24 +315,54 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
@@ -367,7 +397,7 @@ onMounted(() => {
 }
 .metric-title {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -375,13 +405,13 @@ onMounted(() => {
 .metric-value {
   font-size: 32px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--el-text-color-primary);
   font-family: "SF Mono", monospace;
   line-height: 1;
 }
 .metric-unit {
   font-size: 14px;
-  color: #64748b;
+  color: var(--el-text-color-regular);
   font-weight: 500;
   margin-left: 4px;
   font-family: "SF Pro Display", sans-serif;
@@ -392,8 +422,14 @@ onMounted(() => {
   height: 400px;
   padding: 20px;
 }
-.large-chart {
-  height: 420px;
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 .panel-header {
   display: flex;
@@ -404,7 +440,7 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -421,11 +457,7 @@ onMounted(() => {
   font-family: "SF Mono", monospace;
   text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
 }
-.dark-tag {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cbd5e1;
-}
+
 .chart-container {
   flex: 1;
   width: 100%;
@@ -453,30 +485,25 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-.dark-timeline :deep(.el-timeline-item__content) {
-  color: #e2e8f0;
-  font-size: 14px;
+.dark-timeline {
+  margin-top: 10px;
 }
-.dark-timeline :deep(.el-timeline-item__timestamp) {
-  color: #64748b;
-  font-size: 12px;
-  font-family: "SF Mono", monospace;
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.el-radio-button__inner) {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.el-radio-button:first-child .el-radio-button__inner) {
-  border-left-color: rgba(255, 255, 255, 0.1);
-}
-:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
-  background-color: #00d8ff;
-  border-color: #00d8ff;
-  color: #020617;
-  box-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
-}
-:deep(.el-empty__description) {
-  color: #64748b;
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

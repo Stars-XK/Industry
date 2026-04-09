@@ -345,7 +345,7 @@ onMounted(() => {
 }
 
 .status-dot.success {
-  background-color: #10b981;
+  background-color: var(--el-color-success);
   box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
 

@@ -1,14 +1,14 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div>
           <div class="header-title">营收计费与出账对账管理</div>
           <div class="header-subtitle">Billing & Reconciliation Management</div>
         </div>
         <div class="toolbar-actions">
-          <el-button class="neon-btn neon-btn-success" @click="handleInputReading">录入抄表底度</el-button>
-          <el-button class="neon-btn" @click="handleGenerate">根据抄表生成新账单</el-button>
+          <el-button class=" -success" @click="handleInputReading">录入抄表底度</el-button>
+          <el-button  @click="handleGenerate">根据抄表生成新账单</el-button>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
               <el-button 
                 v-if="scope.row.status === 'unpaid'" 
                 size="small" 
-                class="neon-btn neon-btn-success" 
+                class=" -success" 
                 @click="handlePay(scope.row)">
                 确认销账
               </el-button>
@@ -74,8 +74,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
-          <el-button class="neon-btn" @click="submitForm">保存底度</el-button>
+          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button  @click="submitForm">保存底度</el-button>
         </span>
       </template>
     </el-dialog>
@@ -182,6 +182,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -198,7 +243,7 @@ onMounted(() => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -222,16 +267,10 @@ onMounted(() => {
   --el-table-header-text-color: #cbd5e1;
   --el-table-tr-bg-color: transparent;
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
-  --el-table-text-color: #94a3b8;
+  --el-table-text-color: var(--el-text-color-regular);
 }
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-}
+
+
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
@@ -243,7 +282,7 @@ onMounted(() => {
 .value-text {
   font-family: "SF Mono", Consolas, monospace;
   font-weight: 600;
-  color: #00d8ff;
+  color: var(--el-color-primary);
 }
 .money-text {
   font-family: "SF Mono", Consolas, monospace;
@@ -251,36 +290,19 @@ onMounted(() => {
   color: #F56C6C;
   text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
 }
-.neon-btn-success {
+.-success {
   border-color: rgba(103, 194, 58, 0.5);
   color: #67C23A;
 }
-.neon-btn-success:hover {
+.-success:hover {
   background: rgba(103, 194, 58, 0.1);
   box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
   border-color: #67C23A;
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-input.is-disabled .el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.3) !important;
-  border-color: rgba(148, 163, 184, 0.1) !important;
-}
-:deep(.el-input.is-disabled .el-input__inner) {
-  color: #64748b !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
+.industrial-form 
+
+
+
+
+
 </style>

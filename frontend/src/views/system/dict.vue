@@ -1,11 +1,11 @@
 <template>
-  <div class="premium-container fade-in-up sys-dict-container">
+  <div class="app-container fade-in-up sys-dict-container">
     <!-- 左侧：字典类型列表 -->
-    <div class="glass-panel hover-lift dict-type-panel">
+    <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">字典类型 (DictType)</span>
-        <el-button type="primary" size="small" class="neon-btn" @click="handleAddType">新增</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
+        <el-button type="primary" size="small"  @click="handleAddType">新增</el-button>
+          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
       <ul class="type-list">
         <li
@@ -21,21 +21,21 @@
     </div>
 
     <!-- 右侧：字典数据列表 -->
-    <div class="glass-panel hover-lift dict-data-panel">
+    <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">字典数据 (DictData) <span v-if="currentType" class="highlight-text"> - {{ currentType }}</span></span>
-        <el-button type="primary" size="small" class="neon-btn" v-if="currentType" @click="handleAddData">新增字典项</el-button>
+        <el-button type="primary" size="small"  v-if="currentType" @click="handleAddData">新增字典项</el-button>
       </div>
 
       <el-table
         :data="dataList"
         style="width: 100%"
-        class="dark-table"
+        class="custom-table"
         v-if="currentType"
         v-loading="loadingData"
         element-loading-text="Thinking..."
         element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
+        
       >
         <el-table-column prop="dict_label" label="字典标签 (Label)" />
         <el-table-column prop="dict_value" label="字典键值 (Value)" />
@@ -56,7 +56,7 @@
     </div>
 
     <!-- 新增字典类型弹窗 -->
-    <el-dialog title="新增字典类型" v-model="typeDialogVisible" width="400px" custom-class="glass-dialog">
+    <el-dialog title="新增字典类型" v-model="typeDialogVisible" width="400px" custom->
       <el-form :model="typeForm" :rules="typeRules" ref="typeFormRef" label-width="100px">
         <el-form-item label="字典名称" prop="dict_name">
           <el-input v-model="typeForm.dict_name" placeholder="请输入字典名称 (如: 设备类型)" />
@@ -69,13 +69,13 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="typeDialogVisible = false" class="glass-btn">取消</el-button>
-        <el-button type="primary" @click="submitTypeForm" class="neon-btn">确定</el-button>
+        <el-button @click="typeDialogVisible = false" >取消</el-button>
+        <el-button type="primary" @click="submitTypeForm" >确定</el-button>
       </template>
     </el-dialog>
 
     <!-- 新增字典数据弹窗 -->
-    <el-dialog title="新增字典项" v-model="dataDialogVisible" width="400px" custom-class="glass-dialog">
+    <el-dialog title="新增字典项" v-model="dataDialogVisible" width="400px" custom->
       <el-form :model="dataForm" :rules="dataRules" ref="dataFormRef" label-width="100px">
         <el-form-item label="字典标签" prop="dict_label">
           <el-input v-model="dataForm.dict_label" placeholder="请输入字典标签 (如: 智能水表)" />
@@ -88,8 +88,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dataDialogVisible = false" class="glass-btn">取消</el-button>
-        <el-button type="primary" @click="submitDataForm" class="neon-btn">确定</el-button>
+        <el-button @click="dataDialogVisible = false" >取消</el-button>
+        <el-button type="primary" @click="submitDataForm" >确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -233,6 +233,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .sys-dict-container {
   display: flex;
   gap: 20px;
@@ -264,7 +309,7 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .type-list {
   list-style: none;
@@ -290,17 +335,17 @@ onMounted(() => {
   border-right: 3px solid #00d8ff;
 }
 .type-name {
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   font-size: 14px;
   font-weight: 500;
 }
 .type-key {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-size: 12px;
   font-family: 'SF Mono', Consolas, monospace;
 }
 .highlight-text {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-family: 'SF Mono', Consolas, monospace;
 }
 </style>

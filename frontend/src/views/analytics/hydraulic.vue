@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div>
           <div class="header-title">在线水力模型仿真与推演 (EPANET)</div>
@@ -19,7 +19,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-button class="neon-btn" style="width: 100%" @click="startSimulation" :loading="simulating">开始底层流场平差推演</el-button>
+                  <el-button  style="width: 100%" @click="startSimulation" :loading="simulating">开始底层流场平差推演</el-button>
                 </el-form-item>
               </el-form>
 
@@ -37,7 +37,7 @@
                   <span class="label">最大水压降幅:</span>
                   <span class="value text-neon">{{ result.maxPressureDrop }} MPa</span>
                 </div>
-                <el-button class="neon-btn neon-btn-warning" style="width: 100%; margin-top: 16px" @click="createSOP">将此场景一键转抢修 SOP</el-button>
+                <el-button class=" -warning" style="width: 100%; margin-top: 16px" @click="createSOP">将此场景一键转抢修 SOP</el-button>
               </div>
             </div>
           </div>
@@ -128,6 +128,51 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -144,7 +189,7 @@ onMounted(() => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -166,7 +211,7 @@ onMounted(() => {
   padding: 16px 20px;
   font-weight: 600;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
   background: rgba(15, 23, 42, 0.6);
   letter-spacing: 0.5px;
@@ -175,27 +220,15 @@ onMounted(() => {
   padding: 24px;
   flex: 1;
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
-.neon-btn-warning {
+.industrial-form 
+
+
+
+.-warning {
   border-color: rgba(230, 162, 60, 0.5);
   color: #E6A23C;
 }
-.neon-btn-warning:hover {
+.-warning:hover {
   background: rgba(230, 162, 60, 0.1);
   box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
   border-color: #E6A23C;
@@ -222,14 +255,14 @@ onMounted(() => {
   font-size: 13px;
 }
 .result-metric .label {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
 }
 .result-metric .value {
   font-weight: 600;
 }
 .text-danger { color: #F56C6C; text-shadow: 0 0 10px rgba(245, 108, 108, 0.3); }
 .text-warning { color: #E6A23C; }
-.text-neon { color: #00d8ff; }
+.text-neon { color: var(--el-color-primary); }
 .map-placeholder {
   background: rgba(2, 6, 23, 0.6);
   height: 100%;
@@ -262,14 +295,14 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 .map-content p {
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 1px;
   margin: 0 0 8px 0;
 }
 .map-desc {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-size: 13px;
   font-family: "SF Mono", Consolas, monospace;
 }

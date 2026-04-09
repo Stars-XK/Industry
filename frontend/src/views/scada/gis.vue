@@ -296,7 +296,7 @@ onUnmounted(() => {
   border: 1px solid rgba(0, 216, 255, 0.2);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
-  color: #94a3b8 !important;
+  color: var(--el-text-color-regular); !important;
 }
 .industrial-popup {
   padding: 16px;
@@ -304,7 +304,7 @@ onUnmounted(() => {
 .industrial-popup h4 {
   margin: 0 0 8px 0;
   font-size: 15px;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   letter-spacing: 0.5px;
 }
 .industrial-popup .divider {
@@ -318,14 +318,14 @@ onUnmounted(() => {
   color: #cbd5e1;
 }
 .industrial-popup strong {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   display: inline-block;
   width: 80px;
 }
 .industrial-tooltip {
   background: rgba(2, 6, 23, 0.8);
   border: 1px solid #1e293b;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   font-family: monospace;
   font-size: 12px;
 }
@@ -403,7 +403,7 @@ onUnmounted(() => {
 
 .brand-icon {
   font-size: 24px;
-  color: #00d8ff;
+  color: var(--el-color-primary);
 }
 
 .brand h2 {
@@ -416,7 +416,7 @@ onUnmounted(() => {
 
 .badge {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--el-color-success);
   border: 1px solid rgba(16, 185, 129, 0.3);
   padding: 2px 8px;
   border-radius: 12px;
@@ -486,7 +486,7 @@ h3 {
   align-items: center;
   gap: 12px;
   font-size: 14px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   cursor: pointer;
   transition: all 0.2s;
   padding: 8px 12px;
@@ -525,14 +525,8 @@ h3 {
   margin-top: 12px;
   margin-bottom: 16px;
 }
-:deep(.el-input__wrapper) {
-  background-color: rgba(2, 6, 23, 0.5) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #f8fafc;
-}
+
+
 
 .asset-list {
   flex: 1;
@@ -576,8 +570,8 @@ h3 {
   justify-content: center;
   font-size: 16px;
 }
-.asset-icon.pump { background: rgba(0, 216, 255, 0.1); color: #00d8ff; }
-.asset-icon.pressure { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.asset-icon.pump { background: rgba(0, 216, 255, 0.1); color: var(--el-color-primary); }
+.asset-icon.pressure { background: rgba(16, 185, 129, 0.1); color: var(--el-color-success); }
 .asset-icon.alarm { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
 .asset-info h4 {
@@ -591,7 +585,7 @@ h3 {
   font-size: 11px;
   font-family: monospace;
 }
-.status.normal { color: #10b981; }
+.status.normal { color: var(--el-color-success); }
 .status.warning { color: #f59e0b; }
 .status.critical { color: #ef4444; }
 

@@ -1,13 +1,13 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">测点与时序标签映射管理 (IoT Tag Mapping)</span>
-        <el-button type="primary" class="neon-btn" @click="handleAdd">新增映射</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
+        <el-button type="primary"  @click="handleAdd">新增映射</el-button>
+          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
-      <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
+      <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="device_name" label="关联物理设备">
           <template #default="scope">
@@ -36,7 +36,7 @@
       </el-table>
     </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" custom-class="glass-dialog" @close="resetForm">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" custom- @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="绑定物理设备" prop="device_id">
           <el-select v-model="form.device_id" filterable placeholder="选择台账设备" style="width: 100%" class="dark-input">
@@ -60,8 +60,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button type="primary" @click="submitForm" >确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -176,6 +176,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -186,16 +231,16 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .highlight-text {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-weight: 600;
 }
 .custom-tag {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .custom-tag-warning {
   background: rgba(234, 179, 8, 0.1);

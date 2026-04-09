@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">AI 大模型智能调度与指挥中枢</span>
       </div>
@@ -27,14 +27,14 @@
                   <ol class="action-list">
                     <li v-for="(item, index) in aiResponse.actions" :key="index">{{ item }}</li>
                   </ol>
-                  <el-button type="primary" size="default" class="neon-btn bubble-btn" @click="dispatchSOP">一键派发工单</el-button>
+                  <el-button type="primary" size="default" class=" bubble-btn" @click="dispatchSOP">一键派发工单</el-button>
                 </div>
               </div>
             </div>
             <div class="chat-input">
               <el-input v-model="question" type="textarea" :rows="3" placeholder="输入您的调度指令..." resize="none" class="dark-input" @keyup.enter="ask" />
               <div class="input-actions">
-                <el-button type="primary" class="neon-btn" @click="ask" :disabled="!question || isTyping">发送指令</el-button>
+                <el-button type="primary"  @click="ask" :disabled="!question || isTyping">发送指令</el-button>
               </div>
             </div>
           </div>
@@ -136,6 +136,51 @@ onMounted(() => {
 })
 </script>
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -147,7 +192,7 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .chat-container {
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -213,7 +258,7 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   line-height: 1.6;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .message.user .bubble {
@@ -221,10 +266,10 @@ onMounted(() => {
   border-top-right-radius: 4px;
   background: rgba(0, 255, 170, 0.1);
   border: 1px solid rgba(0, 255, 170, 0.2);
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .typing-bubble {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-style: italic;
 }
 .action-bubble {
@@ -240,7 +285,7 @@ onMounted(() => {
 .action-list {
   padding-left: 20px;
   margin-bottom: 16px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .action-list li {
   margin-bottom: 6px;
@@ -260,7 +305,7 @@ onMounted(() => {
   padding: 16px 20px;
   font-weight: 600;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   background: rgba(0, 0, 0, 0.2);
 }
@@ -305,11 +350,11 @@ onMounted(() => {
 }
 .loc-name {
   flex: 1;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   font-weight: 500;
 }
 .loc-dist {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-family: "SF Mono", Consolas, monospace;
 }
 </style>

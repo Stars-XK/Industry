@@ -1,22 +1,22 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">报警风暴收敛中心</h1>
         <p class="page-subtitle">Alarm RCA & Convergence Center</p>
       </div>
       <div class="header-actions">
-        <el-button class="neon-btn" @click="fetchData">刷新列表</el-button>
+        <el-button  @click="fetchData">刷新列表</el-button>
       </div>
     </div>
 
-    <div class="glass-panel hover-lift" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
-      <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" row-key="id">
+    <div class="box-card" v-loading="loading" >
+      <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" row-key="id">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="device_name" label="报警设备" min-width="200">
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}]</span> 
-            <span style="color: #e2e8f0; margin-left: 8px;">{{ scope.row.device_name }}</span>
+            <span style="color: var(--el-text-color-primary); margin-left: 8px;">{{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="alarm_type" label="报警类型" width="180" />
@@ -55,15 +55,15 @@
       </el-table>
     </div>
 
-    <el-dialog title="下发抢修工单" v-model="dialogVisible" width="500px" @close="resetForm" class="glass-dialog" :show-close="false">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" class="dark-form" label-position="top">
+    <el-dialog title="下发抢修工单" v-model="dialogVisible" width="500px" @close="resetForm"  :show-close="false">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px"  label-position="top">
         <el-form-item label="工单标题" prop="title">
-          <el-input v-model="form.title" placeholder="如：泵站紧急抢修" class="glass-input" />
+          <el-input v-model="form.title" placeholder="如：泵站紧急抢修"  />
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="工单类型" prop="order_type">
-              <el-select v-model="form.order_type" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+              <el-select v-model="form.order_type" style="width: 100%"  popper-class="glass-dropdown">
                 <el-option label="抢修工单" :value="2" />
                 <el-option label="听漏工单" :value="3" />
               </el-select>
@@ -71,7 +71,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="优先级" prop="priority">
-              <el-select v-model="form.priority" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+              <el-select v-model="form.priority" style="width: 100%"  popper-class="glass-dropdown">
                 <el-option label="中" :value="2" />
                 <el-option label="高" :value="3" />
                 <el-option label="紧急" :value="4" />
@@ -80,13 +80,13 @@
           </el-col>
         </el-row>
         <el-form-item label="任务描述" prop="description">
-          <el-input type="textarea" v-model="form.description" :rows="4" class="glass-input" />
+          <el-input type="textarea" v-model="form.description" :rows="4"  />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button class="neon-btn" @click="submitOrderForm">确定下发</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button  @click="submitOrderForm">确定下发</el-button>
         </div>
       </template>
     </el-dialog>
@@ -225,42 +225,62 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .highlight-text {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-.danger-tag {
-  background-color: rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
-}
-.warning-tag {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-.dark-tag {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cbd5e1;
-}
+
+
+
 .status-indicator {
   display: flex;
   align-items: center;
@@ -273,12 +293,12 @@ onMounted(() => {
   height: 8px;
   border-radius: 50%;
 }
-.status-danger { color: #f43f5e; }
-.status-danger .dot { background-color: #f43f5e; box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
+.status-danger { color: var(--el-color-danger); }
+.status-danger .dot { background-color: var(--el-color-danger); box-shadow: 0 0 8px #f43f5e; animation: pulse-danger 2s infinite; }
 .status-warning { color: #f59e0b; }
 .status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
-.status-success { color: #10b981; }
-.status-success .dot { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+.status-success { color: var(--el-color-success); }
+.status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
 @keyframes pulse-danger {
   0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
@@ -288,65 +308,48 @@ onMounted(() => {
   display: flex;
   gap: 12px;
 }
-.action-btn {
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.action-btn:hover {
-  text-shadow: 0 0 8px currentColor;
-  transform: translateY(-1px);
-}
-.text-cyan { color: #00d8ff; }
-.text-emerald { color: #10b981; }
+
+
+.text-cyan { color: var(--el-color-primary); }
+.text-emerald { color: var(--el-color-success); }
 .text-amber { color: #f59e0b; }
-.text-rose { color: #f43f5e; }
+.text-rose { color: var(--el-color-danger); }
 /* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
+
+
+
+
+
 /* Dialog Styles */
-:deep(.glass-dialog) {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-:deep(.dark-form .el-form-item__label) {
-  color: #94a3b8;
-  font-weight: 500;
+
+
+
+
+
+
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.glass-input .el-input__wrapper),
-:deep(.glass-input .el-textarea__inner) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  color: #e2e8f0;
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.glass-input .el-input__wrapper:hover),
-:deep(.glass-input .el-textarea__inner:hover) {
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
-}
-:deep(.glass-input .el-input__wrapper.is-focus),
-:deep(.glass-input .el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #00d8ff inset !important;
-}
-:deep(.glass-select .el-input__wrapper) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-:deep(.glass-select .el-input__inner) {
-  color: #e2e8f0;
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

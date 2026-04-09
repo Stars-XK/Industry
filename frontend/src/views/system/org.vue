@@ -1,30 +1,30 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">组织架构管理</h1>
         <p class="page-subtitle">Organizational Structure & Departments</p>
       </div>
       <div class="header-actions">
-        <el-button class="neon-btn" @click="handleAdd(0)">新增顶级部门</el-button>
-        <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
+        <el-button  @click="handleAdd(0)">新增顶级部门</el-button>
+        <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
     </div>
 
-    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px;">
+    <div class="box-card" style="flex: 1; padding: 20px;">
       <el-table
         :data="tableData"
         row-key="id"
         default-expand-all
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         style="width: 100%"
-        class="dark-table custom-scrollbar"
+        class="custom-table custom-scrollbar"
         v-loading="loading"
-        element-loading-background="rgba(15,23,42,0.8)"
+        
       >
         <el-table-column prop="dept_name" label="部门名称" min-width="200">
           <template #default="{ row }">
-            <span style="color: #e2e8f0; font-weight: 500;">{{ row.dept_name }}</span>
+            <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ row.dept_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="sort_order" label="排序" width="80" align="center" />
@@ -37,17 +37,17 @@
         </el-table-column>
         <el-table-column prop="leader" label="负责人" width="120">
           <template #default="{ row }">
-            <span style="color: #00d8ff;">{{ row.leader }}</span>
+            <span style="color: var(--el-color-primary);">{{ row.leader }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="联系电话" width="150">
           <template #default="{ row }">
-            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ row.phone }}</span>
+            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.phone }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="创建时间" width="180">
           <template #default="{ row }">
-            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
+            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right" align="center">
@@ -63,8 +63,8 @@
     </div>
 
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" class="glass-dialog" :show-close="false">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" class="dark-form" label-position="left">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px"  :show-close="false">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px"  label-position="left">
         <el-row :gutter="24">
           <el-col :span="24">
             <el-form-item label="上级部门" prop="parent_id">
@@ -84,36 +84,36 @@
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="部门名称" prop="dept_name">
-              <el-input v-model="form.dept_name" placeholder="请输入部门名称" class="glass-input" />
+              <el-input v-model="form.dept_name" placeholder="请输入部门名称"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="显示排序" prop="sort_order">
-              <el-input-number v-model="form.sort_order" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
+              <el-input-number v-model="form.sort_order" :min="0" style="width: 100%" controls-position="right" class="-number" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="负责人" prop="leader">
-              <el-input v-model="form.leader" placeholder="请输入负责人" class="glass-input" />
+              <el-input v-model="form.leader" placeholder="请输入负责人"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系电话" class="glass-input" />
+              <el-input v-model="form.phone" placeholder="请输入联系电话"  />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" class="glass-input" />
+              <el-input v-model="form.email" placeholder="请输入邮箱"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门状态" prop="status">
-              <el-radio-group v-model="form.status" class="dark-radio-group">
+              <el-radio-group v-model="form.status" >
                 <el-radio 
                   v-for="dict in sys_normal_disable" 
                   :key="dict.dict_value" 
@@ -124,13 +124,13 @@
           </el-col>
         </el-row>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" class="glass-input" />
+          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注"  />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button class="neon-btn" @click="submitForm">确认保存</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button  @click="submitForm">确认保存</el-button>
         </div>
       </template>
     </el-dialog>
@@ -266,126 +266,107 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-.success-tag {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
-.danger-tag {
-  background-color: rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
-}
+
+
+
+
+
+
 .action-btns {
   display: flex;
   gap: 12px;
 }
-.action-btn {
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.action-btn:hover {
-  text-shadow: 0 0 8px currentColor;
-  transform: translateY(-1px);
-}
-.text-cyan { color: #00d8ff; }
-.text-emerald { color: #10b981; }
-.text-rose { color: #f43f5e; }
+
+
+.text-cyan { color: var(--el-color-primary); }
+.text-emerald { color: var(--el-color-success); }
+.text-rose { color: var(--el-color-danger); }
 /* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+
+
+
+
+
+.custom-scrollbar 
+.custom-scrollbar 
 /* Dialog Styles */
-:deep(.glass-dialog) {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-:deep(.dark-form .el-form-item__label) {
-  color: #94a3b8;
-  font-weight: 500;
+
+
+
+
+
+
+
+
+
+
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.glass-input .el-input__wrapper),
-:deep(.glass-input-number .el-input__wrapper),
-:deep(.glass-input .el-textarea__inner) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  color: #e2e8f0;
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.glass-input .el-input__wrapper:hover),
-:deep(.glass-input-number .el-input__wrapper:hover),
-:deep(.glass-input .el-textarea__inner:hover) {
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
-}
-:deep(.glass-input .el-input__wrapper.is-focus),
-:deep(.glass-input-number .el-input__wrapper.is-focus),
-:deep(.glass-input .el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #00d8ff inset !important;
-}
-:deep(.glass-tree-select .el-input__wrapper) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-:deep(.glass-tree-select .el-input__inner),
-:deep(.glass-input .el-input__inner),
-:deep(.glass-input-number .el-input__inner) {
-  color: #e2e8f0;
-}
-:deep(.el-input-number__decrease),
-:deep(.el-input-number__increase) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-:deep(.el-input-number__decrease:hover),
-:deep(.el-input-number__increase:hover) {
-  color: #00d8ff !important;
-}
-:deep(.dark-radio-group .el-radio) {
-  color: #94a3b8;
-}
-:deep(.dark-radio-group .el-radio__input.is-checked + .el-radio__label) {
-  color: #00d8ff;
-}
-:deep(.dark-radio-group .el-radio__input.is-checked .el-radio__inner) {
-  border-color: #00d8ff;
-  background: #00d8ff;
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

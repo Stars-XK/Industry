@@ -264,7 +264,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   background: transparent;
   border: 1px solid rgba(0, 216, 255, 0.4);
-  color: #00d8ff;
+  color: var(--el-color-primary);
   border-radius: 4px;
   transition: all 0.3s ease;
 }
@@ -335,7 +335,7 @@ onUnmounted(() => {
 .kpi-item:hover {
   transform: translateX(4px);
   background: linear-gradient(90deg, rgba(0,216,255,0.05) 0%, transparent 100%);
-  border-left-color: #00d8ff;
+  border-left-color: var(--el-color-primary);
 }
 .kpi-label {
   font-size: 13px;
@@ -349,7 +349,7 @@ onUnmounted(() => {
   font-weight: 300;
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
-.text-blue { color: #00d8ff; text-shadow: 0 0 10px rgba(0,216,255,0.3); }
+.text-blue { color: var(--el-color-primary); text-shadow: 0 0 10px rgba(0,216,255,0.3); }
 .text-green { color: #00ffaa; text-shadow: 0 0 10px rgba(0,255,170,0.3); }
 .text-yellow { color: #ffb800; text-shadow: 0 0 10px rgba(255,184,0,0.3); }
 .chart-box {
@@ -379,7 +379,7 @@ onUnmounted(() => {
 .alarm-desc { flex: 1; font-size: 13px; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .HH { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
 .H { background: rgba(255, 184, 0, 0.15); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.3); }
-.L { background: rgba(0, 216, 255, 0.15); color: #00d8ff; border: 1px solid rgba(0, 216, 255, 0.3); }
+.L { background: rgba(0, 216, 255, 0.15); color: var(--el-color-primary); border: 1px solid rgba(0, 216, 255, 0.3); }
 .map-overlay {
   position: absolute;
   top: 24px;

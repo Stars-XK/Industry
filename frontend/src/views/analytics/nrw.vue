@@ -1,12 +1,12 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">DMA 产销差与漏损分析</h1>
         <p class="page-subtitle">NRW Sankey Analysis & Leakage Reports</p>
       </div>
       <div class="header-actions">
-        <el-select v-model="month" placeholder="分析月份" @change="fetchData" class="glass-select" style="width: 160px">
+        <el-select v-model="month" placeholder="分析月份" @change="fetchData"  style="width: 160px">
           <el-option label="2026-04" value="2026-04" />
           <el-option label="2026-03" value="2026-03" />
         </el-select>
@@ -15,11 +15,11 @@
 
     <el-row :gutter="24" style="margin-bottom: 24px;">
       <el-col :span="10">
-        <div class="glass-panel hover-lift table-panel" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+        <div class="box-card" v-loading="loading" >
           <div class="panel-header">
             <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
           </div>
-          <el-table :data="tableData" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="dark-table custom-scrollbar">
+          <el-table :data="tableData" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="custom-table custom-scrollbar">
             <el-table-column prop="zone_name" label="DMA分区" min-width="120" />
             <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="150">
               <template #default="scope">
@@ -43,7 +43,7 @@
       </el-col>
       
       <el-col :span="14">
-        <div class="glass-panel hover-lift chart-panel" v-loading="sankeyLoading" element-loading-background="rgba(15,23,42,0.8)">
+        <div class="box-card" v-loading="sankeyLoading" >
           <div class="panel-header">
             <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
             <el-tag type="info" effect="dark" class="dark-tag">{{ currentZoneName || '未选择' }}</el-tag>
@@ -55,7 +55,7 @@
 
     <el-row>
       <el-col :span="24">
-        <div class="glass-panel hover-lift chart-panel" v-loading="trendLoading" element-loading-background="rgba(15,23,42,0.8)" style="height: 380px;">
+        <div class="box-card" v-loading="trendLoading"  style="height: 380px;">
           <div class="panel-header">
             <div class="panel-title">历史趋势及同环比分析 <span>Historical Trend</span></div>
           </div>
@@ -215,24 +215,54 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .table-panel {
   height: 520px;
   padding: 20px;
@@ -250,7 +280,7 @@ onBeforeUnmount(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -261,11 +291,7 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.dark-tag {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cbd5e1;
-}
+
 .sankey-chart, .trend-chart {
   width: 100%;
   flex: 1;
@@ -276,43 +302,34 @@ onBeforeUnmount(() => {
   font-family: "SF Mono", monospace;
   font-size: 16px;
 }
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
+
+
+
+
+
+
+.custom-scrollbar 
+.custom-scrollbar 
+
+
+
+
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.el-table tr) {
-  background-color: transparent !important;
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) {
-  background-color: var(--el-table-row-hover-bg-color) !important;
-}
-:deep(.el-table__body tr.current-row > td.el-table__cell) {
-  background-color: var(--el-table-current-row-bg-color) !important;
-}
-:deep(.el-table::before) {
-  display: none;
-}
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-:deep(.dark-progress .el-progress__text) {
-  color: #e2e8f0;
-  font-family: "SF Mono", monospace;
-}
-:deep(.dark-progress .el-progress-bar__outer) {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-:deep(.glass-select .el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-:deep(.glass-select .el-input__inner) {
-  color: #e2e8f0;
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

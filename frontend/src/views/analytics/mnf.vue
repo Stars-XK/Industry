@@ -1,12 +1,12 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">夜间最小流量分析</h1>
         <p class="page-subtitle">Minimum Night Flow (MNF) Analysis</p>
       </div>
       <div class="header-actions">
-        <el-button class="neon-btn">生成听漏工单</el-button>
+        <el-button >生成听漏工单</el-button>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
         </div>
       </el-col>
       <el-col :span="24">
-        <div class="glass-panel hover-lift" style="padding: 20px;">
+        <div class="box-card" style="padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">凌晨 2:00 - 4:00 供水散点图 <span>MNF Scatter Plot</span></div>
           </div>
@@ -112,24 +112,54 @@ const loadData = async () => {
 onMounted(() => loadData())
 </script>
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .warning-banner {
   display: flex;
   align-items: flex-start;
@@ -165,7 +195,7 @@ onMounted(() => loadData())
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -183,5 +213,23 @@ onMounted(() => loadData())
 .chart-inner {
   width: 100%;
   height: 100%;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
+}
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

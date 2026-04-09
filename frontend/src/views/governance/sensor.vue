@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div class="header-title">数据清洗与传感器健康度评估</div>
         <div class="header-subtitle">Data Quality & Sensor Health Monitoring</div>
@@ -20,18 +20,18 @@
                 <el-form-item label="最大物理流速上限">
                   <div style="display: flex; align-items: center; width: 100%;">
                     <el-input-number v-model="rule.max_velocity" :min="1" class="industrial-input-number" />
-                    <span style="color: #e2e8f0; margin-left: 8px;">m/s</span>
+                    <span style="color: var(--el-text-color-primary); margin-left: 8px;">m/s</span>
                     <span class="form-tip">(超过管道最大流速的数据直接抛弃)</span>
                   </div>
                 </el-form-item>
                 <el-form-item label="死值判定 (Deadband)">
                   <div style="display: flex; align-items: center; width: 100%;">
                     <el-input-number v-model="rule.dead_time_hours" :min="1" class="industrial-input-number" />
-                    <span style="color: #e2e8f0; margin-left: 8px;">小时内读数绝对不变，则判定为“传感器卡死”</span>
+                    <span style="color: var(--el-text-color-primary); margin-left: 8px;">小时内读数绝对不变，则判定为“传感器卡死”</span>
                   </div>
                 </el-form-item>
                 <el-form-item style="margin-top: 32px;">
-                  <el-button class="neon-btn">下发清洗规则</el-button>
+                  <el-button >下发清洗规则</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -76,6 +76,51 @@ const sensors = ref([
 ])
 </script>
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   flex-direction: column;
@@ -91,7 +136,7 @@ const sensors = ref([
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -113,7 +158,7 @@ const sensors = ref([
   padding: 16px 20px;
   font-weight: 600;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
   background: rgba(15, 23, 42, 0.6);
   letter-spacing: 0.5px;
@@ -132,18 +177,12 @@ const sensors = ref([
   --el-table-header-text-color: #cbd5e1;
   --el-table-tr-bg-color: transparent;
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
-  --el-table-text-color: #94a3b8;
+  --el-table-text-color: var(--el-text-color-regular);
 }
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-}
+
+
 .form-tip {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-left: 12px;
   font-size: 13px;
 }
@@ -153,35 +192,14 @@ const sensors = ref([
   font-weight: 600;
 }
 .text-success {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-weight: 600;
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-switch__core) {
-  background-color: rgba(148, 163, 184, 0.2) !important;
-  border-color: rgba(148, 163, 184, 0.2) !important;
-}
-:deep(.el-switch.is-checked .el-switch__core) {
-  background-color: #00d8ff !important;
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
-}
-:deep(.el-progress-bar__outer) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-progress__text) {
-  color: #e2e8f0 !important;
-}
+.industrial-form 
+
+
+
+
+
+
 </style>

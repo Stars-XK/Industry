@@ -10,8 +10,8 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: #020617;
-  color: #e2e8f0;
+  background-color: var(--el-bg-color-page);
+  color: var(--el-text-color-primary);
   font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

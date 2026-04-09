@@ -1,9 +1,9 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <!-- 边缘网关状态面板 -->
     <el-row :gutter="20" style="margin-bottom: 24px;">
       <el-col :span="24">
-        <div class="glass-panel hover-lift">
+        <div class="box-card">
           <div class="panel-header">
             <div class="header-title">边缘网关状态监控与策略下发</div>
             <div class="header-subtitle">Edge Gateway Monitoring & Policy Deployment</div>
@@ -24,7 +24,7 @@
                     <div class="metric"><span class="label">网络延迟:</span> <span class="value" :class="{'high-latency': gw.latency > 100}">{{ gw.latency || 'N/A' }} ms</span></div>
                   </div>
                   <div class="gw-actions">
-                    <el-button class="neon-btn neon-btn-warning" size="small" @click="handleSendProtection(gw)" :disabled="gw.is_online === 0">下发本地保护策略</el-button>
+                    <el-button class=" -warning" size="small" @click="handleSendProtection(gw)" :disabled="gw.is_online === 0">下发本地保护策略</el-button>
                   </div>
                 </div>
               </el-col>
@@ -35,16 +35,16 @@
     </el-row>
 
     <!-- 测点与标签映射管理 -->
-    <div class="glass-panel hover-lift" style="flex: 1;">
+    <div class="box-card" style="flex: 1;">
       <div class="toolbar">
         <div>
           <div class="header-title">测点与标签映射配置</div>
           <div class="header-subtitle">Point / Tag Mapping Configuration</div>
         </div>
         <div class="toolbar-actions">
-          <el-button class="neon-btn" @click="handleAdd" :icon="Plus">新增映射</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
-          <el-button class="neon-btn" @click="getList" :icon="Refresh">刷新</el-button>
+          <el-button  @click="handleAdd" :icon="Plus">新增映射</el-button>
+          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
+          <el-button  @click="getList" :icon="Refresh">刷新</el-button>
         </div>
       </div>
 
@@ -57,7 +57,7 @@
             <el-input v-model="searchForm.device_id" placeholder="关联的设备ID" clearable />
           </el-form-item>
           <el-form-item>
-            <el-button class="neon-btn" @click="getList" :icon="Search">搜索</el-button>
+            <el-button  @click="getList" :icon="Search">搜索</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -152,8 +152,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
-        <el-button class="neon-btn" @click="submitForm">确定</el-button>
+        <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+        <el-button  @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -343,6 +343,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
@@ -356,7 +401,7 @@ onMounted(() => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -394,7 +439,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .gw-metrics {
   margin-bottom: 15px;
@@ -408,10 +453,10 @@ onMounted(() => {
   justify-content: space-between;
 }
 .metric .label {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
 }
 .metric .value {
-  color: #00d8ff;
+  color: var(--el-color-primary);
 }
 .high-latency {
   color: #F56C6C !important;
@@ -450,83 +495,50 @@ onMounted(() => {
   --el-table-header-text-color: #cbd5e1;
   --el-table-tr-bg-color: transparent;
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
-  --el-table-text-color: #94a3b8;
+  --el-table-text-color: var(--el-text-color-regular);
 }
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-}
-.neon-btn-warning {
+
+
+.-warning {
   border-color: rgba(230, 162, 60, 0.5);
   color: #E6A23C;
 }
-.neon-btn-warning:hover:not(:disabled) {
+.-warning:hover:not(:disabled) {
   background: rgba(230, 162, 60, 0.1);
   box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
   border-color: #E6A23C;
 }
-.neon-btn-success {
+.-success {
   border-color: rgba(103, 194, 58, 0.5);
   color: #67C23A;
 }
-.neon-btn-success:hover:not(:disabled) {
+.-success:hover:not(:disabled) {
   background: rgba(103, 194, 58, 0.1);
   box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
   border-color: #67C23A;
 }
 .text-neon {
-  color: #00d8ff;
+  color: var(--el-color-primary);
 }
 .text-danger {
   color: #F56C6C;
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
-:deep(.el-switch__core) {
-  background-color: rgba(148, 163, 184, 0.2) !important;
-  border-color: rgba(148, 163, 184, 0.2) !important;
-}
-:deep(.el-switch.is-checked .el-switch__core) {
-  background-color: #00d8ff !important;
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
-}
+.industrial-form 
+
+
+
+
+
 .pagination {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
-:deep(.el-pagination) {
-  --el-pagination-bg-color: transparent;
-  --el-pagination-text-color: #94a3b8;
-  --el-pagination-button-disabled-bg-color: transparent;
-  --el-pagination-hover-color: #00d8ff;
-}
-:deep(.el-pager li.is-active) {
-  color: #00d8ff;
-  font-weight: bold;
-}
+
+
 .form-tip {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 5px;
   line-height: 1.4;
 }

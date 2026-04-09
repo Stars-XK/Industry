@@ -1,13 +1,13 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">边缘计算与物联网网关台账 (IoT Gateways)</span>
-        <el-button type="primary" class="neon-btn" @click="handleAdd">新增网关</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
+        <el-button type="primary"  @click="handleAdd">新增网关</el-button>
+          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
-      <el-table :data="tableData" style="width: 100%" class="dark-table" v-loading="loading">
+      <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="gateway_sn" label="网关序列号 (SN)" width="250">
           <template #default="scope">
@@ -35,7 +35,7 @@
       </el-table>
     </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" custom-class="glass-dialog" @close="resetForm">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" custom- @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="网关SN码" prop="gateway_sn">
           <el-input v-model="form.gateway_sn" :disabled="!!form.id" placeholder="如 GW-MAC-AABBCC" />
@@ -59,8 +59,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button type="primary" @click="submitForm" class="neon-btn">确定</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button type="primary" @click="submitForm" >确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -164,6 +164,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -174,10 +219,10 @@ onMounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .highlight-text {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-family: 'SF Mono', Consolas, monospace;
 }
 .custom-tag {

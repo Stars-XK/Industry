@@ -1,9 +1,9 @@
 <template>
-  <div class="premium-container fade-in-up scada-topology">
+  <div class="app-container fade-in-up scada-topology">
     <el-row :gutter="24" style="height: 100%;">
       <!-- 左侧 2D 拓扑画布 -->
       <el-col :span="14" style="height: 100%;">
-        <div class="glass-panel hover-lift" style="height: 100%;">
+        <div class="box-card" style="height: 100%;">
           <div class="panel-header">
             <div>
               <div class="header-title">供水 DMA 拓扑全景导航</div>
@@ -18,7 +18,7 @@
 
       <!-- 右侧详情/设备列表区 -->
       <el-col :span="10" style="height: 100%;">
-        <div class="glass-panel hover-lift" style="height: 100%;">
+        <div class="box-card" style="height: 100%;">
           <div class="panel-header">
             <div>
               <div class="header-title">分区设备关联信息</div>
@@ -44,7 +44,7 @@
               </el-descriptions-item>
             </el-descriptions>
 
-            <div class="section-title" style="margin-top: 24px; margin-bottom: 12px; color: #e2e8f0; font-weight: 600;">挂载设备清单及实时遥测数据</div>
+            <div class="section-title" style="margin-top: 24px; margin-bottom: 12px; color: var(--el-text-color-primary); font-weight: 600;">挂载设备清单及实时遥测数据</div>
             <el-table
               :data="deviceList"
               style="width: 100%;"
@@ -113,7 +113,7 @@ const chartOption = ref<any>({
     textStyle: { color: '#e2e8f0' },
     formatter: (params: any) => {
       const data = params.data
-      return `${data.name}<br/><span style="color:#94a3b8;font-size:12px;">层级: ${data.level}级分区</span>`
+      return `${data.name}<br/><span style="color: var(--el-text-color-regular);font-size:12px;">层级: ${data.level}级分区</span>`
     }
   },
   series: [
@@ -251,23 +251,41 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  letter-spacing: 0.5px;
+}
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
-}
-.header-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #f8fafc;
-  letter-spacing: 0.5px;
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -277,9 +295,9 @@ onUnmounted(() => {
   flex: 1;
   width: 100%;
   position: relative;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-fill-color-light);
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--el-border-color-light);
 }
 .chart {
   width: 100%;
@@ -298,42 +316,21 @@ onUnmounted(() => {
   flex: 1;
   overflow: auto;
 }
-:deep(.industrial-descriptions) {
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.1) !important;
-}
-:deep(.industrial-descriptions .el-descriptions__body) {
-  background-color: transparent !important;
-}
-:deep(.industrial-descriptions .el-descriptions-item__label) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  color: #94a3b8;
-  border-color: rgba(148, 163, 184, 0.1) !important;
-  font-weight: 500;
-}
-:deep(.industrial-descriptions .el-descriptions-item__content) {
-  background-color: rgba(2, 6, 23, 0.3) !important;
-  color: #e2e8f0;
-  border-color: rgba(148, 163, 184, 0.1) !important;
-}
+
+
+
+
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
-  --el-table-text-color: #e2e8f0;
+  --el-table-row-hover-bg-color: var(--el-fill-color-light);
+  --el-table-text-color: var(--el-text-color-primary);
 }
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-}
+
+
 .telemetry-box {
   display: flex;
   flex-direction: column;
@@ -344,16 +341,16 @@ onUnmounted(() => {
   justify-content: space-between;
   font-family: "SF Mono", Consolas, monospace;
   font-size: 12px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--el-fill-color-light);
   padding: 2px 6px;
   border-radius: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
 }
 .telemetry-item .t-key {
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
 }
 .telemetry-item .t-val {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-weight: 600;
 }
 .industrial-tag {

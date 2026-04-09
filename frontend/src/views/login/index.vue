@@ -191,7 +191,7 @@ const handleLogin = async () => {
   padding: 6px 12px;
   background: rgba(0, 216, 255, 0.1);
   border: 1px solid rgba(0, 216, 255, 0.3);
-  color: #00d8ff;
+  color: var(--el-color-primary);
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
@@ -211,7 +211,7 @@ const handleLogin = async () => {
 .hero-desc {
   font-size: 18px;
   line-height: 1.6;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin: 0 0 48px 0;
   max-width: 600px;
 }
@@ -232,7 +232,7 @@ const handleLogin = async () => {
 .stat-value {
   font-size: 24px;
   font-weight: 600;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-family: "SF Mono", Consolas, monospace;
 }
 
@@ -321,7 +321,7 @@ label {
 
 .forgot-link {
   font-size: 13px;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -344,7 +344,7 @@ label {
 
 .input-field input:focus {
   outline: none;
-  border-color: #00d8ff;
+  border-color: var(--el-color-primary);
   box-shadow: 0 0 0 3px rgba(0, 216, 255, 0.1);
   background: #152038;
 }
@@ -359,7 +359,7 @@ label {
   gap: 8px;
   background: rgba(244, 63, 94, 0.1);
   border: 1px solid rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
+  color: var(--el-color-danger);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;

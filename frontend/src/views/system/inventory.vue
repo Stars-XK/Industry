@@ -1,22 +1,22 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">备品备件与仓储管理</h1>
         <p class="page-subtitle">Inventory & Spare Parts Lifecycle</p>
       </div>
       <div class="header-actions">
-        <el-button class="neon-btn" @click="handleCreate" v-hasPermi="['sys:inventory:add']">新增备件</el-button>
+        <el-button  @click="handleCreate" v-hasPermi="['sys:inventory:add']">新增备件</el-button>
       </div>
     </div>
 
-    <div class="glass-panel hover-lift" style="margin-bottom: 24px; padding: 16px 20px;">
+    <div class="box-card" style="margin-bottom: 24px; padding: 16px 20px;">
       <el-form :inline="true" :model="listQuery" class="dark-filter-form">
         <el-form-item label="备件名称">
-          <el-input v-model="listQuery.part_name" placeholder="请输入名称" clearable class="glass-input" />
+          <el-input v-model="listQuery.part_name" placeholder="请输入名称" clearable  />
         </el-form-item>
         <el-form-item label="备件分类">
-          <el-select v-model="listQuery.category" placeholder="选择分类" clearable class="glass-select" popper-class="glass-dropdown">
+          <el-select v-model="listQuery.category" placeholder="选择分类" clearable  popper-class="glass-dropdown">
             <el-option label="阀门类" value="valve" />
             <el-option label="仪表类" value="meter" />
             <el-option label="化工类" value="chemical" />
@@ -24,14 +24,14 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button class="glass-btn" @click="getList">查询库存</el-button>
-          <el-button class="glass-btn" style="border-color: transparent;" @click="resetQuery">重置</el-button>
+          <el-button  @click="getList">查询库存</el-button>
+          <el-button  style="border-color: transparent;" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
 
-    <div class="glass-panel hover-lift" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
-      <el-table v-loading="loading" :data="list" style="width: 100%" class="dark-table custom-scrollbar" element-loading-background="rgba(15,23,42,0.8)">
+    <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
+      <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="part_code" label="备件编码" width="150">
           <template #default="{ row }">
@@ -40,7 +40,7 @@
         </el-table-column>
         <el-table-column prop="part_name" label="备件名称" min-width="180">
           <template #default="{ row }">
-            <span style="color: #e2e8f0; font-weight: 500;">{{ row.part_name }}</span>
+            <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ row.part_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="category" label="分类" width="120">
@@ -58,13 +58,13 @@
               <span :style="{ color: row.is_low_stock ? '#f43f5e' : '#10b981', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
                 {{ row.stock_quantity }} <span style="font-size: 12px; font-weight: normal;">{{ row.unit }}</span>
               </span>
-              <div v-if="row.is_low_stock" style="font-size: 12px; color: #f43f5e; margin-top: 4px;">低于安全库存: {{ row.safe_stock }}</div>
+              <div v-if="row.is_low_stock" style="font-size: 12px; color: var(--el-color-danger); margin-top: 4px;">低于安全库存: {{ row.safe_stock }}</div>
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="unit_price" label="单价(元)" width="120" align="right">
           <template #default="{ row }">
-            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ row.unit_price }}</span>
+            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ row.unit_price }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="location" label="仓库位置" width="150" />
@@ -74,7 +74,7 @@
               <el-button class="action-btn text-emerald" link size="small" @click="handleStock(row, 1)">入库</el-button>
               <el-button class="action-btn text-amber" link size="small" @click="handleStock(row, -1)">出库</el-button>
               <el-button class="action-btn text-cyan" link size="small" @click="handleLogs(row)">流水</el-button>
-              <el-button class="action-btn" style="color: #94a3b8;" link size="small" @click="handleUpdate(row)">编辑</el-button>
+              <el-button class="action-btn" style="color: var(--el-text-color-regular);" link size="small" @click="handleUpdate(row)">编辑</el-button>
               <el-button class="action-btn text-rose" link size="small" @click="handleDelete(row)">删除</el-button>
             </div>
           </template>
@@ -95,22 +95,22 @@
     </div>
 
     <!-- 备件编辑弹窗 -->
-    <el-dialog :title="dialogStatus === 'create' ? '新增备件' : '编辑备件'" v-model="dialogVisible" width="650px" class="glass-dialog" :show-close="false">
-      <el-form ref="dataFormRef" :model="temp" label-width="100px" class="dark-form" label-position="left">
+    <el-dialog :title="dialogStatus === 'create' ? '新增备件' : '编辑备件'" v-model="dialogVisible" width="650px"  :show-close="false">
+      <el-form ref="dataFormRef" :model="temp" label-width="100px"  label-position="left">
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="备件编码" prop="part_code">
-              <el-input v-model="temp.part_code" :disabled="dialogStatus === 'update'" class="glass-input" :class="{ 'is-disabled': dialogStatus === 'update' }" />
+              <el-input v-model="temp.part_code" :disabled="dialogStatus === 'update'"  :class="{ 'is-disabled': dialogStatus === 'update' }" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="备件名称" prop="part_name">
-              <el-input v-model="temp.part_name" class="glass-input" />
+              <el-input v-model="temp.part_name"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="分类" prop="category">
-              <el-select v-model="temp.category" style="width: 100%" class="glass-select" popper-class="glass-dropdown">
+              <el-select v-model="temp.category" style="width: 100%"  popper-class="glass-dropdown">
                 <el-option label="阀门类" value="valve" />
                 <el-option label="仪表类" value="meter" />
                 <el-option label="化工类" value="chemical" />
@@ -120,77 +120,77 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="规格型号">
-              <el-input v-model="temp.specification" class="glass-input" />
+              <el-input v-model="temp.specification"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="计量单位">
-              <el-input v-model="temp.unit" class="glass-input" />
+              <el-input v-model="temp.unit"  />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="dialogStatus === 'create'">
             <el-form-item label="初始库存">
-              <el-input-number v-model="temp.stock_quantity" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
+              <el-input-number v-model="temp.stock_quantity" :min="0" style="width: 100%" controls-position="right" class="-number" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="安全预警线">
-              <el-input-number v-model="temp.safe_stock" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
+              <el-input-number v-model="temp.safe_stock" :min="0" style="width: 100%" controls-position="right" class="-number" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="单价(元)">
-              <el-input-number v-model="temp.unit_price" :precision="2" :min="0" style="width: 100%" controls-position="right" class="glass-input-number" />
+              <el-input-number v-model="temp.unit_price" :precision="2" :min="0" style="width: 100%" controls-position="right" class="-number" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="仓库位置">
-              <el-input v-model="temp.location" class="glass-input" />
+              <el-input v-model="temp.location"  />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button class="neon-btn" @click="saveData">确认保存</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button  @click="saveData">确认保存</el-button>
         </div>
       </template>
     </el-dialog>
 
     <!-- 库存操作弹窗 -->
-    <el-dialog :title="stockAction === 1 ? '备件入库登记' : '备件出库登记'" v-model="stockDialogVisible" width="500px" class="glass-dialog" :show-close="false">
-      <el-form :model="stockTemp" label-width="100px" class="dark-form" label-position="left">
+    <el-dialog :title="stockAction === 1 ? '备件入库登记' : '备件出库登记'" v-model="stockDialogVisible" width="500px"  :show-close="false">
+      <el-form :model="stockTemp" label-width="100px"  label-position="left">
         <el-form-item label="当前备件">
-          <el-input :value="currentPart?.part_name" disabled class="glass-input is-disabled" />
+          <el-input :value="currentPart?.part_name" disabled class=" is-disabled" />
         </el-form-item>
         <el-form-item label="当前库存">
-          <el-input :value="currentPart?.stock_quantity + ' ' + currentPart?.unit" disabled class="glass-input is-disabled" />
+          <el-input :value="currentPart?.stock_quantity + ' ' + currentPart?.unit" disabled class=" is-disabled" />
         </el-form-item>
         <el-form-item label="变动数量" required>
-          <el-input-number v-model="stockTemp.quantity" :min="0.1" :precision="2" :step="1" style="width: 100%" controls-position="right" class="glass-input-number" />
+          <el-input-number v-model="stockTemp.quantity" :min="0.1" :precision="2" :step="1" style="width: 100%" controls-position="right" class="-number" />
         </el-form-item>
         <el-form-item label="关联工单" v-if="stockAction === -1">
-          <el-input v-model="stockTemp.order_id" placeholder="可选: 抢修/维修工单ID" class="glass-input" />
+          <el-input v-model="stockTemp.order_id" placeholder="可选: 抢修/维修工单ID"  />
         </el-form-item>
         <el-form-item label="备注说明">
-          <el-input v-model="stockTemp.remark" type="textarea" :rows="3" class="glass-input" />
+          <el-input v-model="stockTemp.remark" type="textarea" :rows="3"  />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="stockDialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button :class="stockAction === 1 ? 'neon-btn' : 'danger-neon-btn'" @click="saveStock">确认登记</el-button>
+          <el-button @click="stockDialogVisible = false" >取消</el-button>
+          <el-button :class="stockAction === 1 ? '' : 'danger-'" @click="saveStock">确认登记</el-button>
         </div>
       </template>
     </el-dialog>
 
     <!-- 流水记录弹窗 -->
-    <el-dialog title="出入库流水记录" v-model="logsDialogVisible" width="800px" class="glass-dialog" :show-close="false">
-      <el-table :data="logs" style="width: 100%" height="400" class="dark-table custom-scrollbar">
+    <el-dialog title="出入库流水记录" v-model="logsDialogVisible" width="800px"  :show-close="false">
+      <el-table :data="logs" style="width: 100%" height="400" class="custom-table custom-scrollbar">
         <el-table-column prop="created_at" label="发生时间" width="180">
           <template #default="{ row }">
-            <span style="color: #94a3b8; font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
+            <span style="color: var(--el-text-color-regular); font-family: 'SF Mono', monospace;">{{ new Date(row.created_at).toLocaleString() }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作类型" width="100" align="center">
@@ -209,7 +209,7 @@
         </el-table-column>
         <el-table-column prop="after_stock" label="结余库存" width="100" align="right">
           <template #default="{ row }">
-            <span style="color: #00d8ff; font-weight: 600; font-family: 'SF Mono', monospace;">{{ row.after_stock }}</span>
+            <span style="color: var(--el-color-primary); font-weight: 600; font-family: 'SF Mono', monospace;">{{ row.after_stock }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operator_name" label="操作人" width="120" align="center" />
@@ -218,7 +218,7 @@
       </el-table>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="logsDialogVisible = false" class="glass-btn">关闭</el-button>
+          <el-button @click="logsDialogVisible = false" >关闭</el-button>
         </div>
       </template>
     </el-dialog>
@@ -392,171 +392,135 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+
+
 .highlight-text {
-  color: #00d8ff;
+  color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-.dark-tag {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cbd5e1;
-}
-.danger-tag {
-  background-color: rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
-}
-.warning-tag {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-.success-tag {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-}
+
+
+
+
 .action-btns {
   display: flex;
   gap: 12px;
 }
-.action-btn {
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.action-btn:hover {
-  text-shadow: 0 0 8px currentColor;
-  transform: translateY(-1px);
-}
-.text-cyan { color: #00d8ff; }
-.text-emerald { color: #10b981; }
+
+
+.text-cyan { color: var(--el-color-primary); }
+.text-emerald { color: var(--el-color-success); }
 .text-amber { color: #f59e0b; }
-.text-rose { color: #f43f5e; }
-.danger-neon-btn {
+.text-rose { color: var(--el-color-danger); }
+.danger- {
   background: transparent;
   border: 1px solid #f43f5e;
-  color: #f43f5e;
+  color: var(--el-color-danger);
   transition: all 0.3s;
 }
-.danger-neon-btn:hover {
+.danger-:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
   color: #fff;
 }
 /* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+
+
+
+
+
+.custom-scrollbar 
+.custom-scrollbar 
 /* Dialog Styles */
-:deep(.glass-dialog) {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-:deep(.dark-filter-form .el-form-item) {
-  margin-bottom: 0;
-}
-:deep(.dark-form .el-form-item__label),
-:deep(.dark-filter-form .el-form-item__label) {
-  color: #94a3b8;
-  font-weight: 500;
-}
-:deep(.glass-input .el-input__wrapper),
-:deep(.glass-input-number .el-input__wrapper),
-:deep(.glass-input .el-textarea__inner) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  color: #e2e8f0;
-}
-:deep(.glass-input.is-disabled .el-input__wrapper) {
-  background-color: rgba(255, 255, 255, 0.05);
-  box-shadow: none;
-}
-:deep(.glass-input .el-input__wrapper:hover:not(.is-disabled)),
-:deep(.glass-input-number .el-input__wrapper:hover),
-:deep(.glass-input .el-textarea__inner:hover) {
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
-}
-:deep(.glass-input .el-input__wrapper.is-focus),
-:deep(.glass-input-number .el-input__wrapper.is-focus),
-:deep(.glass-input .el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #00d8ff inset !important;
-}
-:deep(.glass-select .el-input__wrapper) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-:deep(.glass-select .el-input__inner),
-:deep(.glass-input .el-input__inner),
-:deep(.glass-input-number .el-input__inner) {
-  color: #e2e8f0;
-}
-:deep(.glass-input.is-disabled .el-input__inner) {
-  color: #94a3b8;
-}
-:deep(.el-input-number__decrease),
-:deep(.el-input-number__increase) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-:deep(.el-input-number__decrease:hover),
-:deep(.el-input-number__increase:hover) {
-  color: #00d8ff !important;
-}
+
+
+
+
+
+
+
+
+
+
+
 .pagination-container {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
-:deep(.dark-pagination .el-pagination__total),
-:deep(.dark-pagination .el-pagination__jump) {
-  color: #94a3b8;
+
+
+
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-:deep(.dark-pagination button),
-:deep(.dark-pagination .el-pager li) {
-  background-color: transparent !important;
-  color: #94a3b8;
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
 }
-:deep(.dark-pagination .el-pager li.is-active) {
-  color: #00d8ff;
-  font-weight: bold;
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
 }
 </style>

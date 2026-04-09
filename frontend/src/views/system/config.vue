@@ -134,17 +134,9 @@ const handleBatchSave = async () => {
   max-width: 900px;
 }
 
-:deep(.el-divider__text) {
-  background-color: var(--el-bg-color);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--el-text-color-primary);
-}
 
-:deep(.el-form-item__label) {
-  font-weight: 500;
-  color: var(--el-text-color-regular);
-}
+
+
 
 .el-button {
   border-radius: 6px;

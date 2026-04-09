@@ -214,12 +214,6 @@ const goHome = () => {
 .upload-demo {
   margin-top: 16px;
 }
-:deep(.el-upload-dragger) {
-  border-radius: 8px;
-  transition: all 0.3s;
-}
-:deep(.el-upload-dragger:hover) {
-  border-color: var(--el-color-primary);
-  background-color: var(--el-color-primary-light-9);
-}
+
+
 </style>

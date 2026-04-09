@@ -1,6 +1,6 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div class="header-title">营收数据融合清洗 (错期分摊)</div>
         <div class="header-subtitle">Revenue Data Cleansing & Allocation</div>
@@ -27,7 +27,7 @@
                   <el-date-picker v-model="rule.date" type="date" placeholder="从何时开始应用新规则" class="industrial-date" style="width: 100%" />
                 </el-form-item>
                 <el-form-item class="form-actions">
-                  <el-button type="primary" class="neon-btn" @click="saveRule">保存算法规则</el-button>
+                  <el-button type="primary"  @click="saveRule">保存算法规则</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -47,7 +47,7 @@
                   <el-date-picker v-model="recalcMonth" type="month" placeholder="如 2024-05" class="industrial-date" style="width: 100%; max-width: 300px" />
                 </el-form-item>
                 <el-form-item class="form-actions" style="margin-top: 24px;">
-                  <el-button type="danger" class="neon-btn neon-btn-danger" @click="handleRecalc">一键触发底层 TDengine 聚合重算</el-button>
+                  <el-button type="danger" class=" -danger" @click="handleRecalc">一键触发底层 TDengine 聚合重算</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -98,6 +98,51 @@ const handleRecalc = () => {
 }
 </script>
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   flex-direction: column;
@@ -113,7 +158,7 @@ const handleRecalc = () => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -133,7 +178,7 @@ const handleRecalc = () => {
   padding: 16px 20px;
   font-weight: 600;
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   border-bottom: 1px solid rgba(148, 163, 184, 0.05);
   background: rgba(15, 23, 42, 0.6);
   display: flex;
@@ -163,46 +208,28 @@ const handleRecalc = () => {
   padding: 16px;
   background: rgba(245, 108, 108, 0.05);
   border-radius: 8px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
   line-height: 1.6;
   font-size: 14px;
   margin-bottom: 24px;
   border-left: 4px solid #F56C6C;
   box-shadow: inset 0 0 20px rgba(245, 108, 108, 0.02);
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-.industrial-form :deep(.el-radio__label) {
-  color: #94a3b8;
-}
-.industrial-form :deep(.el-radio__input.is-checked + .el-radio__label) {
-  color: #00d8ff;
-}
-.neon-btn-danger {
+.industrial-form 
+.industrial-form 
+.industrial-form 
+.-danger {
   border-color: rgba(245, 108, 108, 0.5);
   color: #F56C6C;
 }
-.neon-btn-danger:hover {
+.-danger:hover {
   background: rgba(245, 108, 108, 0.1);
   box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
   border-color: #F56C6C;
 }
 /* Custom Input/Select Styling */
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
-:deep(.el-date-editor.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-}
+
+
+
+
 </style>

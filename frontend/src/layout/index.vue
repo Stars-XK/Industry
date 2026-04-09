@@ -279,7 +279,7 @@ onMounted(() => {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: #0b1426;
+  background-color: var(--el-bg-color-page);
 }
 /* 全局底层地图层 */
 .global-map-bg {
@@ -289,7 +289,7 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   z-index: 0;
-  background: radial-gradient(circle at center, #10213d 0%, #060b14 100%);
+  background: var(--el-bg-color-page);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,17 +298,18 @@ onMounted(() => {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background-image: 
-    linear-gradient(rgba(24, 144, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24, 144, 255, 0.1) 1px, transparent 1px);
+    linear-gradient(var(--el-border-color-light) 1px, transparent 1px),
+    linear-gradient(90deg, var(--el-border-color-light) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 .map-text-watermark {
-  color: rgba(24, 144, 255, 0.2);
+  color: var(--el-text-color-disabled);
   font-size: 48px;
   font-weight: bold;
   letter-spacing: 10px;
   pointer-events: none;
   user-select: none;
+  opacity: 0.3;
 }
 /* 顶部导航栏 (包含一级菜单) */
 .top-navbar {
@@ -319,14 +320,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--el-border-color-light);
+  box-shadow: var(--el-box-shadow-light);
   pointer-events: auto;
 }
 .glass-effect {
-  background: rgba(2, 6, 23, 0.85);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(12px);
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .logo-area {
   display: flex;
@@ -336,15 +337,15 @@ onMounted(() => {
 .logo-icon {
   font-size: 24px;
   font-weight: bold;
-  color: #00d8ff;
+  color: var(--el-color-primary);
   margin-right: 10px;
-  text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
+  text-shadow: 0 0 10px var(--el-color-primary-light-5);
 }
 .logo-text {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 1px;
-  color: #e2e8f0;
+  color: var(--el-text-color-primary);
 }
 .top-menu-list {
   flex: 1;
@@ -364,20 +365,20 @@ onMounted(() => {
   padding: 0 20px;
   height: 60px;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   font-size: 15px;
   font-weight: 500;
   transition: all 0.3s;
   border-bottom: 2px solid transparent;
 }
 .top-menu-item:hover {
-  color: #e2e8f0;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--el-text-color-primary);
+  background-color: var(--el-fill-color-light);
 }
 .top-menu-item.active {
-  color: #00d8ff;
-  border-bottom: 2px solid #00d8ff;
-  background-color: rgba(0, 216, 255, 0.05);
+  color: var(--el-color-primary);
+  border-bottom: 2px solid var(--el-color-primary);
+  background-color: var(--el-color-primary-light-9);
 }
 .svg-icon-small {
   width: 18px;
@@ -393,7 +394,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #cbd5e1;
+  color: var(--el-text-color-regular);
   font-size: 14px;
 }
 
@@ -401,9 +402,9 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 216, 255, 0.1);
-  border: 1px solid rgba(0, 216, 255, 0.3);
-  color: #00d8ff;
+  background: var(--el-color-primary-light-9);
+  border: 1px solid var(--el-color-primary-light-5);
+  color: var(--el-color-primary);
   cursor: pointer;
   padding: 6px 12px;
   border-radius: 6px;
@@ -413,25 +414,25 @@ onMounted(() => {
 }
 
 .tutorial-btn:hover {
-  background: rgba(0, 216, 255, 0.2);
+  background: var(--el-color-primary-light-8);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 216, 255, 0.2);
+  box-shadow: 0 4px 12px var(--el-color-primary-light-5);
 }
 .logout-btn {
   margin-left: 15px;
   padding: 6px 14px;
   background-color: transparent;
-  color: #ff3366;
-  border: 1px solid rgba(255, 51, 102, 0.5);
+  color: var(--el-color-danger);
+  border: 1px solid var(--el-color-danger-light-5);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;
   font-weight: 500;
 }
 .logout-btn:hover {
-  background-color: rgba(255, 51, 102, 0.1);
-  border-color: #ff3366;
-  box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+  background-color: var(--el-color-danger-light-9);
+  border-color: var(--el-color-danger);
+  box-shadow: 0 0 10px var(--el-color-danger-light-5);
 }
 /* 主体区域：左侧边栏 + 右侧内容 */
 .main-body {
@@ -446,9 +447,9 @@ onMounted(() => {
   position: relative;
   z-index: 10;
   width: 64px;
-  background-color: rgba(8, 15, 30, 0.6);
+  background-color: var(--el-bg-color-overlay);
   backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(0, 216, 255, 0.1);
+  border-right: 1px solid var(--el-border-color-light);
   display: flex;
   flex-direction: column;
   pointer-events: auto;
@@ -473,20 +474,20 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
 }
 .menu-icon-box:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #e2e8f0;
+  background-color: var(--el-fill-color-light);
+  color: var(--el-text-color-primary);
 }
 .menu-icon-box.active {
-  background-color: rgba(0, 216, 255, 0.1);
-  color: #00d8ff;
-  box-shadow: 0 0 12px rgba(0, 216, 255, 0.2);
-  border: 1px solid rgba(0, 216, 255, 0.3);
+  background-color: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  box-shadow: var(--el-box-shadow-light);
+  border: 1px solid var(--el-color-primary-light-5);
 }
 .svg-icon {
   width: 22px;
@@ -502,8 +503,8 @@ onMounted(() => {
   position: absolute;
   left: 70px;
   top: 10px;
-  background-color: rgba(2, 6, 23, 0.95);
-  color: #e2e8f0;
+  background-color: var(--el-bg-color-overlay);
+  color: var(--el-text-color-primary);
   padding: 8px 14px;
   border-radius: 6px;
   font-size: 13px;
@@ -511,8 +512,8 @@ onMounted(() => {
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
-  border: 1px solid rgba(0, 216, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--el-border-color-light);
+  box-shadow: var(--el-box-shadow);
 }
 .tooltip::before {
   content: '';
@@ -522,7 +523,7 @@ onMounted(() => {
   transform: translateY(-50%);
   border-width: 4px;
   border-style: solid;
-  border-color: transparent rgba(0, 216, 255, 0.2) transparent transparent;
+  border-color: transparent var(--el-border-color-light) transparent transparent;
 }
 /* 右侧内容区 */
 .main-container {

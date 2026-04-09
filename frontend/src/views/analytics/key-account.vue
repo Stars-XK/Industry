@@ -1,13 +1,13 @@
 <template>
-  <div class="premium-container fade-in-up">
-    <div class="glass-panel hover-lift">
+  <div class="app-container fade-in-up">
+    <div class="box-card">
       <div class="panel-header">
         <div>
           <div class="header-title">大用户档案与重点企业画像</div>
           <div class="header-subtitle">Key Account & Enterprise Profile Management</div>
         </div>
-        <el-button class="neon-btn" @click="handleAdd">新增档案</el-button>
-          <el-button class="glass-btn" @click="showImport = true" icon="Upload">批量导入</el-button>
+        <el-button  @click="handleAdd">新增档案</el-button>
+          <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
 
       <div class="table-container">
@@ -19,7 +19,7 @@
           </el-table-column>
           <el-table-column prop="account_name" label="企业名称" width="250">
             <template #default="{ row }">
-              <span style="font-weight: 600; color: #e2e8f0;">{{ row.account_name }}</span>
+              <span style="font-weight: 600; color: var(--el-text-color-primary);">{{ row.account_name }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="industry_type" label="行业分类" width="150" align="center">
@@ -30,7 +30,7 @@
           <el-table-column prop="contact" label="联系人" width="120" />
           <el-table-column prop="phone" label="联系电话" width="150">
             <template #default="{ row }">
-              <span class="logic-text" style="color: #94a3b8;">{{ row.phone }}</span>
+              <span class="logic-text" style="color: var(--el-text-color-regular);">{{ row.phone }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="企业地址" show-overflow-tooltip />
@@ -109,8 +109,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button class="neon-btn" style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
-          <el-button class="neon-btn" @click="submitForm">确定</el-button>
+          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button  @click="submitForm">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -242,6 +242,51 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -258,7 +303,7 @@ onMounted(() => {
 }
 .header-subtitle {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--el-text-color-regular);
   margin-top: 4px;
   font-family: "SF Mono", Consolas, monospace;
   text-transform: uppercase;
@@ -278,16 +323,10 @@ onMounted(() => {
   --el-table-header-text-color: #cbd5e1;
   --el-table-tr-bg-color: transparent;
   --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
-  --el-table-text-color: #94a3b8;
+  --el-table-text-color: var(--el-text-color-regular);
 }
-:deep(.el-table th.el-table__cell) {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-:deep(.el-table td.el-table__cell) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-}
+
+
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
@@ -296,7 +335,7 @@ onMounted(() => {
   border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.2);
 }
-.text-neon { color: #00d8ff; }
+.text-neon { color: var(--el-color-primary); }
 .text-danger { color: #F56C6C; }
 .industrial-tag {
   border: none;
@@ -304,38 +343,14 @@ onMounted(() => {
 .industrial-tag-plain {
   background: rgba(15, 23, 42, 0.6) !important;
   border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  color: #94a3b8 !important;
+  color: var(--el-text-color-regular); !important;
 }
-.industrial-form :deep(.el-form-item__label) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-:deep(.el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: none !important;
-}
-:deep(.el-input__inner) {
-  color: #e2e8f0 !important;
-}
-:deep(.el-input.is-disabled .el-input__wrapper) {
-  background-color: rgba(15, 23, 42, 0.3) !important;
-  border-color: rgba(148, 163, 184, 0.1) !important;
-}
-:deep(.el-input.is-disabled .el-input__inner) {
-  color: #64748b !important;
-}
-:deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.2) !important;
-}
-:deep(.el-switch__core) {
-  background-color: rgba(148, 163, 184, 0.2) !important;
-  border-color: rgba(148, 163, 184, 0.2) !important;
-}
-:deep(.el-switch.is-checked .el-switch__core) {
-  background-color: #00d8ff !important;
-  border-color: #00d8ff !important;
-  box-shadow: 0 0 10px rgba(0, 216, 255, 0.4);
-}
+.industrial-form 
+
+
+
+
+
+
+
 </style>

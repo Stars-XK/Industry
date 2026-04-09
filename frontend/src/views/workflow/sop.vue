@@ -1,21 +1,21 @@
 <template>
-  <div class="premium-container fade-in-up">
+  <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">SOP 应急预案库</h1>
         <p class="page-subtitle">Standard Operating Procedures & Emergency Response</p>
       </div>
       <div class="header-actions">
-        <el-button class="neon-btn" @click="handleAdd">新增预案</el-button>
+        <el-button  @click="handleAdd">新增预案</el-button>
       </div>
     </div>
 
-    <div class="glass-panel hover-lift" style="padding: 20px;">
-      <el-table :data="tableData" style="width: 100%" class="dark-table custom-scrollbar" v-loading="loading" element-loading-background="rgba(15,23,42,0.8)">
+    <div class="box-card" style="padding: 20px;">
+      <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="sop_name" label="预案名称" min-width="250">
           <template #default="scope">
-            <span style="color: #e2e8f0; font-weight: 500;">{{ scope.row.sop_name }}</span>
+            <span style="color: var(--el-text-color-primary); font-weight: 500;">{{ scope.row.sop_name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="alarm_type" label="触发报警类型" width="200">
@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" width="120" align="center">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" style="--el-switch-on-color: #10b981; --el-switch-off-color: #475569;" />
+            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" style="--el-switch-on-color: var(--el-color-success); --el-switch-off-color: #475569;" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right" align="center">
@@ -46,22 +46,22 @@
       </el-table>
     </div>
 
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" @close="resetForm" class="glass-dialog" :show-close="false">
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="dark-form" label-position="top">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" @close="resetForm"  :show-close="false">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px"  label-position="top">
         <el-form-item label="预案名称" prop="sop_name">
-          <el-input v-model="form.sop_name" placeholder="如：管道爆裂抢修SOP" class="glass-input" />
+          <el-input v-model="form.sop_name" placeholder="如：管道爆裂抢修SOP"  />
         </el-form-item>
         <el-form-item label="触发报警类型" prop="alarm_type">
-          <el-input v-model="form.alarm_type" placeholder="对应设备的报警类型标识，如 PRESSURE_LOW" class="glass-input" />
+          <el-input v-model="form.alarm_type" placeholder="对应设备的报警类型标识，如 PRESSURE_LOW"  />
         </el-form-item>
         <el-form-item label="执行步骤" prop="steps_json">
-          <el-input type="textarea" v-model="form.steps_json" :rows="8" placeholder='请填入合法的JSON数组，例如: [{"step":1,"action":"关闭阀门"}]' class="glass-input" />
+          <el-input type="textarea" v-model="form.steps_json" :rows="8" placeholder='请填入合法的JSON数组，例如: [{"step":1,"action":"关闭阀门"}]'  />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" class="glass-btn">取消</el-button>
-          <el-button class="neon-btn" @click="submitForm">确定保存</el-button>
+          <el-button @click="dialogVisible = false" >取消</el-button>
+          <el-button  @click="submitForm">确定保存</el-button>
         </div>
       </template>
     </el-dialog>
@@ -189,89 +189,100 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-header {
+
+.app-container {
+  padding: 24px;
+  background-color: var(--el-bg-color-page);
+  min-height: calc(100vh - 84px);
+}
+
+.box-card {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  background-color: var(--el-bg-color);
+  transition: all 0.3s ease;
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--el-text-color-primary);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
 }
-.page-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+
+.toolbar, .header-actions {
+  display: flex;
+  gap: 12px;
 }
-.page-subtitle {
-  font-size: 14px;
-  color: #94a3b8;
-  margin: 0;
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-.danger-tag {
-  background-color: rgba(244, 63, 94, 0.2);
-  color: #f43f5e;
+
+/* 按钮样式优化 */
+.el-button {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
+
+
+
+
+
 .action-btns {
   display: flex;
   gap: 12px;
 }
-.action-btn {
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.action-btn:hover {
-  text-shadow: 0 0 8px currentColor;
-  transform: translateY(-1px);
-}
-.text-cyan { color: #00d8ff; }
-.text-rose { color: #f43f5e; }
+
+
+.text-cyan { color: var(--el-color-primary); }
+.text-rose { color: var(--el-color-danger); }
 /* Table styles */
-:deep(.el-table th.el-table__cell) {
-  background-color: var(--el-table-header-bg-color) !important;
-  border-bottom: 1px solid var(--el-table-border-color);
-}
-:deep(.el-table tr) { background-color: transparent !important; }
-:deep(.el-table td.el-table__cell) { border-bottom: 1px solid var(--el-table-border-color); }
-:deep(.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell) { background-color: var(--el-table-row-hover-bg-color) !important; }
-:deep(.el-table::before) { display: none; }
-.custom-scrollbar :deep(.el-scrollbar__bar.is-vertical) {
-  width: 4px;
-}
-.custom-scrollbar :deep(.el-scrollbar__thumb) {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+
+
+
+
+
+.custom-scrollbar 
+.custom-scrollbar 
 /* Dialog Styles */
-:deep(.glass-dialog) {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-:deep(.dark-form .el-form-item__label) {
-  color: #94a3b8;
-  font-weight: 500;
-}
-:deep(.glass-input .el-input__wrapper),
-:deep(.glass-input .el-textarea__inner) {
-  background-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  color: #e2e8f0;
-}
-:deep(.glass-input .el-input__wrapper:hover),
-:deep(.glass-input .el-textarea__inner:hover) {
-  box-shadow: 0 0 0 1px rgba(0, 216, 255, 0.3) inset;
-}
-:deep(.glass-input .el-input__wrapper.is-focus),
-:deep(.glass-input .el-textarea__inner:focus) {
-  box-shadow: 0 0 0 1px #00d8ff inset !important;
-}
+
+
+
+
 /* SweetAlert overrides (if any global messagebox pops up, ideally handled in global css, but we can add some local overrides if it supports) */
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-content h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 8px 0;
+}
+.header-content p {
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+}
 </style>

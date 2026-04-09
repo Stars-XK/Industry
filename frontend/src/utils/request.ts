@@ -33,8 +33,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
     const res = response.data;
-    // 如果自定义 code 不为 200，视为业务错误
-    if (res.code !== 200) {
+    // 有些接口可能不返回标准 ApiResponse，直接返回数据本身，所以增加 res.code 检查
+    // 如果没有 code 字段或者 code 为 200，说明成功
+    if (res && res.code !== undefined && res.code !== 200) {
       console.error(`[API Error]: ${res.message}`);
       // 结合 UI 组件库弹出全局错误提示
       ElMessage.error(res.message || 'Error');
@@ -46,7 +47,8 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || 'Error'));
     }
-    return res.data;
+    // 如果返回了标准的 code，则剥离出 data；否则直接返回整个 res
+    return res && res.code !== undefined ? res.data : res;
   },
   (error) => {
     console.error(`[HTTP Error]: ${error.message}`);

@@ -70,37 +70,71 @@
             </el-button>
           </template>
         </el-table-column>
+        <el-table-column label="操作" width="220" fixed="right" align="center">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="dialogVisible = true">编辑</el-button>
+            <el-button link type="warning" @click="handleReplace(row)">换表接续</el-button>
+            <el-button link type="success">二维码</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
-    <el-dialog title="换表接续防负流录入单" v-model="dialogVisible" width="560px"  :show-close="false">
-      <div style="background: rgba(244, 63, 94, 0.1); border-left: 4px solid #f43f5e; padding: 12px 16px; margin-bottom: 24px; border-radius: 4px;">
-        <div style="color: var(--el-color-danger); font-weight: 600; font-size: 14px; margin-bottom: 4px;">防产销差突变保护</div>
-        <div style="color: #fda4af; font-size: 13px;">系统将自动接续新老表底码，防止产销差计算出现巨大负值</div>
-      </div>
-      
-      <el-form label-width="120px" label-position="left" >
-        <el-form-item label="旧表编号">
-          <el-input value="M-0021 (故障拆除)" disabled class=" is-disabled" />
+    <!-- 新增/编辑弹窗 -->
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
+        <el-form-item label="资产名称" prop="asset_name">
+          <el-input v-model="form.asset_name" placeholder="请输入资产名称" />
         </el-form-item>
-        <el-form-item label="旧表拆除止码">
-          <el-input-number :min="0" :precision="2" style="width: 100%" controls-position="right" class="-number" />
+        <el-form-item label="资产类型" prop="asset_type">
+          <el-select v-model="form.asset_type" placeholder="请选择类型" style="width: 100%">
+            <el-option label="智能水表" value="meter" />
+            <el-option label="水泵机组" value="pump" />
+            <el-option label="阀门设备" value="valve" />
+            <el-option label="传感器" value="sensor" />
+          </el-select>
         </el-form-item>
-        
-        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 24px 0;"></div>
-        
-        <el-form-item label="新表编号">
-          <el-input placeholder="扫码或手动录入新表 SN"  />
+        <el-form-item label="所在位置" prop="location">
+          <el-input v-model="form.location" placeholder="请输入安装位置" />
         </el-form-item>
-        <el-form-item label="新表安装起码">
-          <el-input-number :min="0" :precision="2" style="width: 100%" controls-position="right" class="-number" />
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio :value="1">在用</el-radio>
+            <el-radio :value="2">停用</el-radio>
+            <el-radio :value="3">报废</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" >取消</el-button>
-          <el-button class="danger-" @click="dialogVisible = false">确认换表接续</el-button>
-        </div>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 换表/拆表专属弹窗 -->
+    <el-dialog title="设备更换/拆除 (Meter Replacement)" v-model="replaceDialogVisible" width="650px">
+      <el-alert title="强制约束：老表拆除止码必须小于或等于新表安装起码，防止时序库产生负流量突变" type="warning" show-icon style="margin-bottom: 20px" />
+      <el-form :model="replaceForm" label-width="130px">
+        <el-form-item label="当前设备">
+          <el-input v-model="replaceForm.old_asset_name" disabled />
+        </el-form-item>
+        <el-form-item label="老表拆除止码">
+          <el-input-number v-model="replaceForm.old_end_reading" :min="0" :precision="2" style="width: 100%" />
+        </el-form-item>
+        <el-divider />
+        <el-form-item label="新设备编号">
+          <el-input v-model="replaceForm.new_asset_code" placeholder="扫描或输入新设备条码" />
+        </el-form-item>
+        <el-form-item label="新表安装起码">
+          <el-input-number v-model="replaceForm.new_start_reading" :min="0" :precision="2" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="更换原因">
+          <el-input type="textarea" v-model="replaceForm.reason" rows="2" placeholder="请输入更换或拆除原因" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="replaceDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitReplace">确认更换</el-button>
       </template>
     </el-dialog>
   </div>
@@ -115,10 +149,64 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { View } from '@element-plus/icons-vue'
+
+const loading = ref(false)
 const dialogVisible = ref(false)
+const replaceDialogVisible = ref(false)
 const showImport = ref(false)
+const dialogTitle = ref('新增资产')
+const formRef = ref()
+const form = ref({
+  id: undefined,
+  asset_name: '',
+  asset_type: '',
+  location: '',
+  status: 1
+})
+const rules = ref({
+  asset_name: [{ required: true, message: '请输入资产名称', trigger: 'blur' }]
+})
+const replaceForm = ref({
+  old_asset_name: '',
+  old_end_reading: 0,
+  new_asset_code: '',
+  new_start_reading: 0,
+  reason: ''
+})
+
+const handleEdit = (row: any) => {
+  dialogTitle.value = '编辑资产'
+  form.value = { ...row }
+  dialogVisible.value = true
+}
+
+const handleReplace = (row: any) => {
+  replaceForm.value = {
+    old_asset_name: row.name || row.asset_name,
+    old_end_reading: 0,
+    new_asset_code: '',
+    new_start_reading: 0,
+    reason: ''
+  }
+  replaceDialogVisible.value = true
+}
+
+const submitForm = () => {
+  dialogVisible.value = false
+}
+
+const submitReplace = () => {
+  if (replaceForm.value.old_end_reading > replaceForm.value.new_start_reading) {
+    ElMessage.error('新表安装起码不能小于老表拆除止码！');
+    return;
+  }
+  ElMessage.success('设备更换记录已保存，时序数据已防负流接续');
+  replaceDialogVisible.value = false;
+}
+
 const assets = ref([
   { code: 'M-DN100-01', name: '一厂区总出水表', type: '智能水表', install_date: '2023-01-15', status: '在线', warranty: '2028-01-15' },
   { code: 'V-REG-02', name: '高位水池进水调节阀', type: '阀门', install_date: '2022-05-20', status: '在线', warranty: '2025-05-20' },

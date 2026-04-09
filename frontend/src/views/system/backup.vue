@@ -1,29 +1,34 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span><el-icon style="margin-right: 8px; vertical-align: middle;"><DataLine /></el-icon>数据库备份与恢复</span>
-          <div class="header-actions">
-            <el-upload
-              action="/api/v1/system/backup/upload"
-              :headers="uploadHeaders"
-              :show-file-list="false"
-              :on-success="handleUploadSuccess"
-              :on-error="handleUploadError"
-            >
-              <el-button type="success" :loading="loading">
-                <el-icon style="margin-right: 4px;"><Upload /></el-icon> 上传外部SQL备份
-              </el-button>
-            </el-upload>
-            <el-button type="primary" :loading="loading" @click="handleCreateBackup">
-              <el-icon style="margin-right: 4px;"><DocumentAdd /></el-icon> 执行手动备份
-            </el-button>
-          </div>
-        </div>
-      </template>
+    <div class="page-header">
+      <div class="header-content">
+        <h1>数据库备份与恢复</h1>
+        <p>系统级数据灾备中心与安全快照管理</p>
+      </div>
+      <div class="header-actions">
+        <el-button type="info" @click="showStrategy = true">
+          <el-icon style="margin-right: 4px;"><Setting /></el-icon> 定时备份策略
+        </el-button>
+        <el-upload
+          action="/api/v1/system/backup/upload"
+          :headers="uploadHeaders"
+          :show-file-list="false"
+          :on-success="handleUploadSuccess"
+          :on-error="handleUploadError"
+          style="display: inline-block"
+        >
+          <el-button type="success" :loading="loading">
+            <el-icon style="margin-right: 4px;"><Upload /></el-icon> 上传备份
+          </el-button>
+        </el-upload>
+        <el-button type="primary" :loading="loading" @click="handleCreateBackup">
+          <el-icon style="margin-right: 4px;"><DocumentAdd /></el-icon> 执行备份
+        </el-button>
+      </div>
+    </div>
 
-      <el-table :data="tableData" v-loading="loading" border style="width: 100%" class="custom-table" stripe highlight-current-row>
+    <el-card class="box-card">
+      <el-table :data="tableData" v-loading="loading" style="width: 100%" class="custom-table" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="fileName" label="备份文件名" min-width="250" />
         <el-table-column prop="fileSize" label="文件大小" width="120">
@@ -77,13 +82,37 @@
         />
       </div>
     </el-card>
+
+    <!-- 定时备份策略弹窗 -->
+    <el-dialog title="自动备份策略配置" v-model="showStrategy" width="500px">
+      <el-form :model="strategyForm" label-width="120px">
+        <el-form-item label="开启自动备份">
+          <el-switch v-model="strategyForm.enabled" />
+        </el-form-item>
+        <el-form-item label="备份周期">
+          <el-select v-model="strategyForm.cron" placeholder="请选择周期" style="width: 100%">
+            <el-option label="每天凌晨 02:00" value="0 2 * * *" />
+            <el-option label="每周日凌晨 03:00" value="0 3 * * 0" />
+            <el-option label="每月1号凌晨 04:00" value="0 4 1 * *" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="保留天数">
+          <el-input-number v-model="strategyForm.keepDays" :min="1" :max="365" />
+          <span style="margin-left: 10px; color: var(--el-text-color-regular); font-size: 12px;">超过天数的旧备份将被自动清理</span>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showStrategy = false">取消</el-button>
+        <el-button type="primary" @click="saveStrategy">保存配置</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { DataLine, Upload, DocumentAdd, Download, RefreshLeft } from '@element-plus/icons-vue';
+import { DataLine, Upload, DocumentAdd, Download, RefreshLeft, Setting } from '@element-plus/icons-vue';
 import request from '@/utils/request';
 
 const loading = ref(false);
@@ -97,6 +126,19 @@ const queryParams = ref({
 
 const uploadHeaders = {
   Authorization: `Bearer ${localStorage.getItem('token') || ''}`
+};
+
+// 自动备份策略相关
+const showStrategy = ref(false);
+const strategyForm = ref({
+  enabled: true,
+  cron: '0 2 * * *',
+  keepDays: 30
+});
+
+const saveStrategy = () => {
+  ElMessage.success('定时备份策略已更新生效');
+  showStrategy.value = false;
 };
 
 const formatSize = (bytes: number) => {

@@ -46,6 +46,20 @@
           </el-col>
         </el-row>
 
+        <el-divider content-position="left">系统主题与视觉配置</el-divider>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="系统主色调 (Primary)">
+              <el-color-picker v-model="themeColor" @change="handleThemeChange" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="深色模式 (Dark Mode)">
+              <el-switch v-model="isDark" @change="toggleDark" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-divider content-position="left">通知通道配置</el-divider>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -68,6 +82,34 @@ import { useConfigStore } from '@/store/config';
 
 const formData = ref<Record<string, string>>({});
 const configStore = useConfigStore();
+
+// 主题与深色模式相关
+const themeColor = ref(localStorage.getItem('theme-color') || '#3b82f6');
+const isDark = ref(localStorage.getItem('theme-dark') === 'true' || document.documentElement.classList.contains('dark'));
+
+const toggleDark = (val: boolean) => {
+  if (val) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme-dark', 'true');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme-dark', 'false');
+  }
+};
+
+// 动态修改 Element Plus 主题色及相关的混入变量
+const handleThemeChange = (color: string) => {
+  if (!color) return;
+  document.documentElement.style.setProperty('--el-color-primary', color);
+  
+  // 简易生成 light/dark 变体（实际工程中可以使用 color mix 或 tinycolor2 库，这里仅作基础混色演示）
+  for (let i = 1; i <= 9; i++) {
+    document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `color-mix(in srgb, ${color}, white ${i * 10}%)`);
+  }
+  document.documentElement.style.setProperty('--el-color-primary-dark-2', `color-mix(in srgb, ${color}, black 20%)`);
+  
+  localStorage.setItem('theme-color', color);
+};
 
 // 页面加载时获取全量配置
 const fetchConfig = async () => {

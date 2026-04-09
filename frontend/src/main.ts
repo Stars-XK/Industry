@@ -8,6 +8,23 @@ import router from './router';
 import { useUserStore } from './store/user';
 import { useConfigStore } from './store/config';
 
+// 初始化系统主题配置
+const initTheme = () => {
+  const isDark = localStorage.getItem('theme-dark') === 'true';
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+  }
+  const themeColor = localStorage.getItem('theme-color');
+  if (themeColor) {
+    document.documentElement.style.setProperty('--el-color-primary', themeColor);
+    for (let i = 1; i <= 9; i++) {
+      document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `color-mix(in srgb, ${themeColor}, white ${i * 10}%)`);
+    }
+    document.documentElement.style.setProperty('--el-color-primary-dark-2', `color-mix(in srgb, ${themeColor}, black 20%)`);
+  }
+};
+initTheme();
+
 const app = createApp(App);
 const pinia = createPinia();
 

@@ -2,14 +2,29 @@
   <div class="app-container fade-in-up">
     <div class="page-header">
       <div class="header-content">
-        <h1 class="page-title">DMA 产销差与漏损分析</h1>
-        <p class="page-subtitle">NRW Sankey Analysis & Leakage Reports</p>
+        <h1 class="page-title">DMA 产销差与漏损报表</h1>
+        <p class="page-subtitle">基于水平衡分析与管网拓扑的精细化水量追踪</p>
       </div>
       <div class="header-actions">
-        <el-select v-model="month" placeholder="分析月份" @change="fetchData"  style="width: 160px">
-          <el-option label="2026-04" value="2026-04" />
-          <el-option label="2026-03" value="2026-03" />
+        <el-date-picker
+          v-model="dateRange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 280px"
+        />
+        <el-select v-model="topoVersion" placeholder="选择拓扑版本" style="width: 160px; margin-left: 12px">
+          <el-option label="当前最新拓扑 (v2.4)" value="latest" />
+          <el-option label="2025年上本年拓扑 (v2.3)" value="v2.3" />
+          <el-option label="2024年下半年拓扑 (v2.2)" value="v2.2" />
         </el-select>
+        <el-button type="primary" @click="fetchData" style="margin-left: 12px">
+          <el-icon style="margin-right: 4px"><Search /></el-icon> 分析查询
+        </el-button>
+        <el-button type="success" @click="exportReport" style="margin-left: 12px">
+          <el-icon style="margin-right: 4px"><Download /></el-icon> 导出报表
+        </el-button>
       </div>
     </div>
 
@@ -73,6 +88,7 @@ import * as echarts from 'echarts/core'
 import { SankeyChart, LineChart, BarChart } from 'echarts/charts'
 import { TooltipComponent, TitleComponent, GridComponent, LegendComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
+import { Search, Download } from '@element-plus/icons-vue'
 
 echarts.use([SankeyChart, LineChart, BarChart, TooltipComponent, TitleComponent, GridComponent, LegendComponent, CanvasRenderer])
 
@@ -80,7 +96,8 @@ const tableData = ref([])
 const loading = ref(false)
 const sankeyLoading = ref(false)
 const trendLoading = ref(false)
-const month = ref('2026-03')
+const dateRange = ref<[Date, Date]>([new Date(), new Date()])
+const topoVersion = ref('latest')
 const currentZoneName = ref('')
 
 const sankeyChartRef = ref<HTMLElement | null>(null)
@@ -164,6 +181,17 @@ const renderSankey = (nodes: any[], links: any[]) => {
     ]
   }
   sankeyInstance.setOption(option)
+    
+  // 下钻功能
+  sankeyInstance.on('click', (params: any) => {
+    if (params.dataType === 'node' && params.data.name.includes('分区')) {
+      // @ts-ignore
+      ElMessage.info(`正在下钻到: ${params.data.name}`);
+      // 模拟下钻数据刷新
+      currentZoneName.value = params.data.name;
+      renderSankey([], []);
+    }
+  });
 }
 
 const renderTrend = (months: string[], ratios: number[]) => {

@@ -53,7 +53,7 @@
         <el-table-column label="库存情况" align="center" width="160">
           <template #default="{ row }">
             <div style="display: flex; flex-direction: column; align-items: center;">
-              <span :style="{ color: row.is_low_stock ? '#f43f5e' : '#10b981', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
+              <span :style="{ color: row.is_low_stock ? 'var(--el-color-danger)' : '#10b981', fontWeight: '600', fontFamily: 'SF Mono, monospace' }">
                 {{ row.stock_quantity }} <span style="font-size: 12px; font-weight: normal;">{{ row.unit }}</span>
               </span>
               <div v-if="row.is_low_stock" style="font-size: 12px; color: var(--el-color-danger); margin-top: 4px;">低于安全库存: {{ row.safe_stock }}</div>
@@ -196,7 +196,7 @@
         </el-table-column>
         <el-table-column prop="quantity" label="变动数量" width="100" align="right">
           <template #default="{ row }">
-            <span :style="{ color: row.change_type === 1 ? '#10b981' : '#f43f5e', fontWeight: 600, fontFamily: 'SF Mono, monospace' }">
+            <span :style="{ color: row.change_type === 1 ? '#10b981' : 'var(--el-color-danger)', fontWeight: 600, fontFamily: 'SF Mono, monospace' }">
               {{ row.change_type === 1 ? '+' : '-' }}{{ row.quantity }}
             </span>
           </template>

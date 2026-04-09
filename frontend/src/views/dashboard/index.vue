@@ -1,57 +1,59 @@
 <template>
   <div class="dashboard-container">
+    <!-- Full-bleed background map -->
+    <div id="twin-map" class="map-container"></div>
+
+    <!-- Floating Header -->
     <div class="header">
       <div class="title">信创工业水务数字孪生调度大屏</div>
       <div class="time">{{ currentTime }}</div>
       <el-button class="exit-btn" type="primary" size="small" @click="goHome">进入系统后台</el-button>
     </div>
 
-    <div class="main-content">
-      <div class="left-panel panel">
-        <div class="panel-title">综合KPI概览</div>
-        <div class="kpi-box">
-          <div class="kpi-item">
-            <div class="kpi-label">本月总供水 (m³)</div>
-            <div class="kpi-value text-blue">{{ kpi.supply.toLocaleString() }}</div>
-          </div>
-          <div class="kpi-item">
-            <div class="kpi-label">本月总售水 (m³)</div>
-            <div class="kpi-value text-green">{{ kpi.sales.toLocaleString() }}</div>
-          </div>
-          <div class="kpi-item">
-            <div class="kpi-label">当月产销差率</div>
-            <div class="kpi-value text-yellow">{{ kpi.nrw }}%</div>
-          </div>
-        </div>
+    <!-- Center Top Floating Stats -->
+    <div class="map-overlay">
+      <div class="map-stats">
+        <div class="stat-item"><span class="dot green"></span>在线设备: 1,423</div>
+        <div class="stat-item"><span class="dot red"></span>离线报警: 12</div>
+        <div class="stat-item"><span class="dot yellow"></span>维修中: 5</div>
+      </div>
+    </div>
 
-        <div class="panel-title" style="margin-top: 20px;">全网水压监测分布</div>
-        <div id="pressure-chart" class="chart-box"></div>
+    <!-- Left Floating Panel -->
+    <div class="left-panel panel">
+      <div class="panel-title">综合KPI概览</div>
+      <div class="kpi-box">
+        <div class="kpi-item">
+          <div class="kpi-label">本月总供水 (m³)</div>
+          <div class="kpi-value text-blue">{{ kpi.supply.toLocaleString() }}</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">本月总售水 (m³)</div>
+          <div class="kpi-value text-green">{{ kpi.sales.toLocaleString() }}</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">当月产销差率</div>
+          <div class="kpi-value text-yellow">{{ kpi.nrw }}%</div>
+        </div>
       </div>
 
-      <div class="center-panel">
-        <div class="map-overlay">
-          <div class="map-stats">
-            <div class="stat-item"><span class="dot green"></span>在线设备: 1,423</div>
-            <div class="stat-item"><span class="dot red"></span>离线报警: 12</div>
-            <div class="stat-item"><span class="dot yellow"></span>维修中: 5</div>
-          </div>
+      <div class="panel-title" style="margin-top: auto; margin-bottom: 20px;">全网水压监测分布</div>
+      <div id="pressure-chart" class="chart-box"></div>
+    </div>
+
+    <!-- Right Floating Panel -->
+    <div class="right-panel panel">
+      <div class="panel-title">实时报警事件 (Top 5)</div>
+      <div class="alarm-list">
+        <div class="alarm-item" v-for="(item, index) in alarms" :key="index">
+          <span class="alarm-time">{{ item.time }}</span>
+          <span class="alarm-level" :class="item.level">{{ item.level }}</span>
+          <span class="alarm-desc">{{ item.desc }}</span>
         </div>
-        <div id="twin-map" class="map-container"></div>
       </div>
 
-      <div class="right-panel panel">
-        <div class="panel-title">实时报警事件 (Top 5)</div>
-        <div class="alarm-list">
-          <div class="alarm-item" v-for="(item, index) in alarms" :key="index">
-            <span class="alarm-time">{{ item.time }}</span>
-            <span class="alarm-level" :class="item.level">{{ item.level }}</span>
-            <span class="alarm-desc">{{ item.desc }}</span>
-          </div>
-        </div>
-
-        <div class="panel-title" style="margin-top: 20px;">泵房能效分析</div>
-        <div id="energy-chart" class="chart-box"></div>
-      </div>
+      <div class="panel-title" style="margin-top: auto; margin-bottom: 20px;">泵房能效分析</div>
+      <div id="energy-chart" class="chart-box"></div>
     </div>
   </div>
 </template>
@@ -228,19 +230,35 @@ onUnmounted(() => {
   background-image: radial-gradient(circle at 50% 50%, var(--el-fill-color-darker) 0%, var(--el-bg-color-page) 100%);
   color: var(--el-text-color-primary);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  position: relative;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+.map-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 .header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 80px;
   background: linear-gradient(180deg, var(--el-color-primary-light-9) 0%, transparent 100%);
   border-bottom: 1px solid var(--el-border-color-light);
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
+  pointer-events: none;
 }
+
+.header > * {
+  pointer-events: auto;
+}
+
 .title {
   font-size: 28px;
   font-weight: 600;
@@ -248,6 +266,7 @@ onUnmounted(() => {
   color: var(--el-text-color-primary);
   text-shadow: 0 0 20px var(--el-color-primary-light-5);
 }
+
 .time {
   position: absolute;
   right: 30px;
@@ -257,6 +276,7 @@ onUnmounted(() => {
   color: var(--el-text-color-regular);
   letter-spacing: 1px;
 }
+
 .exit-btn {
   position: absolute;
   left: 30px;
@@ -268,26 +288,34 @@ onUnmounted(() => {
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
+
 .exit-btn:hover {
   background: var(--el-color-primary-light-9);
   box-shadow: 0 0 15px var(--el-color-primary-light-5);
 }
-.main-content {
-  flex: 1;
-  display: flex;
-  padding: 24px;
-  gap: 24px;
-}
+
 .panel {
-  width: 25%;
+  position: absolute;
+  top: 100px;
+  bottom: 24px;
+  width: 360px;
   background: var(--el-bg-color-overlay);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   box-shadow: var(--el-box-shadow);
+  z-index: 10;
+}
+
+.left-panel {
+  left: 24px;
+}
+
+.right-panel {
+  right: 24px;
 }
 .panel-title {
   font-size: 16px;
@@ -308,18 +336,25 @@ onUnmounted(() => {
   border-radius: 2px;
   box-shadow: 0 0 8px var(--el-color-primary-light-5);
 }
-.center-panel {
-  width: 50%;
-  position: relative;
+.map-overlay {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: var(--el-bg-color-overlay);
+  backdrop-filter: blur(12px);
+  padding: 16px 32px;
   border: 1px solid var(--el-border-color-light);
-  border-radius: 12px;
-  background: var(--el-fill-color-light);
-  overflow: hidden;
+  border-radius: 30px;
+  box-shadow: var(--el-box-shadow-light);
 }
-.map-container {
-  width: 100%;
-  height: 100%;
+.map-stats {
+  display: flex;
+  gap: 32px;
+  align-items: center;
 }
+
 .kpi-box {
   display: flex;
   flex-direction: column;
@@ -380,18 +415,7 @@ onUnmounted(() => {
 .HH { background: var(--el-color-danger-light-9); color: var(--el-color-danger); border: 1px solid var(--el-color-danger-light-5); }
 .H { background: var(--el-color-warning-light-9); color: var(--el-color-warning); border: 1px solid var(--el-color-warning-light-5); }
 .L { background: var(--el-color-primary-light-9); color: var(--el-color-primary); border: 1px solid var(--el-color-primary-light-5); }
-.map-overlay {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 10;
-  background: var(--el-bg-color-overlay);
-  backdrop-filter: blur(10px);
-  padding: 16px 20px;
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-}
+
 .stat-item {
   font-size: 13px;
   color: var(--el-text-color-regular);

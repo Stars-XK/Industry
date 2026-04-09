@@ -242,15 +242,15 @@ onUnmounted(() => {
   color: var(--el-color-primary);
   font-weight: 500;
   letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
+  text-shadow: 0 0 10px var(--el-color-primary-light-5);
 }
 /* 管道与流向动画 */
 .pipe-horizontal {
   width: 100px;
   height: 20px;
   background: var(--el-fill-color-light);
-  border-top: 1px solid rgba(0, 216, 255, 0.2);
-  border-bottom: 1px solid rgba(0, 216, 255, 0.2);
+  border-top: 1px solid var(--el-color-primary-light-8);
+  border-bottom: 1px solid var(--el-color-primary-light-8);
   position: relative;
   overflow: hidden;
 }
@@ -259,8 +259,8 @@ onUnmounted(() => {
   height: 100%;
   background: repeating-linear-gradient(
     45deg,
-    rgba(0, 216, 255, 0.3) 0,
-    rgba(0, 216, 255, 0.3) 10px,
+    var(--el-color-primary-light-7) 0,
+    var(--el-color-primary-light-7) 10px,
     transparent 10px,
     transparent 20px
   );
@@ -275,11 +275,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--el-bg-color-overlay);
   padding: 30px;
   border-radius: 12px;
-  border: 1px solid rgba(0, 216, 255, 0.1);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--el-border-color-light);
+  box-shadow: inset 0 0 20px var(--el-bg-color-page);
 }
 .pump {
   color: var(--el-text-color-regular);
@@ -288,8 +288,8 @@ onUnmounted(() => {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 .pump.running {
-  color: #00ffaa;
-  text-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+  color: var(--el-color-success);
+  text-shadow: 0 0 15px var(--el-color-success-light-5);
 }
 .is-spinning {
   animation: spin 1s linear infinite;
@@ -327,7 +327,7 @@ onUnmounted(() => {
   color: var(--el-color-primary);
   font-weight: 600;
   font-size: 18px;
-  text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+  text-shadow: 0 0 10px var(--el-color-primary-light-7);
 }
 .control-panel {
   display: flex;
@@ -345,7 +345,7 @@ onUnmounted(() => {
 .-danger {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
-  color: #F56C6C;
+  color: var(--el-color-danger);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   font-family: "SF Pro Display", sans-serif;
   border-radius: 4px;
@@ -354,8 +354,8 @@ onUnmounted(() => {
 }
 .-danger:hover:not(:disabled) {
   background: rgba(245, 108, 108, 0.1);
-  box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
-  border-color: #F56C6C;
+  box-shadow: 0 0 15px var(--el-color-danger-light-5);
+  border-color: var(--el-color-danger);
 }
 .industrial-tag {
   border: none;

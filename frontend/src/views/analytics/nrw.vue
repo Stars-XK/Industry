@@ -146,7 +146,7 @@ const renderSankey = (nodes: any[], links: any[]) => {
   }
   if (!sankeyInstance) return
   const option = {
-    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
+    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
     series: [
       {
         type: 'sankey',
@@ -157,12 +157,12 @@ const renderSankey = (nodes: any[], links: any[]) => {
         label: {
           position: 'right',
           formatter: '{b} \n ({c} m³)',
-          color: '#e2e8f0',
+          color: 'var(--el-text-color-primary)',
           fontFamily: 'SF Pro Display'
         },
         itemStyle: {
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.2)'
+          borderColor: 'var(--el-border-color-darker)'
         }
       }
     ]
@@ -185,22 +185,22 @@ const renderTrend = (months: string[], ratios: number[]) => {
   }
   if (!trendInstance) return
   const option = {
-    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
+    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
-    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: '#64748b' }, axisLabel: { formatter: '{value} %', color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
+    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
+    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: 'var(--el-text-color-regular)' }, axisLabel: { formatter: '{value} %', color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
     series: [
       {
         name: '产销差率',
         type: 'line',
         data: ratios,
         smooth: true,
-        itemStyle: { color: '#f59e0b' },
-        lineStyle: { width: 3, shadowColor: 'rgba(245,158,11,0.5)', shadowBlur: 10 },
+        itemStyle: { color: 'var(--el-color-warning)' },
+        lineStyle: { width: 3, shadowColor: 'var(--el-color-warning-light-5)', shadowBlur: 10 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(245,158,11,0.5)' },
-            { offset: 1, color: 'rgba(245,158,11,0.05)' }
+            { offset: 0, color: 'var(--el-color-warning-light-5)' },
+            { offset: 1, color: 'transparent' }
           ])
         }
       }
@@ -283,7 +283,7 @@ onBeforeUnmount(() => {
 }
 .panel-title span {
   font-size: 12px;
-  color: #475569;
+  color: var(--el-text-color-regular);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -292,7 +292,7 @@ onBeforeUnmount(() => {
   flex: 1;
 }
 .highlight-number {
-  color: #f59e0b;
+  color: var(--el-color-warning);
   font-weight: 700;
   font-family: "SF Mono", monospace;
   font-size: 16px;

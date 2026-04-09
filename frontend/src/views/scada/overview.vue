@@ -116,23 +116,23 @@ const metrics = ref([
   { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: '#F56C6C' },
 ])
 const trendOption = ref({
-  tooltip: { trigger: 'axis', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
-  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: '#94a3b8' } },
+  tooltip: { trigger: 'axis', backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
+  legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: 'var(--el-text-color-regular)' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
-  yAxis: { type: 'value', axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
+  xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
+  yAxis: { type: 'value', axisLabel: { color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
   series: [
     {
       name: '供水量 (m³/h)',
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: '#00d8ff' },
-      lineStyle: { width: 3, shadowColor: 'rgba(0,216,255,0.5)', shadowBlur: 10 },
+      itemStyle: { color: 'var(--el-color-primary)' },
+      lineStyle: { width: 3, shadowColor: 'var(--el-color-primary-light-5)', shadowBlur: 10 },
       areaStyle: {
         color: {
           type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [{ offset: 0, color: 'rgba(0, 216, 255, 0.4)' }, { offset: 1, color: 'rgba(0, 216, 255, 0)' }]
+          colorStops: [{ offset: 0, color: 'var(--el-color-primary-light-5)' }, { offset: 1, color: 'transparent' }]
         }
       }
     },
@@ -141,13 +141,13 @@ const trendOption = ref({
       type: 'line',
       smooth: true,
       data: [],
-      itemStyle: { color: '#f59e0b' },
-      lineStyle: { width: 3, shadowColor: 'rgba(245,158,11,0.5)', shadowBlur: 10 }
+      itemStyle: { color: 'var(--el-color-warning)' },
+      lineStyle: { width: 3, shadowColor: 'var(--el-color-warning-light-5)', shadowBlur: 10 }
     }
   ]
 })
 const waterQualityOption = ref({
-  tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'rgba(15, 23, 42, 0.9)', textStyle: { color: '#e2e8f0' }, borderColor: 'rgba(255,255,255,0.1)' },
+  tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'var(--el-bg-color-overlay)', textStyle: { color: 'var(--el-text-color-primary)' }, borderColor: 'var(--el-border-color-light)' },
   series: [
     {
       name: '浊度 (NTU)',
@@ -156,14 +156,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 5,
-      axisLine: { lineStyle: { width: 10, color: [[0.2, '#10b981'], [0.8, '#f59e0b'], [1, '#ef4444']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.2, '#10b981'], [0.8, 'var(--el-color-warning)'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
-      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value} NTU', color: '#e2e8f0' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
+      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} NTU', color: 'var(--el-text-color-primary)' },
       data: [{ value: 0, name: '浊度' }],
-      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: '余氯 (mg/L)',
@@ -172,14 +172,14 @@ const waterQualityOption = ref({
       radius: '75%',
       min: 0,
       max: 2,
-      axisLine: { lineStyle: { width: 10, color: [[0.15, '#ef4444'], [0.8, '#10b981'], [1, '#f59e0b']] } },
+      axisLine: { lineStyle: { width: 10, color: [[0.15, '#ef4444'], [0.8, '#10b981'], [1, 'var(--el-color-warning)']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
-      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value} mg/L', color: '#e2e8f0' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
+      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value} mg/L', color: 'var(--el-text-color-primary)' },
       data: [{ value: 0, name: '余氯' }],
-      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
     },
     {
       name: 'pH值',
@@ -190,25 +190,25 @@ const waterQualityOption = ref({
       max: 14,
       axisLine: { lineStyle: { width: 10, color: [[0.45, '#ef4444'], [0.6, '#10b981'], [1, '#ef4444']] } },
       pointer: { itemStyle: { color: 'auto' } },
-      axisTick: { distance: -10, length: 4, lineStyle: { color: '#fff', width: 1 } },
-      splitLine: { distance: -10, length: 10, lineStyle: { color: '#fff', width: 2 } },
-      axisLabel: { color: '#94a3b8', distance: 15, fontSize: 10 },
-      detail: { fontSize: 14, formatter: '{value}', color: '#e2e8f0' },
+      axisTick: { distance: -10, length: 4, lineStyle: { color: 'var(--el-bg-color)', width: 1 } },
+      splitLine: { distance: -10, length: 10, lineStyle: { color: 'var(--el-bg-color)', width: 2 } },
+      axisLabel: { color: 'var(--el-text-color-regular)', distance: 15, fontSize: 10 },
+      detail: { fontSize: 14, formatter: '{value}', color: 'var(--el-text-color-primary)' },
       data: [{ value: 0, name: 'pH值' }],
-      title: { color: '#94a3b8', fontSize: 12, offsetCenter: [0, '70%'] }
+      title: { color: 'var(--el-text-color-regular)', fontSize: 12, offsetCenter: [0, '70%'] }
     }
   ]
 })
 const energyTrendOption = ref({
-  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
-  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: '#94a3b8' } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'var(--el-bg-color-overlay)', borderColor: 'var(--el-border-color-light)', textStyle: { color: 'var(--el-text-color-primary)' } },
+  legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: 'var(--el-text-color-regular)' } },
   grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-  xAxis: { type: 'category', data: [], axisLabel: { color: '#64748b' }, axisLine: { lineStyle: { color: '#334155' } } },
-  yAxis: { type: 'value', name: 'kgce', nameTextStyle: { color: '#64748b' }, axisLabel: { color: '#64748b' }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } } },
+  xAxis: { type: 'category', data: [], axisLabel: { color: 'var(--el-text-color-regular)' }, axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } } },
+  yAxis: { type: 'value', name: 'kgce', nameTextStyle: { color: 'var(--el-text-color-regular)' }, axisLabel: { color: 'var(--el-text-color-regular)' }, splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } } },
   series: [
-    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#3b82f6', borderRadius: [0, 0, 0, 0] } },
-    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#10b981', borderRadius: [0, 0, 0, 0] } },
-    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] } }
+    { name: '水耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-primary)', borderRadius: [0, 0, 0, 0] } },
+    { name: '电耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-success)', borderRadius: [0, 0, 0, 0] } },
+    { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: 'var(--el-color-warning)', borderRadius: [4, 4, 0, 0] } }
   ]
 })
 const alarms = ref<any[]>([])
@@ -297,180 +297,177 @@ onMounted(() => {
 </script>
 <style scoped>
 .app-container {
-  padding: 24px;
+  padding: 40px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 84px);
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-}
-.card-header {
-  font-weight: 600;
-  font-size: 16px;
+  min-height: calc(100vh - 60px);
   color: var(--el-text-color-primary);
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
-.toolbar, .header-actions {
-  display: flex;
-  gap: 12px;
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  color: var(--el-text-color-primary);
 }
-.custom-table {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
+
+.page-subtitle {
+  font-size: 15px;
+  color: var(--el-text-color-regular);
+  margin: 0;
+  letter-spacing: 0.5px;
 }
-/* 按钮样式优化 */
-.el-button {
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-}
-.pulse-tag {
-  animation: pulse 2s infinite;
-  background-color: rgba(16, 185, 129, 0.2);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #34d399;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-.metric-card {
-  display: flex;
-  align-items: center;
+
+.box-card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 16px;
   padding: 24px;
-  height: 120px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+.box-card:hover {
+  box-shadow: var(--el-box-shadow-light);
+  transform: translateY(-2px);
+}
+
+/* KPI 区域 */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
 .metric-icon-wrap {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 28px;
-  margin-right: 20px;
-  background: var(--el-fill-color-light);
-  border: 1px solid var(--el-border-color-light);
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  background: var(--el-bg-color-page);
 }
+
 .metric-info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+
 .metric-title {
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--el-text-color-regular);
-  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .metric-value {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 600;
   color: var(--el-text-color-primary);
-  font-family: "SF Mono", monospace;
+  font-family: "SF Mono", Consolas, monospace;
   line-height: 1;
 }
+
 .metric-unit {
   font-size: 14px;
-  color: var(--el-text-color-regular);
-  font-weight: 500;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
   margin-left: 4px;
-  font-family: "SF Pro Display", sans-serif;
 }
-.chart-card, .list-card {
-  display: flex;
-  flex-direction: column;
-  height: 400px;
-  padding: 20px;
-}
-.box-card {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-  background-color: var(--el-bg-color);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
-  padding: 20px;
-  margin-bottom: 20px;
-}
+
+/* 面板头部 */
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
+
 .panel-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
+
 .panel-title span {
-  font-size: 12px;
-  color: #475569;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .highlight-text {
-  color: #34d399;
+  color: var(--el-color-success);
   font-weight: 600;
   font-family: "SF Mono", monospace;
-  text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+  background: var(--el-color-success-light-9);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
 }
+
 .chart-container {
   flex: 1;
+  min-height: 300px;
   width: 100%;
-  position: relative;
 }
+
 .chart {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
+
 .alarm-list {
   flex: 1;
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 8px;
 }
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+
+.pulse-tag {
+  animation: pulse 2s infinite;
+  background-color: var(--el-color-success-light-9);
+  border-color: var(--el-color-success-light-5);
+  color: var(--el-color-success);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--el-fill-color-light);
-  border-radius: 4px;
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 var(--el-color-success-light-5); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.dark-timeline {
-  margin-top: 10px;
-}
-.page-header {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.header-content h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--el-text-color-primary);
-  margin: 0 0 8px 0;
-}
-.header-content p {
-  font-size: 13px;
-  color: var(--el-text-color-regular);
-  margin: 0;
+
+@media (max-width: 1400px) {
+  .el-col {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 24px;
+  }
 }
 </style>

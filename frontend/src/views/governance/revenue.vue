@@ -185,8 +185,8 @@ const handleRecalc = () => {
   border-bottom-color: rgba(245, 108, 108, 0.1);
 }
 .text-danger {
-  color: #F56C6C;
-  text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
+  color: var(--el-color-danger);
+  text-shadow: 0 0 10px var(--el-color-danger-light-5);
 }
 .danger-icon {
   margin-right: 8px;
@@ -205,12 +205,12 @@ const handleRecalc = () => {
 }
 .-danger {
   border-color: rgba(245, 108, 108, 0.5);
-  color: #F56C6C;
+  color: var(--el-color-danger);
 }
 .-danger:hover {
   background: rgba(245, 108, 108, 0.1);
-  box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
-  border-color: #F56C6C;
+  box-shadow: 0 0 15px var(--el-color-danger-light-5);
+  border-color: var(--el-color-danger);
 }
 /* Custom Input/Select Styling */
 </style>

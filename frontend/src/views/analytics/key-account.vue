@@ -305,7 +305,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color-light);
 }
 .text-neon { color: var(--el-color-primary); }
-.text-danger { color: #F56C6C; }
+.text-danger { color: var(--el-color-danger); }
 .industrial-tag {
   border: none;
 }

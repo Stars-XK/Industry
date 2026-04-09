@@ -194,7 +194,7 @@ onMounted(() => {
   color: var(--el-color-success);
 }
 .duty-pending {
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--el-color-warning-light-9);
   border-left-color: #f59e0b;
   color: #f59e0b;
 }

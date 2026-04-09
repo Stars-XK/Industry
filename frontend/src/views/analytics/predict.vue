@@ -68,14 +68,14 @@ const initChart = () => {
       title: { 
         text: '未来 7 天供水预测量 (m³)', 
         left: 'center',
-        textStyle: { color: '#e2e8f0', fontSize: 16, fontWeight: 'normal', fontFamily: 'SF Pro Display' }
+        textStyle: { color: 'var(--el-text-color-primary)', fontSize: 16, fontWeight: 'normal', fontFamily: 'SF Pro Display' }
       },
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'cross', label: { backgroundColor: '#1e293b' } },
-        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-        borderColor: 'rgba(0, 216, 255, 0.2)',
-        textStyle: { color: '#e2e8f0' }
+        axisPointer: { type: 'cross', label: { backgroundColor: 'var(--el-border-color-light)' } },
+        backgroundColor: 'var(--el-bg-color-overlay)',
+        borderColor: 'var(--el-color-primary-light-5)',
+        textStyle: { color: 'var(--el-text-color-primary)' }
       },
       legend: {
         data: ['实际用量', 'AI 预测曲线', '置信区间'],
@@ -87,7 +87,7 @@ const initChart = () => {
         type: 'category',
         boundaryGap: false,
         data: dates,
-        axisLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.2)' } },
+        axisLine: { lineStyle: { color: 'var(--el-border-color-light)' } },
         axisLabel: { color: '#94a3b8' },
         splitLine: { show: false }
       },
@@ -98,7 +98,7 @@ const initChart = () => {
         scale: true,
         axisLine: { show: false },
         axisLabel: { color: '#94a3b8' },
-        splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.05)', type: 'dashed' } }
+        splitLine: { lineStyle: { color: 'var(--el-border-color-extra-light)', type: 'dashed' } }
       },
       series: [
         {
@@ -114,7 +114,7 @@ const initChart = () => {
           type: 'line',
           data: lowerBounds,
           lineStyle: { opacity: 0 },
-          areaStyle: { color: 'rgba(0, 216, 255, 0.1)' },
+          areaStyle: { color: 'var(--el-color-primary-light-8)' },
           stack: 'confidence-band',
           symbol: 'none'
         },
@@ -123,7 +123,7 @@ const initChart = () => {
           type: 'line',
           data: actualData,
           itemStyle: { color: '#67C23A' },
-          lineStyle: { width: 3, shadowColor: 'rgba(103, 194, 58, 0.3)', shadowBlur: 10 },
+          lineStyle: { width: 3, shadowColor: 'var(--el-color-success-light-5)', shadowBlur: 10 },
           symbolSize: 8
         },
         {
@@ -131,7 +131,7 @@ const initChart = () => {
           type: 'line',
           data: predData,
           itemStyle: { color: '#00d8ff' },
-          lineStyle: { type: 'dashed', width: 2, shadowColor: 'rgba(0, 216, 255, 0.3)', shadowBlur: 10 },
+          lineStyle: { type: 'dashed', width: 2, shadowColor: 'var(--el-color-primary-light-5)', shadowBlur: 10 },
           symbol: 'emptyCircle',
           symbolSize: 6
         }
@@ -264,11 +264,11 @@ onMounted(() => {
 .text-white { color: var(--el-text-color-primary); }
 .text-blue { 
   color: var(--el-color-primary); 
-  text-shadow: 0 0 15px rgba(0, 216, 255, 0.3);
+  text-shadow: 0 0 15px var(--el-color-primary-light-5);
 }
 .text-green { 
   color: #67C23A; 
-  text-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  text-shadow: 0 0 15px var(--el-color-success-light-5);
 }
 .action-col {
   display: flex;

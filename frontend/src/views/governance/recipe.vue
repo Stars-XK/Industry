@@ -256,6 +256,6 @@ onMounted(() => {
   word-break: break-all;
 }
 .text-neon { color: var(--el-color-primary); }
-.text-danger { color: #F56C6C; }
+.text-danger { color: var(--el-color-danger); }
 .text-success { color: #67C23A; }
 </style>

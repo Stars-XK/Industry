@@ -265,7 +265,7 @@ onMounted(() => {
 .-danger {
   background: transparent;
   border: 1px solid rgba(245, 108, 108, 0.5);
-  color: #F56C6C;
+  color: var(--el-color-danger);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   font-family: "SF Pro Display", sans-serif;
   padding: 8px 16px;
@@ -274,7 +274,7 @@ onMounted(() => {
 }
 .-danger:hover {
   background: rgba(245, 108, 108, 0.1);
-  box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
-  border-color: #F56C6C;
+  box-shadow: 0 0 15px var(--el-color-danger-light-5);
+  border-color: var(--el-color-danger);
 }
 </style>

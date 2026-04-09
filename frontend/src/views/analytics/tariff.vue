@@ -244,8 +244,8 @@ onMounted(() => {
   font-family: "SF Mono", Consolas, monospace;
   font-weight: 600;
   color: var(--el-color-primary);
-  text-shadow: 0 0 10px rgba(0, 216, 255, 0.3);
+  text-shadow: 0 0 10px var(--el-color-primary-light-5);
 }
 .text-neon { color: var(--el-color-primary); }
-.text-danger { color: #F56C6C; }
+.text-danger { color: var(--el-color-danger); }
 </style>

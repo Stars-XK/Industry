@@ -230,7 +230,7 @@ const saveConfig = async () => {
   color: var(--el-color-primary);
   background-color: rgba(0, 216, 255, 0.1);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 216, 255, 0.2);
+  box-shadow: 0 2px 8px var(--el-color-primary-light-8);
 }
 .canvas-panel {
   flex: 1;
@@ -271,7 +271,7 @@ const saveConfig = async () => {
 }
 .canvas-element:hover {
   box-shadow: 0 6px 16px rgba(0,216,255,0.2);
-  border-color: rgba(0, 216, 255, 0.5);
+  border-color: var(--el-color-primary-light-5);
 }
 .canvas-element.active {
   border-color: var(--el-color-primary);

@@ -66,11 +66,11 @@
                       <span class="t-val">{{ val }}</span>
                     </div>
                   </div>
-                  <span v-else style="color: #64748b; font-size: 12px;">暂无数据</span>
+                  <span v-else style="color: var(--el-text-color-regular); font-size: 12px;">暂无数据</span>
                 </template>
               </el-table-column>
               <template #empty>
-                <div style="padding: 30px; color: #64748b;">该分区暂无挂载设备</div>
+                <div style="padding: 30px; color: var(--el-text-color-regular);">该分区暂无挂载设备</div>
               </template>
             </el-table>
           </div>
@@ -100,9 +100,9 @@ const chartOption = ref<any>({
   tooltip: {
     trigger: 'item',
     triggerOn: 'mousemove',
-    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-    borderColor: 'rgba(0, 216, 255, 0.2)',
-    textStyle: { color: '#e2e8f0' },
+    backgroundColor: 'var(--el-bg-color-overlay)',
+    borderColor: 'var(--el-color-primary-light-5)',
+    textStyle: { color: 'var(--el-text-color-primary)' },
     formatter: (params: any) => {
       const data = params.data
       return `${data.name}<br/><span style="color: var(--el-text-color-regular);font-size:12px;">层级: ${data.level}级分区</span>`
@@ -123,7 +123,7 @@ const chartOption = ref<any>({
         verticalAlign: 'middle',
         align: 'right',
         fontSize: 14,
-        color: '#e2e8f0',
+        color: 'var(--el-text-color-primary)',
         fontFamily: 'SF Pro Display'
       },
       leaves: {
@@ -138,12 +138,12 @@ const chartOption = ref<any>({
       animationDuration: 550,
       animationDurationUpdate: 750,
       itemStyle: {
-        color: '#00d8ff',
-        borderColor: '#020617',
+        color: 'var(--el-color-primary)',
+        borderColor: 'var(--el-bg-color)',
         borderWidth: 2
       },
       lineStyle: {
-        color: 'rgba(148, 163, 184, 0.3)',
+        color: 'var(--el-border-color-darker)',
         width: 2,
         curveness: 0.5
       }
@@ -154,17 +154,17 @@ const mapTreeDataForEcharts = (nodes: any[]): any[] => {
   return nodes.map(node => {
     const isAlarm = node.status === 'alarm';
     const itemStyle = isAlarm ? {
-      color: '#F56C6C',
-      borderColor: '#020617',
+      color: 'var(--el-color-danger)',
+      borderColor: 'var(--el-bg-color)',
       borderWidth: 2,
       shadowBlur: 15,
-      shadowColor: 'rgba(245, 108, 108, 0.8)'
+      shadowColor: 'var(--el-color-danger-light-5)'
     } : {
-      color: '#00d8ff',
-      borderColor: '#020617',
+      color: 'var(--el-color-primary)',
+      borderColor: 'var(--el-bg-color)',
       borderWidth: 2,
       shadowBlur: 10,
-      shadowColor: 'rgba(0, 216, 255, 0.5)'
+      shadowColor: 'var(--el-color-primary-light-5)'
     };
     return {
       name: node.label,

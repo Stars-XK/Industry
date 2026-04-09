@@ -74,7 +74,7 @@
                   <span class="dot" :class="door.locked ? 'bg-emerald' : 'bg-red'"></span> {{ door.locked ? '正常锁定' : '异常开启' }}
                 </div>
               </div>
-              <el-button class="danger-" size="small" @click="toggleDoor(door)">紧急锁死</el-button>
+              <el-button type="danger" size="small" @click="toggleDoor(door)">紧急锁死</el-button>
             </div>
           </div>
         </div>
@@ -157,14 +157,14 @@ onMounted(() => {
 }
 .pulse-tag {
   animation: pulse 2s infinite;
-  background-color: rgba(16, 185, 129, 0.2);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #34d399;
+  background-color: var(--el-color-success-light-8);
+  border-color: var(--el-color-success-light-5);
+  color: var(--el-color-success);
 }
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 var(--el-color-success-light-5); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 .panel-header {
   display: flex;
@@ -182,7 +182,7 @@ onMounted(() => {
 }
 .panel-title span {
   font-size: 12px;
-  color: #475569;
+  color: var(--el-text-color-regular);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -201,12 +201,12 @@ onMounted(() => {
   grid-template-rows: repeat(3, 1fr);
 }
 .video-cell {
-  border: 1px solid rgba(0, 216, 255, 0.2);
+  border: 1px solid var(--el-border-color-darker);
   border-radius: 8px;
   position: relative;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--el-fill-color-dark);
   overflow: hidden;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 0 30px var(--el-color-black);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -216,7 +216,7 @@ onMounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+  background: linear-gradient(180deg, var(--el-color-black) 0%, transparent 100%);
   color: var(--el-text-color-regular);
   padding: 12px 16px 24px;
   font-size: 13px;
@@ -231,10 +231,10 @@ onMounted(() => {
   height: 8px;
   background-color: var(--el-color-success);
   border-radius: 50%;
-  box-shadow: 0 0 8px #10b981;
+  box-shadow: 0 0 8px var(--el-color-success);
 }
 .video-placeholder {
-  color: #475569;
+  color: var(--el-text-color-regular);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -251,7 +251,7 @@ onMounted(() => {
   position: absolute;
   bottom: 12px;
   right: 16px;
-  color: #ef4444;
+  color: var(--el-color-danger);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -264,7 +264,7 @@ onMounted(() => {
   display: block;
   width: 6px;
   height: 6px;
-  background-color: #ef4444;
+  background-color: var(--el-color-danger);
   border-radius: 50%;
   animation: blink 1s infinite;
 }
@@ -306,7 +306,7 @@ onMounted(() => {
 }
 .text-emerald { color: var(--el-color-success); }
 .text-cyan { color: var(--el-color-primary); }
-.bg-emerald { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
+.bg-emerald { background-color: var(--el-color-success); box-shadow: 0 0 8px var(--el-color-success); }
 .access-list {
   display: flex;
   flex-direction: column;
@@ -344,13 +344,13 @@ onMounted(() => {
 }
 .danger-btn {
   background: transparent;
-  border: 1px solid #f43f5e;
+  border: 1px solid var(--el-color-danger-light-5);
   color: var(--el-color-danger);
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
 .danger-btn:hover {
-  background: rgba(244, 63, 94, 0.1);
-  box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+  background: var(--el-color-danger-light-9);
+  box-shadow: 0 0 15px var(--el-color-danger-light-5);
   color: var(--el-text-color-primary);
 }
 .page-header {

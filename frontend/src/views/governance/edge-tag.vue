@@ -385,8 +385,8 @@ onMounted(() => {
   flex-direction: column;
 }
 .industrial-card:hover {
-  border-color: rgba(0, 216, 255, 0.3);
-  box-shadow: inset 0 0 20px rgba(0, 216, 255, 0.05);
+  border-color: var(--el-color-primary-light-5);
+  box-shadow: inset 0 0 20px var(--el-color-primary-light-9);
 }
 .offline-card {
   opacity: 0.6;
@@ -462,28 +462,28 @@ onMounted(() => {
   --el-table-text-color: var(--el-text-color-regular);
 }
 .-warning {
-  border-color: rgba(230, 162, 60, 0.5);
+  border-color: var(--el-color-warning-light-5);
   color: #E6A23C;
 }
 .-warning:hover:not(:disabled) {
-  background: rgba(230, 162, 60, 0.1);
-  box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
+  background: var(--el-color-warning-light-9);
+  box-shadow: 0 0 15px var(--el-color-warning-light-5);
   border-color: #E6A23C;
 }
 .-success {
-  border-color: rgba(103, 194, 58, 0.5);
+  border-color: var(--el-color-success-light-5);
   color: #67C23A;
 }
 .-success:hover:not(:disabled) {
-  background: rgba(103, 194, 58, 0.1);
-  box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  background: var(--el-color-success-light-9);
+  box-shadow: 0 0 15px var(--el-color-success-light-5);
   border-color: #67C23A;
 }
 .text-neon {
   color: var(--el-color-primary);
 }
 .text-danger {
-  color: #F56C6C;
+  color: var(--el-color-danger);
 }
 .pagination {
   margin-top: 20px;

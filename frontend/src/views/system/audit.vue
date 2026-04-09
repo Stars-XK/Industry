@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column label="耗时(ms)" width="100" align="center">
           <template #default="{ row }">
-            <span :style="{ color: row.execution_time > 1000 ? '#f43f5e' : '#10b981', fontFamily: 'SF Mono, monospace' }">
+            <span :style="{ color: row.execution_time > 1000 ? 'var(--el-color-danger)' : '#10b981', fontFamily: 'SF Mono, monospace' }">
               {{ row.execution_time }} ms
             </span>
           </template>
@@ -169,7 +169,7 @@ onMounted(() => {
 }
 .cyan-tag { background: rgba(0, 216, 255, 0.1); color: var(--el-color-primary); border: none; }
 .emerald-tag { background: rgba(16, 185, 129, 0.1); color: var(--el-color-success); border: none; }
-.amber-tag { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: none; }
+.amber-tag { background: var(--el-color-warning-light-9); color: #f59e0b; border: none; }
 .rose-tag { background: rgba(244, 63, 94, 0.1); color: var(--el-color-danger); border: none; }
 .text-cyan { color: var(--el-color-primary); }
 /* Table styles */

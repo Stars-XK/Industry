@@ -195,7 +195,7 @@ const renderLayers = () => {
     let color = '#00d8ff'; // default blue for pumps
     if (asset.type === 'pressure') color = '#10b981'; // green
     if (asset.type === 'alarm' && asset.status === 'critical') color = '#ef4444'; // red
-    if (asset.type === 'alarm' && asset.status === 'warning') color = '#f59e0b'; // yellow
+    if (asset.type === 'alarm' && asset.status === 'warning') color = 'var(--el-color-warning)'; // yellow
 
     const markerHtml = `
       <div class="custom-marker" style="background-color: ${color}; box-shadow: 0 0 15px ${color}">
@@ -285,7 +285,7 @@ onUnmounted(() => {
 .dark-popup-wrapper .leaflet-popup-content-wrapper {
   background: var(--el-bg-color-overlay);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 216, 255, 0.2);
+  border: 1px solid var(--el-color-primary-light-8);
   color: var(--el-text-color-primary);
   border-radius: 8px;
   padding: 0;
@@ -293,7 +293,7 @@ onUnmounted(() => {
 }
 .dark-popup-wrapper .leaflet-popup-tip {
   background: var(--el-bg-color-overlay);
-  border: 1px solid rgba(0, 216, 255, 0.2);
+  border: 1px solid var(--el-color-primary-light-8);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
   color: var(--el-text-color-regular) !important;

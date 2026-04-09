@@ -205,12 +205,12 @@ onMounted(() => {
   flex: 1;
 }
 .-warning {
-  border-color: rgba(230, 162, 60, 0.5);
+  border-color: var(--el-color-warning-light-5);
   color: #E6A23C;
 }
 .-warning:hover {
-  background: rgba(230, 162, 60, 0.1);
-  box-shadow: 0 0 15px rgba(230, 162, 60, 0.3);
+  background: var(--el-color-warning-light-9);
+  box-shadow: 0 0 15px var(--el-color-warning-light-5);
   border-color: #E6A23C;
 }
 .result-panel {
@@ -240,7 +240,7 @@ onMounted(() => {
 .result-metric .value {
   font-weight: 600;
 }
-.text-danger { color: #F56C6C; text-shadow: 0 0 10px rgba(245, 108, 108, 0.3); }
+.text-danger { color: var(--el-color-danger); text-shadow: 0 0 10px var(--el-color-danger-light-5); }
 .text-warning { color: #E6A23C; }
 .text-neon { color: var(--el-color-primary); }
 .map-placeholder {
@@ -259,8 +259,8 @@ onMounted(() => {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background-image: 
-    linear-gradient(rgba(0, 216, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 216, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(var(--el-color-primary-light-9) 1px, transparent 1px),
+    linear-gradient(90deg, var(--el-color-primary-light-9) 1px, transparent 1px);
   background-size: 40px 40px;
   z-index: 1;
 }
@@ -271,7 +271,7 @@ onMounted(() => {
 }
 .map-icon {
   font-size: 48px;
-  color: rgba(0, 216, 255, 0.5);
+  color: var(--el-color-primary-light-5);
   margin-bottom: 16px;
 }
 .map-content p {

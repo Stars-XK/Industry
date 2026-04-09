@@ -400,16 +400,16 @@ onMounted(() => {
   --el-table-text-color: var(--el-text-color-regular);
 }
 .-success {
-  border-color: rgba(103, 194, 58, 0.5);
+  border-color: var(--el-color-success-light-5);
   color: #67C23A;
 }
 .-success:hover {
-  background: rgba(103, 194, 58, 0.1);
-  box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  background: var(--el-color-success-light-9);
+  box-shadow: 0 0 15px var(--el-color-success-light-5);
   border-color: #67C23A;
 }
 .text-neon { color: var(--el-color-primary); }
-.text-danger { color: #F56C6C; }
+.text-danger { color: var(--el-color-danger); }
 .text-warning { color: #E6A23C; }
 .industrial-tag {
   border: none;

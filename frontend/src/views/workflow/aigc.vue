@@ -185,7 +185,7 @@ onMounted(() => {
   flex-direction: column;
   height: 600px;
   background: rgba(8, 15, 30, 0.4);
-  box-shadow: inset 0 0 0 1px rgba(0, 216, 255, 0.05);
+  box-shadow: inset 0 0 0 1px var(--el-color-primary-light-9);
   overflow: hidden;
 }
 .chat-history {
@@ -222,7 +222,7 @@ onMounted(() => {
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 216, 255, 0.3);
+  box-shadow: 0 4px 12px var(--el-color-primary-light-5);
 }
 .message.user .avatar {
   background: linear-gradient(135deg, #00ffaa, #00aa66);

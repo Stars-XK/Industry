@@ -190,8 +190,8 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  background: rgba(0, 216, 255, 0.05);
-  border: 1px solid rgba(0, 216, 255, 0.2);
+  background: var(--el-color-primary-light-9);
+  border: 1px solid var(--el-color-primary-light-8);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;

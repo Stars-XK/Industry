@@ -176,7 +176,7 @@ const handleLogin = async () => {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, var(--el-bg-color) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%);
   z-index: 1;
 }
 
@@ -189,9 +189,10 @@ const handleLogin = async () => {
 .brand-badge {
   display: inline-block;
   padding: 6px 12px;
-  background: rgba(0, 216, 255, 0.1);
-  border: 1px solid rgba(0, 216, 255, 0.3);
-  color: var(--el-color-primary);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
@@ -204,14 +205,14 @@ const handleLogin = async () => {
   line-height: 1.1;
   font-weight: 700;
   margin: 0 0 24px 0;
-  color: var(--el-text-color-primary)fff;
+  color: #ffffff;
   letter-spacing: -1px;
 }
 
 .hero-desc {
   font-size: 18px;
   line-height: 1.6;
-  color: var(--el-text-color-regular);
+  color: rgba(255, 255, 255, 0.8);
   margin: 0 0 48px 0;
   max-width: 600px;
 }
@@ -219,7 +220,7 @@ const handleLogin = async () => {
 .system-stats {
   display: flex;
   gap: 48px;
-  border-top: 1px solid var(--el-border-color-light);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 32px;
 }
 
@@ -232,13 +233,13 @@ const handleLogin = async () => {
 .stat-value {
   font-size: 24px;
   font-weight: 600;
-  color: var(--el-color-primary);
+  color: #ffffff;
   font-family: "SF Mono", Consolas, monospace;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -248,7 +249,7 @@ const handleLogin = async () => {
   flex: 0.8;
   min-width: 480px;
   max-width: 600px;
-  background-color: #040914;
+  background-color: var(--el-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,8 +269,8 @@ const handleLogin = async () => {
 .brand-logo {
   width: 48px;
   height: 48px;
-  background: rgba(0, 216, 255, 0.05);
-  border: 1px solid rgba(0, 216, 255, 0.2);
+  background: var(--el-color-primary-light-9);
+  border: 1px solid var(--el-color-primary-light-5);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -280,6 +281,7 @@ const handleLogin = async () => {
 .brand-logo svg {
   width: 24px;
   height: 24px;
+  stroke: var(--el-color-primary);
 }
 
 .form-header h2 {
@@ -290,7 +292,7 @@ const handleLogin = async () => {
 }
 
 .form-header p {
-  color: #64748b;
+  color: var(--el-text-color-secondary);
   font-size: 15px;
   margin: 0;
 }
@@ -332,8 +334,8 @@ label {
 
 .input-field input {
   width: 100%;
-  background: var(--el-bg-color);
-  border: 1px solid #1e293b;
+  background: var(--el-bg-color-page);
+  border: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
   padding: 14px 16px;
   border-radius: 8px;
@@ -343,22 +345,22 @@ label {
 }
 
 .input-field input:focus {
-  outline: 2px solid transparent; outline-offset: 2px;;
+  outline: none;
   border-color: var(--el-color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 216, 255, 0.1);
-  background: #152038;
+  box-shadow: 0 0 0 3px var(--el-color-primary-light-8);
+  background: var(--el-bg-color);
 }
 
 .input-field input::placeholder {
-  color: #475569;
+  color: var(--el-text-color-placeholder);
 }
 
 .error-banner {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.2);
+  background: var(--el-color-danger-light-9);
+  border: 1px solid var(--el-color-danger-light-5);
   color: var(--el-color-danger);
   padding: 12px 16px;
   border-radius: 8px;
@@ -367,7 +369,7 @@ label {
 
 .submit-btn {
   background: var(--el-color-primary);
-  color: var(--el-text-color-primary);
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   width: 100%;
@@ -385,7 +387,7 @@ label {
 
 .submit-btn:hover:not(:disabled) {
   filter: brightness(1.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px var(--el-color-primary-light-5);
 }
 
 .submit-btn:disabled {
@@ -396,8 +398,8 @@ label {
 .loading-spinner {
   width: 20px;
   height: 20px;
-  border: 1px solid var(--el-border-color-light);
-  border-top-color: #020617;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -410,7 +412,7 @@ label {
 
 .form-footer p {
   font-size: 12px;
-  color: #475569;
+  color: var(--el-text-color-secondary);
   line-height: 1.6;
   margin: 0;
 }

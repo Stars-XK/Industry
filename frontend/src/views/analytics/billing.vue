@@ -257,16 +257,16 @@ onMounted(() => {
 .money-text {
   font-family: "SF Mono", Consolas, monospace;
   font-weight: 600;
-  color: #F56C6C;
-  text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
+  color: var(--el-color-danger);
+  text-shadow: 0 0 10px var(--el-color-danger-light-5);
 }
 .-success {
-  border-color: rgba(103, 194, 58, 0.5);
+  border-color: var(--el-color-success-light-5);
   color: #67C23A;
 }
 .-success:hover {
-  background: rgba(103, 194, 58, 0.1);
-  box-shadow: 0 0 15px rgba(103, 194, 58, 0.3);
+  background: var(--el-color-success-light-9);
+  box-shadow: 0 0 15px var(--el-color-success-light-5);
   border-color: #67C23A;
 }
 </style>

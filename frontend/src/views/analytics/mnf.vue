@@ -47,23 +47,23 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
   chart.setOption({
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(15, 23, 42, 0.9)',
-      borderColor: 'rgba(255,255,255,0.1)',
-      textStyle: { color: '#e2e8f0' }
+      backgroundColor: 'var(--el-bg-color-overlay)',
+      borderColor: 'var(--el-border-color-light)',
+      textStyle: { color: 'var(--el-text-color-primary)' }
     },
     legend: { textStyle: { color: '#94a3b8' } },
     xAxis: {
       type: 'category',
       data: dates,
-      axisLabel: { color: '#64748b' },
-      axisLine: { lineStyle: { color: '#334155' } }
+      axisLabel: { color: 'var(--el-text-color-regular)' },
+      axisLine: { lineStyle: { color: 'var(--el-border-color-darker)' } }
     },
     yAxis: {
       type: 'value',
       name: '水量 m³',
-      nameTextStyle: { color: '#64748b' },
-      axisLabel: { color: '#64748b' },
-      splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
+      nameTextStyle: { color: 'var(--el-text-color-regular)' },
+      axisLabel: { color: 'var(--el-text-color-regular)' },
+      splitLine: { lineStyle: { color: 'var(--el-border-color-light)', type: 'dashed' } }
     },
     series: [
       {
@@ -71,7 +71,7 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
         type: 'scatter',
         data: actualData,
         symbolSize: 12,
-        itemStyle: { color: '#f43f5e', shadowColor: 'rgba(244,63,94,0.5)', shadowBlur: 10 }
+        itemStyle: { color: 'var(--el-color-danger)', shadowColor: 'var(--el-color-danger-light-5)', shadowBlur: 10 }
       },
       {
         name: 'AI 正常基线',
@@ -147,8 +147,8 @@ onMounted(() => loadData())
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: var(--el-color-warning-light-9);
+  border: 1px solid var(--el-color-warning-light-5);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;

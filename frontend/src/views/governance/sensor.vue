@@ -173,8 +173,8 @@ const sensors = ref([
   font-size: 13px;
 }
 .text-danger {
-  color: #F56C6C;
-  text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
+  color: var(--el-color-danger);
+  text-shadow: 0 0 10px var(--el-color-danger-light-5);
   font-weight: 600;
 }
 .text-success {

@@ -188,7 +188,7 @@ const handleBatchSave = async () => {
 
 .config-form {
   margin-top: 24px;
-  max-width: 900px;
+  width: 100%;
 }
 
 

@@ -9,6 +9,7 @@
 ```text
 / (Root)
 ├── /login                   [登录与门户] 统一登录页 (Login)
+├── /panorama                [全局常驻] 工业数据流转与平台治理全景图 (Data Flow Panorama) - 右上角入口
 ├── /dashboard               [登录与门户] 沉浸式数字孪生大屏 (Digital Twin Dashboard)
 ├── /scada                   [综合业务监控台] (SCADA & Monitor)
 │   ├── /scada/overview        - 全局态势感知 (Overview Dashboard)
@@ -61,6 +62,7 @@
 |---|---|---|---|---|
 | 统一登录页 | `/login` | `views/login/index.vue` | `sys:login` | 多模态认证、防暴破滑动验证码、RBAC 权限拉取初始化 |
 | 数字孪生大屏 | `/dashboard` | `views/dashboard/index.vue` | `sys:dashboard` | WebGL/3D 地图底座、安全间距分析、一图统管、爆管聚焦联动弹窗 |
+| 数据流转全景图 | `/panorama` | `views/dashboard/panorama.vue` | `sys:panorama` | 常驻顶栏右上角入口。全域数据流转动画，从基础台账、清洗、供水、售水至全域产销差计算链路 |
 
 ### 2.2 综合业务监控台 (SCADA & Monitor)
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
@@ -73,8 +75,8 @@
 ### 2.3 多维统计与数据分析 (Data Analytics)
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
 |---|---|---|---|---|
-| DMA产销差与漏损 | `/analytics/nrw` | `views/analytics/nrw.vue` | `analytics:nrw` | 水量平衡桑基图、多维比对(同环比)、穿透下钻(Drill-down)、时空拓扑时间切片选择 |
-| 夜间最小流量分析 | `/analytics/mnf` | `views/analytics/mnf.vue` | `analytics:mnf` | MNF 散点基线、大用户合法夜间用水剥离、声水交叉定位热力地图 |
+| DMA产销差与漏损 | `/analytics/nrw` | `views/analytics/nrw.vue` | `analytics:nrw` | 水量平衡桑基图、**全域全部分区**同环比与产销差展示、穿透下钻 |
+| 夜间最小流量分析 | `/analytics/mnf` | `views/analytics/mnf.vue` | `analytics:mnf` | **全部分区** MNF 散点基线、大用户夜间合法用水剥离、声水热力图 |
 | 重点企业大户画像 | `/analytics/key-account`| `views/analytics/account.vue` | `analytics:account` | 独立监控档案、"大表小用/表倒转" AI 诊断看板、换表建议单导出 |
 | 营收计费与对账 | `/analytics/billing` | `views/analytics/billing.vue` | `analytics:billing` | 阶梯费率库配置、抄表差值出账、应收vs实收漏斗图、追缴单稽查 |
 | 综合能效与成本核算 | `/analytics/energy` | `views/analytics/energy.vue` | `analytics:energy` | 药剂电费动态折算吨水成本、电量平衡模型(防窃电)、峰谷平排班降本建议表 |

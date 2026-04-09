@@ -62,6 +62,16 @@
 | `icon` | VARCHAR | 100 | Y | '#' | 菜单图标 |
 | `remark` | VARCHAR | 500 | Y | '' | 备注 |
 
+**3.1 系统配置表 (`sys_config`)**
+| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
+|---|---|---|---|---|---|
+| `id` | BIGINT | - | N | 主键 | 唯一标识 |
+| `config_name` | VARCHAR | 100 | N | - | 配置名称 (如：系统标题、地图来源) |
+| `config_key` | VARCHAR | 100 | N | - | 配置键名 (如：`sys.site.title`, `sys.map.source`) |
+| `config_value`| TEXT | - | Y | '' | 配置键值 |
+| `config_type` | CHAR | 1 | Y | 'N' | 系统内置: Y-是, N-否 |
+| `remark` | VARCHAR | 500 | Y | NULL | 备注说明 |
+
 ### 2.2 资产、设备与物联网网关元数据 (Assets & IoT)
 
 **4. 设备台账表 (`ast_device`)**

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container fade-in-up sys-dict-container">
     <!-- 左侧：字典类型列表 -->
-    <div class="box-card">
+    <div class="box-card" style="width: 300px; padding: 0; overflow: hidden; flex: none;">
       <div class="panel-header">
         <span class="panel-title">字典类型 (DictType)</span>
         <el-button type="primary" size="small"  @click="handleAddType">新增</el-button>
@@ -20,7 +20,7 @@
       </ul>
     </div>
     <!-- 右侧：字典数据列表 -->
-    <div class="box-card">
+    <div class="box-card" style="flex: 1; padding: 0; overflow: hidden;">
       <div class="panel-header">
         <span class="panel-title">字典数据 (DictData) <span v-if="currentType" class="highlight-text"> - {{ currentType }}</span></span>
         <el-button type="primary" size="small"  v-if="currentType" @click="handleAddData">新增字典项</el-button>
@@ -219,7 +219,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -256,7 +257,9 @@ onMounted(() => {
 }
 .sys-dict-container {
   display: flex;
+  flex-direction: row;
   gap: 20px;
+  align-items: flex-start;
 }
 .dict-type-panel {
   width: 300px;
@@ -280,7 +283,7 @@ onMounted(() => {
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--el-border-color-light);
-  background: var(--el-box-shadow-light);
+  background: var(--el-fill-color-lighter);
 }
 .panel-title {
   font-size: 16px;
@@ -293,6 +296,7 @@ onMounted(() => {
   margin: 0;
   overflow-y: auto;
   flex: 1;
+  width: 100%;
 }
 .type-list li {
   padding: 16px 20px;
@@ -304,7 +308,7 @@ onMounted(() => {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
 .type-list li:hover {
-  background: var(--el-fill-color-light);
+  background: var(--el-fill-color-lighter);
 }
 .type-list li.active {
   background: var(--el-color-primary-light-9);

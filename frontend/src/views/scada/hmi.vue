@@ -162,7 +162,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 
 .page-header {
   display: flex;
@@ -312,7 +313,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   padding: 30px;
   border-radius: 12px;
   border: 1px solid var(--el-border-color-light);

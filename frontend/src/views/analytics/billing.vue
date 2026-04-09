@@ -173,7 +173,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 
 .page-header {
   display: flex;
@@ -219,7 +220,7 @@ onMounted(() => {
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
 }
 
@@ -235,7 +236,7 @@ onMounted(() => {
   font-size: 13px;
   padding: 4px 8px;
   border-radius: 4px;
-  background: var(--el-fill-color-light);
+  background: var(--el-fill-color-lighter);
   border: 1px solid var(--el-border-color-light);
 }
 

@@ -136,7 +136,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 
 .page-header {
   display: flex;
@@ -198,7 +199,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 600px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   overflow: hidden;
 }
 .chat-history {
@@ -286,7 +287,7 @@ onMounted(() => {
 .side-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   height: 600px;
   display: flex;
   flex-direction: column;
@@ -307,7 +308,7 @@ onMounted(() => {
 }
 .map-placeholder {
   height: 300px;
-  background: var(--el-fill-color-dark);
+  background: var(--el-fill-color-lighter);
   display: flex;
   align-items: center;
   justify-content: center;

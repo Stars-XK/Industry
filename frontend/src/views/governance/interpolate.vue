@@ -117,7 +117,7 @@ const rules = ref([
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
 }
 .industrial-table {
   background: var(--el-fill-color-blank) ;

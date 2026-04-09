@@ -133,7 +133,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -174,7 +175,7 @@ onMounted(() => {
   font-weight: 600;
 }
 .cyan-tag { background: var(--el-color-primary-light-9); color: var(--el-color-primary); border: none; }
-.emerald-tag { background: var(--el-color-success-light-9); color: var(--el-color-success); border: none; }
+.emerald-tag { background: var(--el-color-success-light-9); color: var(--el-text-color-primary); border: none; }
 .amber-tag { background: var(--el-color-warning-light-9); color: var(--el-color-warning); border: none; }
 .rose-tag { background: var(--el-color-danger-light-9); color: var(--el-color-danger); border: none; }
 .text-cyan { color: var(--el-color-primary); }
@@ -186,7 +187,7 @@ onMounted(() => {
   gap: 12px;
 }
 .json-viewer {
-  background-color: var(--el-bg-color-overlay);
+  background-color: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
   padding: 16px;
   border-radius: 8px;
@@ -197,7 +198,7 @@ onMounted(() => {
   white-space: pre-wrap;
   word-wrap: break-word;
   margin: 0;
-  color: var(--el-color-success);
+  color: var(--el-text-color-primary);
   font-family: "SF Mono", monospace;
   font-size: 13px;
 }

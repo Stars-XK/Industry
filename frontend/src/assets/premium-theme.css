@@ -53,7 +53,7 @@ body {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 60px);
-  width: 50%;
+  width: 100%;
 }
 
 .box-card {

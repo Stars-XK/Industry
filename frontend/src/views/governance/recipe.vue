@@ -181,7 +181,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -242,7 +243,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   flex: 1;
 }
 .industrial-table {
@@ -254,7 +255,7 @@ onMounted(() => {
 .json-viewer {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 12px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   padding: 6px 10px;
   border-radius: 4px;
   color: var(--el-color-primary);

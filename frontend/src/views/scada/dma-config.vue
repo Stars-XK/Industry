@@ -294,7 +294,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -359,7 +360,7 @@ onMounted(() => {
 .tree-container {
   flex: 1;
   overflow-y: auto;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border-radius: 8px;
   border: 1px solid var(--el-border-color-light);
   padding: 16px;
@@ -396,8 +397,9 @@ onMounted(() => {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   flex: 1;
+  width: 100%;
 }
 .industrial-table {
   background: var(--el-fill-color-blank) ;

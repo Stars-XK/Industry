@@ -283,7 +283,7 @@ onUnmounted(() => {
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
 .dark-popup-wrapper .leaflet-popup-content-wrapper {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   backdrop-filter: blur(10px);
   border: 1px solid var(--el-color-primary-light-8);
   color: var(--el-text-color-primary);
@@ -292,7 +292,7 @@ onUnmounted(() => {
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 .dark-popup-wrapper .leaflet-popup-tip {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-color-primary-light-8);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
@@ -323,7 +323,7 @@ onUnmounted(() => {
   width: 80px;
 }
 .industrial-tooltip {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-bg-color-overlay);
   color: var(--el-text-color-primary);
   font-family: monospace;
@@ -397,7 +397,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   backdrop-filter: blur(12px);
   padding: 12px 24px;
   border-radius: 8px;
@@ -443,7 +443,7 @@ onUnmounted(() => {
   bottom: 24px;
   width: 340px;
   z-index: 1000;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   backdrop-filter: blur(16px);
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;

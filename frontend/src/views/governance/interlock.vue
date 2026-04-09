@@ -164,7 +164,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -225,7 +226,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
 }
 .industrial-table {
   background: var(--el-fill-color-blank) ;
@@ -257,7 +258,7 @@ onMounted(() => {
 .delay-tag {
   font-family: "SF Mono", Consolas, monospace;
   color: var(--el-text-color-regular);
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid var(--el-border-color-light);

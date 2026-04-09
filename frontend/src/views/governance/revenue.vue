@@ -102,7 +102,8 @@ const handleRecalc = () => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -162,7 +163,7 @@ const handleRecalc = () => {
   flex: 1;
 }
 .industrial-section {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
@@ -174,7 +175,7 @@ const handleRecalc = () => {
   font-size: 14px;
   color: var(--el-text-color-primary);
   border-bottom: 1px solid var(--el-border-color-light);
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   display: flex;
   align-items: center;
   letter-spacing: 0.5px;
@@ -207,7 +208,7 @@ const handleRecalc = () => {
   font-size: 14px;
   margin-bottom: 24px;
   border-left: 4px solid var(--el-color-danger);
-  box-shadow: inset 0 0 20px var(--el-color-danger-light-9);
+  box-shadow: none;
 }
 .-danger {
   border-color: var(--el-color-danger-light-5);

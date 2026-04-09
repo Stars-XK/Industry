@@ -326,7 +326,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 .box-card {
   display: flex;
   flex-direction: column;
@@ -381,7 +382,7 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .industrial-card {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   padding: 16px;
@@ -433,7 +434,7 @@ onMounted(() => {
 }
 .high-latency {
   color: var(--el-color-danger) ;
-  text-shadow: 0 0 10px var(--el-color-danger-light-5);
+  text-shadow: none;
 }
 .gw-actions {
   text-align: right;
@@ -458,7 +459,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   flex: 1;
 }
 .industrial-table {

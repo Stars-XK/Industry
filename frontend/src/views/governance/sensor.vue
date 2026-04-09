@@ -143,7 +143,7 @@ const sensors = ref([
   flex: 1;
 }
 .industrial-section {
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
@@ -157,7 +157,7 @@ const sensors = ref([
   font-size: 14px;
   color: var(--el-text-color-primary);
   border-bottom: 1px solid var(--el-border-color-light);
-  background: var(--el-bg-color-overlay);
+  background: var(--el-fill-color-blank);
   letter-spacing: 0.5px;
 }
 .section-content {
@@ -180,7 +180,7 @@ const sensors = ref([
 }
 .text-danger {
   color: var(--el-color-danger);
-  text-shadow: 0 0 10px var(--el-color-danger-light-5);
+  text-shadow: none;
   font-weight: 600;
 }
 .text-success {

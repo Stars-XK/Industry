@@ -401,6 +401,7 @@ onMounted(() => {
   position: relative;
   z-index: 5;
   overflow: hidden;
+  height: calc(100vh - 60px);
 }
 /* 左侧边栏 (渲染二级菜单，小图标模式) */
 .sidebar-container {
@@ -519,14 +520,14 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   position: relative;
-  pointer-events: none; /* 让鼠标事件默认穿透到地图 */
+  pointer-events: auto;
 }
 /* 核心路由层: 各个业务组件在这里决定自己的尺寸和位置 */
 .app-main {
   flex: 1;
   padding: 20px;
   position: relative;
-  pointer-events: none; /* 穿透 */
+  pointer-events: auto;
 }
 /* 兼容老页面的业务容器 (新页面建议使用 .premium-container) */
 </style>

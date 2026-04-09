@@ -79,6 +79,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import * as echarts from 'echarts/core'
 import { SankeyChart, LineChart, BarChart } from 'echarts/charts'
@@ -102,6 +103,9 @@ const customColors = [
   { color: 'var(--el-color-warning)', percentage: 15 },
   { color: 'var(--el-color-danger)', percentage: 20 },
 ]
+const exportReport = () => {
+  // dummy export
+}
 const fetchData = async () => {
   loading.value = true
   try {
@@ -230,7 +234,8 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 
 .page-header {
   display: flex;

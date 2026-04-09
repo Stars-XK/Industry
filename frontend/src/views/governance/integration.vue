@@ -166,6 +166,10 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   }
 .box-card {
   display: flex;
@@ -189,7 +193,7 @@ onMounted(() => {
   text-align: center;
   border-radius: 8px;
   border: 1px solid var(--el-border-color-light);
-  background-color: var(--el-fill-color-light);
+  background-color: var(--el-fill-color-blank);
   box-shadow: var(--el-box-shadow-light);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }

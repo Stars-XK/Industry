@@ -215,7 +215,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex: 1;
-  }
+  width: 100%;
+}
 
 .page-header {
   display: flex;

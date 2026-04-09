@@ -215,6 +215,7 @@ const handleLogin = async () => {
   color: rgba(255, 255, 255, 0.8);
   margin: 0 0 48px 0;
   max-width: 600px;
+  width: 100%;
 }
 
 .system-stats {
@@ -249,6 +250,7 @@ const handleLogin = async () => {
   flex: 0.8;
   min-width: 480px;
   max-width: 600px;
+  width: 100%;
   background-color: var(--el-bg-color);
   display: flex;
   align-items: center;

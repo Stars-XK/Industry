@@ -6,7 +6,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -115,7 +115,34 @@ CREATE TABLE IF NOT EXISTS sys_audit_log (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作审计记录表';
 
--- 4. 设备台账表 (`ast_device`)
+-- 4.1 系统配置表 (sys_config)
+CREATE TABLE IF NOT EXISTS sys_config (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    config_name VARCHAR(100) NOT NULL COMMENT '配置名称',
+    config_key VARCHAR(100) NOT NULL UNIQUE COMMENT '配置键名',
+    config_value TEXT COMMENT '配置键值',
+    config_type CHAR(1) DEFAULT 'N' COMMENT '系统内置: Y-是, N-否',
+    remark VARCHAR(500) COMMENT '备注说明',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by BIGINT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by BIGINT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统参数配置表';
+
+-- 4.2 数据库备份记录表 (sys_backup_log)
+CREATE TABLE IF NOT EXISTS sys_backup_log (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL COMMENT '备份文件名称',
+    file_path VARCHAR(500) NOT NULL COMMENT '物理存储路径',
+    file_size BIGINT NOT NULL DEFAULT 0 COMMENT '文件大小 (字节)',
+    backup_type SMALLINT NOT NULL DEFAULT 1 COMMENT '备份类型: 1-自动定时, 2-手动',
+    status SMALLINT NOT NULL DEFAULT 1 COMMENT '状态: 1-成功, 0-失败',
+    remark VARCHAR(500) COMMENT '备注',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by BIGINT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据库备份记录表';
+
+-- 5. 设备台账表 (`ast_device`)
 CREATE TABLE IF NOT EXISTS ast_device (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     device_code VARCHAR(50) UNIQUE NOT NULL,

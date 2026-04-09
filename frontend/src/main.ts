@@ -6,6 +6,7 @@ import './assets/premium-theme.css'; // 引入全局工业级玻璃拟态暗黑�
 import App from './App.vue';
 import router from './router';
 import { useUserStore } from './store/user';
+import { useConfigStore } from './store/config';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -13,6 +14,10 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 app.use(ElementPlus);
+
+// 初始化加载全局配置
+const configStore = useConfigStore();
+configStore.fetchGlobalConfig();
 
 // 注册全局权限指令 v-hasPermi
 app.directive('hasPermi', {

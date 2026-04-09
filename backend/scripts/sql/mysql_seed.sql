@@ -88,7 +88,19 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (55, 50, '数据字典管理', 4, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
 (51, 50, '资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1),
 (52, 50, '备品备件与仓储管理', 6, 'inventory', 'system/inventory', 0, 0, 'sys:inventory', 'C', 1, 1, 'ShoppingCart', '', 1),
-(56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1);
+(56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
+(57, 50, '低代码可视化组态工作台', 8, 'visual-studio', 'system/visual-studio', 0, 0, 'sys:visual', 'C', 1, 1, 'Brush', '', 1),
+(59, 50, '系统参数配置', 9, 'config', 'system/config', 0, 0, 'sys:config', 'C', 1, 1, 'Setting', '', 1),
+(60, 50, '快速发布初始化与覆盖导入', 10, 'setup-wizard', 'system/wizard', 0, 0, 'sys:wizard', 'C', 1, 1, 'MagicStick', '', 1),
+(61, 50, '数据库备份与恢复', 11, 'backup', 'system/backup', 0, 0, 'sys:backup', 'C', 1, 1, 'CopyDocument', '', 1);
+
+-- 初始化几条默认系统配置
+INSERT IGNORE INTO sys_config (id, config_name, config_key, config_value, config_type, remark) VALUES
+(1, '系统网站标题', 'sys.site.title', '信创工业综合治理平台', 'Y', '登录页及大屏显示的系统名称'),
+(2, '系统LOGO图标', 'sys.site.logo', '/logo.png', 'Y', '系统顶部导航及大屏显示的Logo路径'),
+(3, 'GIS地图来源', 'sys.map.source', 'amap', 'Y', '地图引擎来源：amap(高德), baidu(百度), tianditu(天地图), offline(离线自建)'),
+(4, 'GIS默认中心点', 'sys.map.center', '[118.67, 24.87]', 'Y', '格式为 [经度, 纬度]'),
+(5, 'SMTP邮件服务器', 'sys.mail.smtp', 'smtp.163.com', 'N', '报警通知发送邮箱服务器地址');
 
 -- ----------------------------
 -- 9. 初始化边缘网关和测点映射规则

@@ -34,7 +34,7 @@
             <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
           </div>
           <el-table :data="tableData" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="custom-table custom-scrollbar">
-            <el-table-column prop="zone_name" label="DMA分区" min-width="120"  show-overflow-tooltip />
+            <el-table-column prop="zone_name" label="DMA分区"  show-overflow-tooltip />
             <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="150" show-overflow-tooltip>
               <template #default="scope">
                 <el-progress 
@@ -45,7 +45,7 @@
                   class="dark-progress" />
               </template>
             </el-table-column>
-            <el-table-column prop="nrw_m3" label="损失量 (m³)" align="right" min-width="120" show-overflow-tooltip>
+            <el-table-column prop="nrw_m3" label="损失量 (m³)" align="right" show-overflow-tooltip>
               <template #default="scope">
                 <span class="highlight-number">
                   {{ Number(scope.row.nrw_m3).toLocaleString() }}

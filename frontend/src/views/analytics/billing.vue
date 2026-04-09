@@ -15,7 +15,7 @@
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
           <el-table-column prop="id" label="账单编号" width="100"  show-overflow-tooltip />
           <el-table-column prop="account_no" label="大用户号" width="150"  show-overflow-tooltip />
-          <el-table-column prop="account_name" label="用户名称"  show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="account_name" label="用户名称"  show-overflow-tooltip  />
           <el-table-column prop="billing_period" label="账期" width="120" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="logic-text">{{ row.billing_period }}</span>

@@ -22,7 +22,7 @@
               <span class="money-text">￥{{ scope.row.price_per_m3 }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="description" label="适用说明"  show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="description" label="适用说明"  show-overflow-tooltip  />
           <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" class="industrial-switch" />

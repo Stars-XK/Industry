@@ -30,7 +30,7 @@
       </el-row>
       <el-table :data="tableData" border style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="60" align="center"  show-overflow-tooltip />
-        <el-table-column prop="sourceName" label="数据源名称"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="sourceName" label="数据源名称"  show-overflow-tooltip  />
         <el-table-column prop="sourceType" label="接入类型" width="120"  show-overflow-tooltip />
         <el-table-column prop="cronExpression" label="定时采集频率" width="150"  show-overflow-tooltip />
         <el-table-column prop="status" label="状态" width="100" align="center" show-overflow-tooltip>

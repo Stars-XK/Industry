@@ -34,7 +34,7 @@
               <span class="logic-text" style="color: var(--el-text-color-regular);">{{ row.phone }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="address" label="企业地址" show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="address" label="企业地址" show-overflow-tooltip  />
           <el-table-column prop="tariff_name" label="适用费率" width="150" align="center" show-overflow-tooltip>
             <template #default="scope">
               <el-tooltip :content="`单价: ￥${scope.row.price_per_m3} / m³`" placement="top" effect="dark">

@@ -30,9 +30,9 @@
             {{ row.menu_type === 'M' ? '目录' : (row.menu_type === 'C' ? '菜单' : '按钮') }}
           </template>
         </el-table-column>
-        <el-table-column prop="path" label="路由路径"  show-overflow-tooltip  min-width="120" />
-        <el-table-column prop="component" label="组件路径"  show-overflow-tooltip  min-width="120" />
-        <el-table-column prop="perm_code" label="权限标识"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="path" label="路由路径"  show-overflow-tooltip  />
+        <el-table-column prop="component" label="组件路径"  show-overflow-tooltip  />
+        <el-table-column prop="perm_code" label="权限标识"  show-overflow-tooltip  />
         <el-table-column prop="visible" label="显示状态" width="100" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="row.visible === 1 ? 'status-dot success' : 'status-dot danger'"></span>

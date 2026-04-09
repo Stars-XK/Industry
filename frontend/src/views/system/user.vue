@@ -13,8 +13,8 @@
       </template>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center"  show-overflow-tooltip />
-        <el-table-column prop="username" label="登录名"  show-overflow-tooltip  min-width="120" />
-        <el-table-column prop="nickname" label="用户昵称"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="username" label="登录名"  show-overflow-tooltip  />
+        <el-table-column prop="nickname" label="用户昵称"  show-overflow-tooltip  />
         <el-table-column prop="gender" label="性别" width="80" show-overflow-tooltip>
           <template #default="{ row }">
             <span v-if="row.gender === 1" class="status-dot info"></span>
@@ -23,8 +23,8 @@
             {{ row.gender === 1 ? '男' : (row.gender === 2 ? '女' : '未知') }}
           </template>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号"  show-overflow-tooltip  min-width="120" />
-        <el-table-column prop="email" label="邮箱"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="phone" label="手机号"  show-overflow-tooltip  />
+        <el-table-column prop="email" label="邮箱"  show-overflow-tooltip  />
         <el-table-column prop="dept_id" label="部门ID" width="80"  show-overflow-tooltip />
         <el-table-column label="分配角色" width="180" show-overflow-tooltip>
           <template #default="scope">

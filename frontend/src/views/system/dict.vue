@@ -34,8 +34,8 @@
         element-loading-text="Thinking…"
         element-loading-spinner="el-icon-loading"
       >
-        <el-table-column prop="dict_label" label="字典标签 (Label)"  show-overflow-tooltip  min-width="120" />
-        <el-table-column prop="dict_value" label="字典键值 (Value)"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="dict_label" label="字典标签 (Label)"  show-overflow-tooltip  />
+        <el-table-column prop="dict_value" label="字典键值 (Value)"  show-overflow-tooltip  />
         <el-table-column prop="dict_sort" label="排序" width="80"  show-overflow-tooltip />
         <el-table-column prop="status" label="状态" width="100" show-overflow-tooltip>
           <template #default="{ row }">

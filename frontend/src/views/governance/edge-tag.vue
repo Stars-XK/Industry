@@ -68,8 +68,8 @@
         >
           <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
           <el-table-column prop="device_id" label="设备ID" width="100"  show-overflow-tooltip />
-          <el-table-column prop="tag_name" label="原始测点标签名"  show-overflow-tooltip  min-width="120" />
-          <el-table-column prop="standard_name" label="标准化属性名"  show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="tag_name" label="原始测点标签名"  show-overflow-tooltip  />
+          <el-table-column prop="standard_name" label="标准化属性名"  show-overflow-tooltip  />
           <el-table-column prop="data_type" label="数据类型" width="100"  show-overflow-tooltip />
           <el-table-column prop="unit" label="单位" width="80"  show-overflow-tooltip />
           <el-table-column prop="scaling_factor" label="缩放因子" width="100"  show-overflow-tooltip />
@@ -78,7 +78,7 @@
               <el-switch v-model="row.is_active" :active-value="1" :inactive-value="0" class="industrial-switch" />
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" show-overflow-tooltip  min-width="120" />
+          <el-table-column prop="remark" label="备注" show-overflow-tooltip  />
           <el-table-column label="操作" width="150" align="center" show-overflow-tooltip>
             <template #default="{ row }">
               <el-button link class="text-neon" @click="handleEdit(row)">编辑</el-button>

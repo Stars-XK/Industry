@@ -24,7 +24,7 @@
             {{ scope.row.is_online === 1 ? '在线 (Connected)' : '离线 (Offline)' }}
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注说明"  show-overflow-tooltip  min-width="120" />
+        <el-table-column prop="remark" label="备注说明"  show-overflow-tooltip  />
         <el-table-column label="操作" width="150" fixed="right" show-overflow-tooltip>
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>

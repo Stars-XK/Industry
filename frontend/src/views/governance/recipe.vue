@@ -19,7 +19,7 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="parameters_json" label="工艺参数" show-overflow-tooltip min-width="120">
+          <el-table-column prop="parameters_json" label="工艺参数" show-overflow-tooltip>
             <template #default="scope">
               <div class="json-viewer">
                 {{ JSON.stringify(scope.row.parameters_json) }}

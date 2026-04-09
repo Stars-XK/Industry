@@ -57,7 +57,7 @@
             >
               <el-table-column prop="id" label="内部ID" width="70"  show-overflow-tooltip />
               <el-table-column prop="device_code" label="资产编号" width="140"  show-overflow-tooltip />
-              <el-table-column prop="name" label="设备名称"  show-overflow-tooltip  min-width="120" />
+              <el-table-column prop="name" label="设备名称"  show-overflow-tooltip  />
               <el-table-column prop="direction" label="流向" width="80" align="center" show-overflow-tooltip>
                 <template #default="{ row }">
                   <el-tag v-if="row.direction === '流入'" type="success" effect="dark" class="industrial-tag">流入</el-tag>

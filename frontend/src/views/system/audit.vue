@@ -27,7 +27,7 @@
             <el-tag :class="getMethodClass(row.req_method)" effect="dark" style="border: none; font-family: 'SF Mono', monospace;">{{ row.req_method }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="req_url" label="请求路径" show-overflow-tooltip min-width="120">
+        <el-table-column prop="req_url" label="请求路径" show-overflow-tooltip>
           <template #default="{ row }">
             <span style="color: var(--el-text-color-primary); font-family: 'SF Mono', monospace;">{{ row.req_url }}</span>
           </template>

@@ -302,13 +302,7 @@ html.dark .el-dialog {
   margin-left: 0 !important;
 }
 
-/* Force tables to scroll horizontally instead of wrapping text into tall, ugly rows */
-.el-table .cell {
-  white-space: nowrap !important;
-  word-break: keep-all !important;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+
 
 /* Pagination wrap */
 .el-pagination {

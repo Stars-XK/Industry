@@ -8,12 +8,12 @@
       </div>
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80"  show-overflow-tooltip />
-        <el-table-column prop="device_name" label="关联物理设备" show-overflow-tooltip min-width="120">
+        <el-table-column prop="device_name" label="关联物理设备" show-overflow-tooltip>
           <template #default="scope">
             <span class="highlight-text">[{{ scope.row.device_code }}] {{ scope.row.device_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="gateway_sn" label="归属网关SN" show-overflow-tooltip min-width="120">
+        <el-table-column prop="gateway_sn" label="归属网关SN" show-overflow-tooltip>
           <template #default="scope">
             <el-tag type="info" v-if="scope.row.gateway_sn" class="custom-tag">{{ scope.row.gateway_sn }}</el-tag>
             <span v-else class="text-gray-400">未绑定网关</span>

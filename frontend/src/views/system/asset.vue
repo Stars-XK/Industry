@@ -41,12 +41,17 @@
             <template #default="{ node, data }">
               <div class="tree-node">
                 <div class="node-icon" :class="data.level">
-                  <el-icon v-if="data.level === 'org'" :size="14"><OfficeBuilding /></el-icon>
-                  <el-icon v-else-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
-                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
+                  <!-- Org Building Icon -->
+                  <svg v-if="data.level === 'org'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>
+                  
+                  <!-- Zone Map/Area Icon -->
+                  <svg v-else-if="data.level === 'zone'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                  
+                  <!-- Site / Factory Icon -->
+                  <svg v-else-if="data.level === 'site'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M17 18h1"></path><path d="M13 18h1"></path><path d="M9 18h1"></path></svg>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
-                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType }}</span>
+                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
@@ -150,17 +155,71 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { OfficeBuilding, MapLocation, HomeFilled, Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
+import { ref, watch, onMounted } from 'vue'
+import { Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
 const filterText = ref('')
 const treeRef = ref<any>(null)
 const currentSiteName = ref('')
+const siteTree = ref<any[]>([])
+const deviceList = ref<any[]>([])
+const currentSiteId = ref<number | null>(null)
 
 const defaultProps = {
   children: 'children',
   label: 'label',
 }
+
+const fetchTreeData = async () => {
+  try {
+    // 调用后端刚刚写好的 tree 接口
+    const res = await request.get('/api/v1/system/asset/tree')
+    siteTree.value = res.data || []
+  } catch (error) {
+    console.error('Failed to fetch asset tree:', error)
+  }
+}
+
+const fetchDevices = async (siteId: number) => {
+  try {
+    const res = await request.get(`/api/v1/system/asset/devices`, {
+      params: { siteId, page: 1, size: 50 }
+    })
+    // 映射后端字段到前端需要展示的结构
+    deviceList.value = (res.data?.list || []).map((d: any) => ({
+      id: d.id,
+      deviceCode: d.device_code,
+      deviceName: d.device_name,
+      deviceType: getDeviceTypeName(d.device_type),
+      installDate: d.install_date,
+      status: d.status === 1 ? '在线' : '离线',
+      points: (d.points || []).map((p: any) => ({
+        pointCode: p.point_code,
+        pointName: p.point_name,
+        pointType: getPointCategoryName(p.point_category),
+        unit: p.unit,
+        updateTime: '-'
+      }))
+    }))
+  } catch (error) {
+    console.error('Failed to fetch devices:', error)
+  }
+}
+
+const getDeviceTypeName = (type: number) => {
+  const map: Record<number, string> = { 1: '智能水表', 2: '压力计', 3: '水泵', 4: '水质仪' }
+  return map[type] || '未知设备'
+}
+
+const getPointCategoryName = (category: number) => {
+  const map: Record<number, string> = { 1: '瞬时流量', 2: '压力', 3: '水质', 4: '状态值', 5: '累计流量' }
+  return map[category] || '其他'
+}
+
+onMounted(() => {
+  fetchTreeData()
+})
 
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
@@ -174,8 +233,12 @@ const filterNode = (value: string, data: any) => {
 const handleNodeClick = (data: any) => {
   if (data.level === 'site') {
     currentSiteName.value = data.label
+    currentSiteId.value = data.realId
+    fetchDevices(data.realId)
   } else {
     currentSiteName.value = ''
+    currentSiteId.value = null
+    deviceList.value = []
   }
 }
 
@@ -183,102 +246,6 @@ const handleCommand = (command: string, data: any) => {
   console.log(`Command: ${command}, Node:`, data)
   // TODO: implement modals for creation and editing
 }
-
-// 模拟数据：部门 -> 分区 -> 站点 (与 mysql_seed.sql 保持完全一致)
-const siteTree = ref([
-  {
-    id: 1,
-    label: '泉州水务集团',
-    level: 'org',
-    children: [
-      {
-        id: 2,
-        label: '丰泽区供水分公司',
-        level: 'org',
-        children: [
-          {
-            id: 102,
-            label: '丰泽区',
-            level: 'zone',
-            zoneType: '行政大区',
-            children: [
-              {
-                id: 201,
-                label: '东海科技园区DMA',
-                level: 'zone',
-                zoneType: '工业园区',
-                children: [
-                  { id: 1, label: '东海园区进水泵站', level: 'site', deviceCount: 2 }
-                ]
-              },
-              {
-                id: 202,
-                label: '泉港新片区DMA',
-                level: 'zone',
-                zoneType: '居民区',
-                children: [
-                  { id: 3, label: '西湖水质监测点', level: 'site', deviceCount: 1 }
-                ]
-              },
-              { id: 2, label: '丰泽2号加压泵站', level: 'site', deviceCount: 1 }
-            ]
-          }
-        ]
-      },
-      {
-        id: 4,
-        label: '鲤城区供水分公司',
-        level: 'org',
-        children: [
-          {
-            id: 104,
-            label: '鲤城区',
-            level: 'zone',
-            zoneType: '行政大区',
-            children: [
-              {
-                id: 204,
-                label: '洛江开发区DMA',
-                level: 'zone',
-                zoneType: '工业园区',
-                children: [
-                  { id: 4, label: '鲤城地下泵房', level: 'site', deviceCount: 3 }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-])
-
-// 模拟数据：设备与测点列表 (匹配 mysql_seed.sql 真实数据)
-const deviceList = ref([
-  {
-    id: '1',
-    deviceCode: 'METER_IN_01',
-    deviceName: '东海园区总进水管表',
-    deviceType: '智能水表',
-    installDate: '2023-01-15',
-    status: '在线',
-    points: [
-      { pointCode: 'METER_IN_01_TEMP', pointName: '温度', pointType: '状态值', unit: '°C', updateTime: '2026-04-09 10:00:00' },
-      { pointCode: 'METER_IN_01_PRESS', pointName: '水压', pointType: '压力', unit: 'MPa', updateTime: '2026-04-09 10:00:00' },
-      { pointCode: 'METER_IN_01_FLOW', pointName: '瞬时流量', pointType: '瞬时流量', unit: 'm³/h', updateTime: '2026-04-09 10:00:00' },
-      { pointCode: 'METER_IN_01_TOTAL', pointName: '累计流量', pointType: '累计流量', unit: 'm³', updateTime: '2026-04-09 10:00:00' }
-    ]
-  },
-  {
-    id: '203',
-    deviceCode: 'PRESS_01',
-    deviceName: '东海末端管网压力计',
-    deviceType: '压力计',
-    installDate: '2022-05-20',
-    status: '在线',
-    points: []
-  }
-])
 
 const getPointColorClass = (type: string) => {
   switch (type) {
@@ -435,6 +402,9 @@ const getPointColorClass = (type: string) => {
   justify-content: center;
   margin-right: 8px;
   color: #889096;
+}
+.node-icon svg {
+  opacity: 0.85;
 }
 .node-icon.org { color: var(--el-color-primary); }
 .node-icon.zone { color: var(--el-color-success); }

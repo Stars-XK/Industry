@@ -31,7 +31,7 @@
 
       <div class="user-info">
         
-        <button class="business-guide-btn" @click="router.push('/panorama')">
+        <button class="business-guide-btn" @click="showBusinessGuide = true">
           <el-icon><DataLine /></el-icon>
           工业数据流转与平台治理全景图
         </button>
@@ -87,8 +87,105 @@
     </div>
   </div>
 
-<!-- Drawer removed as it's now a full page route /panorama -->
-</template>
+<!-- 业务全景与数据流转向导抽屉 -->
+    <el-drawer
+      v-model="showBusinessGuide"
+      title="工业数据流转与平台治理全景图"
+      size="85%"
+      :with-header="false"
+      class="premium-drawer"
+    >
+      <div class="drawer-header">
+        <h2>工业数据流转与平台治理全景图</h2>
+        <p>Industrial Data Flow & Platform Governance Panorama</p>
+        <div class="close-btn" @click="showBusinessGuide = false"><el-icon><Close /></el-icon></div>
+      </div>
+
+      <div class="drawer-body">
+        
+        <!-- 核心业务管线流转图 -->
+        <div class="guide-section">
+          <div class="section-heading">
+            <h3>核心业务流转方向 (Data Pipeline & Quick Actions)</h3>
+            <p>理解数据从哪里来，到哪里去，如何被清洗。点击下方按钮可快速抵达对应业务菜单配置。</p>
+          </div>
+          
+          <div class="pipeline-track">
+            <!-- Step 1: 基础台账构建 -->
+            <div class="track-node">
+              <div class="node-icon"><el-icon><OfficeBuilding /></el-icon></div>
+              <div class="node-info">
+                <h4>1. 基础台账构建</h4>
+                <p>建立物理与逻辑映射：部门/用户权限 ➔ 分区(DMA) ➔ 站点(水厂/泵站) ➔ 设备 ➔ 测点。建立营收水卡映射。</p>
+                <div class="node-actions">
+                  <el-button size="small" type="primary" plain @click="router.push('/system/org'); showBusinessGuide=false">组织与分区</el-button>
+                  <el-button size="small" type="primary" plain @click="router.push('/system/asset'); showBusinessGuide=false">设备与测点台账</el-button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="track-connector"><el-icon><Right /></el-icon></div>
+
+            <!-- Step 2: 实时采集与时序清洗 -->
+            <div class="track-node highlight-node">
+              <div class="node-icon"><el-icon><DataLine /></el-icon></div>
+              <div class="node-info">
+                <h4>2. 实时采集与时序底座</h4>
+                <p>定时抓取底层传感数据（瞬时/累计流量、压力等），存入 TDengine 进行清洗与降采样计算。</p>
+                <div class="node-actions">
+                  <el-button size="small" type="primary" @click="router.push('/governance/interpolate'); showBusinessGuide=false">时序清洗与插值规则</el-button>
+                </div>
+              </div>
+            </div>
+
+            <div class="track-connector"><el-icon><Right /></el-icon></div>
+
+            <!-- Step 3: 供水量计算 -->
+            <div class="track-node">
+              <div class="node-icon"><el-icon><Odometer /></el-icon></div>
+              <div class="node-info">
+                <h4>3. 供水量与夜间流量提取</h4>
+                <p>瞬时流量 ➔ 设备5分钟量 ➔ 2-4点分区MNF。<br/>累计流量 ➔ 切割出设备日用量 ➔ 汇总分区日/月供水。</p>
+                <div class="node-actions">
+                  <el-button size="small" type="primary" plain @click="router.push('/analytics/mnf'); showBusinessGuide=false">全域夜间最小流量</el-button>
+                </div>
+              </div>
+            </div>
+
+            <div class="track-connector"><el-icon><Right /></el-icon></div>
+
+            <!-- Step 4: 营收侧售水量融合 -->
+            <div class="track-node">
+              <div class="node-icon"><el-icon><Money /></el-icon></div>
+              <div class="node-info">
+                <h4>4. 营收侧售水量融合</h4>
+                <p>获取营收用户数据 ➔ 计算单用户日/月用量 ➔ 关联分区水卡信息 ➔ 汇总分区日/月售水。</p>
+                <div class="node-actions">
+                  <el-button size="small" type="primary" plain @click="router.push('/analytics/key-account'); showBusinessGuide=false">大户档案与水卡</el-button>
+                  <el-button size="small" type="primary" plain @click="router.push('/analytics/billing'); showBusinessGuide=false">营收计费与出账</el-button>
+                </div>
+              </div>
+            </div>
+
+            <div class="track-connector"><el-icon><Right /></el-icon></div>
+
+            <!-- Step 5: 全域展现 -->
+            <div class="track-node highlight-node-success">
+              <div class="node-icon"><el-icon><PieChart /></el-icon></div>
+              <div class="node-info">
+                <h4>5. 全域产销差计算与展现</h4>
+                <p>供水减去售水得出差值。系统提供涵盖所有分区的日报、月报及产销差看板，杜绝面子工程。</p>
+                <div class="node-actions">
+                  <el-button size="small" type="success" @click="router.push('/analytics/nrw'); showBusinessGuide=false">全域产销差报表</el-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </el-drawer>
+  </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
@@ -96,7 +193,7 @@ import { ref, watch, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { useConfigStore } from '@/store/config';
-import { QuestionFilled } from '@element-plus/icons-vue';
+import { Right, Guide, QuestionFilled, Close, ElementPlus, Connection, Link, Filter, Monitor, Operation, Finished, OfficeBuilding, DataLine, Odometer, Money, PieChart } from '@element-plus/icons-vue';
 import { useTutorial } from '@/hooks/useTutorial';
 
 const { startTutorial } = useTutorial();

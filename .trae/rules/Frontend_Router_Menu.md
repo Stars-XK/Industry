@@ -9,7 +9,6 @@
 ```text
 / (Root)
 ├── /login                   [登录与门户] 统一登录页 (Login)
-├── /panorama                [全局常驻] 工业数据流转与平台治理全景图 (Data Flow Panorama) - 右上角入口
 ├── /dashboard               [登录与门户] 沉浸式数字孪生大屏 (Digital Twin Dashboard)
 ├── /scada                   [综合业务监控台] (SCADA & Monitor)
 │   ├── /scada/overview        - 全局态势感知 (Overview Dashboard)
@@ -62,7 +61,6 @@
 |---|---|---|---|---|
 | 统一登录页 | `/login` | `views/login/index.vue` | `sys:login` | 多模态认证、防暴破滑动验证码、RBAC 权限拉取初始化 |
 | 数字孪生大屏 | `/dashboard` | `views/dashboard/index.vue` | `sys:dashboard` | WebGL/3D 地图底座、安全间距分析、一图统管、爆管聚焦联动弹窗 |
-| 数据流转全景图 | `/panorama` | `views/dashboard/panorama.vue` | `sys:panorama` | 常驻顶栏右上角入口。全域数据流转动画，从基础台账、清洗、供水、售水至全域产销差计算链路 |
 
 ### 2.2 综合业务监控台 (SCADA & Monitor)
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |

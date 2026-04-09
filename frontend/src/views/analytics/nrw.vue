@@ -24,7 +24,7 @@
             <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="150">
               <template #default="scope">
                 <el-progress 
-                  :percentage="Number(scope.row.nrw_ratio)" 
+                  :percentage="Number(scope.row.nrw_ratio) || 0" 
                   :color="customColors" 
                   :stroke-width="8" 
                   :show-text="true"

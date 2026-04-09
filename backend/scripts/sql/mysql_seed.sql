@@ -76,9 +76,11 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 
 -- 6. 系统设置与台账权限
 (50, 0, '系统设置与台账权限', 6, '/system', 'Layout', 0, 0, '', 'M', 1, 1, 'Setting', '', 1),
+(58, 50, '用户与账号管理', 1, 'user', 'system/user', 0, 0, 'sys:user', 'C', 1, 1, 'User', '', 1),
 (53, 50, '组织架构与部门管理', 2, 'org', 'system/org', 0, 0, 'sys:org', 'C', 1, 1, 'OfficeBuilding', '', 1),
 (54, 50, '角色与权限体系', 3, 'rbac', 'system/rbac', 0, 0, 'sys:rbac', 'C', 1, 1, 'Avatar', '', 1),
-(55, 50, '数据字典管理', 4, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
+(62, 50, '菜单配置管理', 4, 'menu', 'system/menu', 0, 0, 'sys:menu', 'C', 1, 1, 'Menu', '', 1),
+(55, 50, '数据字典管理', 5, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
 (51, 50, '资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1),
 (52, 50, '备品备件与仓储管理', 6, 'inventory', 'system/inventory', 0, 0, 'sys:inventory', 'C', 1, 1, 'ShoppingCart', '', 1),
 (56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
@@ -285,7 +287,7 @@ INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
 (1, 20), (1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26), (1, 28),
 (1, 30), (1, 31), (1, 32), (1, 33), (1, 34), (1, 35),
 (1, 40), (1, 41), (1, 42), (1, 43), (1, 44), (1, 45), (1, 46), (1, 47),
-(1, 50), (1, 51), (1, 52), (1, 53), (1, 54), (1, 55), (1, 56), (1, 57), (1, 59), (1, 60), (1, 61),
+(1, 50), (1, 51), (1, 52), (1, 53), (1, 54), (1, 55), (1, 56), (1, 57), (1, 58), (1, 59), (1, 60), (1, 61), (1, 62),
 (2, 10), (2, 11), (2, 13),
 (3, 10), (3, 11),
 (3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP

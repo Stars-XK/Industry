@@ -143,9 +143,9 @@ const goHome = () => {
   min-height: calc(100vh - 84px);
 }
 .box-card {
-  border: none;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
   transition: all 0.3s ease;
 }

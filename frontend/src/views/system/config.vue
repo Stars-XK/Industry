@@ -113,9 +113,9 @@ const handleBatchSave = async () => {
 }
 
 .box-card {
-  border: none;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
   transition: all 0.3s ease;
 }
@@ -151,15 +151,5 @@ const handleBatchSave = async () => {
   padding: 8px 16px;
   font-weight: 500;
   transition: all 0.2s ease;
-}
-
-.el-button--primary {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-.el-button--primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
 }
 </style>

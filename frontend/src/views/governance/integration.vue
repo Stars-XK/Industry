@@ -181,9 +181,9 @@ onMounted(() => {
 }
 
 .box-card {
-  border: none;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--el-box-shadow-light);
   background-color: var(--el-bg-color);
   transition: all 0.3s ease;
 }
@@ -200,15 +200,15 @@ onMounted(() => {
 .status-card {
   text-align: center;
   border-radius: 8px;
-  border: none;
+  border: 1px solid var(--el-border-color-light);
   background-color: var(--el-fill-color-light);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--el-box-shadow-light);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .status-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--el-box-shadow);
 }
 
 .status-card.connected {
@@ -239,6 +239,8 @@ onMounted(() => {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 24px;
+  --el-table-border-color: var(--el-border-color-lighter);
+  --el-table-header-bg-color: var(--el-fill-color-light);
 }
 
 /* 按钮样式优化 */
@@ -247,16 +249,6 @@ onMounted(() => {
   padding: 8px 16px;
   font-weight: 500;
   transition: all 0.2s ease;
-}
-
-.el-button--primary {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-.el-button--primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
 }
 
 /* 标签样式优化 */

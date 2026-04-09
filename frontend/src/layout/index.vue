@@ -522,6 +522,7 @@ onMounted(() => {
   position: relative;
   pointer-events: auto;
   overflow: hidden;
+  height: 100%;
 }
 /* 核心路由层: 各个业务组件在这里决定自己的尺寸和位置 */
 .app-main {
@@ -534,6 +535,7 @@ onMounted(() => {
   position: relative;
   pointer-events: auto;
   overflow: hidden;
+  height: 100%;
 }
 /* 兼容老页面的业务容器 (新页面建议使用 .premium-container) */
 </style>

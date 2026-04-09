@@ -57,6 +57,7 @@ body {
   border: 1px solid var(--el-border-color-light);
   height: 90%; /* Default height 90% */
   width: 50%;  /* Default width 50% */
+  margin: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -68,6 +69,7 @@ body {
 .app-container.wide-panel {
   width: 90%;
   height: 90%;
+  margin: auto;
 }
 
 .box-card {

@@ -52,7 +52,7 @@ body {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-height: calc(100vh - 100px);
+  min-height: 100%;
   box-sizing: border-box;
   width: 100%;
 }

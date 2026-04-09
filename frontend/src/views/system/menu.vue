@@ -305,7 +305,6 @@ onMounted(() => {
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
-  min-flex: 1;
   display: flex;
   flex-direction: column;
   flex: 1;

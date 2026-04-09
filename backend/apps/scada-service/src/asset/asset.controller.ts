@@ -48,18 +48,18 @@ export class AssetController {
     const zoneMap = new Map();
 
     depts.forEach((d: any) => {
-      const node = { id: \`dept_\${d.id}\`, realId: d.id, label: d.label, level: 'org', children: [] };
+      const node = { id: `dept_${d.id}`, realId: d.id, label: d.label, level: 'org', children: [] };
       deptMap.set(d.id, node);
     });
 
     zones.forEach((z: any) => {
-      const node = { id: \`zone_\${z.id}\`, realId: z.id, label: z.label, level: 'zone', children: [] };
+      const node = { id: `zone_${z.id}`, realId: z.id, label: z.label, level: 'zone', children: [] };
       zoneMap.set(z.id, node);
     });
 
     sites.forEach((s: any) => {
       const node = { 
-        id: \`site_\${s.id}\`, 
+        id: `site_${s.id}`, 
         realId: s.id, 
         label: s.label, 
         level: 'site', 
@@ -105,35 +105,35 @@ export class AssetController {
   @ApiOperation({ summary: '分页获取站点下的设备列表' })
   async getDevices(@Query() query: any) {
     const { siteId, page = 1, size = 20, keyword = '' } = query;
-    let sql = \`SELECT * FROM ast_device WHERE status != 0\`;
+    let sql = `SELECT * FROM ast_device WHERE status != 0`;
     const params: any[] = [];
 
     if (siteId) {
-      sql += \` AND site_id = ?\`;
+      sql += ` AND site_id = ?`;
       params.push(siteId);
     }
     if (keyword) {
-      sql += \` AND (device_name LIKE ? OR device_code LIKE ?)\`;
-      params.push(\`%\${keyword}%\`, \`%\${keyword}%\`);
+      sql += ` AND (device_name LIKE ? OR device_code LIKE ?)`;
+      params.push(`%${keyword}%`, `%${keyword}%`);
     }
 
-    sql += \` ORDER BY id DESC LIMIT ? OFFSET ?\`;
+    sql += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
     params.push(Number(size), (Number(page) - 1) * Number(size));
 
     const list = await this.dataSource.query(sql, params);
 
     // 统计总数
-    let countSql = \`SELECT COUNT(*) as total FROM ast_device WHERE status != 0\`;
+    let countSql = `SELECT COUNT(*) as total FROM ast_device WHERE status != 0`;
     const countParams: any[] = [];
-    if (siteId) { countSql += \` AND site_id = ?\`; countParams.push(siteId); }
-    if (keyword) { countSql += \` AND (device_name LIKE ? OR device_code LIKE ?)\`; countParams.push(\`%\${keyword}%\`, \`%\${keyword}%\`); }
+    if (siteId) { countSql += ` AND site_id = ?`; countParams.push(siteId); }
+    if (keyword) { countSql += ` AND (device_name LIKE ? OR device_code LIKE ?)`; countParams.push(`%${keyword}%`, `%${keyword}%`); }
     
     const countRes = await this.dataSource.query(countSql, countParams);
     
     // 获取每个设备的测点
     for (const dev of list) {
       dev.points = await this.dataSource.query(
-        \`SELECT id, point_code, point_name, point_category, data_type, unit FROM ast_measuring_point WHERE device_id = ?\`,
+        `SELECT id, point_code, point_name, point_category, data_type, unit FROM ast_measuring_point WHERE device_id = ?`,
         [dev.id]
       );
     }
@@ -150,7 +150,7 @@ export class AssetController {
   async createSite(@Body() body: any) {
     const { site_code, site_name, site_type, zone_id, dept_id } = body;
     await this.dataSource.query(
-      \`INSERT INTO ast_site (site_code, site_name, site_type, zone_id, dept_id) VALUES (?, ?, ?, ?, ?)\`,
+      `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, dept_id) VALUES (?, ?, ?, ?, ?)`,
       [site_code, site_name, site_type, zone_id || null, dept_id || null]
     );
     return { success: true };
@@ -162,7 +162,7 @@ export class AssetController {
   async updateSite(@Param('id') id: number, @Body() body: any) {
     const { site_name, site_type, zone_id, dept_id } = body;
     await this.dataSource.query(
-      \`UPDATE ast_site SET site_name=?, site_type=?, zone_id=?, dept_id=? WHERE id=?\`,
+      `UPDATE ast_site SET site_name=?, site_type=?, zone_id=?, dept_id=? WHERE id=?`,
       [site_name, site_type, zone_id || null, dept_id || null, id]
     );
     return { success: true };

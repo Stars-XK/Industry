@@ -9,7 +9,6 @@
         <el-button  @click="handleAdd">补录能耗数据</el-button>
       </div>
     </div>
-
     <div class="info-banner">
       <el-icon class="banner-icon"><InfoFilled /></el-icon>
       <div class="banner-content">
@@ -17,7 +16,6 @@
         <div class="banner-desc">核心指标：吨水百米能耗指标 (kWh/m3·100m) = (日耗电量 / 日泵水量) × (100 / 设计扬程)。该指标越低，说明泵组运行能效越高。当指标显著偏离基线时，建议安排机电检修。</div>
       </div>
     </div>
-
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
         <el-table-column prop="id" label="ID" width="80" align="center" />
@@ -56,7 +54,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog title="手工补录设备能耗" v-model="dialogVisible" width="480px" @close="resetForm"  :show-close="false">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px"  label-position="left">
         <el-form-item label="耗能设备" prop="device_id">
@@ -83,13 +80,11 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
 const dialogVisible = ref(false)
@@ -100,16 +95,13 @@ const form = ref({
   power_kwh: 0,
   water_pumped_m3: 0
 })
-
 const deviceOptions = ref<any[]>([])
-
 const rules = {
   device_id: [{ required: true, message: '必选', trigger: 'change' }],
   record_date: [{ required: true, message: '必填', trigger: 'blur' }],
   power_kwh: [{ required: true, message: '必填', trigger: 'blur' }],
   water_pumped_m3: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -119,17 +111,14 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const fetchOptions = async () => {
   try {
     deviceOptions.value = await request.get('/api/v1/data-center/governance/assets') || []
   } catch (e) { /* fallback */ }
 }
-
 const handleAdd = () => {
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除该日期的能耗记录吗？`, '警告', { type: 'error' }).then(async () => {
     try {
@@ -139,7 +128,6 @@ const handleDelete = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -153,25 +141,20 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
 }
-
 onMounted(() => {
   fetchOptions()
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -179,7 +162,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -188,20 +170,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -209,10 +186,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .info-banner {
   display: flex;
   align-items: flex-start;
@@ -244,32 +217,15 @@ onMounted(() => {
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
-
-
-
-
 .text-rose { color: var(--el-color-danger); }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

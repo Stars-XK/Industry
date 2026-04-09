@@ -6,7 +6,6 @@
         <el-button type="primary"  @click="handleAdd">新增映射</el-button>
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
-
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="device_name" label="关联物理设备">
@@ -35,7 +34,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" custom- @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="绑定物理设备" prop="device_id">
@@ -66,7 +64,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -76,13 +73,11 @@
       @success="fetchOptions"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
 const showImport = ref(false)
@@ -97,22 +92,18 @@ const form = ref({
   ts_tag_name: '',
   deadband: 0
 })
-
 const deviceOptions = ref<any[]>([])
 const gatewayOptions = ref<any[]>([])
-
 const rules = {
   device_id: [{ required: true, message: '必须绑定物理设备', trigger: 'change' }],
   ts_tag_name: [{ required: true, message: '必填，必须全局唯一', trigger: 'blur' }]
 }
-
 const fetchOptions = async () => {
   try {
     deviceOptions.value = await request.get('/api/v1/data-center/governance/assets') || []
     gatewayOptions.value = await request.get('/api/v1/data-center/governance/gateways') || []
   } catch (e) { /* fallback */ }
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -122,18 +113,15 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleAdd = () => {
   dialogTitle.value = '新增映射'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑映射'
   form.value = { ...row }
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除时序标签 [${row.ts_tag_name}] 的映射关系吗？SCADA系统将无法再解析该测点。`, '高危操作确认', {
     type: 'error'
@@ -145,7 +133,6 @@ const handleDelete = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -163,26 +150,21 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value.id = ''
 }
-
 onMounted(() => {
   fetchOptions()
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -190,7 +172,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -199,20 +180,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -220,13 +196,12 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 .panel-title {
   font-size: 16px;
@@ -238,8 +213,8 @@ onMounted(() => {
   font-weight: 600;
 }
 .custom-tag {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
   color: var(--el-text-color-primary);
 }
 .custom-tag-warning {

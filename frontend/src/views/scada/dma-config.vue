@@ -35,7 +35,6 @@
           </div>
         </div>
       </el-col>
-
       <!-- 右侧：挂载设备管理 -->
       <el-col :span="16" style="height: 100%;">
         <div class="box-card" style="height: 100%;" v-if="currentZone">
@@ -71,7 +70,6 @@
         </div>
       </el-col>
     </el-row>
-
     <!-- 分区配置弹窗 -->
     <el-dialog :title="zoneDialogTitle" v-model="zoneDialogVisible" width="500px" @close="resetZoneForm" custom-class="industrial-dialog">
       <el-form ref="zoneFormRef" :model="zoneForm" :rules="zoneRules" label-width="120px" class="industrial-form">
@@ -93,12 +91,11 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="zoneDialogVisible = false">取消</el-button>
+          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="zoneDialogVisible = false">取消</el-button>
           <el-button  @click="submitZoneForm">确定</el-button>
         </span>
       </template>
     </el-dialog>
-
     <!-- 挂载设备弹窗 -->
     <el-dialog title="挂载物理设备" v-model="bindDialogVisible" width="600px" @close="resetBindForm" custom-class="industrial-dialog">
       <el-form ref="bindFormRef" :model="bindForm" :rules="bindRules" label-width="100px" class="industrial-form">
@@ -122,13 +119,12 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="bindDialogVisible = false">取消</el-button>
+          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="bindDialogVisible = false">取消</el-button>
           <el-button  @click="submitBindForm">确定挂载</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -138,18 +134,15 @@
       @success="fetchTree"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 // ----- 拓扑树相关 -----
 const treeData = ref([])
 const loadingTree = ref(false)
 const currentZone = ref<any>(null)
-
 const fetchTree = async () => {
   loadingTree.value = true
   try {
@@ -159,7 +152,6 @@ const fetchTree = async () => {
     loadingTree.value = false
   }
 }
-
 // ----- 分区 CRUD -----
 const zoneDialogVisible = ref(false)
 const zoneDialogTitle = ref('新增分区')
@@ -175,19 +167,16 @@ const zoneForm = ref({
 const zoneRules = {
   zone_name: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const handleAddZone = (parentId: number, parentLevel: number = 0) => {
   zoneDialogTitle.value = '新增分区'
   zoneForm.value = { id: '', parent_id: parentId, zone_name: '', level: parentLevel + 1, boundary_gis: '', mnf_baseline: 0 }
   zoneDialogVisible.value = true
 }
-
 const handleEditZone = (data: any) => {
   zoneDialogTitle.value = '编辑分区'
   zoneForm.value = { id: data.id, parent_id: data.parent_id || 0, zone_name: data.label, level: data.level, boundary_gis: data.boundary_gis, mnf_baseline: data.mnf_baseline }
   zoneDialogVisible.value = true
 }
-
 const submitZoneForm = async () => {
   if (!zoneFormRef.value) return
   await zoneFormRef.value.validate(async (valid: boolean) => {
@@ -208,7 +197,6 @@ const submitZoneForm = async () => {
     }
   })
 }
-
 const handleDeleteZone = (data: any) => {
   ElMessageBox.confirm(`确定删除分区 [${data.label}] 吗？如果存在子分区或挂载设备将拒绝删除。`, '警告', {
     type: 'warning',
@@ -225,16 +213,13 @@ const handleDeleteZone = (data: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const resetZoneForm = () => {
   if (zoneFormRef.value) zoneFormRef.value.resetFields()
 }
-
 // ----- 挂载设备相关 -----
 const deviceData = ref([])
 const loadingDevices = ref(false)
 const availableAssets = ref<any[]>([])
-
 const bindDialogVisible = ref(false)
 const bindFormRef = ref()
 const bindForm = ref({
@@ -244,12 +229,10 @@ const bindForm = ref({
 const bindRules = {
   device_id: [{ required: true, message: '请选择设备', trigger: 'change' }]
 }
-
 const handleNodeClick = (data: any) => {
   currentZone.value = data
   fetchDevices()
 }
-
 const fetchDevices = async () => {
   if (!currentZone.value) return
   loadingDevices.value = true
@@ -260,19 +243,16 @@ const fetchDevices = async () => {
     loadingDevices.value = false
   }
 }
-
 const fetchAvailableAssets = async () => {
   try {
     const res = await request.get('/api/v1/scada/topology/assets/available')
     availableAssets.value = res || []
   } catch (e) { /* fallback */ }
 }
-
 const handleBindDevice = async () => {
   await fetchAvailableAssets()
   bindDialogVisible.value = true
 }
-
 const submitBindForm = async () => {
   if (!bindFormRef.value) return
   await bindFormRef.value.validate(async (valid: boolean) => {
@@ -286,7 +266,6 @@ const submitBindForm = async () => {
     }
   })
 }
-
 const handleUnbindDevice = (row: any) => {
   ElMessageBox.confirm(`确定将设备 [${row.name}] 从当前分区移出吗？`, '提示', {
     type: 'warning',
@@ -299,25 +278,20 @@ const handleUnbindDevice = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const resetBindForm = () => {
   if (bindFormRef.value) bindFormRef.value.resetFields()
   bindForm.value = { device_id: null, direction: 1 }
 }
-
 onMounted(() => {
   fetchTree()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -325,7 +299,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -334,20 +307,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -355,7 +323,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .empty-panel {
   display: flex;
   align-items: center;
@@ -366,13 +333,13 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -386,17 +353,15 @@ onMounted(() => {
 .tree-container {
   flex: 1;
   overflow-y: auto;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--el-border-color-light);
   padding: 16px;
 }
 .industrial-tree {
   background: transparent !important;
   color: var(--el-text-color-primary);
 }
-
-
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -422,23 +387,18 @@ onMounted(() => {
   opacity: 1;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .-success {
   border-color: rgba(103, 194, 58, 0.5);
   color: #67C23A;
@@ -454,5 +414,4 @@ onMounted(() => {
 .industrial-tag {
   border: none;
 }
-
 </style>

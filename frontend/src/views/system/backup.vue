@@ -26,7 +26,6 @@
         </el-button>
       </div>
     </div>
-
     <el-card class="box-card">
       <el-table :data="tableData" v-loading="loading" style="width: 100%" class="custom-table" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
@@ -69,7 +68,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="queryParams.pageNum"
@@ -82,7 +80,6 @@
         />
       </div>
     </el-card>
-
     <!-- 定时备份策略弹窗 -->
     <el-dialog title="自动备份策略配置" v-model="showStrategy" width="500px">
       <el-form :model="strategyForm" label-width="120px">
@@ -108,26 +105,21 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { DataLine, Upload, DocumentAdd, Download, RefreshLeft, Setting } from '@element-plus/icons-vue';
 import request from '@/utils/request';
-
 const loading = ref(false);
 const tableData = ref([]);
 const total = ref(0);
-
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10
 });
-
 const uploadHeaders = {
   Authorization: `Bearer ${localStorage.getItem('token') || ''}`
 };
-
 // 自动备份策略相关
 const showStrategy = ref(false);
 const strategyForm = ref({
@@ -135,12 +127,10 @@ const strategyForm = ref({
   cron: '0 2 * * *',
   keepDays: 30
 });
-
 const saveStrategy = () => {
   ElMessage.success('定时备份策略已更新生效');
   showStrategy.value = false;
 };
-
 const formatSize = (bytes: number) => {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -148,7 +138,6 @@ const formatSize = (bytes: number) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
-
 const getList = async () => {
   loading.value = true;
   try {
@@ -165,7 +154,6 @@ const getList = async () => {
     loading.value = false;
   }
 };
-
 const handleCreateBackup = async () => {
   loading.value = true;
   try {
@@ -181,7 +169,6 @@ const handleCreateBackup = async () => {
     loading.value = false;
   }
 };
-
 const handleRestore = async (row: any) => {
   loading.value = true;
   try {
@@ -197,11 +184,9 @@ const handleRestore = async (row: any) => {
     loading.value = false;
   }
 };
-
 const handleDownload = (row: any) => {
   window.open(`/api/v1/system/backup/download?id=${row.id}&token=${localStorage.getItem('token')}`);
 };
-
 const handleUploadSuccess = (response: any) => {
   if (response.code === 200) {
     ElMessage.success('上传成功');
@@ -210,23 +195,19 @@ const handleUploadSuccess = (response: any) => {
     ElMessage.error(response.message || '上传失败');
   }
 };
-
 const handleUploadError = () => {
   ElMessage.error('上传文件失败');
 };
-
 onMounted(() => {
   getList();
 });
 </script>
-
 <style scoped>
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -234,7 +215,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -243,26 +223,20 @@ onMounted(() => {
   font-size: 16px;
   color: var(--el-text-color-primary);
 }
-
 .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 .pagination-container {
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
   padding: 10px 0;
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -270,7 +244,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 /* 标签样式优化 */
 .el-tag {
   border-radius: 4px;

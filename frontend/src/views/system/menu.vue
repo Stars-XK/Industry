@@ -11,7 +11,6 @@
           </div>
         </div>
       </template>
-
       <el-table
         :data="tableData"
         row-key="id"
@@ -61,7 +60,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
@@ -79,7 +77,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-form-item label="菜单类型" prop="menu_type">
           <el-radio-group v-model="form.menu_type">
             <el-radio
@@ -89,7 +86,6 @@
             >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
         </el-form-item>
-
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="菜单名称" prop="menu_name">
@@ -102,7 +98,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20" v-if="form.menu_type !== 'F'">
           <el-col :span="12">
             <el-form-item label="路由路径" prop="path">
@@ -115,7 +110,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20">
           <el-col :span="12" v-if="form.menu_type === 'C'">
             <el-form-item label="组件路径" prop="component">
@@ -128,7 +122,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20" v-if="form.menu_type !== 'F'">
           <el-col :span="12">
             <el-form-item label="显示状态" prop="visible">
@@ -153,7 +146,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20" v-if="form.menu_type !== 'F'">
           <el-col :span="12">
             <el-form-item label="是否外链" prop="is_frame">
@@ -189,24 +181,19 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Menu, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
-
 const { sys_show_hide, sys_normal_disable, sys_menu_type, sys_yes_no } = useDict('sys_show_hide', 'sys_normal_disable', 'sys_menu_type', 'sys_yes_no')
-
 const loading = ref(false)
 const tableData = ref([])
 const menuOptions = ref<any[]>([])
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增菜单')
 const formRef = ref()
-
 const form = ref({
   id: undefined,
   parent_id: 0,
@@ -223,11 +210,9 @@ const form = ref({
   status: 1,
   remark: ''
 })
-
 const rules = {
   menu_name: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
 }
-
 const getList = async () => {
   loading.value = true
   try {
@@ -238,7 +223,6 @@ const getList = async () => {
     loading.value = false
   }
 }
-
 const resetForm = () => {
   form.value = {
     id: undefined,
@@ -257,14 +241,12 @@ const resetForm = () => {
     remark: ''
   }
 }
-
 const handleAdd = (parentId: number) => {
   resetForm()
   form.value.parent_id = parentId
   dialogTitle.value = '新增菜单'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   resetForm()
   form.value = {
@@ -286,7 +268,6 @@ const handleEdit = (row: any) => {
   dialogTitle.value = '编辑菜单'
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   if (row.children && row.children.length > 0) {
     ElMessage.warning('存在子菜单，不允许删除')
@@ -300,7 +281,6 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -317,19 +297,16 @@ const submitForm = async () => {
     }
   })
 }
-
 onMounted(() => {
   getList()
 })
 </script>
-
 <style scoped>
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -337,7 +314,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -346,20 +322,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -367,7 +338,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .status-dot {
   display: inline-block;
   width: 6px;
@@ -376,22 +346,18 @@ onMounted(() => {
   margin-right: 6px;
   vertical-align: middle;
 }
-
 .status-dot.success {
   background-color: var(--el-color-success);
   box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
-
 .status-dot.danger {
   background-color: #ef4444;
   box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
 }
-
 .status-dot.warning {
   background-color: #f59e0b;
   box-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
 }
-
 .status-dot.info {
   background-color: #3b82f6;
   box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);

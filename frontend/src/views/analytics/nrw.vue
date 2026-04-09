@@ -27,7 +27,6 @@
         </el-button>
       </div>
     </div>
-
     <el-row :gutter="24" style="margin-bottom: 24px;">
       <el-col :span="10">
         <div class="box-card" v-loading="loading" >
@@ -56,7 +55,6 @@
           </el-table>
         </div>
       </el-col>
-      
       <el-col :span="14">
         <div class="box-card" v-loading="sankeyLoading" >
           <div class="panel-header">
@@ -67,7 +65,6 @@
         </div>
       </el-col>
     </el-row>
-
     <el-row>
       <el-col :span="24">
         <div class="box-card" v-loading="trendLoading"  style="height: 380px;">
@@ -80,7 +77,6 @@
     </el-row>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import request from '@/utils/request'
@@ -89,9 +85,7 @@ import { SankeyChart, LineChart, BarChart } from 'echarts/charts'
 import { TooltipComponent, TitleComponent, GridComponent, LegendComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { Search, Download } from '@element-plus/icons-vue'
-
 echarts.use([SankeyChart, LineChart, BarChart, TooltipComponent, TitleComponent, GridComponent, LegendComponent, CanvasRenderer])
-
 const tableData = ref([])
 const loading = ref(false)
 const sankeyLoading = ref(false)
@@ -99,18 +93,15 @@ const trendLoading = ref(false)
 const dateRange = ref<[Date, Date]>([new Date(), new Date()])
 const topoVersion = ref('latest')
 const currentZoneName = ref('')
-
 const sankeyChartRef = ref<HTMLElement | null>(null)
 const trendChartRef = ref<HTMLElement | null>(null)
 let sankeyInstance: echarts.ECharts | null = null
 let trendInstance: echarts.ECharts | null = null
-
 const customColors = [
   { color: '#67C23A', percentage: 10 },
   { color: '#E6A23C', percentage: 15 },
   { color: '#F56C6C', percentage: 20 },
 ]
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -125,7 +116,6 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleRowClick = async (row: any) => {
   currentZoneName.value = row.zone_name
   sankeyLoading.value = true
@@ -138,7 +128,6 @@ const handleRowClick = async (row: any) => {
     if (sankeyRes && sankeyRes.nodes) {
       renderSankey(sankeyRes.nodes, sankeyRes.links)
     }
-
     // 2. 渲染同环比折线图
     const trendRes: any = await request.get('/api/v1/data-center/analytics/nrw/trend', {
       params: { zoneId: row.zone_id }
@@ -151,13 +140,11 @@ const handleRowClick = async (row: any) => {
     trendLoading.value = false
   }
 }
-
 const renderSankey = (nodes: any[], links: any[]) => {
   if (!sankeyInstance && sankeyChartRef.value) {
     sankeyInstance = echarts.init(sankeyChartRef.value)
   }
   if (!sankeyInstance) return
-
   const option = {
     tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
     series: [
@@ -181,7 +168,6 @@ const renderSankey = (nodes: any[], links: any[]) => {
     ]
   }
   sankeyInstance.setOption(option)
-    
   // 下钻功能
   sankeyInstance.on('click', (params: any) => {
     if (params.dataType === 'node' && params.data.name.includes('分区')) {
@@ -193,13 +179,11 @@ const renderSankey = (nodes: any[], links: any[]) => {
     }
   });
 }
-
 const renderTrend = (months: string[], ratios: number[]) => {
   if (!trendInstance && trendChartRef.value) {
     trendInstance = echarts.init(trendChartRef.value)
   }
   if (!trendInstance) return
-
   const option = {
     tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
@@ -224,32 +208,26 @@ const renderTrend = (months: string[], ratios: number[]) => {
   }
   trendInstance.setOption(option)
 }
-
 const handleResize = () => {
   if (sankeyInstance) sankeyInstance.resize()
   if (trendInstance) trendInstance.resize()
 }
-
 onMounted(() => {
   fetchData()
   window.addEventListener('resize', handleResize)
 })
-
 onBeforeUnmount(() => {
   if (sankeyInstance) sankeyInstance.dispose()
   if (trendInstance) trendInstance.dispose()
   window.removeEventListener('resize', handleResize)
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -257,7 +235,6 @@ onBeforeUnmount(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -266,20 +243,15 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -287,10 +259,6 @@ onBeforeUnmount(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .table-panel {
   height: 520px;
   padding: 20px;
@@ -319,7 +287,6 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .sankey-chart, .trend-chart {
   width: 100%;
   flex: 1;
@@ -330,8 +297,6 @@ onBeforeUnmount(() => {
   font-family: "SF Mono", monospace;
   font-size: 16px;
 }
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

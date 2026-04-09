@@ -154,8 +154,8 @@ const handleLogin = async () => {
 .login-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #020617;
-  color: #f8fafc;
+  background-color: var(--el-bg-color-page);
+  color: var(--el-text-color-primary);
   font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
 }
@@ -176,7 +176,7 @@ const handleLogin = async () => {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.4) 50%, rgba(2, 6, 23, 0.1) 100%);
+  background: linear-gradient(to top, var(--el-bg-color) 0%, transparent 100%);
   z-index: 1;
 }
 
@@ -204,7 +204,7 @@ const handleLogin = async () => {
   line-height: 1.1;
   font-weight: 700;
   margin: 0 0 24px 0;
-  color: #ffffff;
+  color: var(--el-text-color-primary)fff;
   letter-spacing: -1px;
 }
 
@@ -219,7 +219,7 @@ const handleLogin = async () => {
 .system-stats {
   display: flex;
   gap: 48px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--el-border-color-light);
   padding-top: 32px;
 }
 
@@ -253,7 +253,7 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 1px solid var(--el-border-color-light);
 }
 
 .form-wrapper {
@@ -286,7 +286,7 @@ const handleLogin = async () => {
   font-size: 28px;
   font-weight: 600;
   margin: 0 0 12px 0;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
 }
 
 .form-header p {
@@ -316,7 +316,7 @@ const handleLogin = async () => {
 label {
   font-size: 13px;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--el-text-color-regular);
 }
 
 .forgot-link {
@@ -332,9 +332,9 @@ label {
 
 .input-field input {
   width: 100%;
-  background: #0f172a;
+  background: var(--el-bg-color);
   border: 1px solid #1e293b;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   padding: 14px 16px;
   border-radius: 8px;
   font-size: 15px;
@@ -367,7 +367,7 @@ label {
 
 .submit-btn {
   background: var(--el-color-primary);
-  color: #fff;
+  color: var(--el-text-color-primary);
   border: none;
   border-radius: 8px;
   width: 100%;
@@ -396,7 +396,7 @@ label {
 .loading-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(2, 6, 23, 0.3);
+  border: 1px solid var(--el-border-color-light);
   border-top-color: #020617;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -405,7 +405,7 @@ label {
 .form-footer {
   margin-top: 48px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--el-border-color-light);
 }
 
 .form-footer p {

@@ -6,7 +6,6 @@
         <el-button type="primary"  @click="handleAdd">新增网关</el-button>
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
-
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="gateway_sn" label="网关序列号 (SN)" width="250">
@@ -34,7 +33,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px" custom- @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="网关SN码" prop="gateway_sn">
@@ -65,7 +63,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -75,13 +72,11 @@
       @success="fetchData"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref([])
 const loading = ref(false)
 const showImport = ref(false)
@@ -95,11 +90,9 @@ const form = ref({
   is_online: 0,
   remark: ''
 })
-
 const rules = {
   gateway_sn: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -109,18 +102,15 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleAdd = () => {
   dialogTitle.value = '新增网关'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑网关'
   form.value = { ...row }
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm('删除网关属于高危操作。如果该网关已被测点映射规则绑定，系统将拦截。是否继续？', '警告', {
     confirmButtonText: '强制删除',
@@ -134,7 +124,6 @@ const handleDelete = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -152,25 +141,20 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value.id = ''
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -178,7 +162,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -187,20 +170,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -208,13 +186,12 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 .panel-title {
   font-size: 16px;

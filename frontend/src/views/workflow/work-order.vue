@@ -9,7 +9,6 @@
         <el-button  @click="handleAdd">手工创建工单</el-button>
       </div>
     </div>
-
     <div class="box-card" style="padding: 20px; flex: 1;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
         <el-table-column prop="order_sn" label="工单编号" width="180">
@@ -72,7 +71,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog title="指派处理人" v-model="assignDialogVisible" width="400px"  :show-close="false">
       <el-form label-width="80px"  label-position="top">
         <el-form-item label="接单人">
@@ -88,7 +86,6 @@
         </div>
       </template>
     </el-dialog>
-
     <el-dialog title="工单闭环" v-model="closeDialogVisible" width="500px"  :show-close="false">
       <el-form label-width="80px"  label-position="top">
         <el-form-item label="处理结果">
@@ -104,25 +101,19 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
-
 const usersOptions = ref<any[]>([])
-
 const assignDialogVisible = ref(false)
 const assignHandlerId = ref<number | null>(null)
 const currentOrder = ref<any>(null)
-
 const closeDialogVisible = ref(false)
 const closeResultDesc = ref('')
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -132,38 +123,32 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const fetchOptions = async () => {
   try {
     usersOptions.value = await request.get('/api/v1/workflow/order/options/users') || []
   } catch (e) { /* fallback */ }
 }
-
 const handleAdd = () => {
   ElMessage.info('手工建单请联系管理员，或通过设备台账直接下发。目前主要由报警风暴中心自动触发。')
 }
-
 const getStatusClass = (status: number) => {
   if (status === 10) return 'status-warning'
   if (status === 20) return 'status-primary'
   if (status === 30) return 'status-success'
   return ''
 }
-
 const getStatusText = (status: number) => {
   if (status === 10) return '待接单'
   if (status === 20) return '处理中'
   if (status === 30) return '已闭环'
   return '未知'
 }
-
 const handleAccept = async (row: any) => {
   await fetchOptions()
   currentOrder.value = row
   assignHandlerId.value = null
   assignDialogVisible.value = true
 }
-
 const submitAssign = async () => {
   if (!assignHandlerId.value) {
     ElMessage.warning('请选择接单人')
@@ -176,13 +161,11 @@ const submitAssign = async () => {
     fetchData()
   } catch (e) { /* fallback */ }
 }
-
 const handleClose = (row: any) => {
   currentOrder.value = row
   closeResultDesc.value = ''
   closeDialogVisible.value = true
 }
-
 const submitClose = async () => {
   if (!closeResultDesc.value) {
     ElMessage.warning('必须填写处理结果才能闭环归档')
@@ -195,7 +178,6 @@ const submitClose = async () => {
     fetchData()
   } catch (e) { /* fallback */ }
 }
-
 const viewDetail = (row: any) => {
   ElMessageBox.alert(`
     <div style="font-size:13px;line-height:1.8;">
@@ -207,20 +189,16 @@ const viewDetail = (row: any) => {
     </div>
   `, '工单详情', { dangerouslyUseHTMLString: true })
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -228,7 +206,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -237,20 +214,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -258,18 +230,11 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
-
-
 .status-indicator {
   display: flex;
   align-items: center;
@@ -321,28 +286,16 @@ onMounted(() => {
   display: flex;
   gap: 12px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

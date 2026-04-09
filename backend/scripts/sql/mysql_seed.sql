@@ -166,7 +166,7 @@ INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4,
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 204, 4, 0); -- 洛江
 
 -- 6. 数据字典测试数据
-INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES 
+INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES
 (1, '设备类型', 'sys_device_type', '物联网传感器的枚举类型', 1),
 (2, '工单状态', 'wf_order_status', '流程工单的生命周期状态', 1),
 (3, '用户性别', 'sys_user_sex', '用户性别列表', 1),

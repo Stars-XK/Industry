@@ -11,7 +11,6 @@
           </div>
         </div>
       </template>
-
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="username" label="登录名" />
@@ -58,7 +57,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
@@ -74,7 +72,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="手机号" prop="phone">
@@ -87,7 +84,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="部门ID" prop="dept_id">
@@ -107,13 +103,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-form-item label="分配角色" prop="roleIds">
           <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%" class="dark-input">
             <el-option v-for="item in roleOptions" :key="item.id" :label="item.role_name" :value="item.id" />
           </el-select>
         </el-form-item>
-
         <el-form-item label="状态" prop="status" v-if="form.id">
           <el-radio-group v-model="form.status">
             <el-radio
@@ -123,7 +117,6 @@
             >{{ dict.dict_label }}</el-radio>
           </el-radio-group>
         </el-form-item>
-
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注信息" />
         </el-form-item>
@@ -135,36 +128,28 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
-
 const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
-
 const loading = ref(false)
 const tableData = ref([])
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增用户')
 const formRef = ref()
-
 const deptOptions = ref<any[]>([])
 const roleOptions = ref<any[]>([])
-
 const fetchOptions = async () => {
   try {
     const res = await request.get('/api/v1/system/dept/tree')
     deptOptions.value = [{ id: 0, dept_name: '顶级部门', children: res }]
-    
     const roleRes = await request.get('/api/v1/system/role/list')
     roleOptions.value = roleRes || []
   } catch (e) { /* fallback */ }
 }
-
 const form = ref({
   id: undefined,
   username: '',
@@ -177,13 +162,11 @@ const form = ref({
   status: 1,
   remark: ''
 })
-
 const rules = {
   username: [{ required: true, message: '请输入登录名', trigger: 'blur' }],
   nickname: [{ required: true, message: '请输入用户昵称', trigger: 'blur' }],
   dept_id: [{ required: true, message: '请输入部门ID', trigger: 'blur' }]
 }
-
 const getList = async () => {
   loading.value = true
   try {
@@ -193,7 +176,6 @@ const getList = async () => {
     loading.value = false
   }
 }
-
 const resetForm = () => {
   form.value = {
     id: undefined,
@@ -208,14 +190,12 @@ const resetForm = () => {
     remark: ''
   }
 }
-
 const handleAdd = async () => {
   await fetchOptions()
   resetForm()
   dialogTitle.value = '新增用户'
   dialogVisible.value = true
 }
-
 const handleEdit = async (row: any) => {
   await fetchOptions()
   resetForm()
@@ -234,7 +214,6 @@ const handleEdit = async (row: any) => {
   dialogTitle.value = '编辑用户'
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除用户 "${row.username}" 吗？`, '警告', {
     type: 'warning'
@@ -244,7 +223,6 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -277,19 +255,16 @@ const submitForm = async () => {
     }
   })
 }
-
 onMounted(() => {
   getList()
 })
 </script>
-
 <style scoped>
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -297,7 +272,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -306,20 +280,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -327,14 +296,12 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 /* 标签样式优化 */
 .el-tag {
   border-radius: 4px;
   padding: 4px 8px;
   font-weight: 500;
 }
-
 .status-dot {
   display: inline-block;
   width: 6px;
@@ -343,22 +310,18 @@ onMounted(() => {
   margin-right: 6px;
   vertical-align: middle;
 }
-
 .status-dot.success {
   background-color: var(--el-color-success);
   box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
-
 .status-dot.danger {
   background-color: #ef4444;
   box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
 }
-
 .status-dot.warning {
   background-color: #f59e0b;
   box-shadow: 0 0 4px rgba(245, 158, 11, 0.4);
 }
-
 .status-dot.info {
   background-color: #3b82f6;
   box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);

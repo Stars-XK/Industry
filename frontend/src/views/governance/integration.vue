@@ -9,7 +9,6 @@
           </el-button>
         </div>
       </template>
-
       <el-row :gutter="20" style="margin-bottom: 24px;">
         <el-col :span="6" v-for="channel in statusData.channels" :key="channel.protocol">
           <el-card shadow="hover" class="status-card" :class="channel.status">
@@ -29,7 +28,6 @@
           </el-card>
         </el-col>
       </el-row>
-
       <el-table :data="tableData" border style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="60" align="center" />
         <el-table-column prop="sourceName" label="数据源名称" />
@@ -54,7 +52,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
         <el-form-item label="数据源名称" prop="sourceName">
@@ -90,29 +87,24 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Connection, Plus, Edit, Delete } from '@element-plus/icons-vue';
 import request from '@/utils/request';
-
 const loading = ref(false);
 const statusData = ref({ channels: [] });
 const tableData = ref([]);
-
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const formRef = ref();
 const form = ref<any>({
   status: 1
 });
-
 const rules = {
   sourceName: [{ required: true, message: '请输入数据源名称', trigger: 'blur' }],
   sourceType: [{ required: true, message: '请选择类型', trigger: 'change' }]
 };
-
 const getStatus = async () => {
   try {
     const res = await request.get('/api/v1/data-center/governance/integration/status');
@@ -121,7 +113,6 @@ const getStatus = async () => {
     console.error(e);
   }
 };
-
 const getList = async () => {
   loading.value = true;
   try {
@@ -133,19 +124,16 @@ const getList = async () => {
     loading.value = false;
   }
 };
-
 const handleAdd = () => {
   dialogTitle.value = '新增数据源接入';
   form.value = { status: 1 };
   dialogVisible.value = true;
 };
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑数据源';
   form.value = { ...row };
   dialogVisible.value = true;
 };
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm('确认删除该数据源吗?', '提示', { type: 'warning' }).then(async () => {
     await request.delete('/api/v1/data-center/governance/integration/' + row.id);
@@ -153,7 +141,6 @@ const handleDelete = (row: any) => {
     getList();
   }).catch(() => {});
 };
-
 const submitForm = async () => {
   await formRef.value.validate();
   if (form.value.id) {
@@ -166,20 +153,17 @@ const submitForm = async () => {
   dialogVisible.value = false;
   getList();
 };
-
 onMounted(() => {
   getStatus();
   getList();
 });
 </script>
-
 <style scoped>
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -187,7 +171,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -196,7 +179,6 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .status-card {
   text-align: center;
   border-radius: 8px;
@@ -205,27 +187,22 @@ onMounted(() => {
   box-shadow: var(--el-box-shadow-light);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .status-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--el-box-shadow);
 }
-
 .status-card.connected {
   border-left: 4px solid #10b981; /* Emerald 500 */
 }
-
 .status-card.warning {
   border-left: 4px solid #f59e0b; /* Amber 500 */
 }
-
 .channel-title {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 12px;
   color: var(--el-text-color-primary);
 }
-
 .channel-stat {
   font-size: 13px;
   color: var(--el-text-color-regular);
@@ -234,15 +211,11 @@ onMounted(() => {
   justify-content: space-between;
   padding: 0 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 24px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -250,7 +223,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 /* 标签样式优化 */
 .el-tag {
   border-radius: 4px;

@@ -10,7 +10,6 @@
         <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
     </div>
-
     <div class="box-card" style="flex: 1; padding: 20px;">
       <el-table
         :data="tableData"
@@ -20,7 +19,6 @@
         style="width: 100%"
         class="custom-table custom-scrollbar"
         v-loading="loading"
-        
       >
         <el-table-column prop="dept_name" label="部门名称" min-width="200">
           <template #default="{ row }">
@@ -61,7 +59,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px"  :show-close="false">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px"  label-position="left">
@@ -134,7 +131,6 @@
         </div>
       </template>
     </el-dialog>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -145,25 +141,20 @@
     />
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
-
 const { sys_normal_disable } = useDict('sys_normal_disable')
-
 const loading = ref(false)
 const showImport = ref(false)
 const tableData = ref([])
 const deptOptions = ref<any[]>([])
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增部门')
 const formRef = ref()
-
 const form = ref({
   id: undefined,
   parent_id: 0,
@@ -175,11 +166,9 @@ const form = ref({
   status: 1,
   remark: ''
 })
-
 const rules = {
   dept_name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
 }
-
 const getList = async () => {
   loading.value = true
   try {
@@ -190,7 +179,6 @@ const getList = async () => {
     loading.value = false
   }
 }
-
 const resetForm = () => {
   form.value = {
     id: undefined,
@@ -204,14 +192,12 @@ const resetForm = () => {
     remark: ''
   }
 }
-
 const handleAdd = (parentId: number) => {
   resetForm()
   form.value.parent_id = parentId
   dialogTitle.value = '新增部门'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   resetForm()
   form.value = {
@@ -228,7 +214,6 @@ const handleEdit = (row: any) => {
   dialogTitle.value = '编辑部门'
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   if (row.children && row.children.length > 0) {
     ElMessage.warning('存在子部门，不允许删除')
@@ -242,7 +227,6 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -259,20 +243,16 @@ const submitForm = async () => {
       }
   })
 }
-
 onMounted(() => {
   getList()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -280,7 +260,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -289,20 +268,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -310,43 +284,21 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
-
-
 .action-btns {
   display: flex;
   gap: 12px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
 .text-rose { color: var(--el-color-danger); }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

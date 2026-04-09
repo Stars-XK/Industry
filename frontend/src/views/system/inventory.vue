@@ -9,7 +9,6 @@
         <el-button  @click="handleCreate" v-hasPermi="['sys:inventory:add']">新增备件</el-button>
       </div>
     </div>
-
     <div class="box-card" style="margin-bottom: 24px; padding: 16px 20px;">
       <el-form :inline="true" :model="listQuery" class="dark-filter-form">
         <el-form-item label="备件名称">
@@ -29,7 +28,6 @@
         </el-form-item>
       </el-form>
     </div>
-
     <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
         <el-table-column prop="id" label="ID" width="80" align="center" />
@@ -80,7 +78,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="listQuery.page"
@@ -93,7 +90,6 @@
         />
       </div>
     </div>
-
     <!-- 备件编辑弹窗 -->
     <el-dialog :title="dialogStatus === 'create' ? '新增备件' : '编辑备件'" v-model="dialogVisible" width="650px"  :show-close="false">
       <el-form ref="dataFormRef" :model="temp" label-width="100px"  label-position="left">
@@ -157,7 +153,6 @@
         </div>
       </template>
     </el-dialog>
-
     <!-- 库存操作弹窗 -->
     <el-dialog :title="stockAction === 1 ? '备件入库登记' : '备件出库登记'" v-model="stockDialogVisible" width="500px"  :show-close="false">
       <el-form :model="stockTemp" label-width="100px"  label-position="left">
@@ -184,7 +179,6 @@
         </div>
       </template>
     </el-dialog>
-
     <!-- 流水记录弹窗 -->
     <el-dialog title="出入库流水记录" v-model="logsDialogVisible" width="800px"  :show-close="false">
       <el-table :data="logs" style="width: 100%" height="400" class="custom-table custom-scrollbar">
@@ -224,12 +218,10 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const loading = ref(false)
 const list = ref([])
 const total = ref(0)
@@ -239,7 +231,6 @@ const listQuery = reactive({
   part_name: '',
   category: ''
 })
-
 const dialogVisible = ref(false)
 const dialogStatus = ref('create')
 const temp = reactive({
@@ -255,7 +246,6 @@ const temp = reactive({
   location: '',
   status: 1
 })
-
 const stockDialogVisible = ref(false)
 const stockAction = ref(1)
 const currentPart = ref<any>(null)
@@ -264,10 +254,8 @@ const stockTemp = reactive({
   order_id: '',
   remark: ''
 })
-
 const logsDialogVisible = ref(false)
 const logs = ref([])
-
 const getList = async () => {
   loading.value = true
   try {
@@ -282,13 +270,11 @@ const getList = async () => {
   } catch (e) { /* fallback */ }
   loading.value = false
 }
-
 const resetQuery = () => {
   listQuery.part_name = ''
   listQuery.category = ''
   getList()
 }
-
 const handleCreate = () => {
   dialogStatus.value = 'create'
   Object.assign(temp, {
@@ -306,13 +292,11 @@ const handleCreate = () => {
   })
   dialogVisible.value = true
 }
-
 const handleUpdate = (row: any) => {
   dialogStatus.value = 'update'
   Object.assign(temp, row)
   dialogVisible.value = true
 }
-
 const saveData = async () => {
   try {
     if (dialogStatus.value === 'create') {
@@ -334,7 +318,6 @@ const saveData = async () => {
     getList()
   } catch (e) { /* fallback */ }
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm('确认删除该备件?', '提示', { type: 'warning' }).then(async () => {
     await request({
@@ -345,7 +328,6 @@ const handleDelete = (row: any) => {
     getList()
   })
 }
-
 const handleStock = (row: any, action: number) => {
   stockAction.value = action
   currentPart.value = row
@@ -354,7 +336,6 @@ const handleStock = (row: any, action: number) => {
   stockTemp.remark = action === 1 ? '手动入库' : '领料出库'
   stockDialogVisible.value = true
 }
-
 const saveStock = async () => {
   try {
     await request({
@@ -374,7 +355,6 @@ const saveStock = async () => {
     ElMessage.error(error.message || '操作失败')
   }
 }
-
 const handleLogs = async (row: any) => {
   logsDialogVisible.value = true
   try {
@@ -385,20 +365,16 @@ const handleLogs = async (row: any) => {
     logs.value = data
   } catch (e) { /* fallback */ }
 }
-
 onMounted(() => {
   getList()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -406,7 +382,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -415,20 +390,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -436,25 +406,15 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
-
-
-
 .action-btns {
   display: flex;
   gap: 12px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
 .text-amber { color: #f59e0b; }
@@ -468,39 +428,21 @@ onMounted(() => {
 .danger-btn:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
-  color: #fff;
+  color: var(--el-text-color-primary);
 }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
-
-
-
-
 .pagination-container {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

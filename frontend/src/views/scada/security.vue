@@ -9,7 +9,6 @@
         <el-tag effect="dark" class="status-tag pulse-tag">安防监控在线</el-tag>
       </div>
     </div>
-
     <el-row :gutter="24">
       <el-col :span="16">
         <div class="box-card" style="padding: 20px; height: calc(100vh - 160px);">
@@ -39,7 +38,6 @@
           </div>
         </div>
       </el-col>
-
       <el-col :span="8">
         <div class="box-card" style="padding: 20px; margin-bottom: 24px;">
           <div class="panel-header">
@@ -64,7 +62,6 @@
             </div>
           </div>
         </div>
-
         <div class="box-card" style="padding: 20px;">
           <div class="panel-header">
             <div class="panel-title">门禁与安防联锁 <span>Access Control</span></div>
@@ -90,14 +87,11 @@ import { ref, onMounted } from 'vue'
 import { VideoCamera } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getSecurityData } from '@/api/scada'
-
 const layoutMode = ref('4')
 const loading = ref(false)
-
 const cameraList = ref<any[]>([])
 const doorList = ref<any[]>([])
 const envData = ref<any>({ h2s: 0, co: 0, temp: 0, humidity: 0 })
-
 const loadData = async () => {
   loading.value = true
   try {
@@ -116,24 +110,20 @@ const loadData = async () => {
     loading.value = false
   }
 }
-
 const toggleDoor = (door: any) => {
   ElMessage.success(`${door.name} 已发送锁死指令`)
   door.locked = true
 }
-
 onMounted(() => {
   loadData()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -141,7 +131,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -150,20 +139,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -171,10 +155,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
@@ -237,7 +217,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--el-text-color-regular);
   padding: 12px 16px 24px;
   font-size: 13px;
   letter-spacing: 0.5px;
@@ -298,8 +278,8 @@ onMounted(() => {
   gap: 16px;
 }
 .env-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -337,8 +317,8 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
 }
 .access-info {
@@ -371,12 +351,8 @@ onMounted(() => {
 .danger-btn:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
-  color: #fff;
+  color: var(--el-text-color-primary);
 }
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

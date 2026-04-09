@@ -15,7 +15,6 @@
           </div>
         </div>
       </el-col>
-
       <!-- 右侧详情/设备列表区 -->
       <el-col :span="10" style="height: 100%;">
         <div class="box-card" style="height: 100%;">
@@ -26,7 +25,6 @@
             </div>
             <el-tag v-if="currentNode" type="success" effect="dark" class="industrial-tag">{{ currentNode.label }}</el-tag>
           </div>
-          
           <div v-if="!currentNode" class="empty-tip">
             <el-empty description="请从左侧 2D 画布点击选择一个 DMA 分区节点" />
           </div>
@@ -43,7 +41,6 @@
                 </el-tag>
               </el-descriptions-item>
             </el-descriptions>
-
             <div class="section-title" style="margin-top: 24px; margin-bottom: 12px; color: var(--el-text-color-primary); font-weight: 600;">挂载设备清单及实时遥测数据</div>
             <el-table
               :data="deviceList"
@@ -82,7 +79,6 @@
     </el-row>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import request from '@/utils/request'
@@ -92,17 +88,13 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { TreeChart } from 'echarts/charts'
 import { TooltipComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
-
 use([CanvasRenderer, TreeChart, TooltipComponent])
-
 const loading = ref(false)
 const deviceLoading = ref(false)
 const treeData = ref<any[]>([])
-
 const deviceList = ref<any[]>([])
 const currentNode = ref<any>(null)
 let socket: Socket | null = null
-
 const chartOption = ref<any>({
   backgroundColor: 'transparent',
   tooltip: {
@@ -158,7 +150,6 @@ const chartOption = ref<any>({
     }
   ]
 })
-
 const mapTreeDataForEcharts = (nodes: any[]): any[] => {
   return nodes.map(node => {
     const isAlarm = node.status === 'alarm';
@@ -175,7 +166,6 @@ const mapTreeDataForEcharts = (nodes: any[]): any[] => {
       shadowBlur: 10,
       shadowColor: 'rgba(0, 216, 255, 0.5)'
     };
-
     return {
       name: node.label,
       value: node.id,
@@ -188,7 +178,6 @@ const mapTreeDataForEcharts = (nodes: any[]): any[] => {
     }
   })
 }
-
 const handleChartClick = (params: any) => {
   if (params.data && params.data.originalData) {
     currentNode.value = {
@@ -198,7 +187,6 @@ const handleChartClick = (params: any) => {
     getDevices(params.data.id)
   }
 }
-
 const initWebSocket = () => {
   socket = io('http://localhost:3002/scada', { transports: ['websocket'] })
   socket.on('telemetry_update', (payload: any) => {
@@ -218,7 +206,6 @@ const initWebSocket = () => {
     }
   })
 }
-
 const getTree = async () => {
   loading.value = true
   try {
@@ -229,7 +216,6 @@ const getTree = async () => {
     loading.value = false
   }
 }
-
 const getDevices = async (zoneId: number) => {
   deviceLoading.value = true
   try {
@@ -239,25 +225,20 @@ const getDevices = async (zoneId: number) => {
     deviceLoading.value = false
   }
 }
-
 onMounted(() => {
   getTree()
   initWebSocket()
 })
-
 onUnmounted(() => {
   if (socket) socket.disconnect()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -268,7 +249,6 @@ onUnmounted(() => {
   flex-direction: column;
   padding: 20px;
 }
-
 .header-title {
   font-size: 20px;
   font-weight: 600;
@@ -316,21 +296,12 @@ onUnmounted(() => {
   flex: 1;
   overflow: auto;
 }
-
-
-
-
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
   --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: var(--el-fill-color-light);
   --el-table-text-color: var(--el-text-color-primary);
 }
-
-
 .telemetry-box {
   display: flex;
   flex-direction: column;

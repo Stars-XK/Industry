@@ -76,13 +76,11 @@ const sensors = ref([
 ])
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -90,7 +88,6 @@ const sensors = ref([
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -99,20 +96,15 @@ const sensors = ref([
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -120,18 +112,17 @@ const sensors = ref([
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -146,8 +137,8 @@ const sensors = ref([
   flex: 1;
 }
 .industrial-section {
-  background: rgba(2, 6, 23, 0.3);
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  background: var(--el-bg-color-overlay);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
   height: 100%;
@@ -159,8 +150,8 @@ const sensors = ref([
   font-weight: 600;
   font-size: 14px;
   color: var(--el-text-color-primary);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid var(--el-border-color-light);
+  background: var(--el-bg-color-overlay);
   letter-spacing: 0.5px;
 }
 .section-content {
@@ -172,15 +163,10 @@ const sensors = ref([
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .form-tip {
   color: var(--el-text-color-regular);
   margin-left: 12px;
@@ -195,5 +181,4 @@ const sensors = ref([
   color: var(--el-color-primary);
   font-weight: 600;
 }
-
 </style>

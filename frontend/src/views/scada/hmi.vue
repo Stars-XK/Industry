@@ -13,7 +13,6 @@
           </el-tag>
         </div>
       </div>
-      
       <div class="hmi-canvas">
         <!-- 模拟组态背景图 -->
         <div class="tank-container">
@@ -22,24 +21,20 @@
             <span class="label">清水池液位: {{ tankLevel.toFixed(1) }} %</span>
           </div>
         </div>
-
         <div class="pipe-horizontal">
           <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
         </div>
-
         <!-- 泵组件 -->
         <div class="pump-station">
           <div class="pump" :class="{ running: pumpStatus === 1 }">
             <el-icon :size="40" :class="{ 'is-spinning': pumpStatus === 1 }"><Setting /></el-icon>
             <div class="pump-label">2# 变频主泵</div>
           </div>
-          
           <div class="data-panel">
             <div class="data-row">状态: <el-tag :type="pumpStatus === 1 ? 'success' : 'danger'" size="small" class="industrial-tag">{{ pumpStatus === 1 ? '运行中' : '已停机' }}</el-tag></div>
             <div class="data-row">频率: <span class="val">{{ pumpFreq }}</span> Hz</div>
             <div class="data-row">功率: <span class="val">{{ pumpPower }}</span> kW</div>
           </div>
-
           <div class="control-panel">
             <el-button 
               :class="pumpStatus === 1 ? '-danger' : ''" 
@@ -52,11 +47,9 @@
             <el-button  @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
           </div>
         </div>
-        
         <div class="pipe-horizontal">
           <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
         </div>
-        
         <div class="valve">
           <el-icon :size="30" color="#E6A23C"><Filter /></el-icon>
           <div style="font-size: 12px; margin-top: 5px;">出水总阀</div>
@@ -65,36 +58,29 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Setting, SwitchButton, Operation, Loading, Filter, CircleClose } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { io, Socket } from 'socket.io-client'
-
 // 绑定变量
 const tankLevel = ref(65.5)
 const pumpStatus = ref(0)
 const pumpFreq = ref(0.0)
 const pumpPower = ref(0.0)
 const isConnected = ref(false)
-
 let socket: Socket | null = null
-
 const initWebSocket = () => {
   socket = io('http://localhost:3002/scada', {
     transports: ['websocket']
   })
-
   socket.on('connect', () => {
     isConnected.value = true
   })
-
   socket.on('disconnect', () => {
     isConnected.value = false
   })
-
   socket.on('telemetry_update', (payload: any) => {
     const { topic, data } = payload
     if (topic === 'telemetry/devices/2/data' && data.data) {
@@ -108,7 +94,6 @@ const initWebSocket = () => {
     }
   })
 }
-
 const handleControl = (targetStatus: number) => {
   const actionText = targetStatus === 1 ? '开机' : '停机'
   ElMessageBox.prompt(`危险操作预警：确定要对 [丰泽2# 变频主泵] 执行远程${actionText}操作吗？此操作将被记录入审计日志！\n请输入操作密码：`, '安全反控确认', {
@@ -133,7 +118,6 @@ const handleControl = (targetStatus: number) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const handleSetFreq = () => {
   ElMessageBox.prompt('请输入目标运行频率 (Hz)，范围 25.0 ~ 50.0', '频率调节', {
     confirmButtonText: '下发指令',
@@ -152,26 +136,21 @@ const handleSetFreq = () => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 onMounted(() => {
   initWebSocket()
 })
-
 onUnmounted(() => {
   if (socket) {
     socket.disconnect()
   }
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -179,7 +158,6 @@ onUnmounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -188,20 +166,15 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -209,13 +182,12 @@ onUnmounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
@@ -276,7 +248,7 @@ onUnmounted(() => {
 .pipe-horizontal {
   width: 100px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
   border-top: 1px solid rgba(0, 216, 255, 0.2);
   border-bottom: 1px solid rgba(0, 216, 255, 0.2);
   position: relative;
@@ -310,7 +282,7 @@ onUnmounted(() => {
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
 }
 .pump {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--el-text-color-regular);
   text-align: center;
   margin-bottom: 20px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
@@ -333,7 +305,7 @@ onUnmounted(() => {
 }
 .data-panel {
   background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   padding: 15px 20px;
   border-radius: 8px;
   width: 220px;
@@ -343,7 +315,7 @@ onUnmounted(() => {
 .data-row {
   margin-bottom: 12px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--el-text-color-regular);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -365,7 +337,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--el-text-color-regular);
 }
 .valve .el-icon {
   filter: drop-shadow(0 0 8px rgba(230, 162, 60, 0.4));

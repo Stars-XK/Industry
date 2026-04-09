@@ -9,7 +9,6 @@
         <el-button >生成听漏工单</el-button>
       </div>
     </div>
-
     <el-row :gutter="24" v-loading="loading">
       <el-col :span="24" v-if="hasAnomaly">
         <div class="warning-banner">
@@ -38,11 +37,9 @@ import { ref, onMounted, nextTick } from 'vue'
 import { WarningFilled } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { getMNFData } from '@/api/analytics'
-
 const loading = ref(false)
 const hasAnomaly = ref(false)
 const anomalyZone = ref('未知分区')
-
 const initChart = (dates: string[], actualData: number[], baselineData: number[]) => {
   const dom = document.getElementById('mnf-chart')
   if (!dom) return
@@ -85,7 +82,6 @@ const initChart = (dates: string[], actualData: number[], baselineData: number[]
     ]
   })
 }
-
 const loadData = async () => {
   loading.value = true
   try {
@@ -108,17 +104,14 @@ const loadData = async () => {
     loading.value = false
   }
 }
-
 onMounted(() => loadData())
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -126,7 +119,6 @@ onMounted(() => loadData())
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -135,20 +127,15 @@ onMounted(() => loadData())
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -156,10 +143,6 @@ onMounted(() => loadData())
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .warning-banner {
   display: flex;
   align-items: flex-start;
@@ -214,7 +197,6 @@ onMounted(() => loadData())
   width: 100%;
   height: 100%;
 }
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

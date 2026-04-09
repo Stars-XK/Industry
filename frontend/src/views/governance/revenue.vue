@@ -62,10 +62,8 @@ import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { Warning } from '@element-plus/icons-vue'
 import { saveRevenueRules, triggerRecalculate } from '@/api/governance'
-
 const rule = ref({ cycle: '2', method: 'weight', date: '' })
 const recalcMonth = ref('')
-
 const saveRule = async () => {
   try {
     const res: any = await saveRevenueRules(rule.value)
@@ -77,7 +75,6 @@ const saveRule = async () => {
     ElMessage.success('算法规则配置成功并下发 (Fallback)')
   }
 }
-
 const handleRecalc = () => {
   if (!recalcMonth.value) return ElMessage.warning('请选择月份')
   ElMessageBox.confirm('重算将覆盖当月产销差报表，且此操作不可逆。是否继续？', '危险操作', {
@@ -98,13 +95,11 @@ const handleRecalc = () => {
 }
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -112,7 +107,6 @@ const handleRecalc = () => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -121,20 +115,15 @@ const handleRecalc = () => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -142,18 +131,17 @@ const handleRecalc = () => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -168,8 +156,8 @@ const handleRecalc = () => {
   flex: 1;
 }
 .industrial-section {
-  background: rgba(2, 6, 23, 0.3);
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  background: var(--el-bg-color-overlay);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
   height: 100%;
@@ -179,8 +167,8 @@ const handleRecalc = () => {
   font-weight: 600;
   font-size: 14px;
   color: var(--el-text-color-primary);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid var(--el-border-color-light);
+  background: var(--el-bg-color-overlay);
   display: flex;
   align-items: center;
   letter-spacing: 0.5px;
@@ -215,9 +203,6 @@ const handleRecalc = () => {
   border-left: 4px solid #F56C6C;
   box-shadow: inset 0 0 20px rgba(245, 108, 108, 0.02);
 }
-
-
-
 .-danger {
   border-color: rgba(245, 108, 108, 0.5);
   color: #F56C6C;
@@ -228,8 +213,4 @@ const handleRecalc = () => {
   border-color: #F56C6C;
 }
 /* Custom Input/Select Styling */
-
-
-
-
 </style>

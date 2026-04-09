@@ -9,7 +9,6 @@
         <el-button  @click="dialogVisible = true">换表/拆表录入 (防负流)</el-button>
       </div>
     </div>
-
     <div class="box-card" style="margin-bottom: 24px; padding: 16px 20px;">
       <el-form :inline="true" class="dark-filter-form">
         <el-form-item label="设备编码">
@@ -27,7 +26,6 @@
         </el-form-item>
       </el-form>
     </div>
-
     <div class="box-card" style="flex: 1; padding: 20px;">
       <el-table :data="assets" style="width: 100%" class="custom-table custom-scrollbar">
         <el-table-column prop="code" label="设备编码" width="180">
@@ -79,7 +77,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
@@ -110,7 +107,6 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
-
     <!-- 换表/拆表专属弹窗 -->
     <el-dialog title="设备更换/拆除 (Meter Replacement)" v-model="replaceDialogVisible" width="650px">
       <el-alert title="强制约束：老表拆除止码必须小于或等于新表安装起码，防止时序库产生负流量突变" type="warning" show-icon style="margin-bottom: 20px" />
@@ -138,7 +134,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -152,7 +147,6 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { View } from '@element-plus/icons-vue'
-
 const loading = ref(false)
 const dialogVisible = ref(false)
 const replaceDialogVisible = ref(false)
@@ -176,13 +170,11 @@ const replaceForm = ref({
   new_start_reading: 0,
   reason: ''
 })
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑资产'
   form.value = { ...row }
   dialogVisible.value = true
 }
-
 const handleReplace = (row: any) => {
   replaceForm.value = {
     old_asset_name: row.name || row.asset_name,
@@ -193,11 +185,9 @@ const handleReplace = (row: any) => {
   }
   replaceDialogVisible.value = true
 }
-
 const submitForm = () => {
   dialogVisible.value = false
 }
-
 const submitReplace = () => {
   if (replaceForm.value.old_end_reading > replaceForm.value.new_start_reading) {
     ElMessage.error('新表安装起码不能小于老表拆除止码！');
@@ -206,7 +196,6 @@ const submitReplace = () => {
   ElMessage.success('设备更换记录已保存，时序数据已防负流接续');
   replaceDialogVisible.value = false;
 }
-
 const assets = ref([
   { code: 'M-DN100-01', name: '一厂区总出水表', type: '智能水表', install_date: '2023-01-15', status: '在线', warranty: '2028-01-15' },
   { code: 'V-REG-02', name: '高位水池进水调节阀', type: '阀门', install_date: '2022-05-20', status: '在线', warranty: '2025-05-20' },
@@ -214,13 +203,11 @@ const assets = ref([
 ])
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -228,7 +215,6 @@ const assets = ref([
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -237,20 +223,15 @@ const assets = ref([
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -258,16 +239,11 @@ const assets = ref([
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
 .status-indicator {
   display: flex;
   align-items: center;
@@ -284,8 +260,6 @@ const assets = ref([
 .status-success .dot { background-color: var(--el-color-success); box-shadow: 0 0 8px #10b981; }
 .status-warning { color: #f59e0b; }
 .status-warning .dot { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .danger-btn {
   background: transparent;
@@ -296,34 +270,16 @@ const assets = ref([
 .danger-btn:hover {
   background: rgba(244, 63, 94, 0.1);
   box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
-  color: #fff;
+  color: var(--el-text-color-primary);
 }
 /* Table styles */
-
-
-
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

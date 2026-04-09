@@ -226,7 +226,7 @@ onUnmounted(() => {
   height: 100vh;
   background-color: #050a15;
   background-image: radial-gradient(circle at 50% 50%, #0d1a38 0%, #050a15 100%);
-  color: #fff;
+  color: var(--el-text-color-primary);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -245,7 +245,7 @@ onUnmounted(() => {
   font-size: 28px;
   font-weight: 600;
   letter-spacing: 4px;
-  color: #fff;
+  color: var(--el-text-color-primary);
   text-shadow: 0 0 20px rgba(0, 216, 255, 0.4);
 }
 .time {
@@ -254,7 +254,7 @@ onUnmounted(() => {
   top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--el-text-color-regular);
   letter-spacing: 1px;
 }
 .exit-btn {
@@ -282,7 +282,7 @@ onUnmounted(() => {
   width: 25%;
   background: rgba(8, 15, 30, 0.7);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -292,7 +292,7 @@ onUnmounted(() => {
 .panel-title {
   font-size: 16px;
   font-weight: 500;
-  color: #fff;
+  color: var(--el-text-color-primary);
   letter-spacing: 1px;
   margin-bottom: 20px;
   display: flex;
@@ -311,7 +311,7 @@ onUnmounted(() => {
 .center-panel {
   width: 50%;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   background: rgba(8, 15, 30, 0.4);
   overflow: hidden;
@@ -327,7 +327,7 @@ onUnmounted(() => {
 }
 .kpi-item {
   background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
-  border-left: 1px solid rgba(255,255,255,0.1);
+  border-left: 1px solid var(--el-border-color-light);
   padding: 16px 20px;
   border-radius: 4px;
   transition: transform 0.3s ease;
@@ -339,7 +339,7 @@ onUnmounted(() => {
 }
 .kpi-label {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--el-text-color-regular);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -365,18 +365,18 @@ onUnmounted(() => {
 .alarm-item {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--el-fill-color-light);
   padding: 12px 16px;
   border-radius: 6px;
   border-left: 2px solid transparent;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
 .alarm-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
 }
-.alarm-time { width: 65px; color: rgba(255,255,255,0.4); font-size: 12px; font-family: monospace; }
+.alarm-time { width: 65px; color: var(--el-text-color-regular); font-size: 12px; font-family: monospace; }
 .alarm-level { width: 36px; font-weight: 600; text-align: center; font-size: 12px; border-radius: 4px; padding: 2px 0; margin-right: 12px; }
-.alarm-desc { flex: 1; font-size: 13px; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alarm-desc { flex: 1; font-size: 13px; color: var(--el-text-color-regular); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .HH { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
 .H { background: rgba(255, 184, 0, 0.15); color: #ffb800; border: 1px solid rgba(255, 184, 0, 0.3); }
 .L { background: rgba(0, 216, 255, 0.15); color: var(--el-color-primary); border: 1px solid rgba(0, 216, 255, 0.3); }
@@ -388,13 +388,13 @@ onUnmounted(() => {
   background: rgba(8, 15, 30, 0.8);
   backdrop-filter: blur(10px);
   padding: 16px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 .stat-item {
   font-size: 13px;
-  color: rgba(255,255,255,0.7);
+  color: var(--el-text-color-regular);
   margin-bottom: 12px;
   display: flex;
   align-items: center;

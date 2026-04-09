@@ -9,7 +9,6 @@
         <el-button  @click="handleAdd">新增预案</el-button>
       </div>
     </div>
-
     <div class="box-card" style="padding: 20px;">
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" v-loading="loading" >
         <el-table-column prop="id" label="ID" width="80" align="center" />
@@ -45,7 +44,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" @close="resetForm"  :show-close="false">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px"  label-position="top">
         <el-form-item label="预案名称" prop="sop_name">
@@ -66,7 +64,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -76,18 +73,15 @@
       @success="fetchData"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { View } from '@element-plus/icons-vue'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
 const showImport = ref(false)
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增预案')
 const formRef = ref()
@@ -98,12 +92,10 @@ const form = ref({
   steps_json: '',
   status: 1
 })
-
 const rules = {
   sop_name: [{ required: true, message: '必填', trigger: 'blur' }],
   alarm_type: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -113,18 +105,15 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleAdd = () => {
   dialogTitle.value = '新增预案'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑预案'
   form.value = { ...row, steps_json: typeof row.steps_json === 'string' ? row.steps_json : JSON.stringify(row.steps_json, null, 2) }
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除 SOP 预案 [${row.sop_name}] 吗？`, '提示', { type: 'warning' }).then(async () => {
     try {
@@ -134,19 +123,16 @@ const handleDelete = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const handleStatusChange = async (row: any) => {
   try {
     await request.put(`/api/v1/workflow/sop/${row.id}`, { ...row, steps_json: typeof row.steps_json === 'string' ? JSON.parse(row.steps_json) : row.steps_json })
     ElMessage.success('状态更新成功')
   } catch (e) { /* fallback */ }
 }
-
 const viewSteps = (jsonStr: any) => {
   const obj = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
   ElMessageBox.alert(`<pre style="text-align: left; font-size: 12px; background: #f4f4f5; padding: 10px; border-radius: 4px;">${JSON.stringify(obj, null, 2)}</pre>`, 'SOP 执行步骤', { dangerouslyUseHTMLString: true })
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -161,9 +147,7 @@ const submitForm = async () => {
           ElMessage.error('执行步骤必须是合法的 JSON 格式')
           return
         }
-
         const payload = { ...form.value, steps_json: parsedSteps }
-
         if (form.value.id) {
           await request.put(`/api/v1/workflow/sop/${form.value.id}`, payload)
         } else {
@@ -176,26 +160,21 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value.id = ''
   form.value.steps_json = ''
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -203,7 +182,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -212,20 +190,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -233,36 +206,21 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
-
 .action-btns {
   display: flex;
   gap: 12px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-rose { color: var(--el-color-danger); }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
 /* SweetAlert overrides (if any global messagebox pops up, ideally handled in global css, but we can add some local overrides if it supports) */
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

@@ -22,7 +22,6 @@
                   <el-button  style="width: 100%" @click="startSimulation" :loading="simulating">开始底层流场平差推演</el-button>
                 </el-form-item>
               </el-form>
-
               <div class="result-panel" v-if="result">
                 <div class="result-header">推演结果影响面评估</div>
                 <div class="result-metric">
@@ -61,18 +60,15 @@ import { ref, onMounted } from 'vue'
 import { Position, Loading } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getHydraulicSimulation, runHydraulicSimulation } from '@/api/analytics'
-
 const loading = ref(false)
 const simulating = ref(false)
 const scenario = ref('close_v05')
 const result = ref<any>(null)
-
 const scenarioOptions = ref([
   { label: '模拟 V-05 阀门关闭检修', value: 'close_v05' },
   { label: '模拟 1号泵房停电', value: 'pump_down' },
   { label: '模拟 D300 主管爆管泄露', value: 'pipe_burst' }
 ])
-
 const loadData = async () => {
   loading.value = true
   try {
@@ -89,7 +85,6 @@ const loadData = async () => {
     loading.value = false
   }
 }
-
 const startSimulation = async () => {
   if (!scenario.value) return
   simulating.value = true
@@ -118,23 +113,19 @@ const startSimulation = async () => {
     simulating.value = false
   }
 }
-
 const createSOP = () => {
   ElMessage.success('抢修预案(SOP)已生成并派发给对应班组')
 }
-
 onMounted(() => {
   loadData()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -142,7 +133,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -151,20 +141,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -172,19 +157,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -199,8 +183,8 @@ onMounted(() => {
   flex: 1;
 }
 .industrial-section {
-  background: rgba(2, 6, 23, 0.3);
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  background: var(--el-bg-color-overlay);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
   height: 100%;
@@ -212,15 +196,14 @@ onMounted(() => {
   font-weight: 600;
   font-size: 14px;
   color: var(--el-text-color-primary);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid var(--el-border-color-light);
+  background: var(--el-bg-color-overlay);
   letter-spacing: 0.5px;
 }
 .section-content {
   padding: 24px;
   flex: 1;
 }
-
 .-warning {
   border-color: rgba(230, 162, 60, 0.5);
   color: #E6A23C;
@@ -233,14 +216,14 @@ onMounted(() => {
 .result-panel {
   margin-top: 32px;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--el-bg-color-overlay);
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-left: 4px solid #00d8ff;
 }
 .result-header {
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   margin-bottom: 16px;
   letter-spacing: 0.5px;
 }
@@ -261,11 +244,11 @@ onMounted(() => {
 .text-warning { color: #E6A23C; }
 .text-neon { color: var(--el-color-primary); }
 .map-placeholder {
-  background: rgba(2, 6, 23, 0.6);
+  background: var(--el-bg-color-overlay);
   height: 100%;
   min-height: 500px;
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   position: relative;
   display: flex;
   align-items: center;

@@ -4,7 +4,6 @@
       <div class="panel-header">
         <span class="panel-title">低代码可视化组态工作台</span>
       </div>
-
       <div class="designer-container">
         <!-- 左侧组件库 -->
         <div class="components-panel">
@@ -27,14 +26,12 @@
             </div>
           </div>
         </div>
-
         <!-- 中间画布 -->
         <div class="canvas-panel" @dragover.prevent @drop="onDrop">
           <div class="toolbar">
             <el-button size="small" type="primary"  @click="saveConfig" :loading="saving"><el-icon><Check /></el-icon> 保存发布</el-button>
             <el-button size="small"  @click="clearCanvas"><el-icon><Delete /></el-icon> 清空画布</el-button>
           </div>
-
           <div class="canvas-area" ref="canvasRef">
             <div
               v-for="(item, index) in elements"
@@ -49,11 +46,9 @@
                 <div v-if="item.boundTag" class="bound-tag">{{ item.boundTag }}</div>
               </div>
             </div>
-
             <div v-if="elements.length === 0" class="empty-text">拖拽左侧图元至此区域进行组态</div>
           </div>
         </div>
-
         <!-- 右侧属性配置 -->
         <div class="props-panel">
           <div class="panel-subtitle">属性与数据绑定</div>
@@ -87,30 +82,24 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Operation, Switch, Box, Connection, Odometer, Check, Delete } from '@element-plus/icons-vue'
 import { saveHMIConfig } from '@/api/system'
-
 const draggedType = ref('')
 const elements = ref<any[]>([])
 const selectedIndex = ref<number | null>(null)
 const canvasRef = ref<HTMLElement | null>(null)
 const saving = ref(false)
-
 const onDragStart = (type: string) => {
   draggedType.value = type
 }
-
 const onDrop = (e: DragEvent) => {
   if (!draggedType.value || !canvasRef.value) return
-  
   const rect = canvasRef.value.getBoundingClientRect()
   const x = e.clientX - rect.left - 60 // 居中偏移
   const y = e.clientY - rect.top - 32
-
   elements.value.push({
     type: draggedType.value,
     x: Math.max(0, x),
@@ -118,26 +107,21 @@ const onDrop = (e: DragEvent) => {
     boundTag: '',
     animation: false
   })
-  
   selectedIndex.value = elements.value.length - 1
   draggedType.value = ''
 }
-
 const selectElement = (index: number) => {
   selectedIndex.value = index
 }
-
 const clearCanvas = () => {
   elements.value = []
   selectedIndex.value = null
 }
-
 const saveConfig = async () => {
   if (elements.value.length === 0) {
     ElMessage.warning('画布为空，无法发布')
     return
   }
-  
   saving.value = true
   try {
     const res: any = await saveHMIConfig({ config: elements.value })
@@ -155,15 +139,12 @@ const saveConfig = async () => {
   }
 }
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -171,7 +152,6 @@ const saveConfig = async () => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -180,20 +160,15 @@ const saveConfig = async () => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -201,13 +176,12 @@ const saveConfig = async () => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 .panel-title {
   font-size: 16px;
@@ -217,22 +191,22 @@ const saveConfig = async () => {
 .designer-container {
   display: flex;
   height: 600px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid var(--el-border-color-light);
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
 }
 .panel-subtitle {
   padding: 16px 20px;
   background-color: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--el-border-color-light);
   font-weight: 600;
   font-size: 14px;
   color: var(--el-text-color-primary);
 }
 .components-panel {
   width: 240px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: rgba(255, 255, 255, 0.02);
+  border-right: 1px solid var(--el-border-color-light);
+  background-color: var(--el-fill-color-light);
 }
 .component-list {
   padding: 16px;
@@ -242,11 +216,11 @@ const saveConfig = async () => {
 }
 .component-item {
   padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 6px;
   cursor: grab;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--el-fill-color-light);
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   color: var(--el-text-color-regular);
   font-size: 13px;
@@ -271,8 +245,8 @@ const saveConfig = async () => {
 }
 .toolbar {
   padding: 12px 20px;
-  background-color: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--el-fill-color-light);
+  border-bottom: 1px solid var(--el-border-color-light);
   display: flex;
   gap: 12px;
 }
@@ -280,7 +254,7 @@ const saveConfig = async () => {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(var(--el-border-color-darker) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 .canvas-element {
@@ -289,7 +263,7 @@ const saveConfig = async () => {
   height: 64px;
   background-color: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -332,11 +306,10 @@ const saveConfig = async () => {
 }
 .props-panel {
   width: 320px;
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: rgba(255, 255, 255, 0.02);
+  border-left: 1px solid var(--el-border-color-light);
+  background-color: var(--el-fill-color-light);
 }
 .props-content {
   padding: 20px;
 }
-
 </style>

@@ -9,7 +9,6 @@
         <el-tag effect="dark" class="status-tag pulse-tag">系统运行正常</el-tag>
       </div>
     </div>
-
     <!-- 核心 KPI 概览 -->
     <el-row :gutter="24">
       <el-col :span="6" v-for="(item, index) in metrics" :key="index">
@@ -27,7 +26,6 @@
         </div>
       </el-col>
     </el-row>
-
     <!-- 水质综合看板与能耗趋势 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="12">
@@ -58,7 +56,6 @@
         </div>
       </el-col>
     </el-row>
-
     <!-- 供水漏损趋势与报警列表 -->
     <el-row :gutter="24" style="margin-top: 24px;">
       <el-col :span="16">
@@ -99,7 +96,6 @@
     </el-row>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, markRaw } from 'vue'
 import { DataLine, WarnTriangleFilled, Opportunity, Odometer } from '@element-plus/icons-vue'
@@ -109,20 +105,16 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, BarChart, GaugeChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent, TitleComponent, DataZoomComponent } from 'echarts/components'
 import VChart from 'vue-echarts'
-
 use([CanvasRenderer, LineChart, BarChart, GaugeChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent, DataZoomComponent])
-
 const loading = ref(false)
 const energyTrendRange = ref('7days')
 const complianceRate = ref(99.8)
-
 const metrics = ref([
   { title: '今日总供水量', value: 0, unit: 'm³', icon: markRaw(Odometer), color: '#409EFF' },
   { title: '今日总漏水量', value: 0, unit: 'm³', icon: markRaw(Opportunity), color: '#E6A23C' },
   { title: '实时产销差率', value: 0, unit: '%', icon: markRaw(DataLine), color: '#67C23A' },
   { title: '活跃异常报警', value: 0, unit: '条', icon: markRaw(WarnTriangleFilled), color: '#F56C6C' },
 ])
-
 const trendOption = ref({
   tooltip: { trigger: 'axis', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
   legend: { data: ['供水量 (m³/h)', '漏水量 (m³/h)'], textStyle: { color: '#94a3b8' } },
@@ -154,7 +146,6 @@ const trendOption = ref({
     }
   ]
 })
-
 const waterQualityOption = ref({
   tooltip: { formatter: '{a} <br/>{b} : {c}', backgroundColor: 'rgba(15, 23, 42, 0.9)', textStyle: { color: '#e2e8f0' }, borderColor: 'rgba(255,255,255,0.1)' },
   series: [
@@ -208,7 +199,6 @@ const waterQualityOption = ref({
     }
   ]
 })
-
 const energyTrendOption = ref({
   tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', textStyle: { color: '#e2e8f0' } },
   legend: { data: ['水耗折标煤', '电耗折标煤', '气耗折标煤'], textStyle: { color: '#94a3b8' } },
@@ -221,9 +211,7 @@ const energyTrendOption = ref({
     { name: '气耗折标煤', type: 'bar', stack: 'total', data: [], itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] } }
   ]
 })
-
 const alarms = ref<any[]>([])
-
 const fetchAlarms = async () => {
   try {
     const res: any = await request.get('/api/v1/scada/overview/alarms')
@@ -238,7 +226,6 @@ const fetchAlarms = async () => {
     ]
   }
 }
-
 const fetchEnergyTrend = async () => {
   try {
     const res: any = await request.get('/api/v1/scada/overview/energy-trend', { params: { range: energyTrendRange.value } })
@@ -255,7 +242,6 @@ const fetchEnergyTrend = async () => {
     energyTrendOption.value.series[2].data = [150, 232, 201, 154, 190, 330, 410]
   }
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -272,7 +258,6 @@ const fetchData = async () => {
     metrics.value[2].value = 14.4
     metrics.value[3].value = 5
   }
-
   try {
     const resTrend: any = await request.get('/api/v1/scada/overview/trend')
     if (resTrend && resTrend.code === 200) {
@@ -285,7 +270,6 @@ const fetchData = async () => {
     trendOption.value.series[0].data = [300, 250, 600, 550, 480, 520, 350]
     trendOption.value.series[1].data = [20, 25, 45, 40, 35, 42, 28]
   }
-
   try {
     const resWater: any = await request.get('/api/v1/scada/overview/water-quality')
     if (resWater && resWater.code === 200) {
@@ -299,7 +283,6 @@ const fetchData = async () => {
     waterQualityOption.value.series[1].data[0].value = 0.8
     waterQualityOption.value.series[2].data[0].value = 7.2
   }
-
   try {
     await Promise.all([
       fetchEnergyTrend(),
@@ -308,20 +291,16 @@ const fetchData = async () => {
   } catch (e) { /* fallback */ }
   loading.value = false
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -329,7 +308,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -338,20 +316,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -359,10 +332,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .pulse-tag {
   animation: pulse 2s infinite;
   background-color: rgba(16, 185, 129, 0.2);
@@ -389,8 +358,8 @@ onMounted(() => {
   align-items: center;
   font-size: 28px;
   margin-right: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
 }
 .metric-info {
   flex: 1;
@@ -457,7 +426,6 @@ onMounted(() => {
   font-family: "SF Mono", monospace;
   text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
 }
-
 .chart-container {
   flex: 1;
   width: 100%;
@@ -479,7 +447,7 @@ onMounted(() => {
   width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--el-fill-color-light);
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -488,7 +456,6 @@ onMounted(() => {
 .dark-timeline {
   margin-top: 10px;
 }
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

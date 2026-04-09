@@ -9,7 +9,6 @@
         <el-button  @click="handleAdd">新增档案</el-button>
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
-
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
           <el-table-column prop="account_no" label="大用户编号" width="150">
@@ -56,7 +55,6 @@
         </el-table>
       </div>
     </div>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" @close="resetForm" custom-class="industrial-dialog">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="industrial-form">
         <el-form-item label="企业编号" prop="account_no">
@@ -109,13 +107,12 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
           <el-button  @click="submitForm">确定</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -125,17 +122,14 @@
       @success="fetchData"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref([])
 const loading = ref(false)
 const showImport = ref(false)
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增档案')
 const tariffOptions = ref<any[]>([])
@@ -153,13 +147,11 @@ const form = ref({
   meter_device_id: null,
   status: 1
 })
-
 const rules = {
   account_no: [{ required: true, message: '必填', trigger: 'blur' }],
   account_name: [{ required: true, message: '必填', trigger: 'blur' }],
   tariff_id: [{ required: true, message: '必须绑定费率', trigger: 'change' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -169,31 +161,26 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const fetchOptions = async () => {
   try {
     // 加载全部有效费率
     const tRes = await request.get('/api/v1/data-center/billing/tariffs')
     tariffOptions.value = (tRes || []).filter((t: any) => t.status === 1)
-    
     // 加载全部水表类型的资产设备
     const aRes = await request.get('/api/v1/data-center/governance/assets')
     // device_type: 1 为水表
     deviceOptions.value = (aRes || []).filter((a: any) => a.device_type === 1 && a.status === 1)
   } catch (e) { /* fallback */ }
 }
-
 const handleAdd = () => {
   dialogTitle.value = '新增档案'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑档案'
   form.value = { ...row }
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm('确定要删除该大用户档案吗？如果已有账单产生将无法硬删除。', '高危操作确认', {
     confirmButtonText: '强制删除',
@@ -210,7 +197,6 @@ const handleDelete = (row: any) => {
     }
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -228,27 +214,22 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value.id = ''
   form.value.status = 1
 }
-
 onMounted(() => {
   fetchData()
   fetchOptions()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -256,7 +237,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -265,20 +245,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -286,19 +261,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -310,30 +284,25 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--el-bg-color-overlay);
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--el-border-color-light);
 }
 .text-neon { color: var(--el-color-primary); }
 .text-danger { color: #F56C6C; }
@@ -341,8 +310,8 @@ onMounted(() => {
   border: none;
 }
 .industrial-tag-plain {
-  background: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  background: var(--el-bg-color-overlay) !important;
+  border: 1px solid var(--el-border-color-light) !important;
   color: var(--el-text-color-regular) !important;
 }
 </style>

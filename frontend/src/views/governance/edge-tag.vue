@@ -33,7 +33,6 @@
         </div>
       </el-col>
     </el-row>
-
     <!-- 测点与标签映射管理 -->
     <div class="box-card" style="flex: 1;">
       <div class="toolbar">
@@ -47,7 +46,6 @@
           <el-button  @click="getList" :icon="Refresh">刷新</el-button>
         </div>
       </div>
-
       <div class="search-bar">
         <el-form :inline="true" :model="searchForm" class="industrial-form">
           <el-form-item label="原始标签名">
@@ -61,7 +59,6 @@
           </el-form-item>
         </el-form>
       </div>
-
       <div class="table-container">
         <el-table
           :data="tableData"
@@ -90,7 +87,6 @@
           </el-table-column>
         </el-table>
       </div>
-
       <div class="pagination">
         <el-pagination
           v-model:current-page="page"
@@ -102,7 +98,6 @@
         />
       </div>
     </div>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px" custom-class="industrial-dialog">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="120px" class="industrial-form">
@@ -152,12 +147,11 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+        <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
         <el-button  @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -167,14 +161,12 @@
       @success="getList"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, Search, Upload, Cpu } from '@element-plus/icons-vue'
 import request from '@/utils/request'
-
 const loading = ref(false)
 const showImport = ref(false)
 const gatewayLoading = ref(false)
@@ -183,18 +175,15 @@ const gatewayList = ref<any[]>([])
 const page = ref(1)
 const size = ref(15)
 const total = ref(0)
-
 const uploadHeaders = computed(() => {
   return {
     Authorization: `Bearer ${localStorage.getItem('token')}`
   }
 })
-
 const searchForm = ref({
   keyword: '',
   device_id: ''
 })
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增标签映射')
 const formRef = ref()
@@ -212,14 +201,12 @@ const form = ref({
   is_active: 1,
   remark: ''
 })
-
 const rules = {
   device_id: [{ required: true, message: '请输入资产设备ID', trigger: 'blur' }],
   tag_name: [{ required: true, message: '请输入原始测点标签名', trigger: 'blur' }],
   standard_name: [{ required: true, message: '请输入标准化属性名', trigger: 'blur' }],
   data_type: [{ required: true, message: '请选择数据类型', trigger: 'change' }]
 }
-
 const getGatewayList = async () => {
   gatewayLoading.value = true
   try {
@@ -229,7 +216,6 @@ const getGatewayList = async () => {
     gatewayLoading.value = false
   }
 }
-
 const handleSendProtection = (gw: any) => {
   ElMessageBox.confirm(`确定要向边缘网关 [${gw.gateway_sn}] 下发断网本地保护策略吗？`, '下发策略', {
     confirmButtonText: '确定下发',
@@ -243,7 +229,6 @@ const handleSendProtection = (gw: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const getList = async () => {
   loading.value = true
   try {
@@ -261,7 +246,6 @@ const getList = async () => {
     loading.value = false
   }
 }
-
 const handleImportSuccess = (res: any) => {
   if (res.code === 200 || res.success) {
     ElMessage.success('Excel 批量导入成功')
@@ -270,11 +254,9 @@ const handleImportSuccess = (res: any) => {
     ElMessage.error(res.message || '导入失败')
   }
 }
-
 const handleImportError = () => {
   ElMessage.error('网络或服务器异常，批量导入失败')
 }
-
 const resetForm = () => {
   form.value = {
     id: undefined,
@@ -294,20 +276,17 @@ const resetForm = () => {
     formRef.value.resetFields()
   }
 }
-
 const handleAdd = () => {
   resetForm()
   dialogTitle.value = '新增标签映射'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   resetForm()
   form.value = { ...row }
   dialogTitle.value = '编辑标签映射'
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除测点 [${row.tag_name}] 的映射记录吗？`, '提示', {
     type: 'warning',
@@ -318,7 +297,6 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -335,21 +313,17 @@ const submitForm = async () => {
     }
   })
 }
-
 onMounted(() => {
   getGatewayList()
   getList()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -357,7 +331,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -366,20 +339,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -387,16 +355,15 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   margin-bottom: 20px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -408,8 +375,8 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .industrial-card {
-  background: rgba(2, 6, 23, 0.3);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--el-bg-color-overlay);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   padding: 16px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
@@ -430,7 +397,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 10px;
 }
 .gw-title {
@@ -471,7 +438,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .toolbar-actions {
@@ -482,23 +449,18 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .-warning {
   border-color: rgba(230, 162, 60, 0.5);
   color: #E6A23C;
@@ -523,14 +485,11 @@ onMounted(() => {
 .text-danger {
   color: #F56C6C;
 }
-
 .pagination {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
-
-
 .form-tip {
   font-size: 12px;
   color: var(--el-text-color-regular);

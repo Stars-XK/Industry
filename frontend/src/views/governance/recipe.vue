@@ -8,7 +8,6 @@
         </div>
         <el-button  @click="handleAdd">新增配方</el-button>
       </div>
-
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
           <el-table-column prop="id" label="ID" width="80" />
@@ -42,7 +41,6 @@
         </el-table>
       </div>
     </div>
-
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="550px" @close="resetForm" custom-class="industrial-dialog">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="industrial-form">
         <el-form-item label="配方名称" prop="recipe_name">
@@ -60,13 +58,12 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
           <el-button  @click="submitForm">保存配方</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -76,13 +73,11 @@
       @success="fetchData"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
 const showImport = ref(false)
@@ -96,12 +91,10 @@ const form = ref({
   parameters_json: '',
   status: 1
 })
-
 const rules = {
   recipe_name: [{ required: true, message: '必填', trigger: 'blur' }],
   parameters_json: [{ required: true, message: '必须是合法的 JSON', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -111,18 +104,15 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleAdd = () => {
   dialogTitle.value = '新增工业配方'
   dialogVisible.value = true
 }
-
 const handleEdit = (row: any) => {
   dialogTitle.value = '编辑配方'
   form.value = { ...row, parameters_json: JSON.stringify(row.parameters_json, null, 2) }
   dialogVisible.value = true
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确定删除配方 [${row.recipe_name}] 吗？`, '提示', { 
     type: 'warning',
@@ -135,14 +125,12 @@ const handleDelete = (row: any) => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const handleStatusChange = async (row: any) => {
   try {
     await request.put(`/api/v1/data-center/recipe/${row.id}`, { ...row })
     ElMessage.success('状态已更新')
   } catch (e) { /* fallback */ }
 }
-
 const handleApply = (row: any) => {
   ElMessageBox.confirm(`即将把配方 [${row.recipe_name}] 下发至底层 PLC 控制器，是否继续？`, '高危操作', { 
     type: 'warning',
@@ -151,7 +139,6 @@ const handleApply = (row: any) => {
     ElMessage.success('反向控制指令已通过 MQTT 发送至边缘网关')
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -165,7 +152,6 @@ const submitForm = async () => {
           return
         }
         const payload = { ...form.value, parameters_json: parsedParams }
-
         if (form.value.id) {
           await request.put(`/api/v1/data-center/recipe/${form.value.id}`, payload)
         } else {
@@ -178,25 +164,21 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value.id = ''
   form.value.parameters_json = ''
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -204,7 +186,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -213,20 +194,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -234,19 +210,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -258,35 +233,29 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .json-viewer {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 12px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--el-bg-color-overlay);
   padding: 6px 10px;
   border-radius: 4px;
   color: var(--el-color-primary);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   word-break: break-all;
 }
 .text-neon { color: var(--el-color-primary); }
 .text-danger { color: #F56C6C; }
 .text-success { color: #67C23A; }
-
 </style>

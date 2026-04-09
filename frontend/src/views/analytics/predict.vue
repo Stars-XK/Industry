@@ -13,7 +13,6 @@
           </el-select>
         </div>
       </div>
-
       <div class="model-info" v-if="predictData" v-loading="loading">
         <el-row :gutter="24">
           <el-col :span="6">
@@ -41,24 +40,20 @@
           </el-col>
         </el-row>
       </div>
-
       <div class="chart-container" v-loading="loading">
         <div id="predict-chart" class="predict-chart"></div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request'
 import * as echarts from 'echarts'
-
 const loading = ref(false)
 const listQuery = ref({ zoneId: '201' })
 const predictData = ref<any>(null)
 let chartInstance: any = null
-
 const initChart = () => {
   if (!chartInstance) {
     const chartDom = document.getElementById('predict-chart')
@@ -66,10 +61,8 @@ const initChart = () => {
       chartInstance = echarts.init(chartDom)
     }
   }
-
   if (chartInstance && predictData.value) {
     const { dates, actualData, predictData: predData, upperBounds, lowerBounds } = predictData.value
-
     const option = {
       backgroundColor: 'transparent',
       title: { 
@@ -147,7 +140,6 @@ const initChart = () => {
     chartInstance.setOption(option)
   }
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -156,11 +148,9 @@ const fetchData = async () => {
       method: 'get',
       params: { zoneId: listQuery.value.zoneId }
     })
-    
     // axios 拦截器已经去掉了 { code, data, msg } 结构，直接返回的是后端控制器给的 `data` 对象
     // 但后端 predict.controller.ts 是这么写的： return { code: 200, data: { dates, actualData… } }
     // 如果拦截器拦截了 code，那么 res 实际上就是 { dates, actualData, predictData, upperBounds, lowerBounds }
-    
     if (res && res.dates) {
       predictData.value = res
       initChart()
@@ -182,22 +172,18 @@ const fetchData = async () => {
   }
   loading.value = false
 }
-
 onMounted(() => {
   nextTick(() => {
     fetchData()
   })
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -205,7 +191,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -214,20 +199,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -235,19 +215,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -259,11 +238,11 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .model-info {
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   padding: 24px;
   border-radius: 8px;
   margin-bottom: 24px;
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--el-border-color-light);
 }
 .stat-item {
   display: flex;
@@ -299,16 +278,13 @@ onMounted(() => {
 .chart-container {
   height: 500px;
   padding: 20px;
-  border: 1px solid rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .predict-chart {
   width: 100%;
   height: 100%;
 }
-
-
-
 </style>

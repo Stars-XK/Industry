@@ -9,7 +9,6 @@
         <el-date-picker v-model="currentMonth" type="month" placeholder="选择月份" value-format="YYYY-MM" @change="fetchData" :clearable="false" class="glass-date-picker" popper-class="glass-dropdown" />
       </div>
     </div>
-
     <div class="box-card" style="padding: 20px;">
       <el-calendar v-model="currentDate" class="dark-calendar">
         <template #date-cell="{ data }">
@@ -33,7 +32,6 @@
         </template>
       </el-calendar>
     </div>
-
     <el-dialog title="新增排班" v-model="dialogVisible" width="400px"  :show-close="false">
       <el-form label-width="80px"  label-position="top">
         <el-form-item label="日期">
@@ -61,46 +59,37 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
-
 const currentDate = ref(new Date())
 const currentMonth = ref(new Date().toISOString().slice(0, 7))
 const scheduleList = ref<any[]>([])
-
 const usersOptions = ref<any[]>([])
 const dialogVisible = ref(false)
 const form = ref({ user_id: null, duty_date: '', shift_type: 'morning' })
-
 const fetchData = async () => {
   try {
     scheduleList.value = await request.get('/api/v1/workflow/duty/schedule', { params: { month: currentMonth.value } }) || []
   } catch (e) { /* fallback */ }
 }
-
 const fetchOptions = async () => {
   try {
     usersOptions.value = await request.get('/api/v1/workflow/order/options/users') || []
   } catch (e) { /* fallback */ }
 }
-
 const getDutiesByDate = (date: string) => {
   return scheduleList.value.filter(item => item.duty_date.startsWith(date))
 }
-
 const getShiftName = (type: string) => {
   const map: Record<string, string> = { 'morning': '早班', 'afternoon': '中班', 'night': '夜班' }
   return map[type] || type
 }
-
 const handleAdd = (date: string) => {
   form.value = { user_id: null, duty_date: date, shift_type: 'morning' }
   dialogVisible.value = true
 }
-
 const submitForm = async () => {
   if (!form.value.user_id) return ElMessage.warning('请选择值班人')
   try {
@@ -110,7 +99,6 @@ const submitForm = async () => {
     fetchData()
   } catch (e) { /* fallback */ }
 }
-
 const markAttend = async (id: number) => {
   try {
     await request.put(`/api/v1/workflow/duty/schedule/${id}/attend`)
@@ -118,20 +106,17 @@ const markAttend = async (id: number) => {
     fetchData()
   } catch (e) { /* fallback */ }
 }
-
 onMounted(() => {
   fetchData()
   fetchOptions()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -139,7 +124,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -148,20 +132,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -169,17 +148,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
-
-
-
-
-
-
-
 .calendar-cell {
   height: 100%;
   display: flex;
@@ -234,33 +202,21 @@ onMounted(() => {
   text-align: right;
   margin-top: 4px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
 .custom-scrollbar::-webkit-scrollbar {
   width: 2px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--el-fill-color-light);
 }
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

@@ -9,7 +9,6 @@
         <el-button  @click="fetchData">刷新列表</el-button>
       </div>
     </div>
-
     <div class="box-card" v-loading="loading" >
       <el-table :data="tableData" style="width: 100%" class="custom-table custom-scrollbar" row-key="id">
         <el-table-column prop="id" label="ID" width="80" />
@@ -54,7 +53,6 @@
         </el-table-column>
       </el-table>
     </div>
-
     <el-dialog title="下发抢修工单" v-model="dialogVisible" width="500px" @close="resetForm"  :show-close="false">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="80px"  label-position="top">
         <el-form-item label="工单标题" prop="title">
@@ -92,15 +90,12 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref<any[]>([])
 const loading = ref(false)
-
 const dialogVisible = ref(false)
 const formRef = ref()
 const form = ref({
@@ -111,11 +106,9 @@ const form = ref({
   priority: 4,
   description: ''
 })
-
 const rules = {
   title: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
@@ -138,7 +131,6 @@ const fetchData = async () => {
     loading.value = false
   }
 }
-
 const handleConfirm = async (row: any) => {
   try {
     await request.put(`/api/v1/workflow/alarm/events/${row.id}/confirm`)
@@ -150,7 +142,6 @@ const handleConfirm = async (row: any) => {
     row.status = 1
   }
 }
-
 const handleRecover = async (row: any) => {
   try {
     await request.put(`/api/v1/workflow/alarm/events/${row.id}/recover`)
@@ -162,7 +153,6 @@ const handleRecover = async (row: any) => {
     row.status = 2
   }
 }
-
 const handleDelete = async (row: any) => {
   ElMessageBox.confirm('确定清除该历史报警记录吗？', '提示', { type: 'warning', customClass: 'industrial-msg-box' }).then(async () => {
     try {
@@ -176,7 +166,6 @@ const handleDelete = async (row: any) => {
     }
   }).catch(() => {})
 }
-
 const handleCreateOrder = (row: any) => {
   form.value.alarm_id = row.id
   form.value.device_id = row.device_id
@@ -184,7 +173,6 @@ const handleCreateOrder = (row: any) => {
   form.value.description = `报警描述：${row.alarm_desc}\n触发SOP：${row.sop_name || '无'}`
   dialogVisible.value = true
 }
-
 const submitOrderForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -200,38 +188,31 @@ const submitOrderForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
 }
-
 const getStatusClass = (status: number) => {
   if (status === 0) return 'status-danger'
   if (status === 1) return 'status-warning'
   if (status === 2) return 'status-success'
   return ''
 }
-
 const getStatusText = (status: number) => {
   if (status === 0) return '未确认'
   if (status === 1) return '已确认'
   if (status === 2) return '已恢复'
   return '未知'
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -239,7 +220,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -248,20 +228,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -269,18 +244,11 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
-
-
 .status-indicator {
   display: flex;
   align-items: center;
@@ -308,33 +276,18 @@ onMounted(() => {
   display: flex;
   gap: 12px;
 }
-
-
 .text-cyan { color: var(--el-color-primary); }
 .text-emerald { color: var(--el-color-success); }
 .text-amber { color: #f59e0b; }
 .text-rose { color: var(--el-color-danger); }
 /* Table styles */
-
-
-
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 /* Form Styles */
-
-
-
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

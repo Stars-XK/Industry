@@ -68,17 +68,14 @@ import { ref, onMounted } from 'vue'
 import { ChatDotRound, User, Loading, Location, Van } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getDutyLocations, sendAIGCCommand } from '@/api/workflow'
-
 const question = ref('')
 const lastQuestion = ref('')
 const hasAsked = ref(false)
 const isTyping = ref(false)
 const hasAnswered = ref(false)
 const aiResponse = ref<any>(null)
-
 const loadingLocations = ref(false)
 const locations = ref<any[]>([])
-
 const loadLocations = async () => {
   loadingLocations.value = true
   try {
@@ -97,7 +94,6 @@ const loadLocations = async () => {
     loadingLocations.value = false
   }
 }
-
 const ask = async () => {
   if (!question.value.trim() || isTyping.value) return
   lastQuestion.value = question.value
@@ -105,7 +101,6 @@ const ask = async () => {
   isTyping.value = true
   hasAnswered.value = false
   question.value = ''
-  
   try {
     const res: any = await sendAIGCCommand({ command: lastQuestion.value })
     if (res.code === 200) {
@@ -126,23 +121,19 @@ const ask = async () => {
     hasAnswered.value = true
   }
 }
-
 const dispatchSOP = () => {
   ElMessage.success('SOP 抢修工单已派发给距离最近的外勤人员')
 }
-
 onMounted(() => {
   loadLocations()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -150,7 +141,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -159,20 +149,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -180,13 +165,12 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   background: rgba(0, 0, 0, 0.2);
 }
 .panel-title {
@@ -195,7 +179,7 @@ onMounted(() => {
   color: var(--el-text-color-primary);
 }
 .chat-container {
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -213,7 +197,7 @@ onMounted(() => {
 .chat-input {
   padding: 20px;
   background: rgba(0, 0, 0, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--el-border-color-light);
 }
 .input-actions {
   display: flex;
@@ -232,7 +216,7 @@ onMounted(() => {
   height: 40px;
   border-radius: 12px;
   background: linear-gradient(135deg, #00d8ff, #0088ff);
-  color: #fff;
+  color: var(--el-text-color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,13 +237,13 @@ onMounted(() => {
   padding: 14px 18px;
   border-radius: 12px;
   border-top-left-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
   backdrop-filter: blur(8px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   line-height: 1.6;
   font-size: 14px;
   color: var(--el-text-color-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--el-border-color-light);
 }
 .message.user .bubble {
   border-top-left-radius: 12px;
@@ -294,7 +278,7 @@ onMounted(() => {
   width: 100%;
 }
 .side-card {
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   background: rgba(8, 15, 30, 0.4);
   height: 600px;
@@ -306,7 +290,7 @@ onMounted(() => {
   font-weight: 600;
   font-size: 14px;
   color: var(--el-text-color-primary);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--el-border-color-light);
   background: rgba(0, 0, 0, 0.2);
 }
 .side-content {
@@ -322,7 +306,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border: 1px dashed var(--el-border-color-light);
 }
 .placeholder-text {
   color: #64748b;
@@ -338,7 +322,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--el-border-color-light);
   font-size: 14px;
 }
 .location-item:last-child {

@@ -19,14 +19,12 @@
         </li>
       </ul>
     </div>
-
     <!-- 右侧：字典数据列表 -->
     <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">字典数据 (DictData) <span v-if="currentType" class="highlight-text"> - {{ currentType }}</span></span>
         <el-button type="primary" size="small"  v-if="currentType" @click="handleAddData">新增字典项</el-button>
       </div>
-
       <el-table
         :data="dataList"
         style="width: 100%"
@@ -35,7 +33,6 @@
         v-loading="loadingData"
         element-loading-text="Thinking…"
         element-loading-spinner="el-icon-loading"
-        
       >
         <el-table-column prop="dict_label" label="字典标签 (Label)" />
         <el-table-column prop="dict_value" label="字典键值 (Value)" />
@@ -54,7 +51,6 @@
       </el-table>
       <el-empty v-else description="请在左侧选择一个字典类型以查看详情" :image-size="100" />
     </div>
-
     <!-- 新增字典类型弹窗 -->
     <el-dialog title="新增字典类型" v-model="typeDialogVisible" width="400px" custom->
       <el-form :model="typeForm" :rules="typeRules" ref="typeFormRef" label-width="100px">
@@ -73,7 +69,6 @@
         <el-button type="primary" @click="submitTypeForm" >确定</el-button>
       </template>
     </el-dialog>
-
     <!-- 新增字典数据弹窗 -->
     <el-dialog title="新增字典项" v-model="dataDialogVisible" width="400px" custom->
       <el-form :model="dataForm" :rules="dataRules" ref="dataFormRef" label-width="100px">
@@ -93,7 +88,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -103,19 +97,16 @@
       @success="fetchTypeList"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 const showImport = ref(false)
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const typeList = ref<any[]>([])
 const dataList = ref<any[]>([])
 const currentType = ref<string>('')
 const loadingData = ref(false)
-
 // 字典类型表单
 const typeDialogVisible = ref(false)
 const typeFormRef = ref()
@@ -124,7 +115,6 @@ const typeRules = {
   dict_name: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
   dict_type: [{ required: true, message: '请输入字典标识', trigger: 'blur' }],
 }
-
 // 字典数据表单
 const dataDialogVisible = ref(false)
 const dataFormRef = ref()
@@ -133,7 +123,6 @@ const dataRules = {
   dict_label: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
   dict_value: [{ required: true, message: '请输入字典键值', trigger: 'blur' }],
 }
-
 const fetchTypeList = async () => {
   try {
     const res = await request.get('/api/v1/system/dict/type/list')
@@ -143,7 +132,6 @@ const fetchTypeList = async () => {
     }
   } catch (e) { /* fallback */ }
 }
-
 const fetchDataList = async (type: string) => {
   loadingData.value = true
   try {
@@ -153,18 +141,15 @@ const fetchDataList = async (type: string) => {
     loadingData.value = false
   }
 }
-
 const handleSelectType = (type: string) => {
   currentType.value = type
   fetchDataList(type)
 }
-
 // --- 类型操作 ---
 const handleAddType = () => {
   typeForm.value = { dict_name: '', dict_type: '', remark: '' }
   typeDialogVisible.value = true
 }
-
 const submitTypeForm = async () => {
   if (!typeFormRef.value) return
   await typeFormRef.value.validate(async (valid: boolean) => {
@@ -180,7 +165,6 @@ const submitTypeForm = async () => {
     }
   })
 }
-
 const handleDeleteType = (type: any) => {
   ElMessageBox.confirm(`确认删除字典类型 "${type.dict_name}" 吗？这将级联删除其下所有字典项！`, '警告', {
     type: 'warning'
@@ -191,13 +175,11 @@ const handleDeleteType = (type: any) => {
     fetchTypeList()
   }).catch(() => {})
 }
-
 // --- 数据操作 ---
 const handleAddData = () => {
   dataForm.value = { dict_label: '', dict_value: '', dict_sort: dataList.value.length + 1 }
   dataDialogVisible.value = true
 }
-
 const submitDataForm = async () => {
   if (!dataFormRef.value) return
   await dataFormRef.value.validate(async (valid: boolean) => {
@@ -216,7 +198,6 @@ const submitDataForm = async () => {
     }
   })
 }
-
 const handleDeleteData = (data: any) => {
   ElMessageBox.confirm(`确认删除字典项 "${data.dict_label}" 吗？`, '警告', {
     type: 'warning'
@@ -226,20 +207,16 @@ const handleDeleteData = (data: any) => {
     fetchDataList(currentType.value)
   }).catch(() => {})
 }
-
 onMounted(() => {
   fetchTypeList()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -247,7 +224,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -256,20 +232,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -277,7 +248,6 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .sys-dict-container {
   display: flex;
   gap: 20px;
@@ -303,7 +273,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   background: rgba(0, 0, 0, 0.2);
 }
 .panel-title {
@@ -320,7 +290,7 @@ onMounted(() => {
 }
 .type-list li {
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--el-border-color-light);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -328,7 +298,7 @@ onMounted(() => {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
 }
 .type-list li:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
 }
 .type-list li.active {
   background: rgba(0, 216, 255, 0.1);

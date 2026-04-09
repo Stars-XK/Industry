@@ -11,7 +11,6 @@
           <el-button  @click="handleGenerate">根据抄表生成新账单</el-button>
         </div>
       </div>
-
       <div class="table-container">
         <el-table :data="tableData" style="width: 100%" v-loading="loading" class="industrial-table">
           <el-table-column prop="id" label="账单编号" width="100" />
@@ -54,7 +53,6 @@
         </el-table>
       </div>
     </div>
-
     <el-dialog title="手工录入/补录大户抄表底度" v-model="dialogVisible" width="450px" @close="resetForm" custom-class="industrial-dialog">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="industrial-form">
         <el-form-item label="企业用户" prop="account_id">
@@ -74,24 +72,21 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button  style="border-color: #64748b; color: #cbd5e1" @click="dialogVisible = false">取消</el-button>
+          <el-button  style="border-color: #64748b; color: var(--el-text-color-regular)" @click="dialogVisible = false">取消</el-button>
           <el-button  @click="submitForm">保存底度</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-
 const tableData = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
 const accountList = ref<any[]>([])
-
 const formRef = ref()
 const form = ref({
   account_id: '',
@@ -99,37 +94,31 @@ const form = ref({
   period: '',
   value: 0
 })
-
 const rules = {
   account_id: [{ required: true, message: '必填', trigger: 'change' }],
   period: [{ required: true, message: '必填', trigger: 'change' }],
   value: [{ required: true, message: '必填', trigger: 'blur' }]
 }
-
 const fetchData = async () => {
   loading.value = true
   try {
     const res = await request.get('/api/v1/data-center/billing/records')
     tableData.value = res || []
-    
     const accRes = await request.get('/api/v1/data-center/billing/accounts')
     accountList.value = (accRes || []).filter((a: any) => a.meter_device_id)
   } catch (e) { /* fallback */ } finally {
     loading.value = false
   }
 }
-
 const handleInputReading = () => {
   dialogVisible.value = true
 }
-
 const onAccountChange = (val: number) => {
   const acc = accountList.value.find(a => a.id === val)
   if (acc) {
     form.value.device_id = acc.meter_device_id
   }
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -142,12 +131,10 @@ const submitForm = async () => {
     }
   })
 }
-
 const resetForm = () => {
   if (formRef.value) formRef.value.resetFields()
   form.value = { account_id: '', device_id: '', period: '', value: 0 }
 }
-
 const handleGenerate = () => {
   ElMessageBox.prompt('请输入要生成账单的账期 (如 2026-05)，系统将自动根据该月及上月真实抄表底度相减进行计费', '真实账单生成 (工业计费)', {
     confirmButtonText: '执行出账',
@@ -167,7 +154,6 @@ const handleGenerate = () => {
     } catch (e) { /* fallback */ }
   }).catch(() => {})
 }
-
 const handlePay = async (row: any) => {
   try {
     await request.put(`/api/v1/data-center/billing/records/${row.id}/pay`)
@@ -175,20 +161,16 @@ const handlePay = async (row: any) => {
     fetchData()
   } catch (e) { /* fallback */ }
 }
-
 onMounted(() => {
   fetchData()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -196,7 +178,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -205,20 +186,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -226,19 +202,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -254,30 +229,25 @@ onMounted(() => {
   gap: 12px;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
   flex: 1;
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
   padding: 4px 8px;
   border-radius: 4px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--el-bg-color-overlay);
+  border: 1px solid var(--el-border-color-light);
 }
 .value-text {
   font-family: "SF Mono", Consolas, monospace;

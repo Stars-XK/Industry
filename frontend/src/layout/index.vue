@@ -23,7 +23,7 @@
             :class="{ active: isTopMenuActive(menu, index) }"
             @click="handleTopMenuClick(menu, index)"
           >
-            <div v-html="menu.icon" class="svg-icon-small"></div>
+            <el-icon class="svg-icon-small" v-if="menu.icon"><component :is="menu.icon" /></el-icon>
             <span>{{ menu.name }}</span>
           </li>
         </ul>
@@ -41,7 +41,10 @@
 
     <div class="main-body">
       <!-- 侧边菜单栏 (渲染当前选中的一级菜单的子菜单，如果没有子菜单则不显示) -->
-      <aside class="sidebar-icon-mode" v-if="currentSubMenus && currentSubMenus.length > 0">
+      <aside class="sidebar-container" :class="{ collapsed: isSidebarCollapsed }" v-if="currentSubMenus && currentSubMenus.length > 0">
+        <div class="collapse-toggle" @click="isSidebarCollapsed = !isSidebarCollapsed">
+          <el-icon><component :is="isSidebarCollapsed ? 'Expand' : 'Fold'" /></el-icon>
+        </div>
         <nav class="side-menu-list">
           <ul>
             <li 
@@ -51,13 +54,12 @@
               @mouseenter="hoverMenu = childIndex"
               @mouseleave="hoverMenu = null"
             >
-              <!-- 图标区 (如果没有配置专属图标，使用通用图标) -->
               <div class="menu-icon-box" :class="{ active: currentPath === child.path }" @click="handleNavigate(child)" tabindex="0" @keydown.enter="handleNavigate(child)" @keydown.space.prevent="handleNavigate(child)">
-                <div v-html="child.icon || icons.defaultSub" class="svg-icon"></div>
+                <el-icon class="svg-icon" v-if="child.icon"><component :is="child.icon" /></el-icon>
+                <span class="menu-text" v-show="!isSidebarCollapsed">{{ child.name }}</span>
               </div>
-
-              <!-- 悬浮 Tooltip -->
-              <div class="tooltip" v-show="hoverMenu === childIndex">
+              <!-- 悬浮 Tooltip (仅收起时显示) -->
+              <div class="tooltip" v-show="isSidebarCollapsed && hoverMenu === childIndex">
                 {{ child.name }}
               </div>
             </li>
@@ -99,6 +101,7 @@ const configStore = useConfigStore();
 const currentPath = ref(route.path);
 const hoverMenu = ref<number | null>(null);
 const activeTopMenuIndex = ref<number>(0);
+const isSidebarCollapsed = ref<boolean>(false);
 
 // 监听路由变化
 watch(() => route.path, (newPath) => {
@@ -150,64 +153,21 @@ const dynamicMenuTree = computed(() => {
   
   // Create static base
   const tree = [
-    { name: '数字大屏', path: '/dashboard', icon: icons.dashboard }
+    { name: '数字大屏', path: '/dashboard', icon: 'Odometer' }
   ];
 
   // Map backend menus to frontend structure
   menus.forEach(menu => {
     if (menu.menu_type === 'M' && menu.visible) {
-      // Find default icon based on name
-      let menuIcon = icons.workflow;
-      if (menu.menu_name.includes('SCADA') || menu.menu_name.includes('监控')) menuIcon = icons.scada;
-      if (menu.menu_name.includes('统计') || menu.menu_name.includes('分析')) menuIcon = icons.analytics;
-      if (menu.menu_name.includes('中台') || menu.menu_name.includes('治理')) menuIcon = icons.governance;
-      if (menu.menu_name.includes('设置') || menu.menu_name.includes('权限')) menuIcon = icons.system;
-
       const treeNode = {
         name: menu.menu_name,
-        icon: menuIcon,
+        icon: menu.icon || 'Menu',
         children: menu.children?.filter((c: any) => c.visible && c.menu_type === 'C').map((child: any) => {
-          let childIcon = icons.defaultSub;
-          
-          // Map some common icons
           const fullPath = `${menu.path}/${child.path}`.replace(/\/\//g, '/').replace(/^\//, '');
-          if (fullPath === 'scada/overview') childIcon = icons.overview;
-          if (fullPath === 'scada/topology') childIcon = icons.topology;
-          if (fullPath === 'scada/hmi') childIcon = icons.hmi;
-          if (fullPath === 'scada/security') childIcon = icons.security;
-          if (fullPath === 'scada/gis') childIcon = icons.location;
-          if (fullPath === 'scada/dma-config') childIcon = icons.share;
-          if (fullPath === 'analytics/nrw') childIcon = icons.pieChart;
-          if (fullPath === 'analytics/mnf') childIcon = icons.trend;
-          if (fullPath === 'analytics/key-account') childIcon = icons.userAvatar;
-          if (fullPath === 'analytics/billing') childIcon = icons.money;
-          if (fullPath === 'analytics/energy') childIcon = icons.lightning;
-          if (fullPath === 'analytics/predict') childIcon = icons.cpu;
-          if (fullPath === 'analytics/hydraulic') childIcon = icons.opportunity;
-          if (fullPath === 'workflow/alarm') childIcon = icons.bell;
-          if (fullPath === 'workflow/work-order') childIcon = icons.document;
-          if (fullPath === 'workflow/aigc') childIcon = icons.guide;
-          if (fullPath === 'workflow/duty') childIcon = icons.message;
-          if (fullPath === 'workflow/sop') childIcon = icons.documentChecked;
-          if (fullPath === 'system/org') childIcon = icons.connection;
-          if (fullPath === 'system/rbac') childIcon = icons.avatar;
-          if (fullPath === 'system/audit') childIcon = icons.documentChecked;
-          if (fullPath === 'system/dict') childIcon = icons.collection;
-          if (fullPath === 'system/asset') childIcon = icons.briefcase;
-          if (fullPath === 'system/gateway') childIcon = icons.connection;
-          if (fullPath === 'system/tag-mapping') childIcon = icons.cpu;
-          if (fullPath === 'governance/integration') childIcon = icons.link;
-          if (fullPath === 'governance/revenue') childIcon = icons.filter;
-          if (fullPath === 'governance/interpolate') childIcon = icons.operation;
-          if (fullPath === 'governance/interlock') childIcon = icons.setting;
-          if (fullPath === 'governance/edge-tag') childIcon = icons.cpu;
-          if (fullPath === 'governance/recipe') childIcon = icons.tickets;
-          if (fullPath === 'governance/sensor') childIcon = icons.firstAidKit;
-
           return {
             name: child.menu_name,
             path: `/${fullPath}`,
-            icon: childIcon
+            icon: child.icon || 'Document'
           };
         }) || []
       };
@@ -443,20 +403,38 @@ onMounted(() => {
   overflow: hidden;
 }
 /* 左侧边栏 (渲染二级菜单，小图标模式) */
-.sidebar-icon-mode {
+.sidebar-container {
   position: relative;
   z-index: 10;
-  width: 64px;
+  width: 220px;
   background-color: var(--el-bg-color-overlay);
   backdrop-filter: blur(12px);
   border-right: 1px solid var(--el-border-color-light);
   display: flex;
   flex-direction: column;
   pointer-events: auto;
+  transition: width 0.3s ease;
+}
+.sidebar-container.collapsed {
+  width: 64px;
+}
+.collapse-toggle {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--el-text-color-secondary);
+  border-bottom: 1px solid var(--el-border-color-light);
+  transition: color 0.3s;
+}
+.collapse-toggle:hover {
+  color: var(--el-color-primary);
 }
 .side-menu-list {
   flex: 1;
   padding-top: 15px;
+  overflow-y: auto;
 }
 .side-menu-list ul {
   list-style: none;
@@ -465,19 +443,29 @@ onMounted(() => {
 }
 .side-menu-item-wrapper {
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  padding: 0 8px;
 }
 .menu-icon-box {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto;
+  height: 48px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--el-text-color-regular);
-  border-radius: 8px;
+  padding: 0 12px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+  color: var(--el-text-color-regular);
+  transition: background-color 0.3s, color 0.3s, padding 0.3s, justify-content 0.3s;
+}
+.sidebar-container.collapsed .menu-icon-box {
+  justify-content: center;
+  padding: 0;
+}
+.menu-text {
+  margin-left: 12px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .menu-icon-box:hover {
   background-color: var(--el-fill-color-light);

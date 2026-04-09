@@ -279,20 +279,20 @@ onUnmounted(() => {
 <style>
 /* Global Leaflet Overrides for Dark Theme */
 .leaflet-container {
-  background: #020617 !important;
+  background: var(--el-bg-color-page) !important;
   font-family: "SF Pro Display", -apple-system, sans-serif;
 }
 .dark-popup-wrapper .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.9);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 216, 255, 0.2);
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   border-radius: 8px;
   padding: 0;
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 .dark-popup-wrapper .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.9);
+  background: var(--el-bg-color-overlay);
   border: 1px solid rgba(0, 216, 255, 0.2);
 }
 .dark-popup-wrapper .leaflet-popup-close-button {
@@ -315,7 +315,7 @@ onUnmounted(() => {
 .industrial-popup p {
   margin: 6px 0;
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--el-text-color-regular);
 }
 .industrial-popup strong {
   color: var(--el-text-color-regular);
@@ -323,7 +323,7 @@ onUnmounted(() => {
   width: 80px;
 }
 .industrial-tooltip {
-  background: rgba(2, 6, 23, 0.8);
+  background: var(--el-bg-color-overlay);
   border: 1px solid #1e293b;
   color: var(--el-text-color-primary);
   font-family: monospace;
@@ -361,7 +361,7 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: calc(100vh - 60px); /* Adjust based on your layout header */
-  background: #020617;
+  background: var(--el-bg-color-page);
   overflow: hidden;
   pointer-events: auto; /* Ensure map and internal elements receive pointer events */
 }
@@ -393,11 +393,11 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(15, 23, 42, 0.7);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(12px);
   padding: 12px 24px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--el-border-color-light);
   pointer-events: auto;
 }
 
@@ -410,7 +410,7 @@ onUnmounted(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 
@@ -439,9 +439,9 @@ onUnmounted(() => {
   bottom: 24px;
   width: 340px;
   z-index: 1000;
-  background: rgba(15, 23, 42, 0.75);
+  background: var(--el-bg-color-overlay);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -452,7 +452,7 @@ onUnmounted(() => {
 
 .panel-section {
   padding: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 .panel-section:last-child {
   border-bottom: none;
@@ -464,7 +464,7 @@ onUnmounted(() => {
 
 h3 {
   margin: 0 0 4px 0;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   font-size: 15px;
   font-weight: 600;
 }
@@ -491,15 +491,15 @@ h3 {
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
   padding: 8px 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--el-fill-color-light);
 }
 .toggle-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #f8fafc;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-primary);
 }
 .toggle-item.active {
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--el-text-color-primary);
+  background: var(--el-fill-color-light);
 }
 .toggle-item input {
   display: none;
@@ -540,7 +540,7 @@ h3 {
   width: 4px;
 }
 .asset-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--el-fill-color-light);
   border-radius: 2px;
 }
 
@@ -549,16 +549,16 @@ h3 {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
 .asset-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--el-fill-color-light);
   transform: translateX(2px);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--el-border-color-light);
 }
 
 .asset-icon {
@@ -577,7 +577,7 @@ h3 {
 .asset-info h4 {
   margin: 0 0 4px 0;
   font-size: 13px;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   font-weight: 500;
 }
 

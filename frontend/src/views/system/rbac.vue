@@ -14,7 +14,6 @@
           </div>
         </div>
       </template>
-
       <el-table :data="tableData" style="width: 100%" class="custom-table" v-loading="loading" stripe highlight-current-row>
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="role_name" label="角色名称" min-width="150">
@@ -60,7 +59,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" label-position="right">
@@ -127,7 +125,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -137,26 +134,21 @@
       @success="getList"
     />
 </template>
-
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useDict } from '@/hooks/useDict'
-
 const { sys_normal_disable, sys_data_scope } = useDict('sys_normal_disable', 'sys_data_scope')
-
 const loading = ref(false)
 const showImport = ref(false)
 const tableData = ref([])
 const menuOptions = ref([])
-
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增角色')
 const formRef = ref()
 const menuTreeRef = ref()
-
 const form = ref({
   id: undefined,
   role_name: '',
@@ -166,12 +158,10 @@ const form = ref({
   status: 1,
   remark: ''
 })
-
 const rules = {
   role_name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
   role_key: [{ required: true, message: '请输入角色标识', trigger: 'blur' }],
 }
-
 const getList = async () => {
   loading.value = true
   try {
@@ -181,14 +171,12 @@ const getList = async () => {
     loading.value = false
   }
 }
-
 const getMenuTree = async () => {
   try {
     const res = await request.get('/api/v1/system/menu/tree')
     menuOptions.value = res || []
   } catch (e) { /* fallback */ }
 }
-
 const resetForm = () => {
   form.value = {
     id: undefined,
@@ -203,13 +191,11 @@ const resetForm = () => {
     menuTreeRef.value.setCheckedKeys([])
   }
 }
-
 const handleAdd = () => {
   resetForm()
   dialogTitle.value = '新增角色'
   dialogVisible.value = true
 }
-
 const handleEdit = async (row: any) => {
   resetForm()
   form.value = {
@@ -223,14 +209,12 @@ const handleEdit = async (row: any) => {
   }
   dialogTitle.value = '编辑角色'
   dialogVisible.value = true
-  
   await nextTick()
   if (menuTreeRef.value && row.menus) {
     const menuIds = row.menus.map((m: any) => m.id)
     menuTreeRef.value.setCheckedKeys(menuIds)
   }
 }
-
 const handleDelete = (row: any) => {
   ElMessageBox.confirm(`确认删除角色 "${row.role_name}" 吗？`, '警告', {
     type: 'warning'
@@ -240,7 +224,6 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-
 const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
@@ -248,7 +231,6 @@ const submitForm = async () => {
       const checkedKeys = menuTreeRef.value ? menuTreeRef.value.getCheckedKeys() : []
       const halfCheckedKeys = menuTreeRef.value ? menuTreeRef.value.getHalfCheckedKeys() : []
       const menu_ids = [...checkedKeys, ...halfCheckedKeys]
-
       const payload = {
         role_name: form.value.role_name,
         role_key: form.value.role_key,
@@ -258,7 +240,6 @@ const submitForm = async () => {
         remark: form.value.remark,
         menu_ids
       }
-
       if (form.value.id) {
         await request.put(`/api/v1/system/role/update/${form.value.id}`, payload)
         ElMessage.success('更新成功')
@@ -271,20 +252,17 @@ const submitForm = async () => {
     }
   })
 }
-
 onMounted(() => {
   getList()
   getMenuTree()
 })
 </script>
-
 <style scoped>
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -292,7 +270,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -301,20 +278,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -322,25 +294,21 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 /* 标签样式优化 */
 .el-tag {
   border-radius: 4px;
   padding: 4px 8px;
   font-weight: 500;
 }
-
 .time-text {
   color: var(--el-text-color-regular);
   font-family: 'SF Mono', monospace;
   font-size: 13px;
 }
-
 .highlight-text {
   font-family: "SF Mono", monospace;
   font-weight: 500;
 }
-
 .tree-container {
   width: 100%;
   border: 1px solid var(--el-border-color-light);

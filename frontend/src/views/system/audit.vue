@@ -9,7 +9,6 @@
         <el-button  @click="getList">刷新记录</el-button>
       </div>
     </div>
-    
     <div class="box-card" style="flex: 1; padding: 20px; display: flex; flex-direction: column;">
       <el-table v-loading="loading" :data="list" style="width: 100%" class="custom-table custom-scrollbar" >
         <el-table-column prop="id" label="日志ID" width="100" align="center" />
@@ -51,7 +50,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="listQuery.page"
@@ -64,7 +62,6 @@
         />
       </div>
     </div>
-
     <el-dialog title="请求参数详情 (已脱敏)" v-model="dialogVisible" width="600px"  :show-close="false">
       <div v-if="currentLog" class="json-viewer custom-scrollbar">
         <pre>{{ formatJson(currentLog.req_body) }}</pre>
@@ -77,11 +74,9 @@
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
-
 const loading = ref(false)
 const list = ref([])
 const total = ref(0)
@@ -89,10 +84,8 @@ const listQuery = reactive({
   page: 1,
   limit: 20
 })
-
 const dialogVisible = ref(false)
 const currentLog = ref<any>(null)
-
 const getList = async () => {
   loading.value = true
   try {
@@ -106,7 +99,6 @@ const getList = async () => {
   } catch (e) { /* fallback */ }
   loading.value = false
 }
-
 const getMethodClass = (method: string) => {
   switch (method) {
     case 'GET': return 'cyan-tag'
@@ -116,12 +108,10 @@ const getMethodClass = (method: string) => {
     default: return 'dark-tag'
   }
 }
-
 const showDetail = (row: any) => {
   currentLog.value = row
   dialogVisible.value = true
 }
-
 const formatJson = (val: any) => {
   if (!val) return '无参数'
   try {
@@ -131,20 +121,16 @@ const formatJson = (val: any) => {
     return String(val)
   }
 }
-
 onMounted(() => {
   getList()
 })
 </script>
-
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -152,7 +138,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -161,20 +146,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -182,28 +162,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
-
-
-
 .highlight-text {
   color: var(--el-color-primary);
   font-family: "SF Mono", monospace;
   font-weight: 600;
 }
-
 .cyan-tag { background: rgba(0, 216, 255, 0.1); color: var(--el-color-primary); border: none; }
 .emerald-tag { background: rgba(16, 185, 129, 0.1); color: var(--el-color-success); border: none; }
 .amber-tag { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: none; }
 .rose-tag { background: rgba(244, 63, 94, 0.1); color: var(--el-color-danger); border: none; }
-
-
 .text-cyan { color: var(--el-color-primary); }
 /* Table styles */
-
-
 /* Dialog Styles */
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
@@ -211,7 +181,7 @@ onMounted(() => {
 }
 .json-viewer {
   background-color: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--el-border-color-light);
   padding: 16px;
   border-radius: 8px;
   max-height: 400px;
@@ -230,10 +200,6 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
 }
-
-
-
-
 .page-header {
   margin-bottom: 24px;
   display: flex;

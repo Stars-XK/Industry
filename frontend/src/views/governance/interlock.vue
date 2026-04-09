@@ -9,7 +9,6 @@
         <el-button type="primary"  @click="dialogVisible = true">新增联锁策略</el-button>
           <el-button  @click="showImport = true" icon="Upload">批量导入</el-button>
       </div>
-
       <div class="table-container">
         <el-table :data="matrix" style="width: 100%" class="industrial-table custom-table" v-loading="loading">
           <el-table-column prop="cause" label="触发条件 (Cause)" min-width="280">
@@ -51,7 +50,6 @@
         </el-table>
       </div>
     </div>
-
     <!-- 新增策略弹窗 -->
     <el-dialog title="新增联锁策略配置" v-model="dialogVisible" width="500px" custom- @close="resetForm">
       <el-form ref="formRef" :model="form" label-width="120px">
@@ -73,7 +71,6 @@
       </template>
     </el-dialog>
   </div>
-
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
@@ -89,17 +86,14 @@ import ExcelImport from '@/components/ExcelImport/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Right } from '@element-plus/icons-vue'
 import { getInterlockRules, updateInterlockRule } from '@/api/governance'
-
 const matrix = ref<any[]>([])
 const loading = ref(false)
 const showImport = ref(false)
 const dialogVisible = ref(false)
 const form = ref({ cause: '', effect: '', delay: 0 })
-
 const resetForm = () => {
   form.value = { cause: '', effect: '', delay: 0 }
 }
-
 const submitForm = () => {
   if (!form.value.cause || !form.value.effect) {
     ElMessage.warning('请输入完整的触发条件与执行动作')
@@ -117,7 +111,6 @@ const submitForm = () => {
   ElMessage.success('联锁策略新增成功，已下发底层 PLC 引擎')
   dialogVisible.value = false
 }
-
 const loadData = async () => {
   loading.value = true
   try {
@@ -136,7 +129,6 @@ const loadData = async () => {
     loading.value = false
   }
 }
-
 const toggleBypass = (row: any) => {
   if (!row.bypass) {
     ElMessageBox.confirm('开启 Bypass 将跳过自动化联锁保护，仅限维修期使用。此操作将记入高级审计库，是否继续？', '危险权限', {
@@ -160,19 +152,16 @@ const toggleBypass = (row: any) => {
     })
   }
 }
-
 onMounted(() => {
   loadData()
 })
 </script>
 <style scoped>
-
 .app-container {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   min-height: calc(100vh - 84px);
 }
-
 .box-card {
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
@@ -180,7 +169,6 @@ onMounted(() => {
   background-color: var(--el-bg-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
-
 .card-header {
   font-weight: 600;
   font-size: 16px;
@@ -189,20 +177,15 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
 .toolbar, .header-actions {
   display: flex;
   gap: 12px;
 }
-
 .custom-table {
   border-radius: 8px;
   overflow: hidden;
   margin-top: 20px;
-  --el-table-border-color: var(--el-border-color-lighter);
-  --el-table-header-bg-color: var(--el-fill-color-light);
 }
-
 /* 按钮样式优化 */
 .el-button {
   border-radius: 6px;
@@ -210,19 +193,18 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid var(--el-border-color-light);
   padding-bottom: 16px;
 }
 .header-title {
   font-size: 20px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--el-text-color-primary);
   letter-spacing: 0.5px;
 }
 .header-subtitle {
@@ -234,22 +216,17 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 .table-container {
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.3);
+  background: var(--el-bg-color-overlay);
 }
 .industrial-table {
   background: transparent !important;
-  --el-table-border-color: rgba(148, 163, 184, 0.05);
-  --el-table-header-bg-color: rgba(15, 23, 42, 0.6);
-  --el-table-header-text-color: #cbd5e1;
+  --el-table-header-text-color: var(--el-text-color-regular);
   --el-table-tr-bg-color: transparent;
-  --el-table-row-hover-bg-color: rgba(30, 41, 59, 0.5);
   --el-table-text-color: var(--el-text-color-regular);
 }
-
-
 .logic-text {
   font-family: "SF Mono", Consolas, monospace;
   font-size: 13px;
@@ -274,10 +251,10 @@ onMounted(() => {
 .delay-tag {
   font-family: "SF Mono", Consolas, monospace;
   color: var(--el-text-color-regular);
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--el-bg-color-overlay);
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--el-border-color-light);
   font-size: 12px;
 }
 .link-icon {
@@ -300,6 +277,4 @@ onMounted(() => {
   box-shadow: 0 0 15px rgba(245, 108, 108, 0.3);
   border-color: #F56C6C;
 }
-
-
 </style>

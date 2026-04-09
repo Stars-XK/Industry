@@ -1,25 +1,26 @@
 <template>
   <div class="asset-ledger fade-in-up">
-    <!-- Premium Header -->
-    <header class="ledger-header">
-      <div class="header-main">
-        <h1 class="headline">Asset Ledger</h1>
-        <p class="sub-headline">Global Physical Assets & Structural Hierarchy</p>
-      </div>
-      <div class="header-actions">
-        <el-button class="action-btn primary" icon="Plus">Register Asset</el-button>
-        <el-button class="action-btn" icon="Upload">Batch Import</el-button>
-      </div>
-    </header>
+    <div class="ledger-container">
+      <!-- Premium Header -->
+      <header class="ledger-header">
+        <div class="header-main">
+          <h1 class="headline">全域物理资产与设备台账</h1>
+          <p class="sub-headline">支持树级挂载与点位属性的结构层级管理 (Asset Ledger)</p>
+        </div>
+        <div class="header-actions">
+          <el-button class="action-btn primary" icon="Plus">注册资产</el-button>
+          <el-button class="action-btn" icon="Upload">批量导入</el-button>
+        </div>
+      </header>
 
-    <div class="ledger-workspace">
+      <div class="ledger-workspace">
       <!-- Left Sidebar: Structural Hierarchy -->
       <aside class="hierarchy-sidebar">
         <div class="sidebar-header">
-          <h2>Structural Hierarchy</h2>
+          <h2>组织与站点架构</h2>
           <el-input 
             v-model="filterText" 
-            placeholder="Search sites or zones..." 
+            placeholder="搜索站点或分区..." 
             clearable 
             class="sleek-input"
             prefix-icon="Search"
@@ -40,9 +41,9 @@
             <template #default="{ node, data }">
               <div class="tree-node">
                 <div class="node-icon" :class="data.level">
-                  <el-icon v-if="data.level === 'org'"><OfficeBuilding /></el-icon>
-                  <el-icon v-else-if="data.level === 'zone'"><MapLocation /></el-icon>
-                  <el-icon v-else-if="data.level === 'site'"><HomeFilled /></el-icon>
+                  <el-icon v-if="data.level === 'org'" :size="14"><OfficeBuilding /></el-icon>
+                  <el-icon v-else-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
+                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
@@ -58,10 +59,10 @@
           <div class="content-header">
             <div>
               <h2 class="content-title">{{ currentSiteName }}</h2>
-              <p class="content-meta">Devices and measuring points mapped to this physical site.</p>
+              <p class="content-meta">挂载到该物理站点的设备及测点台账列表</p>
             </div>
             <div class="content-filters">
-              <el-input placeholder="Filter devices..." class="sleek-input small" prefix-icon="Filter" />
+              <el-input placeholder="过滤设备..." class="sleek-input small" prefix-icon="Filter" />
             </div>
           </div>
 
@@ -75,28 +76,28 @@
                   <span class="device-type-badge">{{ device.deviceType }}</span>
                 </div>
                 <div class="device-actions">
-                  <span class="install-date">Installed: {{ device.installDate }}</span>
-                  <el-button link class="text-action">Edit</el-button>
-                  <el-button link class="text-action danger">Replace</el-button>
+                  <span class="install-date">安装日期: {{ device.installDate }}</span>
+                  <el-button link class="text-action">编辑信息</el-button>
+                  <el-button link class="text-action danger">换表接续</el-button>
                 </div>
               </div>
               
               <!-- Measuring Points -->
               <div class="points-grid" v-if="device.points && device.points.length > 0">
                 <div class="points-header">
-                  <h4>Measuring Points</h4>
-                  <el-button link class="text-action small" icon="Plus">Add Point</el-button>
+                  <h4>输出测点 (Measuring Points)</h4>
+                  <el-button link class="text-action small" icon="Plus">添加测点</el-button>
                 </div>
                 <div class="points-table-wrapper">
                   <table class="sleek-table">
                     <thead>
                       <tr>
-                        <th>Point Code</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Unit</th>
-                        <th>Last Updated</th>
-                        <th class="align-right">Action</th>
+                        <th>测点编码</th>
+                        <th>测点名称</th>
+                        <th>数据类型</th>
+                        <th>单位</th>
+                        <th>更新时间</th>
+                        <th class="align-right">操作</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -107,7 +108,7 @@
                         <td class="subtle">{{ point.unit || '-' }}</td>
                         <td class="subtle">{{ point.updateTime }}</td>
                         <td class="align-right">
-                          <el-button link class="text-action small">Map Tag</el-button>
+                          <el-button link class="text-action small">配置映射</el-button>
                         </td>
                       </tr>
                     </tbody>
@@ -115,8 +116,8 @@
                 </div>
               </div>
               <div v-else class="empty-points">
-                <p>No measuring points configured for this device.</p>
-                <el-button link class="text-action small" icon="Plus">Add Point</el-button>
+                <p>该设备暂未配置任何物理输出测点。</p>
+                <el-button link class="text-action small" icon="Plus">添加测点</el-button>
               </div>
             </div>
           </div>
@@ -124,10 +125,11 @@
 
         <div v-else class="empty-state">
           <div class="empty-icon"><el-icon><DataBoard /></el-icon></div>
-          <h3>Select a Site</h3>
-          <p>Choose a physical site from the structural hierarchy on the left to view and manage its devices.</p>
+          <h3>未选择站点</h3>
+          <p>请在左侧的架构树中选择一个具体的物理站点，以查看并管理其挂载的设备与测点台账。</p>
         </div>
       </main>
+    </div>
     </div>
   </div>
 </template>
@@ -268,10 +270,23 @@ const getPointColorClass = (type: string) => {
 .asset-ledger {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  background-color: #fcfcfc;
+  height: calc(100vh - 50px);
+  padding: 16px;
+  background-color: var(--el-bg-color-page);
   color: #11181c;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* 内部容器，添加边框和圆角使高级感更强 */
+.ledger-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fcfcfc;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 /* Header */
@@ -279,13 +294,13 @@ const getPointColorClass = (type: string) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 32px 40px;
+  padding: 16px 24px;
   background: #ffffff;
   border-bottom: 1px solid #eaeaea;
 }
 
 .headline {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
   margin: 0 0 4px 0;
@@ -293,7 +308,7 @@ const getPointColorClass = (type: string) => {
 }
 
 .sub-headline {
-  font-size: 14px;
+  font-size: 13px;
   color: #687076;
   margin: 0;
 }
@@ -310,12 +325,12 @@ const getPointColorClass = (type: string) => {
   transition: all 0.2s ease;
 }
 .action-btn.primary {
-  background: #11181c;
+  background: var(--el-color-primary);
   color: #fff;
   border: none;
 }
 .action-btn.primary:hover {
-  background: #2b3236;
+  background: var(--el-color-primary-light-3);
 }
 
 /* Workspace Layout */
@@ -335,7 +350,7 @@ const getPointColorClass = (type: string) => {
 }
 
 .sidebar-header {
-  padding: 24px;
+  padding: 16px;
 }
 
 .sidebar-header h2 {
@@ -353,7 +368,7 @@ const getPointColorClass = (type: string) => {
   border-radius: 6px;
 }
 .sleek-input :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 1px #11181c inset;
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset;
   background-color: #fff;
 }
 .sleek-input.small :deep(.el-input__wrapper) {
@@ -376,8 +391,8 @@ const getPointColorClass = (type: string) => {
   margin-bottom: 2px;
 }
 .sleek-tree :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: #f1f3f5;
-  color: #11181c;
+  background-color: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
   font-weight: 500;
 }
 
@@ -395,9 +410,9 @@ const getPointColorClass = (type: string) => {
   margin-right: 8px;
   color: #889096;
 }
-.node-icon.org { color: #3e63dd; }
-.node-icon.zone { color: #29a366; }
-.node-icon.site { color: #e54d2e; }
+.node-icon.org { color: var(--el-color-primary); }
+.node-icon.zone { color: var(--el-color-success); }
+.node-icon.site { color: var(--el-color-warning); }
 
 .node-label {
   flex: 1;
@@ -421,7 +436,7 @@ const getPointColorClass = (type: string) => {
   flex: 1;
   background: #fcfcfc;
   overflow-y: auto;
-  padding: 40px;
+  padding: 24px;
 }
 
 .empty-state {
@@ -463,13 +478,13 @@ const getPointColorClass = (type: string) => {
 }
 
 .content-title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   margin: 0 0 6px 0;
 }
 
 .content-meta {
-  font-size: 14px;
+  font-size: 13px;
   color: #687076;
   margin: 0;
 }
@@ -478,7 +493,7 @@ const getPointColorClass = (type: string) => {
 .device-list {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
 }
 
 .device-item {
@@ -493,7 +508,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid #eaeaea;
   background: #fafafa;
 }
@@ -509,8 +524,8 @@ const getPointColorClass = (type: string) => {
   height: 8px;
   border-radius: 50%;
 }
-.status-indicator.online { background-color: #29a366; box-shadow: 0 0 0 2px rgba(41,163,102,0.2); }
-.status-indicator.offline { background-color: #e54d2e; box-shadow: 0 0 0 2px rgba(229,77,46,0.2); }
+.status-indicator.online { background-color: var(--el-color-success); box-shadow: 0 0 0 2px rgba(103, 194, 58, 0.2); }
+.status-indicator.offline { background-color: var(--el-color-danger); box-shadow: 0 0 0 2px rgba(245, 108, 108, 0.2); }
 
 .device-name {
   font-size: 16px;
@@ -529,8 +544,8 @@ const getPointColorClass = (type: string) => {
 
 .device-type-badge {
   font-size: 12px;
-  color: #3e63dd;
-  background: #e6edfe;
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
   padding: 2px 8px;
   border-radius: 12px;
   font-weight: 500;
@@ -553,12 +568,12 @@ const getPointColorClass = (type: string) => {
   color: #11181c;
   padding: 0;
 }
-.text-action:hover { color: #3e63dd; }
-.text-action.danger { color: #e54d2e; }
+.text-action:hover { color: var(--el-color-primary); }
+.text-action.danger { color: var(--el-color-danger); }
 
 /* Measuring Points Table */
 .points-grid {
-  padding: 24px;
+  padding: 16px 20px;
 }
 
 .points-header {
@@ -622,13 +637,13 @@ const getPointColorClass = (type: string) => {
   border-radius: 50%;
   margin-right: 6px;
 }
-.type-dot.blue { background-color: #3e63dd; }
-.type-dot.green { background-color: #29a366; }
-.type-dot.orange { background-color: #f76b15; }
+.type-dot.blue { background-color: var(--el-color-primary); }
+.type-dot.green { background-color: var(--el-color-success); }
+.type-dot.orange { background-color: var(--el-color-warning); }
 .type-dot.gray { background-color: #889096; }
 
 .empty-points {
-  padding: 32px;
+  padding: 24px;
   text-align: center;
   color: #889096;
   font-size: 13px;

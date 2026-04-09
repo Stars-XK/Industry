@@ -46,7 +46,7 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (13, 10, '工业SCADA工艺组态', 3, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
 (14, 10, '安防与环境空间监控', 4, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'Camera', '', 1),
 (15, 10, 'DMA 拓扑树配置', 5, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
-(16, 10, 'GIS 管网与资产调度', 6, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 1, 1, 'Location', '', 1),
+(16, 10, 'GIS 管网与资产调度', 6, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 0, 1, 'Location', '测试隐藏的GIS菜单', 1),
 
 -- 3. 多维统计与数据分析
 (20, 0, '多维统计与数据分析', 20, '/analytics', 'Layout', 0, 0, '', 'M', 1, 1, 'DataAnalysis', '', 1),

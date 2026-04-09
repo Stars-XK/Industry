@@ -363,6 +363,7 @@ onUnmounted(() => {
   height: calc(100vh - 60px); /* Adjust based on your layout header */
   background: #020617;
   overflow: hidden;
+  pointer-events: auto; /* Ensure map and internal elements receive pointer events */
 }
 
 .map-layer {

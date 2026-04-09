@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">在线水力模型仿真与推演 (EPANET)</h1>
@@ -121,7 +121,7 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-.app-container {
+.app-container wide-panel {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   display: flex;

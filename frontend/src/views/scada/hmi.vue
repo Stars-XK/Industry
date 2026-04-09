@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up hmi-container">
+  <div class="app-container wide-panel fade-in-up hmi-container">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">工业 SCADA 工艺组态监控</h1>

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <el-card class="box-card">
       <template #header>
         <div class="card-header">

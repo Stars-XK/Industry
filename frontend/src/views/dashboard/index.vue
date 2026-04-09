@@ -223,7 +223,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.dashboard-container {
+.app-container wide-panel {
   width: 100vw;
   height: 100vh;
   background-color: var(--el-bg-color-page);

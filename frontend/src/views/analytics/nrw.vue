@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">DMA 产销差与漏损报表</h1>

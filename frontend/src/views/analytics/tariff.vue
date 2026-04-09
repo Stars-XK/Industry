@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="box-card">
       <div class="panel-header">
         <div>
@@ -161,7 +161,7 @@ onMounted(() => {
 })
 </script>
 <style scoped>
-.app-container {
+.app-container wide-panel {
   padding: 24px;
   background-color: var(--el-bg-color-page);
   display: flex;

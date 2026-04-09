@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="box-card" v-loading="saving">
       <div class="panel-header">
         <span class="panel-title">低代码可视化组态工作台</span>

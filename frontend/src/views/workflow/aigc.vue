@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">AI 大模型智能调度与指挥中枢</span>

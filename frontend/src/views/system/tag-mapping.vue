@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">测点与时序标签映射管理 (IoT Tag Mapping)</span>

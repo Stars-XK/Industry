@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="box-card">
       <div class="panel-header">
         <span class="panel-title">边缘计算与物联网网关台账 (IoT Gateways)</span>

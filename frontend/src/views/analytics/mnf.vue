@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up">
+  <div class="app-container wide-panel fade-in-up">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">夜间最小流量分析</h1>

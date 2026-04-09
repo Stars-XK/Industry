@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container fade-in-up scada-overview">
+  <div class="app-container wide-panel fade-in-up scada-overview">
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">全局态势感知</h1>

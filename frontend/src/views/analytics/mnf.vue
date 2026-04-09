@@ -37,6 +37,7 @@
     </el-row>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import { WarningFilled } from '@element-plus/icons-vue'
@@ -46,11 +47,20 @@ const selectedZone = ref('zone_1')
 const loading = ref(false)
 const hasAnomaly = ref(false)
 const anomalyZone = ref('未知分区')
+
+let chartInstance: echarts.ECharts | null = null
+
+window.addEventListener('resize', () => {
+  chartInstance?.resize()
+})
+
 const initChart = (dates: string[], actualData: number[], baselineData: number[]) => {
   const dom = document.getElementById('mnf-chart')
   if (!dom) return
-  const chart = echarts.init(dom)
-  chart.setOption({
+  if (!chartInstance) {
+    chartInstance = echarts.init(dom)
+  }
+  chartInstance.setOption({
     tooltip: {
       trigger: 'axis',
       backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -96,7 +106,9 @@ const loadData = async () => {
       hasAnomaly.value = res.data.hasAnomaly
       anomalyZone.value = res.data.anomalyZone
       nextTick(() => {
-        initChart(res.data.dates, res.data.actual, res.data.baseline)
+        setTimeout(() => {
+          initChart(res.data.dates, res.data.actual, res.data.baseline)
+        }, 100)
       })
     }
   } catch (error) {
@@ -107,19 +119,25 @@ const loadData = async () => {
       hasAnomaly.value = true
       anomalyZone.value = '东海园区'
       nextTick(() => {
-        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [12, 11, 13, 25, 28, 26, 29], [10, 10, 10, 10, 10, 10, 10])
+        setTimeout(() => {
+          initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [12, 11, 13, 25, 28, 26, 29], [10, 10, 10, 10, 10, 10, 10])
+        }, 100)
       })
     } else if (selectedZone.value === 'zone_2') {
       hasAnomaly.value = false
       anomalyZone.value = '丰泽二期'
       nextTick(() => {
-        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [8, 9, 8.5, 9, 8, 9.2, 8.8], [10, 10, 10, 10, 10, 10, 10])
+        setTimeout(() => {
+          initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [8, 9, 8.5, 9, 8, 9.2, 8.8], [10, 10, 10, 10, 10, 10, 10])
+        }, 100)
       })
     } else {
       hasAnomaly.value = false
       anomalyZone.value = '新港高新区'
       nextTick(() => {
-        initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [15, 14.5, 16, 15, 14, 15.5, 15], [18, 18, 18, 18, 18, 18, 18])
+        setTimeout(() => {
+          initChart(['1日', '2日', '3日', '4日', '5日', '6日', '7日'], [15, 14.5, 16, 15, 14, 15.5, 15], [18, 18, 18, 18, 18, 18, 18])
+        }, 100)
       })
     }
   } finally {

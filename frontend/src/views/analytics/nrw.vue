@@ -19,10 +19,10 @@
           <el-option label="2025年上本年拓扑 (v2.3)" value="v2.3" />
           <el-option label="2024年下半年拓扑 (v2.2)" value="v2.2" />
         </el-select>
-        <el-button type="primary" @click="fetchData" style="margin-left: 12px">
+        <el-button type="primary" @click="fetchData" >
           <el-icon style="margin-right: 4px"><Search /></el-icon> 分析查询
         </el-button>
-        <el-button type="success" @click="exportReport" style="margin-left: 12px">
+        <el-button type="success" @click="exportReport" >
           <el-icon style="margin-right: 4px"><Download /></el-icon> 导出报表
         </el-button>
       </div>

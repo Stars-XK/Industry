@@ -27,9 +27,11 @@
         <el-table-column prop="remark" label="备注说明"  show-overflow-tooltip  />
         <el-table-column label="操作" fixed="right" width="160">
           <template #default="scope">
+        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
-          </template>
+                  </div>
+      </template>
         </el-table-column>
       </el-table>
     </div>

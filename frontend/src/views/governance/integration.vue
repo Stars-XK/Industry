@@ -42,13 +42,15 @@
         </el-table-column>
         <el-table-column label="操作" align="center" fixed="right" width="160">
           <template #default="scope">
+        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <el-button link type="primary" @click="handleEdit(scope.row)">
               <el-icon style="margin-right: 2px;"><Edit /></el-icon> 编辑
             </el-button>
             <el-button link type="danger" @click="handleDelete(scope.row)">
               <el-icon style="margin-right: 2px;"><Delete /></el-icon> 删除
             </el-button>
-          </template>
+                  </div>
+      </template>
         </el-table-column>
       </el-table>
     </el-card>

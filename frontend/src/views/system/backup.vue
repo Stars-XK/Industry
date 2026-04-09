@@ -52,6 +52,7 @@
         <el-table-column prop="createdAt" label="备份时间" width="180"  show-overflow-tooltip />
         <el-table-column label="操作" align="center" fixed="right" width="160">
           <template #default="scope">
+        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <el-button type="primary" link :disabled="scope.row.status !== 1" @click="handleDownload(scope.row)">
               <el-icon style="margin-right: 2px;"><Download /></el-icon> 下载
             </el-button>
@@ -63,7 +64,8 @@
                 <el-button type="danger" link :disabled="scope.row.status !== 1">
                   <el-icon style="margin-right: 2px;"><RefreshLeft /></el-icon> 一键恢复
                 </el-button>
-              </template>
+                      </div>
+      </template>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -95,7 +97,7 @@
         </el-form-item>
         <el-form-item label="保留天数">
           <el-input-number v-model="strategyForm.keepDays" :min="1" :max="365" />
-          <span style="margin-left: 10px; color: var(--el-text-color-regular); font-size: 12px;">超过天数的旧备份将被自动清理</span>
+          <span >超过天数的旧备份将被自动清理</span>
         </el-form-item>
       </el-form>
       <template #footer>

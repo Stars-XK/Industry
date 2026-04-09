@@ -41,6 +41,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center" fixed="right" width="100">
             <template #default="scope">
+        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <el-button 
                 v-if="scope.row.status === 'unpaid'" 
                 size="small" 
@@ -48,7 +49,8 @@
                 @click="handlePay(scope.row)">
                 确认销账
               </el-button>
-            </template>
+                    </div>
+      </template>
           </el-table-column>
         </el-table>
       </div>

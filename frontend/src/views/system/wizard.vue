@@ -25,7 +25,7 @@
           </el-button>
           <div class="next-btn">
             <el-button type="primary" size="large" @click="nextStep">
-              我已填好数据，下一步 <el-icon style="margin-left: 6px;"><Right /></el-icon>
+              我已填好数据，下一步 <el-icon ><Right /></el-icon>
             </el-button>
           </div>
         </div>

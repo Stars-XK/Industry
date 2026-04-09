@@ -317,3 +317,23 @@ html.dark .el-dialog {
   margin-right: 16px;
   margin-bottom: 16px;
 }
+
+
+/* Action buttons layout */
+.el-table .cell .action-btns {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.el-table .cell .action-btns .el-button {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Specific fix for link buttons so they look nice */
+.el-table .cell .el-button.is-link {
+  padding: 4px 0;
+  height: auto;
+}

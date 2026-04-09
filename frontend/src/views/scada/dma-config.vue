@@ -59,8 +59,10 @@
               </el-table-column>
               <el-table-column label="操作" align="center" fixed="right" width="100">
                 <template #default="scope">
+        <div class="action-btns" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                   <el-button size="small" class="text-danger" link @click="handleUnbindDevice(scope.row)">解绑移出</el-button>
-                </template>
+                        </div>
+      </template>
               </el-table-column>
             </el-table>
           </div>

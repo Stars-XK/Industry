@@ -256,33 +256,6 @@ INSERT IGNORE INTO biz_meter_reading (id, account_id, device_id, reading_period,
 (5, 2, 3, '2026-03', 545000.00),
 (6, 2, 3, '2026-04', 591500.00);
 
--- 8. TDengine 降级模拟数据
-INSERT IGNORE INTO dma_1h (ts, zone_id, supply, sale, balance_value, night_flow) VALUES
-( '2026-04-07 04:00:00', '201', 518, 0, 0, 0 ),
-( '2026-04-07 05:00:00', '201', 535, 0, 0, 0 ),
-( '2026-04-07 06:00:00', '201', 452, 0, 0, 0 ),
-( '2026-04-07 07:00:00', '201', 469, 0, 0, 0 ),
-( '2026-04-07 08:00:00', '201', 486, 0, 0, 0 ),
-( '2026-04-07 09:00:00', '201', 503, 0, 0, 0 ),
-( '2026-04-07 10:00:00', '201', 520, 0, 0, 0 ),
-( '2026-04-07 11:00:00', '201', 537, 0, 0, 0 ),
-( '2026-04-07 12:00:00', '201', 454, 0, 0, 0 ),
-( '2026-04-07 13:00:00', '201', 471, 0, 0, 0 ),
-( '2026-04-07 14:00:00', '201', 488, 0, 0, 0 ),
-( '2026-04-07 15:00:00', '201', 505, 0, 0, 0 ),
-( '2026-04-07 16:00:00', '201', 522, 0, 0, 0 ),
-( '2026-04-07 17:00:00', '201', 539, 0, 0, 0 ),
-( '2026-04-07 18:00:00', '201', 456, 0, 0, 0 ),
-( '2026-04-07 19:00:00', '201', 473, 0, 0, 0 ),
-( '2026-04-07 20:00:00', '201', 490, 0, 0, 0 ),
-( '2026-04-07 21:00:00', '201', 507, 0, 0, 0 ),
-( '2026-04-07 22:00:00', '201', 524, 0, 0, 0 ),
-( '2026-04-07 23:00:00', '201', 541, 0, 0, 0 ),
-( '2026-04-08 00:00:00', '201', 450, 0, 0, 0 ),
-( '2026-04-08 01:00:00', '201', 467, 0, 0, 0 ),
-( '2026-04-08 02:00:00', '201', 484, 0, 0, 0 ),
-( '2026-04-08 03:00:00', '201', 501, 0, 0, 0 );
-
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
@@ -366,16 +339,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- 填充 sys_audit_log 基础日志
 INSERT INTO sys_audit_log (req_url, req_method, user_id, ip_address, req_body, execution_time)
 VALUES ('/api/v1/system/init', 'POST', 1, '127.0.0.1', '{"action": "init", "status":"ok", "remark":"系统初始化完成"}', 150);
-
--- 填充 dma_daily DMA日聚合数据 (模拟 7 天时序降采样假数据)
-INSERT INTO dma_daily (ts, zone_id, supply, sale, balance_value, night_flow) VALUES
-(DATE_SUB(CURRENT_DATE, INTERVAL 6 DAY), 'DMA-001', 12500, 10000, 2500, 12),
-(DATE_SUB(CURRENT_DATE, INTERVAL 5 DAY), 'DMA-001', 12600, 10100, 2500, 11),
-(DATE_SUB(CURRENT_DATE, INTERVAL 4 DAY), 'DMA-001', 12450, 10050, 2400, 13),
-(DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY), 'DMA-001', 13500, 10100, 3400, 25),
-(DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY), 'DMA-001', 13800, 10000, 3800, 28),
-(DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY), 'DMA-001', 13650, 10150, 3500, 26),
-(CURRENT_DATE, 'DMA-001', 13900, 10000, 3900, 29);
 
 -- 填充 wf_duty_schedule 运维排班与位置
 INSERT INTO wf_duty_schedule (user_id, duty_date, shift_type, is_attended) VALUES

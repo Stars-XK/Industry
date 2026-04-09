@@ -6,7 +6,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, device_raw, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, dma_daily, dma_1h, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -180,19 +180,6 @@ CREATE TABLE IF NOT EXISTS `dma_device_rel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='DMA与设备关联表';
 
 -- ----------------------------
--- 10. 设备原始遥测数据表 (Phase 2, 临时替代 TDengine)
--- ----------------------------
-DROP TABLE IF EXISTS `device_raw`;
-CREATE TABLE `device_raw` (
-  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-  `device_id` INT NOT NULL COMMENT '资产设备ID',
-  `tag_name` VARCHAR(100) NOT NULL COMMENT '测点标签名 (如 PLC.S7.Temp)',
-  `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名',
-  `value` FLOAT NOT NULL COMMENT '处理后的数值',
-  `timestamp` BIGINT NOT NULL COMMENT '毫秒级时间戳',
-  INDEX `idx_device_time` (`device_id`, `timestamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='设备原始遥测数据表(降级使用)';
--- ----------------------------
 DROP TABLE IF EXISTS `iot_gateway`;
 CREATE TABLE `iot_gateway` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -279,29 +266,6 @@ CREATE TABLE IF NOT EXISTS biz_meter_reading (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (account_id) REFERENCES biz_key_account(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 16. 时序库超级表在 MySQL 中的降级模拟表 (用于没有安装 TDengine 时的系统演示不报错)
-CREATE TABLE IF NOT EXISTS dma_daily (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ts TIMESTAMP NOT NULL,
-    zone_id VARCHAR(30),
-    supply DOUBLE,
-    sale DOUBLE,
-    balance_value DOUBLE,
-    night_flow DOUBLE,
-    INDEX `idx_dma_daily_ts` (`zone_id`, `ts`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_daily 降级模拟表';
-
-CREATE TABLE IF NOT EXISTS dma_1h (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ts TIMESTAMP NOT NULL,
-    zone_id VARCHAR(30),
-    supply DOUBLE,
-    sale DOUBLE,
-    balance_value DOUBLE,
-    night_flow DOUBLE,
-    INDEX `idx_dma_1h_ts` (`zone_id`, `ts`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TDengine dma_1h 降级模拟表';
 
 -- ====================== 运维排班与协同 ======================
 CREATE TABLE IF NOT EXISTS wf_duty_schedule (
@@ -520,27 +484,6 @@ CREATE TABLE IF NOT EXISTS ast_inventory_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存出入库流水表';
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- 补充缺少的模拟降级表与业务表
--- 30. 时序数据模拟表（当 TDengine 不可用时的降级方案，仅做模拟和兼容）
-CREATE TABLE IF NOT EXISTS device_raw (
-    ts TIMESTAMP NOT NULL,
-    raw_value DOUBLE NOT NULL,
-    device_id VARCHAR(50) NOT NULL,
-    zone_id VARCHAR(30) DEFAULT NULL,
-    device_type TINYINT DEFAULT 1,
-    PRIMARY KEY (device_id, ts)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='设备原始遥测数据模拟表';
-
-CREATE TABLE IF NOT EXISTS dma_daily (
-    ts TIMESTAMP NOT NULL,
-    zone_id VARCHAR(30) NOT NULL,
-    supply DOUBLE DEFAULT 0,
-    sale DOUBLE DEFAULT 0,
-    balance_value DOUBLE DEFAULT 0,
-    night_flow DOUBLE DEFAULT 0,
-    PRIMARY KEY (zone_id, ts)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='DMA 日聚合数据模拟表';
 
 -- 31. 运维排班表
 CREATE TABLE IF NOT EXISTS wf_duty_schedule (

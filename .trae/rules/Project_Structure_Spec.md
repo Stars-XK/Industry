@@ -13,6 +13,7 @@
 ├── /frontend               # 前端工程 (Vue3 / React + Vite)
 ├── /backend                # 后端微服务工程 (NestJS + TypeORM)
 ├── /edge-gateway           # 边缘计算与网关脚本 (Python / Node.js)
+├── /data-simulator         # 独立的数据模拟推送工程 (定时向 API 或 TDengine 塞假数据)
 ├── /docs                   # 业务文档、架构图与部署手册
 └── /.trae/rules            # AI 与开发人员需遵循的设计规范与全局规则 (如 PRD、DB结构等)
 ```
@@ -76,19 +77,25 @@
 2. **`auth-service`**: 连接 MySQL 的 `sys_*` 表，处理登录、Token 签发、权限范围校验。
 3. **`data-center`**: 重度依赖 TDengine，处理报表、产销差计算、聚合查询；同时也读取 MySQL 中的大户档案 (`bil_*`)。
 4. **`workflow-service`**: 连接 MySQL 的 `wf_*` 和 `alm_*` 表，驱动工单状态机。
-5. **`iot-bridge`**: 作为一个“翻译官”，订阅 MQTT Broker 的原始报文，查询 `iot_tag_mapping`，然后批量高速写入 TDengine 的子表。
+6. **`gov-datasource`**: (新增) 多源异构数据接入服务。支持通过 HTTP/Kafka/PG/Oracle 等外部通道抓取并解析数据，随后推送到 TDengine。
 
 ---
 
-## 4. 边缘计算与网关工程 (Edge Gateway)
+## 4. 边缘计算与数据模拟工程 (Edge & Simulator)
 
-由于工业现场环境复杂，单独划分边缘层代码。部署在厂区工控机或工业路由器上。
+由于工业现场环境复杂，单独划分边缘层代码及模拟工具代码。
 
 ```text
-/edge-gateway
+/edge-gateway               # 真实边缘网关 (部署于厂区工控机)
 ├── /protocols              # 协议解析插件 (Modbus RTU/TCP, OPC UA, S7)
 ├── /buffer                 # 本地断网缓存机制 (SQLite/本地文件队列)
 ├── /filters                # 边缘过滤与清洗 (死区 Deadband 拦截、极值丢弃)
 ├── /mqtt_client            # 上云客户端 (将标准化 JSON 通过 MQTT 推送至云端)
 └── main.py / app.js        # 边缘网关主入口
+
+/data-simulator             # (新增) 独立的数据模拟工程
+├── /generators             # 数据生成算法 (如正弦波波动、随机递增、异常突刺)
+├── /schedulers             # 定时调度器 (Cron jobs)
+├── /push_clients           # API 推送客户端 (模拟网关向 /api/v1/data 塞数据)
+└── main.py / app.js        # 模拟器主入口
 ```

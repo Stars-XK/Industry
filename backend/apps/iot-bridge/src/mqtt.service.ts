@@ -4,17 +4,18 @@ import { Repository } from 'typeorm';
 import * as mqtt from 'mqtt';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { TDengineService } from '@app/database/tdengine/tdengine.service';
+import { RedisService } from '@app/redis';
 
 @Injectable()
 export class MqttService implements OnModuleInit, OnModuleDestroy {
   private client: mqtt.MqttClient;
-  private tagMap: Map<string, IotTagMapping> = new Map();
   private readonly logger = new Logger(MqttService.name);
 
   constructor(
     @InjectRepository(IotTagMapping)
     private tagMappingRepo: Repository<IotTagMapping>,
-    private tdengineService: TDengineService
+    private tdengineService: TDengineService,
+    private redisService: RedisService
   ) {}
 
   async onModuleInit() {
@@ -34,11 +35,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   private async loadTagMappings() {
     const tags = await this.tagMappingRepo.find({ where: { is_active: 1 } });
-    this.tagMap.clear();
     for (const tag of tags) {
-      this.tagMap.set(`${tag.device_id}_${tag.tag_name}`, tag);
+      await this.redisService.set(`iot:tag_map:${tag.device_id}_${tag.tag_name}`, JSON.stringify(tag));
     }
-    this.logger.log(`已加载 ${tags.length} 条有效测点映射规则`);
+    this.logger.log(`已加载 ${tags.length} 条有效测点映射规则到 Redis`);
   }
 
   private connectMqtt() {
@@ -76,8 +76,9 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
         const tdengineSqls = [];
 
         for (const [tagName, rawValue] of Object.entries(msg.data)) {
-          const mapping = this.tagMap.get(`${deviceId}_${tagName}`);
-          if (mapping) {
+          const mappingStr = await this.redisService.get(`iot:tag_map:${deviceId}_${tagName}`);
+          if (mappingStr) {
+            const mapping: IotTagMapping = JSON.parse(mappingStr);
             const parsedVal = parseFloat(rawValue as string);
             if (!isNaN(parsedVal)) {
               const scaledValue = parsedVal * mapping.scaling_factor;

@@ -6,7 +6,7 @@ import { DictData } from '../../../../libs/entities/src/dict-data.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateDictTypeDto, UpdateDictTypeDto, CreateDictDataDto, UpdateDictDataDto } from './dto/dict.dto';
+import { RedisService } from '@app/redis';
 
 @ApiTags('字典管理')
 @ApiBearerAuth()
@@ -18,7 +18,8 @@ export class DictController {
     private readonly dictTypeRepository: Repository<DictType>,
     @InjectRepository(DictData)
     private readonly dictDataRepository: Repository<DictData>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private redisService: RedisService
   ) {}
 
   @Get('type/list')
@@ -63,19 +64,31 @@ export class DictController {
   @Get('data/list')
   @ApiOperation({ summary: '根据字典类型获取字典数据' })
   async getDictData(@Query('dictType') dictType: string) {
-    return await this.dataSource.query(
+    const cacheKey = `sys:dict:${dictType}`;
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    const data = await this.dataSource.query(
       `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY dict_sort ASC`,
       [dictType]
     );
+    await this.redisService.set(cacheKey, JSON.stringify(data), 86400);
+    return data;
   }
 
   @Get('data/list/:dictType')
   @ApiOperation({ summary: '根据字典类型获取字典数据(路径参数)' })
   async getDictDataByPath(@Param('dictType') dictType: string) {
-    return await this.dataSource.query(
+    const cacheKey = `sys:dict:${dictType}`;
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    const data = await this.dataSource.query(
       `SELECT * FROM sys_dict_data WHERE dict_type = ? ORDER BY dict_sort ASC`,
       [dictType]
     );
+    await this.redisService.set(cacheKey, JSON.stringify(data), 86400);
+    return data;
   }
 
   @Post('data')
@@ -87,6 +100,7 @@ export class DictController {
       `INSERT INTO sys_dict_data (dict_type, dict_label, dict_value, css_class, list_class, dict_sort, status, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [dict_type, dict_label, dict_value, css_class, list_class, dict_sort || 0, status ?? 1, remark]
     );
+    await this.redisService.del(`sys:dict:${dict_type}`);
     return { success: true };
   }
 
@@ -94,19 +108,21 @@ export class DictController {
   @ApiOperation({ summary: '修改字典数据' })
   @RequirePermissions('sys:dict')
   async updateDictData(@Param('id') id: string, @Body() body: any) {
-    const { dict_label, dict_value, css_class, list_class, dict_sort, status, remark } = body;
+    const { dict_type, dict_label, dict_value, css_class, list_class, dict_sort, status, remark } = body;
     await this.dataSource.query(
       `UPDATE sys_dict_data SET dict_label = ?, dict_value = ?, css_class = ?, list_class = ?, dict_sort = ?, status = ?, remark = ? WHERE id = ?`,
       [dict_label, dict_value, css_class, list_class, dict_sort, status, remark, id]
     );
+    if (dict_type) await this.redisService.del(`sys:dict:${dict_type}`);
     return { success: true };
   }
 
   @Delete('data/:id')
   @ApiOperation({ summary: '删除字典数据' })
   @RequirePermissions('sys:dict')
-  async deleteDictData(@Param('id') id: string) {
+  async deleteDictData(@Param('id') id: string, @Query('dictType') dictType?: string) {
     await this.dataSource.query(`DELETE FROM sys_dict_data WHERE id = ?`, [id]);
+    if (dictType) await this.redisService.del(`sys:dict:${dictType}`);
     return { success: true };
   }
 }

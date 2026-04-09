@@ -6,9 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IotTagMapping } from '../../../libs/entities/src/iot-tag-mapping.entity';
 import { MqttService } from './mqtt.service';
 import { TDengineModule } from '@app/database/tdengine/tdengine.module';
+import { RedisModule } from '@app/redis';
 
 @Module({
   imports: [
+    RedisModule,
     TDengineModule,
     TypeOrmModule.forRoot({
       type: 'mysql',

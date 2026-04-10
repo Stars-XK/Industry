@@ -1,18 +1,6 @@
 <template>
   <div class="asset-ledger fade-in-up">
     <div class="ledger-container">
-      <!-- Premium Header -->
-      <header class="ledger-header">
-        <div class="header-main">
-          <h1 class="headline">全域物理资产与设备台账</h1>
-          <p class="sub-headline">支持树级挂载与点位属性的结构层级管理 (Asset Ledger)</p>
-        </div>
-        <div class="header-actions">
-          <el-button class="action-btn primary" icon="Plus" @click="handleRegisterAsset">注册资产</el-button>
-          <el-button class="action-btn" icon="Upload">批量导入</el-button>
-        </div>
-      </header>
-
       <div class="ledger-workspace">
         <el-tabs v-model="mainTab" class="main-tabs" type="card">
           <el-tab-pane label="资产层级与挂载拓扑" name="hierarchy">
@@ -374,48 +362,7 @@ const onSubmitPoint = async (formData: any) => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-/* Header */
-.ledger-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 16px 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #eaeaea;
-}
-
-.headline {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0 0 4px 0;
-  color: #11181c;
-}
-.sub-headline {
-  font-size: 13px;
-  color: #687076;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.action-btn {
-  border-radius: 6px;
-  font-weight: 500;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  transition: all 0.2s ease;
-}
-.action-btn.primary {
-  background: var(--el-color-primary);
-  color: #fff;
-  border: none;
-}
-.action-btn.primary:hover {
-  background: var(--el-color-primary-light-3);
-}
+/* Header 样式移除，保持与其它组件干净 */
 
 /* Workspace Layout */
 .ledger-workspace {

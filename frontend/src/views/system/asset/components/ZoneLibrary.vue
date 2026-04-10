@@ -86,6 +86,23 @@
       :templateColumns="['分区编码', '分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
       @import-data="handleImportData"
     />
+
+    <!-- 进度条弹窗 -->
+    <el-dialog
+      v-model="progressVisible"
+      title="正在导入数据"
+      width="400px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+    >
+      <div style="text-align: center; padding: 20px 0;">
+        <el-progress type="dashboard" :percentage="importProgress" :color="progressColor" />
+        <div style="margin-top: 15px; color: #666;">
+          正在处理: {{ currentImportCount }} / {{ totalImportCount }}
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -108,6 +125,18 @@ const queryParams = ref({
   size: 20,
   keyword: ''
 })
+
+// Progress Bar Variables
+const progressVisible = ref(false)
+const importProgress = ref(0)
+const currentImportCount = ref(0)
+const totalImportCount = ref(0)
+
+const progressColor = (percentage: number) => {
+  if (percentage < 30) return '#909399'
+  if (percentage < 70) return '#e6a23c'
+  return '#67c23a'
+}
 
 const fetchZones = async () => {
   loading.value = true
@@ -192,6 +221,11 @@ const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
 
   loading.value = true
+  progressVisible.value = true
+  totalImportCount.value = data.length
+  currentImportCount.value = 0
+  importProgress.value = 0
+  
   try {
     const payload = data.map(item => ({
       zone_code: item['分区编码'] || '',
@@ -213,7 +247,12 @@ const handleImportData = async (data: any[]) => {
       if (res && typeof res.successCount === 'number') {
         totalSuccess += res.successCount
       }
+      currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
+      importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
     }
+    
+    // 短暂延迟让用户看到 100% 进度条
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     if (totalSuccess < payload.length) {
       ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能是数据重复或格式错误）`)
@@ -224,6 +263,7 @@ const handleImportData = async (data: any[]) => {
     ElMessage.error(error.message || '导入失败，请检查数据格式')
   } finally {
     loading.value = false
+    progressVisible.value = false
     fetchZones()
   }
 }

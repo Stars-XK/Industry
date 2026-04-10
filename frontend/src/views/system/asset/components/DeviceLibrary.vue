@@ -92,15 +92,33 @@
     </div>
 
     <!-- 弹窗统一引用 -->
-    <AssetDialogs ref="assetDialogsRef" @submit-device="handleFormSubmit" />
+    <AssetDialogs ref="assetDialogsRef" @submit-device="fetchDevices" />
 
+    <!-- 导入组件 -->
     <ExcelImport
       v-model="importVisible"
       title="导入设备数据"
-      templateName="设备资产"
+      templateName="设备台账"
       :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点ID', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
       @import-data="handleImportData"
     />
+
+    <!-- 进度条弹窗 -->
+    <el-dialog
+      v-model="progressVisible"
+      title="正在导入数据"
+      width="400px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+    >
+      <div style="text-align: center; padding: 20px 0;">
+        <el-progress type="dashboard" :percentage="importProgress" :color="progressColor" />
+        <div style="margin-top: 15px; color: #666;">
+          正在处理: {{ currentImportCount }} / {{ totalImportCount }}
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,6 +142,18 @@ const queryParams = ref({
   keyword: '',
   device_type: ''
 })
+
+// Progress Bar Variables
+const progressVisible = ref(false)
+const importProgress = ref(0)
+const currentImportCount = ref(0)
+const totalImportCount = ref(0)
+
+const progressColor = (percentage: number) => {
+  if (percentage < 30) return '#909399'
+  if (percentage < 70) return '#e6a23c'
+  return '#67c23a'
+}
 
 const fetchDevices = async () => {
   loading.value = true
@@ -208,6 +238,11 @@ const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
   
   loading.value = true
+  progressVisible.value = true
+  totalImportCount.value = data.length
+  currentImportCount.value = 0
+  importProgress.value = 0
+  
   try {
     const payload = data.map(item => ({
       device_code: item['设备编码'],
@@ -230,7 +265,11 @@ const handleImportData = async (data: any[]) => {
       if (res && typeof res.successCount === 'number') {
         totalSuccess += res.successCount
       }
+      currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
+      importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
     }
+    
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     if (totalSuccess < payload.length) {
       ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能存在唯一编码重复）`)
@@ -241,6 +280,7 @@ const handleImportData = async (data: any[]) => {
     ElMessage.error(error.message || '导入失败，请检查数据格式')
   } finally {
     loading.value = false
+    progressVisible.value = false
     fetchDevices()
   }
 }

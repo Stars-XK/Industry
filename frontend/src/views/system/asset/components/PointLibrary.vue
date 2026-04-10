@@ -56,6 +56,14 @@
           {{ scope.row.device_name ? `${scope.row.device_name} (${scope.row.device_code})` : '未关联' }}
         </template>
       </el-table-column>
+      <el-table-column label="量程与扩展属性" min-width="250">
+        <template #default="scope">
+          <div v-if="scope.row.range_min !== null || scope.row.range_max !== null" style="font-size: 12px; color: #666">
+            量程: {{ scope.row.range_min ?? '-' }} ~ {{ scope.row.range_max ?? '-' }} {{ scope.row.unit }}
+          </div>
+          <div v-else style="font-size: 12px; color: #999">未设置量程</div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="150" align="center" fixed="right">
         <template #default="scope">
           <el-button link type="primary" @click="handleEdit(scope.row)">修改映射</el-button>

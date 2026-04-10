@@ -40,9 +40,18 @@
           <span v-else>{{ scope.row.site_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="zone_name" label="当前挂载分区">
+      <el-table-column prop="zone_name" label="当前挂载分区" width="200">
         <template #default="scope">
           {{ scope.row.zone_name || '未挂载' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="地理与扩展属性" min-width="250">
+        <template #default="scope">
+          <div v-if="scope.row.lng && scope.row.lat" style="font-size: 12px; color: #666">
+            <el-tag size="small" type="info" class="mr-1">{{ scope.row.crs || 'CGCS2000' }}</el-tag>
+            {{ scope.row.lng }}, {{ scope.row.lat }}
+          </div>
+          <div v-else style="font-size: 12px; color: #999">暂无坐标</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150" align="center" fixed="right">

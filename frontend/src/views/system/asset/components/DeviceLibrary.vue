@@ -46,7 +46,7 @@
           <span v-else>{{ scope.row.device_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="site_name" label="挂载物理站点">
+      <el-table-column prop="site_name" label="所属物理站点" width="200">
         <template #default="scope">
           {{ scope.row.site_name || '未挂载' }}
         </template>
@@ -57,6 +57,18 @@
           <el-tag v-else-if="scope.row.status === 2" type="info">离线</el-tag>
           <el-tag v-else-if="scope.row.status === 3" type="warning">维修中</el-tag>
           <span v-else>{{ scope.row.status }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="地理与扩展属性" min-width="250">
+        <template #default="scope">
+          <div v-if="scope.row.lng && scope.row.lat" style="font-size: 12px; color: #666">
+            <el-tag size="small" type="info" class="mr-1">{{ scope.row.crs || 'CGCS2000' }}</el-tag>
+            {{ scope.row.lng }}, {{ scope.row.lat }}
+          </div>
+          <div v-else-if="scope.row.manufacturer" style="font-size: 12px; color: #666">
+            {{ scope.row.manufacturer }} / {{ scope.row.model || '-' }}
+          </div>
+          <div v-else style="font-size: 12px; color: #999">暂无扩展信息</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150" align="center" fixed="right">

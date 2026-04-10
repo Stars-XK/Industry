@@ -154,10 +154,10 @@ export class AssetController {
   @ApiOperation({ summary: '创建物理站点' })
   @RequirePermissions('sys:asset:manage')
   async createSite(@Body() body: any) {
-    const { site_code, site_name, site_type, zone_id, dept_id } = body;
+    const { site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, dept_id) VALUES (?, ?, ?, ?, ?)`,
-      [site_code, site_name, site_type, zone_id || null, dept_id || null]
+      `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [site_code, site_name, site_type, zone_id || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -166,10 +166,10 @@ export class AssetController {
   @ApiOperation({ summary: '更新物理站点' })
   @RequirePermissions('sys:asset:manage')
   async updateSite(@Param('id') id: number, @Body() body: any) {
-    const { site_name, site_type, zone_id, dept_id } = body;
+    const { site_name, site_type, zone_id, address, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_site SET site_name=?, site_type=?, zone_id=?, dept_id=? WHERE id=?`,
-      [site_name, site_type, zone_id || null, dept_id || null, id]
+      `UPDATE ast_site SET site_name=?, site_type=?, zone_id=?, address=?, lng=?, lat=?, crs=?, properties=? WHERE id=?`,
+      [site_name, site_type, zone_id || null, address || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }
@@ -201,10 +201,11 @@ export class AssetController {
   @ApiOperation({ summary: '创建设备' })
   @RequirePermissions('sys:asset:manage')
   async createDevice(@Body() body: any) {
-    const { device_code, device_name, device_type, site_id, status } = body;
+    const { device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status) VALUES (?, ?, ?, ?, ?)`,
-      [device_code, device_name, device_type, site_id || null, status || 1]
+      `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [device_code, device_name, device_type, site_id || null, status || 1, manufacturer || null, model || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -213,10 +214,12 @@ export class AssetController {
   @ApiOperation({ summary: '更新设备' })
   @RequirePermissions('sys:asset:manage')
   async updateDevice(@Param('id') id: number, @Body() body: any) {
-    const { device_name, device_type, site_id, status } = body;
+    const { device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_device SET device_name=?, device_type=?, site_id=?, status=? WHERE id=?`,
-      [device_name, device_type, site_id || null, status, id]
+      `UPDATE ast_device 
+       SET device_name=?, device_type=?, site_id=?, status=?, manufacturer=?, model=?, lng=?, lat=?, crs=?, properties=? 
+       WHERE id=?`,
+      [device_name, device_type, site_id || null, status, manufacturer || null, model || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }
@@ -243,13 +246,15 @@ export class AssetController {
   }
 
   // --- Point CRUD ---
-  @ApiOperation({ summary: '为设备添加物理测点' })
+  @Post('point')
+  @ApiOperation({ summary: '创建物理测点' })
   @RequirePermissions('sys:asset:manage')
   async createPoint(@Body() body: any) {
-    const { device_id, point_code, point_name, point_category, data_type, unit } = body;
+    const { device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_measuring_point (device_id, point_code, point_name, point_category, data_type, unit) VALUES (?, ?, ?, ?, ?, ?)`,
-      [device_id, point_code, point_name, point_category, data_type || 'float', unit || '']
+      `INSERT INTO ast_measuring_point (device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [device_id, point_code, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -258,10 +263,12 @@ export class AssetController {
   @ApiOperation({ summary: '修改物理测点' })
   @RequirePermissions('sys:asset:manage')
   async updatePoint(@Param('id') id: number, @Body() body: any) {
-    const { device_id, point_name, point_category, data_type, unit } = body;
+    const { device_id, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_measuring_point SET device_id=?, point_name=?, point_category=?, data_type=?, unit=? WHERE id=?`,
-      [device_id, point_name, point_category, data_type || 'float', unit || '', id]
+      `UPDATE ast_measuring_point 
+       SET device_id=?, point_name=?, point_category=?, data_type=?, unit=?, range_min=?, range_max=?, properties=? 
+       WHERE id=?`,
+      [device_id, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }

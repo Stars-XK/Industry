@@ -104,13 +104,17 @@ export class ZoneController {
   @ApiOperation({ summary: '新增 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async createZone(@Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline } = body;
+    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     const newZone = this.dmaZoneRepo.create({
       parent_id: parent_id || 0,
       zone_name,
       level: level || 1,
       boundary_gis,
       mnf_baseline: mnf_baseline || 0,
+      center_lng,
+      center_lat,
+      crs: crs || 'CGCS2000',
+      properties,
       created_by: req.user?.userId || 1
     });
     await this.dmaZoneRepo.save(newZone);
@@ -121,13 +125,17 @@ export class ZoneController {
   @ApiOperation({ summary: '修改 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async updateZone(@Param('id') id: number, @Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline } = body;
+    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     await this.dmaZoneRepo.update(id, {
       parent_id,
       zone_name,
       level,
       boundary_gis,
       mnf_baseline,
+      center_lng,
+      center_lat,
+      crs,
+      properties,
       updated_by: req.user?.userId || 1
     });
     return { success: true };

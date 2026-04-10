@@ -39,12 +39,21 @@
           <span v-else>{{ scope.row.level }}级分区</span>
         </template>
       </el-table-column>
-      <el-table-column prop="parent_name" label="上级分区">
+      <el-table-column prop="parent_name" label="上级分区" width="180">
         <template #default="scope">
           {{ scope.row.parent_name || '无 (顶层)' }}
         </template>
       </el-table-column>
-      <el-table-column prop="mnf_baseline" label="夜间最小流量基线 (m³/h)" width="200" />
+      <el-table-column prop="mnf_baseline" label="基线流量 (m³/h)" width="150" />
+      <el-table-column label="地理与扩展属性" min-width="250">
+        <template #default="scope">
+          <div v-if="scope.row.center_lng && scope.row.center_lat" style="font-size: 12px; color: #666">
+            <el-tag size="small" type="info" class="mr-1">{{ scope.row.crs || 'CGCS2000' }}</el-tag>
+            {{ scope.row.center_lng }}, {{ scope.row.center_lat }}
+          </div>
+          <div v-else style="font-size: 12px; color: #999">暂无坐标</div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="150" align="center" fixed="right">
         <template #default="scope">
           <el-button link type="primary" @click="handleEdit(scope.row)">编辑</el-button>

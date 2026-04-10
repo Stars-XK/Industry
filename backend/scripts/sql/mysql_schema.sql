@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS sys_backup_log (
 CREATE TABLE IF NOT EXISTS dma_zone (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     parent_id BIGINT NOT NULL DEFAULT 0,
+    zone_code VARCHAR(50) NULL COMMENT '分区唯一编码',
     zone_name VARCHAR(100) NOT NULL,
     level SMALLINT NOT NULL DEFAULT 1,
     boundary_gis JSON COMMENT '分区多边形边界(GeoJSON格式)',

@@ -183,18 +183,33 @@
           </div>
         </div>
 
+        <!-- 工业数据全局流转桑基图 -->
+        <div class="guide-section sankey-section">
+          <div class="section-heading">
+            <h3>全域水量平衡拓扑 (Sankey Diagram)</h3>
+            <p>从水源到用户的整体数据流向监控，展示每一滴水的最终去向与损耗点。</p>
+          </div>
+          <div class="sankey-chart-wrapper" ref="globalSankeyRef"></div>
+        </div>
+
       </div>
     </el-drawer>
   </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted, computed, nextTick, shallowRef } from 'vue';
 
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { useConfigStore } from '@/store/config';
 import { Right, Guide, QuestionFilled, Close, ElementPlus, Connection, Link, Filter, Monitor, Operation, Finished, OfficeBuilding, DataLine, Odometer, Money, PieChart } from '@element-plus/icons-vue';
 import { useTutorial } from '@/hooks/useTutorial';
+import * as echarts from 'echarts/core';
+import { SankeyChart } from 'echarts/charts';
+import { TooltipComponent, TitleComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+
+echarts.use([SankeyChart, TooltipComponent, TitleComponent, CanvasRenderer]);
 
 const { startTutorial } = useTutorial();
 
@@ -208,6 +223,57 @@ const currentPath = ref(route.path);
 const hoverMenu = ref<any>(null);
 const activeTopMenuIndex = ref<number>(0);
 const isSidebarCollapsed = ref<boolean>(false);
+const globalSankeyRef = ref<HTMLElement | null>(null);
+const chartInstance = shallowRef<echarts.ECharts | null>(null);
+
+// 监听全景图抽屉打开事件，渲染桑基图
+watch(showBusinessGuide, async (val) => {
+  if (val) {
+    await nextTick();
+    renderSankey();
+  } else {
+    chartInstance.value?.dispose();
+    chartInstance.value = null;
+  }
+});
+
+const renderSankey = () => {
+  if (!globalSankeyRef.value) return;
+  if (!chartInstance.value) {
+    chartInstance.value = echarts.init(globalSankeyRef.value);
+  }
+  
+  const option = {
+    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    series: {
+      type: 'sankey',
+      layout: 'none',
+      emphasis: { focus: 'adjacency' },
+      nodeAlign: 'left',
+      data: [
+        { name: '总供水量' },
+        { name: '出厂有效输出' },
+        { name: '工艺自用水' },
+        { name: '全域真实售水' },
+        { name: '物理漏损(管网漏水)' },
+        { name: '表观漏损(计量误差)' },
+        { name: '未计费水量' }
+      ],
+      links: [
+        { source: '总供水量', target: '出厂有效输出', value: 850000 },
+        { source: '总供水量', target: '工艺自用水', value: 150000 },
+        { source: '出厂有效输出', target: '全域真实售水', value: 680000 },
+        { source: '出厂有效输出', target: '物理漏损(管网漏水)', value: 85000 },
+        { source: '出厂有效输出', target: '表观漏损(计量误差)', value: 51000 },
+        { source: '出厂有效输出', target: '未计费水量', value: 34000 }
+      ],
+      lineStyle: { color: 'source', curveness: 0.5, opacity: 0.2 },
+      itemStyle: { borderWidth: 0, borderRadius: 4 },
+      label: { color: '#333', fontSize: 13, fontWeight: 500 }
+    }
+  };
+  chartInstance.value.setOption(option);
+};
 
 // 监听路由变化
 watch(() => route.path, (newPath) => {
@@ -881,6 +947,19 @@ html.dark .node-icon { background: var(--el-color-primary-dark-2); }
   font-weight: 500;
 }
 .business-guide-btn:hover { background-color: var(--el-color-primary-light-3); transform: translateY(-1px); }
+
+/* 抽屉内桑基图样式 */
+.sankey-section {
+  margin-top: 32px;
+  background: var(--el-bg-color-page);
+  border-radius: 8px;
+  padding: 24px;
+}
+.sankey-chart-wrapper {
+  width: 100%;
+  height: 380px;
+  margin-top: 16px;
+}
 
 </style>
 

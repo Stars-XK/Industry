@@ -18,7 +18,7 @@ export class ZoneController {
   ) {}
 
   @Get('tree')
-  @ApiOperation({ summary: '获取DMA分区与站点树' })
+  @ApiOperation({ summary: '获取DMA分区树' })
   async getZoneTree(@Request() req: any) {
     const userId = req.user?.userId;
     
@@ -34,23 +34,10 @@ export class ZoneController {
       order: { id: 'ASC' }
     });
 
-    // 2. 获取物理站点
-    const sites = await this.dataSource.query(`SELECT id, site_name as label, site_type, zone_id FROM ast_site`);
-
-    // 3. 统计设备数量
-    const siteDeviceCounts = await this.dataSource.query(`
-      SELECT site_id, COUNT(id) as cnt
-      FROM ast_device
-      WHERE status != 0
-      GROUP BY site_id
-    `);
-    const countMap = new Map();
-    siteDeviceCounts.forEach((r: any) => countMap.set(r.site_id, Number(r.cnt)));
-
     const tree = [];
     const zoneMap = new Map();
 
-    // 4. 转换为树节点格式
+    // 2. 转换为树节点格式
     zones.forEach((z: any) => {
       const node = { 
         id: `zone_${z.id}`, 
@@ -62,23 +49,7 @@ export class ZoneController {
       zoneMap.set(z.id, node);
     });
 
-    sites.forEach((s: any) => {
-      const node = {
-        id: `site_${s.id}`,
-        realId: s.id,
-        label: s.label,
-        level: 'site',
-        type: s.site_type,
-        deviceCount: countMap.get(s.id) || 0
-      };
-
-      // 挂载到对应的父分区节点
-      if (s.zone_id && zoneMap.has(s.zone_id)) {
-        zoneMap.get(s.zone_id).children.push(node);
-      }
-    });
-
-    // 5. 组装分区层级
+    // 3. 组装分区层级
     zones.forEach((z: any) => {
       const parentId = Number(z.parent_id);
       if (parentId && zoneMap.has(parentId)) {

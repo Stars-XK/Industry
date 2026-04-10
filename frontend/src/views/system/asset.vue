@@ -40,22 +40,19 @@
           >
             <template #default="{ node, data }">
               <div class="tree-node">
-                <div class="node-icon" :class="data.level">
-                  <el-icon v-if="data.level === 'zone'" :size="14"><MapLocation /></el-icon>
-                  <el-icon v-else-if="data.level === 'site'" :size="14"><HomeFilled /></el-icon>
+                <div class="node-icon zone">
+                  <el-icon :size="14"><MapLocation /></el-icon>
                 </div>
                 <span class="node-label">{{ node.label }}</span>
-                <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
-                <span v-if="data.level === 'site'" class="node-type-badge site-badge">{{ getSiteTypeName(data.type) }}</span>
-                <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
+                <span class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
                     <el-icon><More /></el-icon>
                   </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item v-if="data.level === 'zone'" command="addZone">添加子分区</el-dropdown-item>
-                      <el-dropdown-item v-if="data.level === 'zone'" command="addSite">添加物理站点</el-dropdown-item>
+                      <el-dropdown-item command="addZone">添加子分区</el-dropdown-item>
+                      <el-dropdown-item command="addSite">添加物理站点</el-dropdown-item>
                       <el-dropdown-item command="edit">编辑节点信息</el-dropdown-item>
                       <el-dropdown-item command="delete" divided class="text-danger">删除该节点</el-dropdown-item>
                     </el-dropdown-menu>
@@ -73,69 +70,95 @@
           <div class="content-header">
             <div>
               <h2 class="content-title">{{ currentSiteName }}</h2>
-              <p class="content-meta">挂载到该物理站点的设备及测点台账列表</p>
+              <p class="content-meta">挂载到该分区的物理站点及设备测点台账</p>
             </div>
             <div class="content-filters">
-              <el-input placeholder="过滤设备..." class="sleek-input small" prefix-icon="Filter" />
+              <el-input placeholder="全局过滤..." class="sleek-input small" prefix-icon="Filter" />
             </div>
           </div>
 
-          <div class="device-list">
-            <div v-for="device in deviceList" :key="device.id" class="device-item">
-              <div class="device-header">
-                <div class="device-info">
-                  <div class="status-indicator" :class="device.status === '在线' ? 'online' : 'offline'"></div>
-                  <h3 class="device-name">{{ device.deviceName }}</h3>
-                  <span class="device-code">{{ device.deviceCode }}</span>
-                  <span class="device-type-badge">{{ device.deviceType }}</span>
-                </div>
-                <div class="device-actions">
-                  <span class="install-date">安装日期: {{ device.installDate }}</span>
-                  <el-button link class="text-action">编辑信息</el-button>
-                  <el-button link class="text-action">换表接续</el-button>
-                  <el-button link class="text-action danger">删除设备</el-button>
+          <el-tabs v-model="activeTab" class="ledger-tabs">
+            <el-tab-pane label="下辖物理站点" name="sites">
+              <div class="site-list">
+                <el-table :data="siteList" border stripe style="width: 100%; margin-top: 16px">
+                  <el-table-column prop="site_code" label="站点编码" width="180" />
+                  <el-table-column prop="site_name" label="站点名称" />
+                  <el-table-column label="站点类型" width="180">
+                    <template #default="{ row }">
+                      <span class="node-type-badge site-badge">{{ getSiteTypeName(row.site_type) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="180">
+                    <template #default="{ row }">
+                      <el-button link class="text-action" @click="viewSiteDevices(row)">查看设备台账</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            
+            <el-tab-pane label="挂载设备台账" name="devices">
+              <div class="device-list">
+                <div v-for="device in deviceList" :key="device.id" class="device-item">
+                  <div class="device-header">
+                    <div class="device-info">
+                      <div class="status-indicator" :class="device.status === '在线' ? 'online' : 'offline'"></div>
+                      <h3 class="device-name">{{ device.deviceName }}</h3>
+                      <span class="device-code">{{ device.deviceCode }}</span>
+                      <span class="device-type-badge">{{ device.deviceType }}</span>
+                    </div>
+                    <div class="device-actions">
+                      <span class="install-date">安装日期: {{ device.installDate }}</span>
+                      <el-button link class="text-action">编辑信息</el-button>
+                      <el-button link class="text-action">换表接续</el-button>
+                      <el-button link class="text-action danger">删除设备</el-button>
+                    </div>
+                  </div>
+                  
+                  <!-- Measuring Points -->
+                  <div class="points-grid" v-if="device.points && device.points.length > 0">
+                    <div class="points-header">
+                      <h4>输出测点 (Measuring Points)</h4>
+                      <el-button link class="text-action small" icon="Plus">添加测点</el-button>
+                    </div>
+                    <div class="points-table-wrapper">
+                      <table class="sleek-table">
+                        <thead>
+                          <tr>
+                            <th>测点编码</th>
+                            <th>测点名称</th>
+                            <th>数据类型</th>
+                            <th>单位</th>
+                            <th>更新时间</th>
+                            <th class="align-right">操作</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="point in device.points" :key="point.pointCode">
+                            <td class="mono">{{ point.pointCode }}</td>
+                            <td class="strong">{{ point.pointName }}</td>
+                            <td>
+                              <span class="data-type-dot" :class="getPointColorClass(point.pointType)"></span>
+                              {{ point.pointType }}
+                            </td>
+                            <td class="mono">{{ point.unit || '-' }}</td>
+                            <td class="mono text-muted">{{ point.updateTime }}</td>
+                            <td class="align-right">
+                              <el-button link class="text-action small">配置映射</el-button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="points-empty" v-else>
+                    该设备暂未配置任何物理输出测点。
+                    <el-button link type="primary" icon="Plus">添加测点</el-button>
+                  </div>
                 </div>
               </div>
-              
-              <!-- Measuring Points -->
-              <div class="points-grid" v-if="device.points && device.points.length > 0">
-                <div class="points-header">
-                  <h4>输出测点 (Measuring Points)</h4>
-                  <el-button link class="text-action small" icon="Plus">添加测点</el-button>
-                </div>
-                <div class="points-table-wrapper">
-                  <table class="sleek-table">
-                    <thead>
-                      <tr>
-                        <th>测点编码</th>
-                        <th>测点名称</th>
-                        <th>数据类型</th>
-                        <th>单位</th>
-                        <th>更新时间</th>
-                        <th class="align-right">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="point in device.points" :key="point.pointCode">
-                        <td class="mono">{{ point.pointCode }}</td>
-                        <td>{{ point.pointName }}</td>
-                        <td><span class="type-dot" :class="getPointColorClass(point.pointType)"></span>{{ point.pointType }}</td>
-                        <td class="subtle">{{ point.unit || '-' }}</td>
-                        <td class="subtle">{{ point.updateTime }}</td>
-                        <td class="align-right">
-                          <el-button link class="text-action small">配置映射</el-button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div v-else class="empty-points">
-                <p>该设备暂未配置任何物理输出测点。</p>
-                <el-button link class="text-action small" icon="Plus">添加测点</el-button>
-              </div>
-            </div>
-          </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
 
         <div v-else class="empty-state">
@@ -158,8 +181,10 @@ const filterText = ref('')
 const treeRef = ref<any>(null)
 const currentSiteName = ref('')
 const siteTree = ref<any[]>([])
+const siteList = ref<any[]>([])
 const deviceList = ref<any[]>([])
 const currentSiteId = ref<number | null>(null)
+const activeTab = ref('sites')
 
 const defaultProps = {
   children: 'children',
@@ -168,7 +193,6 @@ const defaultProps = {
 
 const fetchTreeData = async () => {
   try {
-    // 调用后端刚刚写好的 tree 接口
     const res = await request.get('/api/v1/system/zone/tree')
     siteTree.value = res || []
   } catch (error) {
@@ -176,10 +200,21 @@ const fetchTreeData = async () => {
   }
 }
 
-const fetchDevices = async (id: number) => {
+const fetchSites = async (zoneId: number) => {
+  try {
+    const res = await request.get(`/api/v1/system/asset/sites`, {
+      params: { zoneId, page: 1, size: 50 }
+    })
+    siteList.value = res?.list || []
+  } catch (error) {
+    console.error('Failed to fetch sites:', error)
+  }
+}
+
+const fetchDevices = async (params: { zoneId?: number, siteId?: number }) => {
   try {
     const res = await request.get(`/api/v1/system/asset/devices`, {
-      params: { zoneId: id, page: 1, size: 50 }
+      params: { ...params, page: 1, size: 50 }
     })
     // 映射后端字段到前端需要展示的结构
     deviceList.value = (res?.list || []).map((d: any) => ({
@@ -235,7 +270,16 @@ const filterNode = (value: string, data: any) => {
 const handleNodeClick = (data: any) => {
   currentSiteName.value = data.label
   currentSiteId.value = data.realId
-  fetchDevices(data.realId)
+  activeTab.value = 'sites'
+  fetchSites(data.realId)
+  fetchDevices({ zoneId: data.realId })
+}
+
+const viewSiteDevices = (site: any) => {
+  currentSiteName.value = site.site_name
+  currentSiteId.value = site.id
+  activeTab.value = 'devices'
+  fetchDevices({ siteId: site.id })
 }
 
 const handleCommand = (command: string, data: any) => {
@@ -517,6 +561,17 @@ const getPointColorClass = (type: string) => {
   font-size: 13px;
   color: #687076;
   margin: 0;
+}
+
+.ledger-tabs {
+  margin-top: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.ledger-tabs :deep(.el-tabs__content) {
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Device List (Cardless approach) */

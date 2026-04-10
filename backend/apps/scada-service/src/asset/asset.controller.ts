@@ -20,6 +20,41 @@ export class AssetController {
     private dataSource: DataSource
   ) {}
 
+  @Get('sites')
+  @ApiOperation({ summary: '分页获取分区下的物理站点列表' })
+  async getSites(@Query() query: any) {
+    const { zoneId, page = 1, size = 20, keyword = '' } = query;
+    let sql = `SELECT * FROM ast_site WHERE 1=1`;
+    let countSql = `SELECT COUNT(*) as total FROM ast_site WHERE 1=1`;
+    const params: any[] = [];
+    const countParams: any[] = [];
+
+    if (zoneId) {
+      sql += ` AND zone_id = ?`;
+      countSql += ` AND zone_id = ?`;
+      params.push(zoneId);
+      countParams.push(zoneId);
+    }
+
+    if (keyword) {
+      sql += ` AND (site_name LIKE ? OR site_code LIKE ?)`;
+      countSql += ` AND (site_name LIKE ? OR site_code LIKE ?)`;
+      params.push(`%${keyword}%`, `%${keyword}%`);
+      countParams.push(`%${keyword}%`, `%${keyword}%`);
+    }
+
+    sql += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+    params.push(Number(size), (Number(page) - 1) * Number(size));
+
+    const list = await this.dataSource.query(sql, params);
+    const countRes = await this.dataSource.query(countSql, countParams);
+
+    return {
+      list,
+      total: Number(countRes[0].total)
+    };
+  }
+
   @Get('devices')
   @ApiOperation({ summary: '分页获取分区或站点下的设备列表' })
   async getDevices(@Query() query: any) {

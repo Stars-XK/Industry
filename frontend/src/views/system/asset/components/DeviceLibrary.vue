@@ -206,33 +206,30 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-  let successCount = 0
-  let failCount = 0
   
   loading.value = true
-  for (const item of data) {
-    try {
-      const payload = {
-        device_code: item['设备编码'],
-        device_name: item['设备名称'],
-        device_type: item['设备类型(1/2/3/4)'] || 1,
-        site_id: item['所属站点ID'] || null,
-        status: item['状态(1/2/3)'] || 1,
-        manufacturer: item['生产厂家'],
-        model: item['规格型号'],
-        lng: item['经度'],
-        lat: item['纬度'],
-        crs: item['坐标系'] || 'CGCS2000'
-      }
-      await request.post('/api/v1/system/asset/device', payload)
-      successCount++
-    } catch (e) {
-      failCount++
-    }
+  try {
+    const payload = data.map(item => ({
+      device_code: item['设备编码'],
+      device_name: item['设备名称'],
+      device_type: item['设备类型(1/2/3/4)'] || 1,
+      site_id: item['所属站点ID'] || null,
+      status: item['状态(1/2/3)'] || 1,
+      manufacturer: item['生产厂家'],
+      model: item['规格型号'],
+      lng: item['经度'],
+      lat: item['纬度'],
+      crs: item['坐标系'] || 'CGCS2000'
+    }))
+    
+    const res = await request.post('/api/v1/system/asset/device/batch', payload)
+    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+  } catch (error: any) {
+    ElMessage.error(error.message || '导入失败，请检查数据格式')
+  } finally {
+    loading.value = false
+    fetchDevices()
   }
-  loading.value = false
-  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
-  fetchDevices()
 }
 
 const handleExport = () => {

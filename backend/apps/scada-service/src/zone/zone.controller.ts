@@ -100,13 +100,44 @@ export class ZoneController {
     };
   }
 
+  @Post('batch')
+  @ApiOperation({ summary: '批量新增 DMA 分区' })
+  @RequirePermissions('sys:asset:manage')
+  async batchCreateZones(@Body() body: any[], @Request() req: any) {
+    if (!body || !body.length) return { successCount: 0 };
+    let successCount = 0;
+    const userId = req.user?.userId || 1;
+    
+    for (const item of body) {
+      try {
+        const newZone = this.dmaZoneRepo.create({
+          zone_code: item.zone_code || null,
+          parent_id: item.parent_id || 0,
+          zone_name: item.zone_name,
+          level: item.level || 1,
+          mnf_baseline: item.mnf_baseline || 0,
+          center_lng: item.center_lng || null,
+          center_lat: item.center_lat || null,
+          crs: item.crs || 'CGCS2000',
+          created_by: userId
+        });
+        await this.dmaZoneRepo.save(newZone);
+        successCount++;
+      } catch (e) {
+        // Skip on error
+      }
+    }
+    return { successCount };
+  }
+
   @Post()
   @ApiOperation({ summary: '新增 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async createZone(@Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_id, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     const newZone = this.dmaZoneRepo.create({
       parent_id: parent_id || 0,
+      zone_code: zone_code || null,
       zone_name,
       level: level || 1,
       boundary_gis,
@@ -125,9 +156,10 @@ export class ZoneController {
   @ApiOperation({ summary: '修改 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async updateZone(@Param('id') id: number, @Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_id, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     await this.dmaZoneRepo.update(id, {
       parent_id,
+      zone_code,
       zone_name,
       level,
       boundary_gis,

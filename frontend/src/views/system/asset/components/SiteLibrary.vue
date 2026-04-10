@@ -189,31 +189,28 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-  let successCount = 0
-  let failCount = 0
   
   loading.value = true
-  for (const item of data) {
-    try {
-      const payload = {
-        site_code: item['站点编码'],
-        site_name: item['站点名称'],
-        site_type: item['站点类型(1/2/3/4)'] || 1,
-        zone_id: item['挂载分区ID'] || null,
-        address: item['详细地址'],
-        lng: item['经度'],
-        lat: item['纬度'],
-        crs: item['坐标系'] || 'CGCS2000'
-      }
-      await request.post('/api/v1/system/asset/site', payload)
-      successCount++
-    } catch (e) {
-      failCount++
-    }
+  try {
+    const payload = data.map(item => ({
+      site_code: item['站点编码'],
+      site_name: item['站点名称'],
+      site_type: item['站点类型(1/2/3/4)'] || 1,
+      zone_id: item['挂载分区ID'] || null,
+      address: item['详细地址'],
+      lng: item['经度'],
+      lat: item['纬度'],
+      crs: item['坐标系'] || 'CGCS2000'
+    }))
+    
+    const res = await request.post('/api/v1/system/asset/site/batch', payload)
+    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+  } catch (error: any) {
+    ElMessage.error(error.message || '导入失败，请检查数据格式')
+  } finally {
+    loading.value = false
+    fetchSites()
   }
-  loading.value = false
-  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
-  fetchSites()
 }
 
 const handleExport = () => {

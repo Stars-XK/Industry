@@ -199,31 +199,28 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-  let successCount = 0
-  let failCount = 0
   
   loading.value = true
-  for (const item of data) {
-    try {
-      const payload = {
-        point_code: item['测点编码'],
-        point_name: item['测点名称'],
-        point_category: item['测点类型(1/2/3/4/5)'] || 1,
-        device_id: item['关联设备ID'] || null,
-        data_type: item['数据类型'] || 'float',
-        unit: item['物理单位'] || '',
-        range_min: item['量程下限'] || null,
-        range_max: item['量程上限'] || null
-      }
-      await request.post('/api/v1/system/asset/point', payload)
-      successCount++
-    } catch (e) {
-      failCount++
-    }
+  try {
+    const payload = data.map(item => ({
+      point_code: item['测点编码'],
+      point_name: item['测点名称'],
+      point_category: item['测点类型(1/2/3/4/5)'] || 1,
+      device_id: item['关联设备ID'] || null,
+      data_type: item['数据类型'] || 'float',
+      unit: item['物理单位'] || '',
+      range_min: item['量程下限'] || null,
+      range_max: item['量程上限'] || null
+    }))
+    
+    const res = await request.post('/api/v1/system/asset/point/batch', payload)
+    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+  } catch (error: any) {
+    ElMessage.error(error.message || '导入失败，请检查数据格式')
+  } finally {
+    loading.value = false
+    fetchPoints()
   }
-  loading.value = false
-  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
-  fetchPoints()
 }
 
 const handleExport = () => {

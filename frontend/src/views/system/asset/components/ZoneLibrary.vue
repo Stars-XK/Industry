@@ -190,31 +190,28 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-  let successCount = 0
-  let failCount = 0
   
   loading.value = true
-  for (const item of data) {
-    try {
-      const payload = {
-        zone_code: item['分区编码'] || '',
-        zone_name: item['分区名称'],
-        level: item['层级(1/2/3)'] || 1,
-        parent_id: item['上级分区ID'] || 0,
-        mnf_baseline: item['基线流量'] || 0,
-        center_lng: item['中心经度'],
-        center_lat: item['中心纬度'],
-        crs: item['坐标系'] || 'CGCS2000'
-      }
-      await request.post('/api/v1/system/zone', payload)
-      successCount++
-    } catch (e) {
-      failCount++
-    }
+  try {
+    const payload = data.map(item => ({
+      zone_code: item['分区编码'] || '',
+      zone_name: item['分区名称'],
+      level: item['层级(1/2/3)'] || 1,
+      parent_id: item['上级分区ID'] || 0,
+      mnf_baseline: item['基线流量'] || 0,
+      center_lng: item['中心经度'],
+      center_lat: item['中心纬度'],
+      crs: item['坐标系'] || 'CGCS2000'
+    }))
+    
+    const res = await request.post('/api/v1/system/zone/batch', payload)
+    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+  } catch (error: any) {
+    ElMessage.error(error.message || '导入失败，请检查数据格式')
+  } finally {
+    loading.value = false
+    fetchZones()
   }
-  loading.value = false
-  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
-  fetchZones()
 }
 
 const handleExport = () => {

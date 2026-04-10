@@ -17,7 +17,7 @@
       />
       <el-button @click="fetchPoints" style="margin-left: 12px">搜索</el-button>
     </div>
-    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="calc(100vh - 390px)">
+    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="75vh">
       <el-table-column prop="point_code" label="测点编码" width="180" />
       <el-table-column prop="point_name" label="测点名称" />
       <el-table-column prop="point_category" label="测点类型">

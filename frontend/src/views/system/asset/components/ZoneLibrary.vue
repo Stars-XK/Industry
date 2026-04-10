@@ -190,7 +190,7 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-  
+
   loading.value = true
   try {
     const payload = data.map(item => ({
@@ -203,9 +203,23 @@ const handleImportData = async (data: any[]) => {
       center_lat: item['中心纬度'],
       crs: item['坐标系'] || 'CGCS2000'
     }))
+
+    // 分批发送，每批 100 条，避免后端处理超时
+    let totalSuccess = 0
+    const BATCH_SIZE = 100
+    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
+      const batch = payload.slice(i, i + BATCH_SIZE)
+      const res = await request.post('/api/v1/system/zone/batch', batch)
+      if (res && typeof res.successCount === 'number') {
+        totalSuccess += res.successCount
+      }
+    }
     
-    const res = await request.post('/api/v1/system/zone/batch', payload)
-    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+    if (totalSuccess < payload.length) {
+      ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能是数据重复或格式错误）`)
+    } else {
+      ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
+    }
   } catch (error: any) {
     ElMessage.error(error.message || '导入失败，请检查数据格式')
   } finally {

@@ -213,8 +213,21 @@ const handleImportData = async (data: any[]) => {
       range_max: item['量程上限'] || null
     }))
     
-    const res = await request.post('/api/v1/system/asset/point/batch', payload)
-    ElMessage.success(`导入成功: 成功导入 ${res.successCount} 条数据`)
+    let totalSuccess = 0
+    const BATCH_SIZE = 100
+    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
+      const batch = payload.slice(i, i + BATCH_SIZE)
+      const res = await request.post('/api/v1/system/asset/point/batch', batch)
+      if (res && typeof res.successCount === 'number') {
+        totalSuccess += res.successCount
+      }
+    }
+    
+    if (totalSuccess < payload.length) {
+      ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能存在唯一编码重复）`)
+    } else {
+      ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
+    }
   } catch (error: any) {
     ElMessage.error(error.message || '导入失败，请检查数据格式')
   } finally {

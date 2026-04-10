@@ -37,12 +37,12 @@
             <el-tabs v-model="activeTab" class="ledger-tabs">
               <el-tab-pane label="2D架构拓扑" name="topology">
                 <TopologyChart 
-                  ref="topologyChartRef"
-                  v-if="activeTab === 'topology'"
-                  :currentZoneName="currentZoneName" 
-                  :siteList="siteList" 
-                  :deviceList="deviceList" 
-                />
+                ref="topologyChartRef"
+                v-if="activeTab === 'topology'"
+                :zoneName="currentZoneName" 
+                :siteList="siteList" 
+                :deviceList="deviceList" 
+              />
               </el-tab-pane>
 
               <el-tab-pane label="下辖物理站点" name="sites">

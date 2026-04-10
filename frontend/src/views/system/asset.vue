@@ -46,6 +46,10 @@
                 </div>
                 <span class="node-label">{{ node.label }}</span>
                 <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
+<<<<<<< trae/solo-agent-USiW56
+                <span v-if="data.level === 'site'" class="node-type-badge site-badge">{{ data.type || '物理站点' }}</span>
+=======
+>>>>>>> main
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
@@ -222,6 +226,7 @@ watch(filterText, (val) => {
 const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.toLowerCase().includes(value.toLowerCase())
+<<<<<<< trae/solo-agent-USiW56
 }
 
 const handleNodeClick = (data: any) => {
@@ -235,6 +240,21 @@ const handleCommand = (command: string, data: any) => {
   // TODO: implement modals for creation and editing
 }
 
+=======
+}
+
+const handleNodeClick = (data: any) => {
+  currentSiteName.value = data.label
+  currentSiteId.value = data.realId
+  fetchDevices(data.realId)
+}
+
+const handleCommand = (command: string, data: any) => {
+  console.log(`Command: ${command}, Node:`, data)
+  // TODO: implement modals for creation and editing
+}
+
+>>>>>>> main
 const getPointColorClass = (type: string) => {
   switch (type) {
     case '瞬时流量': return 'blue'
@@ -276,6 +296,7 @@ const getPointColorClass = (type: string) => {
   padding: 16px 24px;
   background: #ffffff;
   border-bottom: 1px solid #eaeaea;
+<<<<<<< trae/solo-agent-USiW56
 }
 
 .headline {
@@ -286,6 +307,18 @@ const getPointColorClass = (type: string) => {
   color: #11181c;
 }
 
+=======
+}
+
+.headline {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px 0;
+  color: #11181c;
+}
+
+>>>>>>> main
 .sub-headline {
   font-size: 13px;
   color: #687076;
@@ -398,6 +431,17 @@ const getPointColorClass = (type: string) => {
 .node-icon.zone { color: var(--el-color-success); }
 .node-icon.site { color: var(--el-color-warning); }
 
+<<<<<<< trae/solo-agent-USiW56
+.node-icon .el-icon {
+  font-size: 14px !important;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+=======
+>>>>>>> main
 .node-label {
   flex: 1;
   overflow: hidden;
@@ -426,6 +470,15 @@ const getPointColorClass = (type: string) => {
   border: 1px solid var(--el-color-primary-light-5);
 }
 
+<<<<<<< trae/solo-agent-USiW56
+.site-badge {
+  background: var(--el-color-warning-light-9);
+  color: var(--el-color-warning);
+  border-color: var(--el-color-warning-light-5);
+}
+
+=======
+>>>>>>> main
 .node-actions {
   display: none;
   cursor: pointer;
@@ -438,8 +491,27 @@ const getPointColorClass = (type: string) => {
   color: #11181c;
 }
 .sleek-tree :deep(.el-tree-node__content:hover) .node-actions {
+<<<<<<< trae/solo-agent-USiW56
   display: flex;
   align-items: center;
+}
+
+/* Right Main Content */
+.ledger-content {
+  flex: 1;
+  background: #ffffff;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.empty-state {
+=======
+>>>>>>> main
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+<<<<<<< trae/solo-agent-USiW56
+=======
 }
 
 /* Right Main Content */
@@ -454,6 +526,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+>>>>>>> main
   justify-content: center;
   height: 100%;
   color: #889096;
@@ -505,6 +578,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+<<<<<<< trae/solo-agent-USiW56
 }
 
 .device-item {
@@ -524,6 +598,27 @@ const getPointColorClass = (type: string) => {
   background: #fafafa;
 }
 
+=======
+}
+
+.device-item {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eaeaea;
+  background: #fafafa;
+}
+
+>>>>>>> main
 .device-info {
   display: flex;
   align-items: center;
@@ -566,6 +661,7 @@ const getPointColorClass = (type: string) => {
   display: flex;
   align-items: center;
   gap: 16px;
+<<<<<<< trae/solo-agent-USiW56
 }
 
 .install-date {
@@ -579,6 +675,21 @@ const getPointColorClass = (type: string) => {
   color: #11181c;
   padding: 0;
 }
+=======
+}
+
+.install-date {
+  font-size: 13px;
+  color: #889096;
+}
+
+.text-action {
+  font-size: 13px;
+  font-weight: 500;
+  color: #11181c;
+  padding: 0;
+}
+>>>>>>> main
 .text-action:hover { color: var(--el-color-primary); }
 .text-action.danger { color: var(--el-color-danger); }
 

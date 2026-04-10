@@ -113,7 +113,7 @@
           <div class="pipeline-track">
             <!-- Step 1: 基础台账构建 -->
             <div class="track-node">
-              <div class="node-icon"><el-icon><OfficeBuilding /></el-icon></div>
+              <div class="guide-node-icon"><el-icon><OfficeBuilding /></el-icon></div>
               <div class="node-info">
                 <h4>1. 基础台账构建</h4>
                 <p>建立物理与逻辑映射：部门/用户权限 ➔ 分区(DMA) ➔ 站点(水厂/泵站) ➔ 设备 ➔ 测点。建立营收水卡映射。</p>
@@ -128,7 +128,7 @@
 
             <!-- Step 2: 实时采集与时序清洗 -->
             <div class="track-node highlight-node">
-              <div class="node-icon"><el-icon><DataLine /></el-icon></div>
+              <div class="guide-node-icon"><el-icon><DataLine /></el-icon></div>
               <div class="node-info">
 <<<<<<< trae/solo-agent-USiW56
                 <h4>2. 实时采集与时序底座</h4>
@@ -147,7 +147,7 @@
 
             <!-- Step 3: 供水量计算 -->
             <div class="track-node">
-              <div class="node-icon"><el-icon><Odometer /></el-icon></div>
+              <div class="guide-node-icon"><el-icon><Odometer /></el-icon></div>
               <div class="node-info">
 <<<<<<< trae/solo-agent-USiW56
                 <h4>3. 供水量与夜间流量提取</h4>
@@ -166,7 +166,7 @@
 
             <!-- Step 4: 营收侧售水量融合 -->
             <div class="track-node">
-              <div class="node-icon"><el-icon><Money /></el-icon></div>
+              <div class="guide-node-icon"><el-icon><Money /></el-icon></div>
               <div class="node-info">
                 <h4>4. 营收侧售水量融合</h4>
 <<<<<<< trae/solo-agent-USiW56
@@ -185,7 +185,7 @@
 
             <!-- Step 5: 全域展现 -->
             <div class="track-node highlight-node-success">
-              <div class="node-icon"><el-icon><PieChart /></el-icon></div>
+              <div class="guide-node-icon"><el-icon><PieChart /></el-icon></div>
               <div class="node-info">
                 <h4>5. 全域产销差计算与展现</h4>
                 <p>供水减去售水得出差值。系统提供涵盖所有分区的日报、月报及产销差看板，杜绝面子工程。</p>
@@ -837,7 +837,7 @@ html.dark .track-node.highlight-node {
   border-color: var(--el-color-primary);
 }
 
-.node-icon {
+.guide-node-icon {
   width: 48px; height: 48px;
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
@@ -846,7 +846,7 @@ html.dark .track-node.highlight-node {
   font-size: 24px;
   margin-bottom: 20px;
 }
-html.dark .node-icon { background: var(--el-color-primary-dark-2); }
+html.dark .guide-node-icon { background: var(--el-color-primary-dark-2); }
 
 .node-info h4 { margin: 0 0 12px 0; font-size: 16px; color: var(--el-text-color-primary); }
 .node-info p { margin: 0 0 20px 0; font-size: 13px; color: var(--el-text-color-regular); line-height: 1.6; flex: 1; }
@@ -1106,7 +1106,7 @@ html.dark .track-node.highlight-node {
   border-color: var(--el-color-primary);
 }
 
-.node-icon {
+.guide-node-icon {
   width: 48px; height: 48px;
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
@@ -1115,7 +1115,7 @@ html.dark .track-node.highlight-node {
   font-size: 24px;
   margin-bottom: 20px;
 }
-html.dark .node-icon { background: var(--el-color-primary-dark-2); }
+html.dark .guide-node-icon { background: var(--el-color-primary-dark-2); }
 
 .node-info h4 { margin: 0 0 12px 0; font-size: 16px; color: var(--el-text-color-primary); }
 .node-info p { margin: 0 0 20px 0; font-size: 13px; color: var(--el-text-color-regular); line-height: 1.6; flex: 1; }

@@ -46,7 +46,7 @@
                 </div>
                 <span class="node-label">{{ node.label }}</span>
                 <span v-if="data.level === 'zone'" class="node-type-badge">{{ data.zoneType || 'DMA分区' }}</span>
-                <span v-if="data.level === 'site'" class="node-type-badge site-badge">{{ data.type || '物理站点' }}</span>
+                <span v-if="data.level === 'site'" class="node-type-badge site-badge">{{ getSiteTypeName(data.type) }}</span>
                 <span v-if="data.level === 'site'" class="node-badge">{{ data.deviceCount || 0 }}</span>
                 <el-dropdown trigger="click" @command="handleCommand($event, data)" placement="bottom-end">
                   <span class="node-actions" @click.stop>
@@ -205,6 +205,13 @@ const fetchDevices = async (id: number) => {
 const getDeviceTypeName = (type: number) => {
   const map: Record<number, string> = { 1: '智能水表', 2: '压力计', 3: '水泵', 4: '水质仪' }
   return map[type] || '未知设备'
+}
+
+const getSiteTypeName = (type: unknown) => {
+  if (typeof type === 'string' && type.trim()) return type
+  const n = Number(type)
+  const map: Record<number, string> = { 1: '水厂', 2: '加压泵站', 3: '二供泵房', 4: '管网监测点' }
+  return map[n] || '物理站点'
 }
 
 const getPointCategoryName = (category: number) => {

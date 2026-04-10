@@ -80,6 +80,10 @@
       </div>
           </el-tab-pane>
 
+          <el-tab-pane label="DMA分区台账库" name="zones">
+            <ZoneLibrary />
+          </el-tab-pane>
+
           <el-tab-pane label="物理站点台账库" name="sites">
             <SiteLibrary />
           </el-tab-pane>
@@ -121,6 +125,7 @@ import AssetDialogs from './components/AssetDialogs.vue'
 import SiteLibrary from './components/SiteLibrary.vue'
 import DeviceLibrary from './components/DeviceLibrary.vue'
 import PointLibrary from './components/PointLibrary.vue'
+import ZoneLibrary from './components/ZoneLibrary.vue'
 
 const currentZoneName = ref('')
 const currentZoneId = ref<number | null>(null)

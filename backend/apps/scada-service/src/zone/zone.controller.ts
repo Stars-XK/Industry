@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
@@ -61,6 +61,43 @@ export class ZoneController {
     });
 
     return tree;
+  }
+
+  @Get('list')
+  @ApiOperation({ summary: '分页获取DMA分区列表' })
+  async getZones(@Query() query: any, @Request() req: any) {
+    const { page = 1, size = 20, keyword = '' } = query;
+    const userId = req.user?.userId;
+
+    let sql = `SELECT z.*, p.zone_name as parent_name FROM dma_zone z LEFT JOIN dma_zone p ON z.parent_id = p.id WHERE z.is_deleted IS NULL`;
+    let countSql = `SELECT COUNT(*) as total FROM dma_zone z WHERE z.is_deleted IS NULL`;
+    const params: any[] = [];
+    const countParams: any[] = [];
+
+    if (userId && userId !== 1) {
+      sql += ` AND z.created_by = ?`;
+      countSql += ` AND z.created_by = ?`;
+      params.push(userId);
+      countParams.push(userId);
+    }
+
+    if (keyword) {
+      sql += ` AND z.zone_name LIKE ?`;
+      countSql += ` AND z.zone_name LIKE ?`;
+      params.push(`%${keyword}%`);
+      countParams.push(`%${keyword}%`);
+    }
+
+    sql += ` ORDER BY z.id DESC LIMIT ? OFFSET ?`;
+    params.push(Number(size), (Number(page) - 1) * Number(size));
+
+    const list = await this.dataSource.query(sql, params);
+    const countRes = await this.dataSource.query(countSql, countParams);
+
+    return {
+      list,
+      total: Number(countRes[0].total)
+    };
   }
 
   @Post()

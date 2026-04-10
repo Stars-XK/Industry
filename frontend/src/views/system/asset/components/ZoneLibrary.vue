@@ -1,9 +1,5 @@
 <template>
   <div class="library-container">
-    <div class="header">
-      <h3>DMA分区台账库</h3>
-      <p>管理全局 DMA 分区数据，支持管网层级结构与水量计算节点。</p>
-    </div>
     <div class="toolbar">
       <el-button type="primary" icon="Plus" @click="handleAdd">新增分区</el-button>
       <el-button type="danger" icon="Delete" :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
@@ -184,18 +180,6 @@ onMounted(() => {
   padding: 24px;
   height: 100%;
   overflow-y: auto;
-}
-.header {
-  margin-bottom: 24px;
-}
-.header h3 {
-  margin: 0 0 8px 0;
-  font-size: 20px;
-}
-.header p {
-  margin: 0;
-  color: #687076;
-  font-size: 14px;
 }
 .toolbar {
   display: flex;

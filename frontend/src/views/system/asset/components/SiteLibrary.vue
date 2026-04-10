@@ -1,9 +1,5 @@
 <template>
   <div class="library-container">
-    <div class="header">
-      <h3>物理站点台账库</h3>
-      <p>管理全局物理站点数据（水厂、泵房、管网等）。</p>
-    </div>
     <div class="toolbar">
       <el-button type="primary" icon="Plus" @click="handleAdd">注册新站点</el-button>
       <el-button type="danger" icon="Delete" :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
@@ -185,18 +181,6 @@ onMounted(() => {
   padding: 24px;
   height: 100%;
   overflow-y: auto;
-}
-.header {
-  margin-bottom: 24px;
-}
-.header h3 {
-  margin: 0 0 8px 0;
-  font-size: 20px;
-}
-.header p {
-  margin: 0;
-  color: #687076;
-  font-size: 14px;
 }
 .toolbar {
   display: flex;

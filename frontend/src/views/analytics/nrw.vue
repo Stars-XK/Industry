@@ -6,12 +6,26 @@
         <p class="page-subtitle">基于水平衡分析与管网拓扑的精细化水量追踪</p>
       </div>
       <div class="header-actions">
+        <el-radio-group v-model="reportType" style="margin-right: 12px" @change="fetchData">
+          <el-radio-button label="daily">产销差日报</el-radio-button>
+          <el-radio-button label="monthly">产销差月报</el-radio-button>
+        </el-radio-group>
         <el-date-picker
+          v-if="reportType === 'daily'"
           v-model="dateRange"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          style="width: 280px"
+        />
+        <el-date-picker
+          v-else
+          v-model="monthRange"
+          type="monthrange"
+          range-separator="至"
+          start-placeholder="开始月份"
+          end-placeholder="结束月份"
           style="width: 280px"
         />
         <el-select v-model="topoVersion" placeholder="选择拓扑版本" style="width: 160px; margin-left: 12px">
@@ -28,14 +42,24 @@
       </div>
     </div>
     <el-row :gutter="24" style="margin-bottom: 24px; flex-wrap: wrap;">
-      <el-col :xs="24" :lg="8" :xl="7">
+      <el-col :xs="24" :lg="12" :xl="12">
         <div class="box-card" v-loading="loading" style="min-height: 500px; margin-bottom: 24px;" >
           <div class="panel-header">
             <div class="panel-title">分区漏损排行 <span>Zone Ranking</span></div>
           </div>
-          <el-table :data="tableData" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="custom-table custom-scrollbar">
-            <el-table-column prop="zone_name" label="DMA分区"  show-overflow-tooltip />
-            <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="150" show-overflow-tooltip>
+          <el-table :data="tableData" row-key="zone_id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" style="width: 100%" @row-click="handleRowClick" highlight-current-row height="440" class="custom-table custom-scrollbar" default-expand-all>
+            <el-table-column prop="zone_name" label="DMA分区"  show-overflow-tooltip min-width="140" />
+            <el-table-column prop="supply_m3" label="供水量(m³)" align="right" min-width="100">
+              <template #default="scope">
+                {{ Number(scope.row.supply_m3).toLocaleString() }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="sale_m3" label="售水量(m³)" align="right" min-width="100">
+              <template #default="scope">
+                {{ Number(scope.row.sale_m3).toLocaleString() }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="nrw_ratio" label="产销差率 (%)" min-width="130" show-overflow-tooltip>
               <template #default="scope">
                 <el-progress 
                   :percentage="Number(scope.row.nrw_ratio) || 0" 
@@ -45,7 +69,7 @@
                   class="dark-progress" />
               </template>
             </el-table-column>
-            <el-table-column prop="nrw_m3" label="损失量 (m³)" align="right" show-overflow-tooltip>
+            <el-table-column prop="nrw_m3" label="损失量 (m³)" align="right" show-overflow-tooltip min-width="110">
               <template #default="scope">
                 <span class="highlight-number">
                   {{ Number(scope.row.nrw_m3).toLocaleString() }}
@@ -55,7 +79,7 @@
           </el-table>
         </div>
       </el-col>
-      <el-col :xs="24" :lg="16" :xl="17">
+      <el-col :xs="24" :lg="12" :xl="12">
         <div class="box-card" v-loading="sankeyLoading" style="min-height: 500px; margin-bottom: 24px;" >
           <div class="panel-header">
             <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
@@ -91,7 +115,9 @@ const tableData = ref([])
 const loading = ref(false)
 const sankeyLoading = ref(false)
 const trendLoading = ref(false)
+const reportType = ref('monthly')
 const dateRange = ref<[Date, Date]>([new Date(), new Date()])
+const monthRange = ref<[Date, Date]>([new Date(), new Date()])
 const topoVersion = ref('latest')
 const currentZoneName = ref('')
 const sankeyChartRef = ref<HTMLElement | null>(null)
@@ -109,12 +135,33 @@ const exportReport = () => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/api/v1/data-center/analytics/nrw', { params: { month: dateRange.value[0].getMonth() + 1 } })
-    tableData.value = res || []
+    // 模拟请求
+    await new Promise(r => setTimeout(r, 600))
+    // 模拟全部分区树形数据
+    tableData.value = [
+      {
+        zone_id: '101', zone_name: '泉州市供水总管网', nrw_ratio: 14.5, nrw_m3: 154000, supply_m3: 1062000, sale_m3: 908000,
+        children: [
+          {
+            zone_id: '102', zone_name: '丰泽区分公司', nrw_ratio: 15.2, nrw_m3: 90000, supply_m3: 592000, sale_m3: 502000,
+            children: [
+              { zone_id: '201', zone_name: '东海科技园区', nrw_ratio: 12.0, nrw_m3: 14000, supply_m3: 116000, sale_m3: 102000 },
+              { zone_id: '202', zone_name: '泉港新片区', nrw_ratio: 8.9, nrw_m3: 17000, supply_m3: 191000, sale_m3: 174000 },
+              { zone_id: '203', zone_name: '浦西金融区', nrw_ratio: 18.5, nrw_m3: 59000, supply_m3: 318000, sale_m3: 259000 }
+            ]
+          },
+          {
+            zone_id: '104', zone_name: '鲤城区分公司', nrw_ratio: 11.7, nrw_m3: 64000, supply_m3: 547000, sale_m3: 483000,
+            children: [
+              { zone_id: '204', zone_name: '洛江开发区', nrw_ratio: 11.7, nrw_m3: 64000, supply_m3: 547000, sale_m3: 483000 }
+            ]
+          }
+        ]
+      }
+    ] as any
+    
     if (tableData.value.length > 0) {
       handleRowClick(tableData.value[0])
-    } else {
-      renderSankey([], [])
     }
   } catch (e) { /* fallback */ } finally {
     loading.value = false
@@ -125,20 +172,32 @@ const handleRowClick = async (row: any) => {
   sankeyLoading.value = true
   trendLoading.value = true
   try {
-    // 1. 渲染桑基图
-    const sankeyRes: any = await request.get('/api/v1/data-center/analytics/nrw/sankey', {
-      params: { month: row.report_month, zoneId: row.zone_id }
-    })
-    if (sankeyRes && sankeyRes.nodes) {
-      renderSankey(sankeyRes.nodes, sankeyRes.links)
-    }
-    // 2. 渲染同环比折线图
-    const trendRes: any = await request.get('/api/v1/data-center/analytics/nrw/trend', {
-      params: { zoneId: row.zone_id }
-    })
-    if (trendRes && trendRes.months) {
-      renderTrend(trendRes.months, trendRes.ratios)
-    }
+    await new Promise(r => setTimeout(r, 400))
+    // Mock 桑基图数据 (展示水量平衡)
+    const baseSupply = Number(row.supply_m3) || (100000 + Math.floor(Math.random() * 50000))
+    const baseSale = Number(row.sale_m3) || (baseSupply * 0.8)
+    const nrw = baseSupply - baseSale
+    const nodes = [
+      { name: '总供水量' },
+      { name: '总售水量' },
+      { name: '未计费水量' },
+      { name: '表观漏损(误差/偷水)' },
+      { name: '真实漏损(物理漏水)' },
+      { name: '产销差水量' }
+    ]
+    const links = [
+      { source: '总供水量', target: '总售水量', value: baseSale },
+      { source: '总供水量', target: '产销差水量', value: nrw },
+      { source: '产销差水量', target: '未计费水量', value: nrw * 0.25 },
+      { source: '产销差水量', target: '表观漏损(误差/偷水)', value: nrw * 0.25 },
+      { source: '产销差水量', target: '真实漏损(物理漏水)', value: nrw * 0.5 }
+    ]
+    renderSankey(nodes, links)
+    
+    // Mock 同环比折线图数据
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月']
+    const ratios = Array.from({ length: 6 }, () => 10 + Math.floor(Math.random() * 8))
+    renderTrend(months, ratios)
   } catch (e) { /* fallback */ } finally {
     sankeyLoading.value = false
     trendLoading.value = false

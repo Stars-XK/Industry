@@ -12,7 +12,6 @@
 ├── /dashboard               [登录与门户] 沉浸式数字孪生大屏 (Digital Twin Dashboard)
 ├── /scada                   [综合业务监控台] (SCADA & Monitor)
 │   ├── /scada/overview        - 全局态势感知 (Overview Dashboard)
-│   ├── /scada/topology        - 2D 拓扑与 DMA 分区导航 (Topology & DMA)
 │   ├── /scada/hmi             - 工业 SCADA 工艺组态 (SCADA HMI)
 │   └── /scada/security        - 安防与环境空间监控 (Security & Environment)
 ├── /analytics               [多维统计与数据分析] (Data Analytics)
@@ -38,10 +37,10 @@
 │   ├── /governance/recipe     - 工业配方管理 (Recipe Management)
 │   └── /governance/sensor     - 数据清洗与传感器健康度配置 (Data Quality & Sensor Health)
 └── /system                  [系统设置与台账权限] (System & Security)
-    ├── /system/asset          - 资产与设备台账 (Asset Management)
-    ├── /system/inventory      - 备品备件与仓储管理 (Inventory & Spare Parts)
-    ├── /system/org            - 组织架构与人员管理 (Organization)
+    ├── /system/user           - 用户与账号管理 (User Management)
+    ├── /system/org            - 组织架构与部门管理 (Organization)
     ├── /system/rbac           - 角色与权限体系 (RBAC Configuration)
+    ├── /system/menu           - 菜单配置管理 (Menu Management)
     ├── /system/dict           - 数据字典管理 (Data Dictionary)
     ├── /system/audit          - 安全审计与脱敏日志 (Audit Logs)
     ├── /system/visual-studio  - 低代码可视化组态工作台 (Visual Studio)
@@ -66,7 +65,6 @@
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
 |---|---|---|---|---|
 | 全局态势感知 | `/scada/overview` | `views/scada/overview.vue` | `scada:overview` | KPI 卡片概览、水质综合看板、能耗趋势折线图 |
-| 2D拓扑与分区导航 | `/scada/topology` | `views/scada/topology.vue` | `scada:topology` | 无限级 2D 拓扑画布、节点展开折叠、红黄绿状态概览 |
 | 工业SCADA组态 | `/scada/hmi` | `views/scada/hmi.vue` | `scada:hmi` | 动态工艺图纸加载、设备启停/阀门PID无级调节、双向握手验证 |
 | 安防与环境空间 | `/scada/security` | `views/scada/security.vue` | `scada:security` | RTSP 视频矩阵分屏、BIM 视频贴图(盲区展示)、密闭空间环境曲线及门禁联锁 |
 
@@ -104,11 +102,13 @@
 ### 2.6 系统设置与台账权限 (System & Security)
 | 菜单/页面名称 | 路由路径 (Path) | 视图组件 (Component) | 权限标识 (Perm Code) | 核心承载功能 |
 |---|---|---|---|---|
-| 资产与设备台账 | `/system/asset` | `views/system/asset.vue` | `sys:asset` | 型号/保修期记录、"老表止码+新表起码"强制接续表单(防负流) |
-| 备品备件与仓储 | `/system/inventory` | `views/system/inventory.vue`| `sys:inventory` | 安全库存红绿灯预警、扫码出库与工单成本绑定报表 |
-| 组织架构与人员 | `/system/org` | `views/system/org.vue` | `sys:org` | 集团-厂区无限级拖拽树、人员账号分配与重置 |
+| 用户与账号管理 | `/system/user` | `views/system/user.vue` | `sys:user` | 人员账号分配与重置、修改状态禁止登录 |
+| 组织架构与部门 | `/system/org` | `views/system/org.vue` | `sys:org` | 集团-厂区无限级拖拽树 |
 | 角色与权限体系 | `/system/rbac` | `views/system/rbac.vue` | `sys:rbac` | 菜单/按钮细粒度勾选授权、数据范围隔离(如下拉选择"仅本人/本厂区") |
+| 菜单配置管理 | `/system/menu` | `views/system/menu.vue` | `sys:menu` | 动态路由树与权限标识符的可视化配置 |
 | 数据字典管理 | `/system/dict` | `views/system/dict.vue` | `sys:dict` | 全局枚举值动态配置中心(设备类型、管材、工单状态等) |
+| 资产与设备台账 | `/system/asset` | `views/system/asset.vue` | `sys:asset` | 无限级 2D 拓扑与资产挂载、型号/保修期记录、强制接续表单(防负流) |
+| 备品备件与仓储 | `/system/inventory` | `views/system/inventory.vue`| `sys:inventory` | 安全库存红绿灯预警、扫码出库与工单成本绑定报表 |
 | 安全审计与脱敏 | `/system/audit` | `views/system/audit.vue` | `sys:audit` | 防篡改请求记录与 JSON Diff 对比、敏感信息(手机号/金额)默认动态掩码展示 |
 | 低代码组态工作台 | `/system/visual-studio`| `views/system/visual.vue` | `sys:visual` | 内置 ISA 图元与 Echarts 的拖拽画布、属性与标签绑定配置面板、发布管理 |
 | 系统参数配置 | `/system/config` | `views/system/config.vue` | `sys:config` | 网站标题、地图来源、邮箱短信配置等基础环境参数管理 (动态状态更新，无刷新生效) |

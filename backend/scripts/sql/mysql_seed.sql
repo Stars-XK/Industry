@@ -43,11 +43,8 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 -- 2. 综合业务监控台
 (10, 0, '综合业务监控台', 2, '/scada', 'Layout', 0, 0, '', 'M', 1, 1, 'Monitor', '', 1),
 (11, 10, '全局态势感知', 1, 'overview', 'scada/overview', 0, 0, 'scada:overview', 'C', 1, 1, 'View', '', 1),
-(12, 10, '2D拓扑与分区导航', 2, 'topology', 'scada/topology', 0, 0, 'scada:topology', 'C', 1, 1, 'Connection', '', 1),
-(13, 10, '工业SCADA工艺组态', 3, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
-(14, 10, '安防与环境空间监控', 4, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'VideoCamera', '', 1),
-(15, 10, 'DMA 拓扑树配置', 5, 'dma-config', 'scada/dma-config', 0, 0, 'scada:dma:manage', 'C', 1, 1, 'Share', '', 1),
-(16, 10, 'GIS 管网与资产调度', 6, 'gis', 'scada/gis', 0, 0, 'scada:gis', 'C', 0, 1, 'Location', '测试隐藏的GIS菜单', 1),
+(13, 10, '工业SCADA工艺组态', 2, 'hmi', 'scada/hmi', 0, 0, 'scada:hmi', 'C', 1, 1, 'Platform', '', 1),
+(14, 10, '安防与环境空间监控', 3, 'security', 'scada/security', 0, 0, 'scada:security', 'C', 1, 1, 'VideoCamera', '', 1),
 
 -- 3. 多维统计与数据分析
 (20, 0, '多维统计与数据分析', 3, '/analytics', 'Layout', 0, 0, '', 'M', 1, 1, 'DataAnalysis', '', 1),
@@ -58,7 +55,6 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (25, 20, '综合能效优化与动态成本核算', 5, 'energy', 'analytics/energy', 0, 0, 'analytics:energy', 'C', 1, 1, 'Lightning', '', 1),
 (26, 20, '用量与能耗AI预测分析', 6, 'predict', 'analytics/predict', 0, 0, 'analytics:predict', 'C', 1, 1, 'Cpu', '', 1),
 (28, 20, '在线水力模型推演', 7, 'hydraulic', 'analytics/hydraulic', 0, 0, 'analytics:hydraulic', 'C', 1, 1, 'Connection', '', 1),
-(128, 20, '用水阶梯与费率配置', 8, 'tariff', 'analytics/tariff', 0, 0, 'analytics:tariff', 'C', 1, 1, 'PriceTag', '', 1),
 
 -- 4. 运维治理与协同闭环
 (30, 0, '运维治理与协同闭环', 4, '/workflow', 'Layout', 0, 0, '', 'M', 1, 1, 'Tools', '', 1),
@@ -83,7 +79,8 @@ INSERT IGNORE INTO sys_menu (id, parent_id, menu_name, sort_order, path, compone
 (58, 50, '用户与账号管理', 1, 'user', 'system/user', 0, 0, 'sys:user', 'C', 1, 1, 'User', '', 1),
 (53, 50, '组织架构与部门管理', 2, 'org', 'system/org', 0, 0, 'sys:org', 'C', 1, 1, 'OfficeBuilding', '', 1),
 (54, 50, '角色与权限体系', 3, 'rbac', 'system/rbac', 0, 0, 'sys:rbac', 'C', 1, 1, 'Avatar', '', 1),
-(55, 50, '数据字典管理', 4, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
+(62, 50, '菜单配置管理', 4, 'menu', 'system/menu', 0, 0, 'sys:menu', 'C', 1, 1, 'Menu', '', 1),
+(55, 50, '数据字典管理', 5, 'dict', 'system/dict', 0, 0, 'sys:dict', 'C', 1, 1, 'Collection', '', 1),
 (51, 50, '资产与设备台账', 5, 'asset', 'system/asset', 0, 0, 'sys:asset', 'C', 1, 1, 'Box', '', 1),
 (52, 50, '备品备件与仓储管理', 6, 'inventory', 'system/inventory', 0, 0, 'sys:inventory', 'C', 1, 1, 'ShoppingCart', '', 1),
 (56, 50, '安全审计与脱敏日志', 7, 'audit', 'system/audit', 0, 0, 'sys:audit', 'C', 1, 1, 'DocumentChecked', '', 1),
@@ -109,21 +106,21 @@ INSERT IGNORE INTO `iot_gateway` (`id`, `gateway_sn`, `protocol`, `is_online`, `
 (1, 'GW-SH-PD-001', 'MQTT', 1, 15.2, 12, '丰泽东海网关'),
 (2, 'GW-SH-XH-002', 'Modbus', 0, 0, 0, '鲤城洛江网关');
 
-INSERT IGNORE INTO `iot_tag_mapping` (`device_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `data_type`, `unit`, `scaling_factor`, `is_active`, `remark`) VALUES
-(1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 'float', '°C', 1.0, 1, '东海园区温度监控'),
-(1, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 'float', 'MPa', 1.0, 1, '东海园区水压'),
-(1, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 'float', 'm³/h', 1.0, 1, '东海园区瞬时流量'),
-(2, 2, 'Pump.Status', '10001', 'status', 0.0, 'int', '', 1.0, 1, '丰泽2号泵站运行状态(1=开,0=关)'),
-(2, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 'float', 'Hz', 1.0, 1, '丰泽2号泵站变频器频率'),
-(2, 2, 'Pump.Power', '40012', 'power', 0.5, 'float', 'kW', 1.0, 1, '丰泽2号泵站功率'),
-(3, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 'float', 'NTU', 1.0, 1, '西湖水质浊度'),
-(3, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 'float', 'mg/L', 1.0, 1, '西湖余氯'),
-(3, 1, 'WQ.PH', '40024', 'ph', 0.05, 'float', '', 1.0, 1, '西湖pH值'),
-(4, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 'float', '°C', 1.0, 1, '鲤城地下泵站环境温度'),
-(4, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 'float', '%', 1.0, 1, '鲤城地下泵站环境湿度'),
-(4, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站硫化氢浓度'),
-(4, 2, 'ENV.CO', '40036', 'co', 0.1, 'float', 'ppm', 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
-(4, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 'float', 'ug/m3', 1.0, 1, '鲤城地下泵站PM2.5');
+INSERT IGNORE INTO `iot_tag_mapping` (`id`, `point_id`, `gateway_id`, `tag_name`, `plc_address`, `standard_name`, `deadband`, `scaling_factor`, `is_active`, `remark`) VALUES
+(1, 1, 1, 'PLC.S7.Temp', '40001', 'temperature', 0.5, 1.0, 1, '东海园区温度监控'),
+(2, 2, 1, 'PLC.S7.Pressure', '40003', 'pressure', 0.05, 1.0, 1, '东海园区水压'),
+(3, 3, 1, 'PLC.S7.FlowRate', '40005', 'flow_rate', 0.1, 1.0, 1, '东海园区瞬时流量'),
+(4, 5, 2, 'Pump.Status', '10001', 'status', 0.0, 1.0, 1, '丰泽2号泵站运行状态'),
+(5, 6, 2, 'Pump.Freq', '40010', 'frequency', 1.0, 1.0, 1, '丰泽2号泵站变频器频率'),
+(6, 7, 2, 'Pump.Power', '40012', 'power', 0.5, 1.0, 1, '丰泽2号泵站功率'),
+(7, 8, 1, 'WQ.Turbidity', '40020', 'turbidity', 0.01, 1.0, 1, '西湖水质浊度'),
+(8, 9, 1, 'WQ.Chlorine', '40022', 'chlorine', 0.01, 1.0, 1, '西湖余氯'),
+(9, 10, 1, 'WQ.PH', '40024', 'ph', 0.05, 1.0, 1, '西湖pH值'),
+(10, 11, 2, 'ENV.Temp', '40030', 'temperature', 0.1, 1.0, 1, '鲤城地下泵站环境温度'),
+(11, 12, 2, 'ENV.Humidity', '40032', 'humidity', 0.5, 1.0, 1, '鲤城地下泵站环境湿度'),
+(12, 13, 2, 'ENV.H2S', '40034', 'h2s', 0.1, 1.0, 1, '鲤城地下泵站硫化氢浓度'),
+(13, 14, 2, 'ENV.CO', '40036', 'co', 0.1, 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
+(14, 15, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 1.0, 1, '鲤城地下泵站PM2.5');
 -- 3. DMA分区测试数据 (以泉州市进行设计分区)
 INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (101, 0, '泉州市供水总管网', 1, 1),
@@ -151,14 +148,38 @@ INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
 (205, 110, '紫竹高新区DMA', 3, 1),
 (206, 112, '嘉定汽车城DMA', 3, 1);
 
--- 4. 设备资产测试数据 (匹配泉州市DMA)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (1, 'METER_IN_01', '东海园区总进水管表', 1);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (2, 'PUMP_01', '丰泽2号泵站主泵', 4);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (203, 'PRESS_01', '东海末端管网压力计', 2);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (3, 'WQ_01', '西湖水质监测仪', 3);
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type) VALUES (4, 'ENV_01', '鲤城地下泵站环境传感器', 5);
+-- 3.1 物理站点测试数据
+INSERT IGNORE INTO ast_site (id, site_code, site_name, site_type, zone_id, dept_id) VALUES
+(1, 'SITE_DH_01', '东海园区进水泵站', 2, 201, 2),
+(2, 'SITE_FZ_02', '丰泽2号加压泵站', 2, 102, 2),
+(3, 'SITE_XH_01', '西湖水质监测点', 4, 202, 3),
+(4, 'SITE_LC_01', '鲤城地下泵房', 3, 204, 4);
 
--- 5. DMA 与 设备资产 绑定关系
+-- 4. 设备资产测试数据 (匹配泉州市DMA)
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, site_id) VALUES 
+(1, 'METER_IN_01', '东海园区总进水管表', 1, 1),
+(2, 'PUMP_01', '丰泽2号泵站主泵', 3, 2),
+(203, 'PRESS_01', '东海末端管网压力计', 2, 1),
+(3, 'WQ_01', '西湖水质监测仪', 4, 3),
+(4, 'ENV_01', '鲤城地下泵站环境传感器', 5, 4);
+
+-- 4.1 物理测点测试数据 (为设备赋予业务测点属性)
+INSERT IGNORE INTO ast_measuring_point (id, device_id, point_code, point_name, point_category, data_type, unit) VALUES 
+(1, 1, 'METER_IN_01_TEMP', '进水温度', 4, 'float', '°C'),
+(2, 1, 'METER_IN_01_PRESS', '进水压力', 2, 'float', 'MPa'),
+(3, 1, 'METER_IN_01_FLOW', '进水瞬时流量', 1, 'float', 'm³/h'),
+(4, 1, 'METER_IN_01_TOTAL', '进水累计流量', 1, 'float', 'm³'),
+(5, 2, 'PUMP_01_STATUS', '主泵运行状态', 4, 'int', ''),
+(6, 2, 'PUMP_01_FREQ', '主泵运行频率', 4, 'float', 'Hz'),
+(7, 2, 'PUMP_01_POWER', '主泵运行功率', 5, 'float', 'kW'),
+(8, 3, 'WQ_01_TURB', '水质浊度', 3, 'float', 'NTU'),
+(9, 3, 'WQ_01_CHL', '余氯', 3, 'float', 'mg/L'),
+(10, 3, 'WQ_01_PH', 'pH值', 3, 'float', ''),
+(11, 4, 'ENV_01_TEMP', '环境温度', 4, 'float', '°C'),
+(12, 4, 'ENV_01_HUM', '环境湿度', 4, 'float', '%'),
+(13, 4, 'ENV_01_H2S', '硫化氢浓度', 4, 'float', 'ppm'),
+(14, 4, 'ENV_01_CO', '一氧化碳浓度', 4, 'float', 'ppm'),
+(15, 4, 'ENV_01_PM25', 'PM2.5', 4, 'float', 'ug/m³');
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 东海
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 丰泽
 INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 东海
@@ -180,6 +201,9 @@ INSERT IGNORE INTO sys_dict_data (dict_label, dict_value, dict_type, dict_sort, 
 ('智能水表', '1', 'sys_device_type', 1, 1),
 ('压力计', '2', 'sys_device_type', 2, 1),
 ('水泵', '3', 'sys_device_type', 3, 1),
+('水质监测仪', '4', 'sys_device_type', 4, 1),
+('环境传感器', '5', 'sys_device_type', 5, 1),
+('阀门', '6', 'sys_device_type', 6, 1),
 ('待接单', '10', 'wf_order_status', 1, 1),
 ('处理中', '20', 'wf_order_status', 2, 1),
 ('已闭环', '30', 'wf_order_status', 3, 1),
@@ -259,10 +283,13 @@ INSERT IGNORE INTO biz_meter_reading (id, account_id, device_id, reading_period,
 -- 9. 第四阶段 菜单配置 (报警、SOP、工单)
 -- 10. 第四阶段 角色权限绑定
 INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
-(1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16),
-(1, 30), (1, 31), (1, 32), (1, 35),
-(2, 10), (2, 11), (2, 12), (2, 13), (2, 16),
-(3, 10), (3, 11), (3, 12), (3, 16),
+(1, 10), (1, 11), (1, 13), (1, 14),
+(1, 20), (1, 21), (1, 22), (1, 23), (1, 24), (1, 25), (1, 26), (1, 28),
+(1, 30), (1, 31), (1, 32), (1, 33), (1, 34), (1, 35),
+(1, 40), (1, 41), (1, 42), (1, 43), (1, 44), (1, 45), (1, 46), (1, 47),
+(1, 50), (1, 51), (1, 52), (1, 53), (1, 54), (1, 55), (1, 56), (1, 57), (1, 58), (1, 59), (1, 60), (1, 61), (1, 62),
+(2, 10), (2, 11), (2, 13),
+(3, 10), (3, 11),
 (3, 30), (3, 31), (3, 32); -- 维修工只能看报警和工单，不能编辑 SOP
 
 -- 11. 第四阶段 初始数据

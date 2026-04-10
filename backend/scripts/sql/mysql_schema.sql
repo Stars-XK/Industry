@@ -6,7 +6,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 清理旧表以支持重新初始化 (强制同步字段更新)
-DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
+DROP TABLE IF EXISTS sys_user, sys_role, sys_menu, sys_dept, sys_dict_type, sys_dict_data, sys_user_role, sys_role_menu, sys_audit_log, sys_config, sys_backup_log, ast_device, ast_site, ast_measuring_point, dma_zone, dma_device_rel, wf_work_order, alm_event, alm_rule, alm_sop, iot_tag_mapping, iot_gateway, biz_tariff, biz_key_account, biz_billing, biz_meter_reading, biz_nrw_report, biz_interpolate_rule, wf_duty_schedule, biz_energy_record, biz_recipe, ast_inventory, ast_inventory_log;
 
 -- 1. 组织架构表
 CREATE TABLE IF NOT EXISTS sys_dept (
@@ -142,20 +142,7 @@ CREATE TABLE IF NOT EXISTS sys_backup_log (
     created_by BIGINT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据库备份记录表';
 
--- 5. 设备台账表 (`ast_device`)
-CREATE TABLE IF NOT EXISTS ast_device (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) UNIQUE NOT NULL,
-    device_name VARCHAR(200) NOT NULL,
-    device_type SMALLINT NOT NULL COMMENT '字典: 1-水表, 2-阀门, 3-泵, 4-压力计',
-    install_date DATE,
-    gis_coord VARCHAR(100),
-    status SMALLINT DEFAULT 1 COMMENT '状态: 1-在线, 2-离线, 3-维修中',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 6. DMA 分区表
+-- 5. DMA 分区表
 CREATE TABLE IF NOT EXISTS dma_zone (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     parent_id BIGINT NOT NULL DEFAULT 0,
@@ -170,13 +157,63 @@ CREATE TABLE IF NOT EXISTS dma_zone (
     is_deleted TIMESTAMP NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. 分区与设备关联表
+-- 6. 物理站点台账表 (`ast_site`)
+CREATE TABLE IF NOT EXISTS ast_site (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    site_code VARCHAR(50) UNIQUE NOT NULL,
+    site_name VARCHAR(100) NOT NULL COMMENT '站点名称',
+    site_type SMALLINT NOT NULL COMMENT '1-水厂, 2-加压泵站, 3-二供泵房, 4-管网监测点',
+    zone_id BIGINT COMMENT '所属DMA分区ID',
+    dept_id BIGINT COMMENT '所属归管部门ID',
+    address VARCHAR(200) COMMENT '物理地址',
+    gis_coord VARCHAR(100) COMMENT 'GIS坐标',
+    status SMALLINT DEFAULT 1 COMMENT '1-正常, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (zone_id) REFERENCES dma_zone(id) ON DELETE SET NULL,
+    FOREIGN KEY (dept_id) REFERENCES sys_dept(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理站点台账表';
+
+-- 7. 设备台账表 (`ast_device`)
+CREATE TABLE IF NOT EXISTS ast_device (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_code VARCHAR(50) UNIQUE NOT NULL,
+    device_name VARCHAR(200) NOT NULL,
+    device_type SMALLINT NOT NULL COMMENT '字典: 1-水表, 2-阀门, 3-泵, 4-压力计',
+    site_id BIGINT COMMENT '所属站点ID',
+    install_date DATE,
+    gis_coord VARCHAR(100),
+    status SMALLINT DEFAULT 1 COMMENT '状态: 1-在线, 2-离线, 3-维修中',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (site_id) REFERENCES ast_site(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7.1 物理测点表 (`ast_measuring_point`)
+CREATE TABLE IF NOT EXISTS ast_measuring_point (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id BIGINT NOT NULL COMMENT '所属设备ID',
+    point_code VARCHAR(50) NOT NULL COMMENT '测点编码',
+    point_name VARCHAR(100) NOT NULL COMMENT '测点名称 (如: 瞬时流量, 累计流量)',
+    point_category SMALLINT NOT NULL COMMENT '1-流量, 2-压力, 3-水质, 4-状态值, 5-电量',
+    data_type VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
+    unit VARCHAR(50) DEFAULT '' COMMENT '物理单位',
+    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    UNIQUE KEY `uk_device_point` (device_id, point_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理设备输出测点表';
+
+-- 7.1 分区与设备关联表
 CREATE TABLE IF NOT EXISTS `dma_device_rel` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `zone_id` INT NOT NULL COMMENT '分区ID',
-  `device_id` INT NOT NULL COMMENT '设备ID',
+  `zone_id` BIGINT NOT NULL COMMENT '分区ID',
+  `device_id` BIGINT NOT NULL COMMENT '设备ID',
   `direction` TINYINT(1) DEFAULT 1 COMMENT '1-流入, -1-流出, 0-内部',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`zone_id`) REFERENCES `dma_zone`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`device_id`) REFERENCES `ast_device`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='DMA与设备关联表';
 
 -- ----------------------------
@@ -196,21 +233,20 @@ CREATE TABLE `iot_gateway` (
 DROP TABLE IF EXISTS `iot_tag_mapping`;
 CREATE TABLE `iot_tag_mapping` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `device_id` INT NOT NULL COMMENT '关联的资产设备ID',
+  `point_id` BIGINT NOT NULL COMMENT '关联的物理测点ID',
   `gateway_id` INT DEFAULT NULL COMMENT '关联的边缘网关ID',
   `tag_name` VARCHAR(100) NOT NULL COMMENT '原始测点标签名 (如 PLC.S7.Temp)',
   `plc_address` VARCHAR(100) DEFAULT '' COMMENT 'PLC寄存器地址',
-  `standard_name` VARCHAR(100) NOT NULL COMMENT '标准化属性名 (如 temperature)',
+  `standard_name` VARCHAR(100) NOT NULL COMMENT '时序库全局标签名 (如 PUMP_01_PRESS)',
   `deadband` FLOAT DEFAULT 0.0 COMMENT '死区过滤阈值',
-  `data_type` VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
-  `unit` VARCHAR(50) DEFAULT '' COMMENT '单位 (如 °C, MPa)',
   `scaling_factor` FLOAT DEFAULT 1.0 COMMENT '缩放因子',
   `is_active` TINYINT(1) DEFAULT 1 COMMENT '是否启用',
   `remark` VARCHAR(255) DEFAULT '' COMMENT '备注说明',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `uk_tag_device` (`device_id`, `tag_name`),
-  CONSTRAINT `fk_tag_gateway` FOREIGN KEY (`gateway_id`) REFERENCES `iot_gateway` (`id`) ON DELETE SET NULL
+  UNIQUE KEY `uk_tag_point` (`point_id`, `tag_name`),
+  CONSTRAINT `fk_tag_gateway` FOREIGN KEY (`gateway_id`) REFERENCES `iot_gateway` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tag_point` FOREIGN KEY (`point_id`) REFERENCES `ast_measuring_point` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='物联网测点与标准属性映射表';
 
 -- 8. 字典类型表

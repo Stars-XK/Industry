@@ -23,6 +23,14 @@ export default defineConfig({
         target: 'http://localhost:3002',
         changeOrigin: true,
       },
+      '/api/v1/system/asset': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+      },
+      '/api/v1/system/zone': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+      },
       '/api/v1/system': {
         target: 'http://localhost:3001',
         changeOrigin: true,

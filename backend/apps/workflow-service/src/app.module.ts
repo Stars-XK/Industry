@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '@app/common';
+import { TDengineModule } from '@app/database/tdengine/tdengine.module';
 
 import { AlarmController } from './alarm/alarm.controller';
 import { SopController } from './sop/sop.controller';
@@ -18,6 +19,7 @@ import { AigcController } from './aigc/aigc.controller';
 @Module({
   imports: [
     PassportModule,
+    TDengineModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || '139.224.26.134',

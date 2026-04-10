@@ -637,22 +637,19 @@ const getPointColorClass = (type: string) => {
   flex: 1;
   background: #ffffff;
   overflow-y: auto;
-  padding: 32px 40px;
+  padding: 2%;
 }
 
 .content-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 120px);
 }
 
 .content-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .content-title {
@@ -669,8 +666,7 @@ const getPointColorClass = (type: string) => {
 
 .topology-wrapper {
   width: 100%;
-  height: calc(100vh - 280px);
-  min-height: 600px;
+  height: 500px;
   background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-lighter);
@@ -679,13 +675,6 @@ const getPointColorClass = (type: string) => {
 }
 .ledger-tabs {
   margin-top: 16px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.ledger-tabs :deep(.el-tabs__content) {
-  flex: 1;
-  overflow-y: auto;
 }
 
 /* Device List (Cardless approach) */

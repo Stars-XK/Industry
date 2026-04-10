@@ -82,10 +82,10 @@ export class ZoneController {
     }
 
     if (keyword) {
-      sql += ` AND z.zone_name LIKE ?`;
-      countSql += ` AND z.zone_name LIKE ?`;
-      params.push(`%${keyword}%`);
-      countParams.push(`%${keyword}%`);
+      sql += ` AND (z.zone_name LIKE ? OR z.zone_code LIKE ?)`;
+      countSql += ` AND (z.zone_name LIKE ? OR z.zone_code LIKE ?)`;
+      params.push(`%${keyword}%`, `%${keyword}%`);
+      countParams.push(`%${keyword}%`, `%${keyword}%`);
     }
 
     sql += ` ORDER BY z.id DESC LIMIT ? OFFSET ?`;

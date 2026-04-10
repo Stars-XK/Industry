@@ -76,6 +76,14 @@
 
     <!-- 弹窗统一引用 -->
     <AssetDialogs ref="assetDialogsRef" @submit-site="handleFormSubmit" />
+
+    <ExcelImport
+      v-model="importVisible"
+      title="导入站点数据"
+      templateName="物理站点"
+      :templateColumns="['站点编码', '站点名称', '站点类型(1/2/3/4)', '挂载分区ID', '详细地址', '经度', '纬度', '坐标系']"
+      @import-data="handleImportData"
+    />
   </div>
 </template>
 
@@ -84,8 +92,11 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import AssetDialogs from './AssetDialogs.vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
+import { exportToExcel } from '@/utils/export'
 
 const loading = ref(false)
+const importVisible = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const selectedIds = ref<number[]>([])
@@ -173,11 +184,61 @@ const handleFormSubmit = async (formData: any) => {
 }
 
 const handleImport = () => {
-  ElMessage.info('暂未开放导入功能，将在 Phase 6 实现')
+  importVisible.value = true
+}
+
+const handleImportData = async (data: any[]) => {
+  if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
+  
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        site_code: item['站点编码'],
+        site_name: item['站点名称'],
+        site_type: item['站点类型(1/2/3/4)'] || 1,
+        zone_id: item['挂载分区ID'] || null,
+        address: item['详细地址'],
+        lng: item['经度'],
+        lat: item['纬度'],
+        crs: item['坐标系'] || 'CGCS2000'
+      }
+      await request.post('/api/v1/system/asset/site', payload)
+      successCount++
+    } catch (e) {
+      failCount++
+    }
+  }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchSites()
 }
 
 const handleExport = () => {
-  ElMessage.success('导出请求已发送，请稍后查看下载')
+  if (!tableData.value || !tableData.value.length) {
+    ElMessage.warning('没有可导出的数据')
+    return
+  }
+  const typeMap: Record<number, string> = { 1: '水厂', 2: '加压泵站', 3: '二供泵房', 4: '管网监测点' }
+  const exportData = tableData.value.map((item: any) => ({
+    ...item,
+    site_type_name: typeMap[item.site_type] || item.site_type
+  }))
+  const headers = {
+    id: '站点ID',
+    site_code: '站点编码',
+    site_name: '站点名称',
+    site_type_name: '站点类型',
+    zone_name: '所属分区',
+    address: '详细地址',
+    lng: '经度',
+    lat: '纬度',
+    crs: '坐标系'
+  }
+  exportToExcel(exportData, '物理站点台账', headers)
+  ElMessage.success('导出成功')
 }
 
 onMounted(() => {

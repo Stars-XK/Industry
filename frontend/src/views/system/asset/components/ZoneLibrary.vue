@@ -76,6 +76,15 @@
 
     <!-- 弹窗统一引用 -->
     <AssetDialogs ref="assetDialogsRef" @submit-zone="handleFormSubmit" />
+
+    <!-- 导入组件 -->
+    <ExcelImport
+      v-model="importVisible"
+      title="导入分区数据"
+      templateName="DMA分区"
+      :templateColumns="['分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
+      @import-data="handleImportData"
+    />
   </div>
 </template>
 
@@ -84,8 +93,11 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import AssetDialogs from './AssetDialogs.vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
+import { exportToExcel } from '@/utils/export'
 
 const loading = ref(false)
+const importVisible = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const selectedIds = ref<number[]>([])
@@ -172,11 +184,54 @@ const handleFormSubmit = async (formData: any) => {
 }
 
 const handleImport = () => {
-  ElMessage.info('暂未开放导入功能，将在 Phase 6 实现')
+  importVisible.value = true
+}
+
+const handleImportData = async (data: any[]) => {
+  if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
+  
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        zone_name: item['分区名称'],
+        level: item['层级(1/2/3)'] || 1,
+        parent_id: item['上级分区ID'] || 0,
+        mnf_baseline: item['基线流量'] || 0,
+        center_lng: item['中心经度'],
+        center_lat: item['中心纬度'],
+        crs: item['坐标系'] || 'CGCS2000'
+      }
+      await request.post('/api/v1/system/zone', payload)
+      successCount++
+    } catch (e) {
+      failCount++
+    }
+  }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchZones()
 }
 
 const handleExport = () => {
-  ElMessage.success('导出请求已发送，请稍后查看下载')
+  if (!tableData.value || !tableData.value.length) {
+    ElMessage.warning('没有可导出的数据')
+    return
+  }
+  const headers = {
+    id: '分区ID',
+    zone_name: '分区名称',
+    level: '分区层级',
+    parent_name: '上级分区',
+    mnf_baseline: '基线流量',
+    center_lng: '中心经度',
+    center_lat: '中心纬度',
+    crs: '坐标系'
+  }
+  exportToExcel(tableData.value, 'DMA分区台账', headers)
+  ElMessage.success('导出成功')
 }
 
 onMounted(() => {

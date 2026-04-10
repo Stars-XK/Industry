@@ -86,6 +86,14 @@
 
     <!-- 弹窗统一引用 -->
     <AssetDialogs ref="assetDialogsRef" @submit-point="handleFormSubmit" />
+
+    <ExcelImport
+      v-model="importVisible"
+      title="导入测点数据"
+      templateName="测点字典"
+      :templateColumns="['测点编码', '测点名称', '测点类型(1/2/3/4/5)', '关联设备ID', '数据类型', '物理单位', '量程下限', '量程上限']"
+      @import-data="handleImportData"
+    />
   </div>
 </template>
 
@@ -94,8 +102,11 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import AssetDialogs from './AssetDialogs.vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
+import { exportToExcel } from '@/utils/export'
 
 const loading = ref(false)
+const importVisible = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const selectedIds = ref<number[]>([])
@@ -183,11 +194,62 @@ const handleFormSubmit = async (formData: any) => {
 }
 
 const handleImport = () => {
-  ElMessage.info('暂未开放导入功能，将在 Phase 6 实现')
+  importVisible.value = true
+}
+
+const handleImportData = async (data: any[]) => {
+  if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
+  
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        point_code: item['测点编码'],
+        point_name: item['测点名称'],
+        point_category: item['测点类型(1/2/3/4/5)'] || 1,
+        device_id: item['关联设备ID'] || null,
+        data_type: item['数据类型'] || 'float',
+        unit: item['物理单位'] || '',
+        range_min: item['量程下限'] || null,
+        range_max: item['量程上限'] || null
+      }
+      await request.post('/api/v1/system/asset/point', payload)
+      successCount++
+    } catch (e) {
+      failCount++
+    }
+  }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchPoints()
 }
 
 const handleExport = () => {
-  ElMessage.success('导出请求已发送，请稍后查看下载')
+  if (!tableData.value || !tableData.value.length) {
+    ElMessage.warning('没有可导出的数据')
+    return
+  }
+  const categoryMap: Record<number, string> = { 1: '瞬时流量', 2: '压力', 3: '水质', 4: '状态值', 5: '累计流量' }
+  const exportData = tableData.value.map((item: any) => ({
+    ...item,
+    point_category_name: categoryMap[item.point_category] || item.point_category
+  }))
+  const headers = {
+    id: '测点ID',
+    point_code: '测点编码',
+    point_name: '测点名称',
+    point_category_name: '测点类型',
+    data_type: '数据类型',
+    unit: '物理单位',
+    device_name: '关联设备',
+    device_code: '关联设备编码',
+    range_min: '量程下限',
+    range_max: '量程上限'
+  }
+  exportToExcel(exportData, '测点数据字典库', headers)
+  ElMessage.success('导出成功')
 }
 
 onMounted(() => {

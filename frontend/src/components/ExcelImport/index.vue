@@ -21,8 +21,7 @@
       <el-upload
         class="excel-uploader"
         drag
-        :action="uploadUrl"
-        :headers="headers"
+        action="#"
         :auto-upload="false"
         :on-change="handleChange"
         :file-list="fileList"
@@ -39,7 +38,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="visible = false" >取消</el-button>
-        <el-button  @click="submitUpload" :loading="loading">开始导入</el-button>
+        <el-button type="primary" @click="submitUpload" :loading="loading">开始导入</el-button>
       </div>
     </template>
   </el-dialog>
@@ -49,16 +48,16 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { InfoFilled, Download, UploadFilled } from '@element-plus/icons-vue'
+import * as XLSX from 'xlsx'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: '批量导入' },
   templateName: { type: String, default: '数据' },
-  uploadUrl: { type: String, default: '#' },
-  templateColumns: { type: Array, default: () => [] } // e.g. ['部门名称', '部门编码']
+  templateColumns: { type: Array, default: () => [] } // e.g. ['编码', '名称']
 })
 
-const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(['update:modelValue', 'import-data'])
 
 const visible = computed({
   get: () => props.modelValue,
@@ -68,29 +67,15 @@ const visible = computed({
 const loading = ref(false)
 const fileList = ref<any[]>([])
 
-const headers = computed(() => {
-  return {
-    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
-  }
-})
-
 const handleChange = (file: any, files: any[]) => {
   fileList.value = files.slice(-1) // Keep only the latest file
 }
 
 const downloadTemplate = () => {
-  // Simple CSV generation for the template
-  const bom = '\uFEFF'
-  const csvContent = props.templateColumns.join(',') + '\n'
-  const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.setAttribute('download', `${props.templateName}导入模板.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+  const worksheet = XLSX.utils.aoa_to_sheet([props.templateColumns])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+  XLSX.writeFile(workbook, `${props.templateName}导入模板.xlsx`)
 }
 
 const submitUpload = () => {
@@ -100,16 +85,34 @@ const submitUpload = () => {
   }
   
   loading.value = true
+  const file = fileList.value[0].raw
+  const reader = new FileReader()
   
-  // Since we don't have real backend endpoints for all imports right now,
-  // we simulate a successful upload for UX demonstration.
-  setTimeout(() => {
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer)
+      const workbook = XLSX.read(data, { type: 'array' })
+      const firstSheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[firstSheetName]
+      const jsonData = XLSX.utils.sheet_to_json(worksheet)
+      
+      emit('import-data', jsonData)
+      visible.value = false
+      fileList.value = []
+    } catch (err) {
+      console.error(err)
+      ElMessage.error('文件解析失败，请检查文件格式是否正确')
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  reader.onerror = () => {
+    ElMessage.error('文件读取失败')
     loading.value = false
-    ElMessage.success(`${props.templateName}数据导入成功 (模拟)！`)
-    visible.value = false
-    fileList.value = []
-    emit('success')
-  }, 1500)
+  }
+  
+  reader.readAsArrayBuffer(file)
 }
 </script>
 

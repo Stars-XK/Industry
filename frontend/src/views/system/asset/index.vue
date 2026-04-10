@@ -230,9 +230,13 @@ const handleTreeCommand = (command: string, data: any) => {
   } else if (command === 'delete') {
     ElMessageBox.confirm('确定要删除该分区节点吗?', '警告', { type: 'warning' })
       .then(async () => {
-        // await request.delete(`/api/v1/system/zone/${data.realId}`)
-        ElMessage.success('已发送删除请求')
-        zoneTreeRef.value?.fetchTreeData()
+        try {
+          await request.delete(`/api/v1/system/zone/${data.realId}`)
+          ElMessage.success('删除成功')
+          zoneTreeRef.value?.fetchTreeData()
+        } catch (error: any) {
+          ElMessage.error(error.message || '删除失败')
+        }
       })
       .catch(() => {})
   }
@@ -241,9 +245,14 @@ const handleTreeCommand = (command: string, data: any) => {
 const handleDeleteSite = (site: any) => {
   ElMessageBox.confirm('确定要删除该站点吗?', '警告', { type: 'warning' })
     .then(async () => {
-      ElMessage.success('已发送删除站点请求')
-      if (currentZoneId.value) {
-        await fetchSites(currentZoneId.value)
+      try {
+        await request.delete(`/api/v1/system/asset/site/${site.id}`)
+        ElMessage.success('删除站点成功')
+        if (currentZoneId.value) {
+          await fetchSites(currentZoneId.value)
+        }
+      } catch (error: any) {
+        ElMessage.error(error.message || '删除站点失败')
       }
     })
     .catch(() => {})
@@ -277,11 +286,16 @@ const handleEditDevice = (device: any) => {
 const handleDeleteDevice = (device: any) => {
   ElMessageBox.confirm('确定要删除该设备吗?', '警告', { type: 'warning' })
     .then(async () => {
-      ElMessage.success('已发送删除设备请求')
-      if (currentSiteId.value) {
-        await fetchDevices({ siteId: currentSiteId.value })
-      } else if (currentZoneId.value) {
-        await fetchDevices({ zoneId: currentZoneId.value })
+      try {
+        await request.delete(`/api/v1/system/asset/device/${device.id}`)
+        ElMessage.success('删除设备成功')
+        if (currentSiteId.value) {
+          await fetchDevices({ siteId: currentSiteId.value })
+        } else if (currentZoneId.value) {
+          await fetchDevices({ zoneId: currentZoneId.value })
+        }
+      } catch (error: any) {
+        ElMessage.error(error.message || '删除设备失败')
       }
     })
     .catch(() => {})
@@ -294,11 +308,16 @@ const handleAddPoint = (device: any) => {
 const handleDeletePoint = (device: any, point: any) => {
   ElMessageBox.confirm('确定要删除该测点吗?', '警告', { type: 'warning' })
     .then(async () => {
-      ElMessage.success('已发送删除测点请求')
-      if (currentSiteId.value) {
-        await fetchDevices({ siteId: currentSiteId.value })
-      } else if (currentZoneId.value) {
-        await fetchDevices({ zoneId: currentZoneId.value })
+      try {
+        await request.delete(`/api/v1/system/asset/point/${point.id}`)
+        ElMessage.success('删除测点成功')
+        if (currentSiteId.value) {
+          await fetchDevices({ siteId: currentSiteId.value })
+        } else if (currentZoneId.value) {
+          await fetchDevices({ zoneId: currentZoneId.value })
+        }
+      } catch (error: any) {
+        ElMessage.error(error.message || '删除测点失败')
       }
     })
     .catch(() => {})
@@ -306,36 +325,76 @@ const handleDeletePoint = (device: any, point: any) => {
 
 // Dialog Submits
 const onSubmitZone = async (formData: any) => {
-  console.log('Submit Zone:', formData)
-  ElMessage.success('分区保存成功(模拟)')
-  zoneTreeRef.value?.fetchTreeData()
+  try {
+    const isEdit = !!formData.id
+    if (isEdit) {
+      await request.put(`/api/v1/system/zone/${formData.id}`, formData)
+      ElMessage.success('更新分区成功')
+    } else {
+      await request.post('/api/v1/system/zone', formData)
+      ElMessage.success('新增分区成功')
+    }
+    zoneTreeRef.value?.fetchTreeData()
+  } catch (error: any) {
+    ElMessage.error(error.message || '保存分区失败')
+  }
 }
 
 const onSubmitSite = async (formData: any) => {
-  console.log('Submit Site:', formData)
-  ElMessage.success('站点保存成功(模拟)')
-  if (currentZoneId.value) {
-    await fetchSites(currentZoneId.value)
+  try {
+    const isEdit = !!formData.id
+    if (isEdit) {
+      await request.put(`/api/v1/system/asset/site/${formData.id}`, formData)
+      ElMessage.success('更新站点成功')
+    } else {
+      await request.post('/api/v1/system/asset/site', formData)
+      ElMessage.success('新增站点成功')
+    }
+    if (currentZoneId.value) {
+      await fetchSites(currentZoneId.value)
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '保存站点失败')
   }
 }
 
 const onSubmitDevice = async (formData: any) => {
-  console.log('Submit Device:', formData)
-  ElMessage.success('设备保存成功(模拟)')
-  if (currentSiteId.value) {
-    await fetchDevices({ siteId: currentSiteId.value })
-  } else if (currentZoneId.value) {
-    await fetchDevices({ zoneId: currentZoneId.value })
+  try {
+    const isEdit = !!formData.id
+    if (isEdit) {
+      await request.put(`/api/v1/system/asset/device/${formData.id}`, formData)
+      ElMessage.success('更新设备成功')
+    } else {
+      await request.post('/api/v1/system/asset/device', formData)
+      ElMessage.success('新增设备成功')
+    }
+    if (currentSiteId.value) {
+      await fetchDevices({ siteId: currentSiteId.value })
+    } else if (currentZoneId.value) {
+      await fetchDevices({ zoneId: currentZoneId.value })
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '保存设备失败')
   }
 }
 
 const onSubmitPoint = async (formData: any) => {
-  console.log('Submit Point:', formData)
-  ElMessage.success('测点保存成功(模拟)')
-  if (currentSiteId.value) {
-    await fetchDevices({ siteId: currentSiteId.value })
-  } else if (currentZoneId.value) {
-    await fetchDevices({ zoneId: currentZoneId.value })
+  try {
+    const isEdit = !!formData.id
+    if (isEdit) {
+      await request.put(`/api/v1/system/asset/point/${formData.id}`, formData)
+      ElMessage.success('更新测点成功')
+    } else {
+      await request.post('/api/v1/system/asset/point', formData)
+      ElMessage.success('新增测点成功')
+    }
+    if (currentSiteId.value) {
+      await fetchDevices({ siteId: currentSiteId.value })
+    } else if (currentZoneId.value) {
+      await fetchDevices({ zoneId: currentZoneId.value })
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message || '保存测点失败')
   }
 }
 </script>

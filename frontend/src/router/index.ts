@@ -81,11 +81,16 @@ router.beforeEach(async (to, from, next) => {
               // 给目录节点分配 RouterView 以渲染子路由，使用 h() 和 div 包裹以彻底避免 Vue 3 的 <transition> 警告
               route.component = { render: () => h('div', { class: 'nested-router-view', style: 'height: 100%; width: 100%' }, [h(RouterView)]) };
             } else if (menu.menu_type === 'C' && menu.component) {
-              // 动态匹配 views 下的 Vue 组件
-              const componentPath = `../views/${menu.component}.vue`;
-              route.component = modules[componentPath];
-              if (!route.component) {
-                console.warn(`未找到组件路径: ${componentPath}`);
+              // 支持两种组件查找模式：单文件组件 (e.g. system/user.vue) 和 模块入口 (e.g. system/user/index.vue)
+              const directPath = `../views/${menu.component}.vue`;
+              const indexPath = `../views/${menu.component}/index.vue`;
+              
+              if (modules[indexPath]) {
+                route.component = modules[indexPath];
+              } else if (modules[directPath]) {
+                route.component = modules[directPath];
+              } else {
+                console.warn(`未找到组件路径: 尝试了 ${directPath} 和 ${indexPath}`);
               }
             }
             routes.push(route);

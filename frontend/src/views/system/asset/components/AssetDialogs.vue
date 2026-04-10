@@ -39,6 +39,15 @@
             <el-option label="GCJ02" value="GCJ02" />
           </el-select>
         </el-form-item>
+        <el-form-item label="分区边界" prop="boundary_gis">
+          <el-input 
+            type="textarea" 
+            v-model="zoneForm.boundary_gis" 
+            placeholder="请在资产地图中通过圈选工具绘制边界，暂不支持手动输入GeoJSON" 
+            :rows="3" 
+            disabled 
+          />
+        </el-form-item>
         <el-form-item label="扩展属性" prop="properties">
           <el-input type="textarea" v-model="zoneForm.properties" placeholder="输入 JSON 格式的扩展属性" :rows="3" />
         </el-form-item>
@@ -223,7 +232,7 @@ const emit = defineEmits(['submit-zone', 'submit-site', 'submit-device', 'submit
 // Zone
 const zoneDialogVisible = ref(false)
 const zoneFormRef = ref<any>(null)
-const zoneForm = reactive({ id: null, parent_id: 0, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '' })
+const zoneForm = reactive({ id: null, parent_id: 0, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
 const zoneRules = { zone_name: [{ required: true, message: '请输入分区名称', trigger: 'blur' }] }
 
 // Site
@@ -260,10 +269,11 @@ const openZoneDialog = (parentIdOrRow?: any, data?: any) => {
   if (typeof parentIdOrRow === 'number') { pid = parentIdOrRow; row = data; }
   else { row = parentIdOrRow; }
   
-  Object.assign(zoneForm, { id: null, parent_id: pid, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '' })
+  Object.assign(zoneForm, { id: null, parent_id: pid, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
   if (row) {
     Object.assign(zoneForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) zoneForm.properties = JSON.stringify(row.properties, null, 2)
+    if (typeof row.boundary_gis === 'object' && row.boundary_gis !== null) zoneForm.boundary_gis = JSON.stringify(row.boundary_gis)
   }
   zoneDialogVisible.value = true
 }

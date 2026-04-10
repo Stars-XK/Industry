@@ -147,6 +147,9 @@ export class ZoneController {
   async deleteZone(@Param('id') id: number) {
     const children = await this.dmaZoneRepo.count({ where: { parent_id: id, is_deleted: IsNull() } });
     if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
+    
+    const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_id = ?`, [id]);
+    if (sites.length > 0) throw new Error('该分区下已挂载物理站点，禁止删除');
 
     await this.dmaZoneRepo.update(id, { is_deleted: new Date() });
     return { success: true };
@@ -159,6 +162,9 @@ export class ZoneController {
     if (!body.ids || !body.ids.length) return { success: true };
     const children = await this.dmaZoneRepo.count({ where: { parent_id: In(body.ids), is_deleted: IsNull() } });
     if (children > 0) throw new Error('选中分区中存在子分区，禁止删除');
+
+    const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_id IN (?)`, [body.ids]);
+    if (sites.length > 0) throw new Error('选中分区中部分已挂载物理站点，禁止删除');
 
     await this.dataSource.query(`UPDATE dma_zone SET is_deleted = NOW() WHERE id IN (?)`, [body.ids]);
     return { success: true };

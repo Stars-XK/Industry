@@ -180,11 +180,7 @@ INSERT IGNORE INTO ast_measuring_point (id, device_id, point_code, point_name, p
 (13, 4, 'ENV_01_H2S', '硫化氢浓度', 4, 'float', 'ppm'),
 (14, 4, 'ENV_01_CO', '一氧化碳浓度', 4, 'float', 'ppm'),
 (15, 4, 'ENV_01_PM25', 'PM2.5', 4, 'float', 'ug/m³');
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (1, 201, 1, 1); -- 东海
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (2, 102, 2, -1); -- 丰泽
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (3, 201, 203, 0); -- 东海
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (4, 202, 3, 0); -- 泉港
-INSERT IGNORE INTO dma_device_rel (id, zone_id, device_id, direction) VALUES (5, 204, 4, 0); -- 洛江
+
 
 -- 6. 数据字典测试数据
 INSERT IGNORE INTO sys_dict_type (id, dict_name, dict_type, remark, created_by) VALUES

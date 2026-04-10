@@ -94,6 +94,12 @@
 | `site_type` | SMALLINT | - | N | - | 1-水厂, 2-加压泵站, 3-二供泵房, 4-管网监测点 |
 | `zone_id` | BIGINT | - | Y | NULL | 所属DMA分区ID |
 | `dept_id` | BIGINT | - | Y | NULL | 所属归管部门ID |
+| `address` | VARCHAR | 200 | Y | NULL | 物理地址 |
+| `lng` | DECIMAL | 10,6| Y | NULL | 经度 |
+| `lat` | DECIMAL | 10,6| Y | NULL | 纬度 |
+| `crs` | VARCHAR | 20 | Y | 'CGCS2000' | 坐标系 |
+| `properties` | JSON | - | Y | NULL | 扩展业务属性 |
+| `status` | SMALLINT | - | Y | 1 | 1-正常, 0-停用 |
 
 **7. 设备台账表 (`ast_device`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
@@ -103,7 +109,13 @@
 | `device_name` | VARCHAR | 200 | N | - | 设备名称 |
 | `device_type` | SMALLINT | - | N | - | 字典: 1-智能水表, 2-压力计, 3-水泵 |
 | `site_id` | BIGINT | - | Y | NULL | 关联的站点 ID |
-| `install_date` | DATE | - | Y | - | 安装日期 |
+| `install_date` | DATE | - | Y | NULL | 安装日期 |
+| `manufacturer` | VARCHAR | 100 | Y | NULL | 生产厂家 |
+| `model` | VARCHAR | 100 | Y | NULL | 规格型号 |
+| `lng` | DECIMAL | 10,6| Y | NULL | 经度 |
+| `lat` | DECIMAL | 10,6| Y | NULL | 纬度 |
+| `crs` | VARCHAR | 20 | Y | 'CGCS2000' | 坐标系 |
+| `properties` | JSON | - | Y | NULL | 扩展业务属性 |
 | `status` | SMALLINT | - | N | 1 | 状态: 1-在线, 2-离线, 3-维修中 |
 
 **7.1 物理测点表 (`ast_measuring_point`)**
@@ -116,6 +128,9 @@
 | `point_category` | SMALLINT | - | N | - | 1-流量, 2-压力, 3-水质, 4-状态值, 5-电量 |
 | `data_type` | VARCHAR | 50 | Y | 'float' | 数据类型 |
 | `unit` | VARCHAR | 50 | Y | '' | 物理单位 (如 m³/h, MPa) |
+| `range_min` | DECIMAL | 10,2| Y | NULL | 量程下限 |
+| `range_max` | DECIMAL | 10,2| Y | NULL | 量程上限 |
+| `properties` | JSON | - | Y | NULL | 扩展业务属性 |
 
 **8. 网关表 (`iot_gateway`)**
 | 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
@@ -145,16 +160,14 @@
 | `parent_id` | BIGINT | - | N | 0 | 父级分区 |
 | `zone_name` | VARCHAR | 100 | N | - | 分区名称 (如：一厂区、A车间) |
 | `level` | SMALLINT | - | N | 1 | 层级 (1级, 2级, 3级) |
-| `boundary_gis`| TEXT | - | Y | - | GIS面状边界 (GeoJSON Polygon) |
+| `boundary_gis`| JSON | - | Y | NULL | GIS面状边界 (GeoJSON Polygon格式) |
+| `center_lng` | DECIMAL | 10,6| Y | NULL | 中心点经度 |
+| `center_lat` | DECIMAL | 10,6| Y | NULL | 中心点纬度 |
+| `crs` | VARCHAR | 20 | Y | 'CGCS2000' | 坐标系 (如: CGCS2000, WGS84, GCJ02) |
+| `properties` | JSON | - | Y | NULL | 扩展业务属性 (支持动态扩展) |
 | `mnf_baseline`| DECIMAL | 10,2 | Y | 0 | 夜间最小流量基线 (AI写入) |
 
-**8. 分区设备关联表 (`dma_device_rel`)**
-| 字段名 | 类型 | 长度 | 允许空 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `id` | BIGINT | - | N | 主键 | 唯一标识 |
-| `zone_id` | BIGINT | - | N | - | 分区 ID |
-| `device_id` | BIGINT | - | N | - | 设备 ID |
-| `in_out_type`| SMALLINT | - | N | 0 | 1:进水分表, -1:出水分表, 0:内部分表 |
+*(注：原有的 `dma_device_rel` 分区设备关联表已被废弃，现采用严格的树形层级强关联：分区 `dma_zone` -> 物理站点 `ast_site.zone_id` -> 设备 `ast_device.site_id` -> 测点 `ast_measuring_point.device_id`。以此保证资产拓扑的一致性，防止设备游离和多头挂载。)*
 
 ### 2.4 工单与应急协同 (Workflow & SOP)
 

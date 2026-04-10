@@ -220,16 +220,7 @@ CREATE TABLE IF NOT EXISTS ast_measuring_point (
     UNIQUE KEY `uk_device_point` (device_id, point_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理设备输出测点表';
 
--- 7.1 分区与设备关联表
-CREATE TABLE IF NOT EXISTS `dma_device_rel` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `zone_id` BIGINT NOT NULL COMMENT '分区ID',
-  `device_id` BIGINT NOT NULL COMMENT '设备ID',
-  `direction` TINYINT(1) DEFAULT 1 COMMENT '1-流入, -1-流出, 0-内部',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`zone_id`) REFERENCES `dma_zone`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`device_id`) REFERENCES `ast_device`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='DMA与设备关联表';
+
 
 -- ----------------------------
 DROP TABLE IF EXISTS `iot_gateway`;

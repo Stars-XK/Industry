@@ -43,7 +43,7 @@ export class AssetController {
       countParams.push(`%${keyword}%`, `%${keyword}%`);
     }
 
-    sql += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+    sql += ` ORDER BY s.id DESC LIMIT ? OFFSET ?`;
     params.push(Number(size), (Number(page) - 1) * Number(size));
 
     const list = await this.dataSource.query(sql, params);

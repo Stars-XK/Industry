@@ -666,7 +666,7 @@ const getPointColorClass = (type: string) => {
 
 .topology-wrapper {
   width: 100%;
-  height: 500px;
+  height: 800px;
   background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-lighter);

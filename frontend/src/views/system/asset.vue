@@ -312,7 +312,18 @@ const renderTopology = () => {
   // 组装 Tree 数据
   const rootNode = {
     name: currentZoneName.value,
-    itemStyle: { color: 'var(--el-color-success)' },
+    symbol: 'circle',
+    symbolSize: 18,
+    itemStyle: { 
+      color: 'var(--el-color-success)',
+      borderColor: 'var(--el-color-success-light-5)',
+      borderWidth: 4
+    },
+    label: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      color: 'var(--el-color-success)'
+    },
     children: siteList.value.map(site => {
       const siteDevices = deviceList.value.filter(d => d.siteId === site.id || d.deviceCode.includes(site.site_code) || true); 
       // 注意: 这里暂用全挂载演示，如果设备接口返回数据带明确 site_id 则使用 `d.site_id === site.id`
@@ -321,11 +332,32 @@ const renderTopology = () => {
       
       return {
         name: site.site_name,
-        itemStyle: { color: 'var(--el-color-warning)' },
+        symbol: 'rect',
+        symbolSize: [16, 16],
+        itemStyle: { 
+          color: 'var(--el-color-warning)',
+          borderColor: 'var(--el-color-warning-light-5)',
+          borderWidth: 3
+        },
+        label: {
+          fontSize: 14,
+          fontWeight: 600,
+          color: 'var(--el-color-warning-dark-2)'
+        },
         children: devicesToMount.map(dev => ({
           name: dev.deviceName,
           value: dev.deviceType,
-          itemStyle: { color: 'var(--el-color-primary)' }
+          symbol: 'diamond',
+          symbolSize: 14,
+          itemStyle: { 
+            color: 'var(--el-color-primary)',
+            borderColor: 'var(--el-color-primary-light-5)',
+            borderWidth: 2
+          },
+          label: {
+            fontSize: 13,
+            color: 'var(--el-color-primary-dark-2)'
+          }
         }))
       }
     })
@@ -337,14 +369,20 @@ const renderTopology = () => {
       {
         type: 'tree',
         data: [rootNode],
-        top: '5%',
-        left: '8%',
-        bottom: '5%',
-        right: '18%',
-        symbolSize: 10,
+        top: '10%',
+        left: '15%',
+        bottom: '10%',
+        right: '25%',
+        roam: true,
+        symbolSize: 12,
         edgeShape: 'polyline',
         edgeForkPosition: '63%',
-        initialTreeDepth: 2,
+        initialTreeDepth: 3,
+        lineStyle: {
+          color: '#cbd5e1',
+          width: 2,
+          curveness: 0.5
+        },
         label: {
           position: 'left',
           verticalAlign: 'middle',
@@ -361,8 +399,9 @@ const renderTopology = () => {
         },
         emphasis: { focus: 'descendant' },
         expandAndCollapse: true,
-        animationDuration: 550,
-        animationDurationUpdate: 750
+        animationDuration: 650,
+        animationDurationUpdate: 800,
+        animationEasing: 'cubicOut'
       }
     ]
   }

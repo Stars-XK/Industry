@@ -19,7 +19,8 @@
     "vue": "^3.3.4",
     "vue-echarts": "^7.0.3",
     "vue-router": "^4.2.4",
-    "vue3-puzzle-vcode": "^1.1.7"
+    "vue3-puzzle-vcode": "^1.1.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.21",

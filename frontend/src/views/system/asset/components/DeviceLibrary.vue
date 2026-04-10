@@ -93,6 +93,14 @@
 
     <!-- 弹窗统一引用 -->
     <AssetDialogs ref="assetDialogsRef" @submit-device="handleFormSubmit" />
+
+    <ExcelImport
+      v-model="importVisible"
+      title="导入设备数据"
+      templateName="设备资产"
+      :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点ID', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
+      @import-data="handleImportData"
+    />
   </div>
 </template>
 
@@ -101,8 +109,11 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import AssetDialogs from './AssetDialogs.vue'
+import ExcelImport from '@/components/ExcelImport/index.vue'
+import { exportToExcel } from '@/utils/export'
 
 const loading = ref(false)
+const importVisible = ref(false)
 const tableData = ref([])
 const total = ref(0)
 const selectedIds = ref<number[]>([])
@@ -190,11 +201,67 @@ const handleFormSubmit = async (formData: any) => {
 }
 
 const handleImport = () => {
-  ElMessage.info('暂未开放导入功能，将在 Phase 6 实现')
+  importVisible.value = true
+}
+
+const handleImportData = async (data: any[]) => {
+  if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
+  
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        device_code: item['设备编码'],
+        device_name: item['设备名称'],
+        device_type: item['设备类型(1/2/3/4)'] || 1,
+        site_id: item['所属站点ID'] || null,
+        status: item['状态(1/2/3)'] || 1,
+        manufacturer: item['生产厂家'],
+        model: item['规格型号'],
+        lng: item['经度'],
+        lat: item['纬度'],
+        crs: item['坐标系'] || 'CGCS2000'
+      }
+      await request.post('/api/v1/system/asset/device', payload)
+      successCount++
+    } catch (e) {
+      failCount++
+    }
+  }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchDevices()
 }
 
 const handleExport = () => {
-  ElMessage.success('导出请求已发送，请稍后查看下载')
+  if (!tableData.value || !tableData.value.length) {
+    ElMessage.warning('没有可导出的数据')
+    return
+  }
+  const typeMap: Record<number, string> = { 1: '智能水表', 2: '压力计', 3: '水泵', 4: '水质仪' }
+  const statusMap: Record<number, string> = { 1: '在线', 2: '离线', 3: '维修中' }
+  const exportData = tableData.value.map((item: any) => ({
+    ...item,
+    device_type_name: typeMap[item.device_type] || item.device_type,
+    status_name: statusMap[item.status] || item.status
+  }))
+  const headers = {
+    id: '设备ID',
+    device_code: '设备编码',
+    device_name: '设备名称',
+    device_type_name: '设备类型',
+    site_name: '所属站点',
+    status_name: '状态',
+    manufacturer: '生产厂家',
+    model: '规格型号',
+    lng: '经度',
+    lat: '纬度',
+    crs: '坐标系'
+  }
+  exportToExcel(exportData, '设备资产台账', headers)
+  ElMessage.success('导出成功')
 }
 
 onMounted(() => {

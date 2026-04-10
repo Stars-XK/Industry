@@ -351,7 +351,7 @@ const onSubmitPoint = async (formData: any) => {
 .asset-ledger {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 50px);
+  min-height: 100%;
   padding: 2%;
   color: #11181c;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

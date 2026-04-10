@@ -258,13 +258,11 @@ const handleAddSite = () => {
 }
 
 const handleAddDevice = () => {
-  if (!currentSiteId.value && !currentZoneId.value) {
-    ElMessage.warning('请先选择一个物理站点或分区')
-    return
+  if (currentSiteId.value) {
+    assetDialogsRef.value?.openDeviceDialog(currentSiteId.value)
+  } else {
+    ElMessage.warning('设备必须挂载到具体的物理站点下，请先在左侧拓扑图或下方列表中选择一个物理站点，再进行添加/挂载。')
   }
-  // Ideally, devices belong to sites, so we need a siteId
-  // If we only selected a zone, we might require selecting a site first, or allow zone mounting
-  assetDialogsRef.value?.openDeviceDialog(currentSiteId.value || 0)
 }
 
 const handleEditDevice = (device: any) => {

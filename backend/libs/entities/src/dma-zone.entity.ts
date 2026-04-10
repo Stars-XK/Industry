@@ -20,6 +20,18 @@ export class DmaZone {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   mnf_baseline: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  center_lng: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  center_lat: number;
+
+  @Column({ length: 20, default: 'CGCS2000' })
+  crs: string;
+
+  @Column({ type: 'json', nullable: true })
+  properties: any;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -61,18 +61,18 @@ export class AssetController {
     const { siteId, zoneId, page = 1, size = 20, keyword = '' } = query;
 
     let sql = `SELECT d.*, s.site_name FROM ast_device d LEFT JOIN ast_site s ON d.site_id = s.id `;
-    let countSql = `SELECT COUNT(*) as total FROM ast_device d `;
+    let countSql = `SELECT COUNT(*) as total FROM ast_device d LEFT JOIN ast_site s ON d.site_id = s.id `;
     const params: any[] = [];
     const countParams: any[] = [];
 
+    sql += ` WHERE d.status != 0`;
+    countSql += ` WHERE d.status != 0`;
+
     if (zoneId) {
-      sql += ` JOIN dma_device_rel r ON d.id = r.device_id WHERE d.status != 0 AND r.zone_id = ?`;
-      countSql += ` JOIN dma_device_rel r ON d.id = r.device_id WHERE d.status != 0 AND r.zone_id = ?`;
+      sql += ` AND s.zone_id = ?`;
+      countSql += ` AND s.zone_id = ?`;
       params.push(zoneId);
       countParams.push(zoneId);
-    } else {
-      sql += ` WHERE d.status != 0`;
-      countSql += ` WHERE d.status != 0`;
     }
 
     if (siteId) {

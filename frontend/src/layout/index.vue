@@ -130,13 +130,8 @@
             <div class="track-node highlight-node">
               <div class="guide-node-icon"><el-icon><DataLine /></el-icon></div>
               <div class="node-info">
-<<<<<<< trae/solo-agent-USiW56
-                <h4>2. 实时采集与时序底座</h4>
-                <p>定时抓取底层传感数据（瞬时/累计流量、压力等），存入 TDengine 进行清洗与降采样计算。</p>
-=======
                 <h4>2. 实时采集与清洗计算</h4>
                 <p>补充实时数据源定时抓取存放 tgen。在 tgen 中清洗，计算设备 5分钟、1小时的数据，提取设备最新数据。</p>
->>>>>>> main
                 <div class="node-actions">
                   <el-button size="small" type="primary" @click="router.push('/governance/interpolate'); showBusinessGuide=false">时序清洗与插值规则</el-button>
                 </div>
@@ -149,13 +144,8 @@
             <div class="track-node">
               <div class="guide-node-icon"><el-icon><Odometer /></el-icon></div>
               <div class="node-info">
-<<<<<<< trae/solo-agent-USiW56
-                <h4>3. 供水量与夜间流量提取</h4>
-                <p>瞬时流量 ➔ 设备5分钟量 ➔ 2-4点分区MNF。<br/>累计流量 ➔ 切割出设备日用量 ➔ 汇总分区日/月供水。</p>
-=======
                 <h4>3. 供水指标提取与流转</h4>
                 <p>提取5分钟量得到 2-4点分区夜间最小流量；切割累计流量得设备日用量，汇总得出分区日/月供水。</p>
->>>>>>> main
                 <div class="node-actions">
                   <el-button size="small" type="primary" plain @click="router.push('/analytics/mnf'); showBusinessGuide=false">全域夜间最小流量</el-button>
                 </div>
@@ -169,11 +159,7 @@
               <div class="guide-node-icon"><el-icon><Money /></el-icon></div>
               <div class="node-info">
                 <h4>4. 营收侧售水量融合</h4>
-<<<<<<< trae/solo-agent-USiW56
-                <p>获取营收用户数据 ➔ 计算单用户日/月用量 ➔ 关联分区水卡信息 ➔ 汇总分区日/月售水。</p>
-=======
                 <p>补充营收数据，按日用/月用/累计算出单用户日/月用水量，关联分区水卡汇总出分区的日用量/月用量(售水)。</p>
->>>>>>> main
                 <div class="node-actions">
                   <el-button size="small" type="primary" plain @click="router.push('/analytics/key-account'); showBusinessGuide=false">大户档案与水卡</el-button>
                   <el-button size="small" type="primary" plain @click="router.push('/analytics/billing'); showBusinessGuide=false">营收计费与出账</el-button>
@@ -197,7 +183,6 @@
           </div>
         </div>
 
-<<<<<<< trae/solo-agent-USiW56
         <!-- 工业数据全局流转桑基图 -->
         <div class="guide-section sankey-section">
           <div class="section-heading">
@@ -206,9 +191,6 @@
           </div>
           <div class="sankey-chart-wrapper" ref="globalSankeyRef"></div>
         </div>
-
-=======
->>>>>>> main
       </div>
     </el-drawer>
   </template>

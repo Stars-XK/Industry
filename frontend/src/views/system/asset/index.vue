@@ -38,7 +38,8 @@
               <el-tab-pane label="2D架构拓扑" name="topology">
                 <TopologyChart 
                   ref="topologyChartRef"
-                  :zoneName="currentZoneName" 
+                  v-if="activeTab === 'topology'"
+                  :currentZoneName="currentZoneName" 
                   :siteList="siteList" 
                   :deviceList="deviceList" 
                 />
@@ -49,6 +50,7 @@
                   :siteList="siteList" 
                   @view-devices="viewSiteDevices" 
                   @delete-site="handleDeleteSite" 
+                  @add-site="handleAddSite"
                 />
               </el-tab-pane>
               
@@ -226,6 +228,14 @@ const handleDeleteSite = (site: any) => {
       }
     })
     .catch(() => {})
+}
+
+const handleAddSite = () => {
+  if (!currentZoneId.value) {
+    ElMessage.warning('请先在左侧选择一个所属的分区')
+    return
+  }
+  assetDialogsRef.value?.openSiteDialog(currentZoneId.value)
 }
 
 const handleAddDevice = () => {

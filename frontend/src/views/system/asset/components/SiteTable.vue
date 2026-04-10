@@ -1,6 +1,9 @@
 <template>
   <div class="site-list">
-    <el-table :data="siteList" border stripe style="width: 100%; margin-top: 16px">
+    <div class="table-toolbar" style="margin-bottom: 16px; display: flex; justify-content: flex-end;">
+      <el-button type="primary" icon="Plus" @click="$emit('add-site')">注册物理站点</el-button>
+    </div>
+    <el-table :data="siteList" border stripe style="width: 100%;">
       <el-table-column prop="site_code" label="站点编码" width="180" />
       <el-table-column prop="site_name" label="站点名称" />
       <el-table-column label="站点类型" width="180">
@@ -23,7 +26,7 @@ defineProps<{
   siteList: any[]
 }>()
 
-const emit = defineEmits(['view-devices', 'delete-site'])
+const emit = defineEmits(['view-devices', 'delete-site', 'add-site'])
 
 const getSiteTypeName = (type: unknown) => {
   if (typeof type === 'string' && type.trim()) return type

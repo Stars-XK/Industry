@@ -36,9 +36,8 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="addZone">添加子分区</el-dropdown-item>
-                  <el-dropdown-item command="addSite">添加物理站点</el-dropdown-item>
-                  <el-dropdown-item command="edit">编辑节点信息</el-dropdown-item>
-                  <el-dropdown-item command="delete" divided class="text-danger">删除该节点</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑分区信息</el-dropdown-item>
+                  <el-dropdown-item command="delete" divided class="text-danger">删除该分区</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

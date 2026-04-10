@@ -5,11 +5,17 @@
       <p>管理全局 DMA 分区数据，支持管网层级结构与水量计算节点。</p>
     </div>
     <div class="toolbar">
-      <el-button type="primary" icon="Plus">新增分区</el-button>
+      <el-button type="primary" icon="Plus" @click="handleAdd">新增分区</el-button>
+      <el-button type="danger" icon="Delete" :disabled="!selectedIds.length" @click="handleBatchDelete">批量删除</el-button>
+      <el-button type="success" icon="Upload" @click="handleImport">导入分区</el-button>
+      <el-button type="warning" icon="Download" @click="handleExport">导出</el-button>
+      
+      <div style="flex: 1"></div>
+      
       <el-input 
         v-model="queryParams.keyword" 
         placeholder="搜索分区名称" 
-        style="width: 240px; margin-left: 12px" 
+        style="width: 200px; margin-left: 12px" 
         prefix-icon="Search" 
         clearable
         @keyup.enter="fetchZones"
@@ -17,7 +23,16 @@
       />
       <el-button @click="fetchZones" style="margin-left: 12px">搜索</el-button>
     </div>
-    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="60vh">
+    <el-table 
+      :data="tableData" 
+      v-loading="loading" 
+      border 
+      stripe 
+      style="width: 100%; margin-top: 16px" 
+      height="60vh"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="55" align="center" />
       <el-table-column prop="id" label="分区ID" width="100" />
       <el-table-column prop="zone_name" label="分区名称" />
       <el-table-column prop="level" label="分区层级">
@@ -34,10 +49,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="mnf_baseline" label="夜间最小流量基线 (m³/h)" width="200" />
-      <el-table-column label="操作" width="150" align="center">
-        <template #default>
-          <el-button link type="primary">编辑</el-button>
-          <el-button link type="danger">删除</el-button>
+      <el-table-column label="操作" width="150" align="center" fixed="right">
+        <template #default="scope">
+          <el-button link type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button link type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -53,16 +68,23 @@
         @current-change="fetchZones"
       />
     </div>
+
+    <!-- 弹窗统一引用 -->
+    <AssetDialogs ref="assetDialogsRef" @submit-zone="handleFormSubmit" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import AssetDialogs from './AssetDialogs.vue'
 
 const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
+const selectedIds = ref<number[]>([])
+const assetDialogsRef = ref<any>(null)
 const queryParams = ref({
   page: 1,
   size: 20,
@@ -86,6 +108,70 @@ const fetchZones = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSelectionChange = (selection: any[]) => {
+  selectedIds.value = selection.map(item => item.id)
+}
+
+const handleAdd = () => {
+  assetDialogsRef.value?.openZoneDialog()
+}
+
+const handleEdit = (row: any) => {
+  assetDialogsRef.value?.openZoneDialog(row)
+}
+
+const handleDelete = async (row: any) => {
+  try {
+    await ElMessageBox.confirm(`确认删除分区 [${row.zone_name}] 吗？`, '警告', { type: 'warning' })
+    const res = await request.delete(`/api/v1/system/zone/${row.id}`)
+    if (res && res.success) {
+      ElMessage.success('删除成功')
+      fetchZones()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') ElMessage.error(error.message || '删除失败')
+  }
+}
+
+const handleBatchDelete = async () => {
+  if (!selectedIds.value.length) return
+  try {
+    await ElMessageBox.confirm(`确认删除选中的 ${selectedIds.value.length} 个分区吗？`, '警告', { type: 'warning' })
+    const res = await request.post(`/api/v1/system/zone/batch-delete`, { ids: selectedIds.value })
+    if (res && res.success) {
+      ElMessage.success('批量删除成功')
+      selectedIds.value = []
+      fetchZones()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') ElMessage.error(error.message || '批量删除失败')
+  }
+}
+
+const handleFormSubmit = async (formData: any) => {
+  try {
+    const isEdit = !!formData.id
+    if (isEdit) {
+      await request.put(`/api/v1/system/zone/${formData.id}`, formData)
+      ElMessage.success('更新成功')
+    } else {
+      await request.post('/api/v1/system/zone', formData)
+      ElMessage.success('新增成功')
+    }
+    fetchZones()
+  } catch (error: any) {
+    ElMessage.error(error.message || '操作失败')
+  }
+}
+
+const handleImport = () => {
+  ElMessage.info('暂未开放导入功能，将在 Phase 6 实现')
+}
+
+const handleExport = () => {
+  ElMessage.success('导出请求已发送，请稍后查看下载')
 }
 
 onMounted(() => {

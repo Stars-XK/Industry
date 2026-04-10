@@ -184,7 +184,65 @@ export class AssetController {
     return { success: true };
   }
 
-  @Post('point')
+  @Post('site/batch-delete')
+  @ApiOperation({ summary: '批量删除物理站点' })
+  @RequirePermissions('sys:asset:manage')
+  async batchDeleteSites(@Body() body: { ids: number[] }) {
+    if (!body.ids || !body.ids.length) return { success: true };
+    // 检查是否有挂载设备
+    const devices = await this.dataSource.query(`SELECT id FROM ast_device WHERE site_id IN (?)`, [body.ids]);
+    if (devices.length > 0) throw new Error('部分站点下存在设备，无法删除');
+    await this.dataSource.query(`DELETE FROM ast_site WHERE id IN (?)`, [body.ids]);
+    return { success: true };
+  }
+
+  // --- Device CRUD ---
+  @Post('device')
+  @ApiOperation({ summary: '创建设备' })
+  @RequirePermissions('sys:asset:manage')
+  async createDevice(@Body() body: any) {
+    const { device_code, device_name, device_type, site_id, status } = body;
+    await this.dataSource.query(
+      `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status) VALUES (?, ?, ?, ?, ?)`,
+      [device_code, device_name, device_type, site_id || null, status || 1]
+    );
+    return { success: true };
+  }
+
+  @Put('device/:id')
+  @ApiOperation({ summary: '更新设备' })
+  @RequirePermissions('sys:asset:manage')
+  async updateDevice(@Param('id') id: number, @Body() body: any) {
+    const { device_name, device_type, site_id, status } = body;
+    await this.dataSource.query(
+      `UPDATE ast_device SET device_name=?, device_type=?, site_id=?, status=? WHERE id=?`,
+      [device_name, device_type, site_id || null, status, id]
+    );
+    return { success: true };
+  }
+
+  @Delete('device/:id')
+  @ApiOperation({ summary: '删除设备' })
+  @RequirePermissions('sys:asset:manage')
+  async deleteDevice(@Param('id') id: number) {
+    const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id = ?`, [id]);
+    if (points.length > 0) throw new Error('该设备下存在测点，无法删除');
+    await this.dataSource.query(`DELETE FROM ast_device WHERE id = ?`, [id]);
+    return { success: true };
+  }
+
+  @Post('device/batch-delete')
+  @ApiOperation({ summary: '批量删除设备' })
+  @RequirePermissions('sys:asset:manage')
+  async batchDeleteDevices(@Body() body: { ids: number[] }) {
+    if (!body.ids || !body.ids.length) return { success: true };
+    const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id IN (?)`, [body.ids]);
+    if (points.length > 0) throw new Error('部分设备下存在测点，无法删除');
+    await this.dataSource.query(`DELETE FROM ast_device WHERE id IN (?)`, [body.ids]);
+    return { success: true };
+  }
+
+  // --- Point CRUD ---
   @ApiOperation({ summary: '为设备添加物理测点' })
   @RequirePermissions('sys:asset:manage')
   async createPoint(@Body() body: any) {
@@ -196,11 +254,32 @@ export class AssetController {
     return { success: true };
   }
 
+  @Put('point/:id')
+  @ApiOperation({ summary: '修改物理测点' })
+  @RequirePermissions('sys:asset:manage')
+  async updatePoint(@Param('id') id: number, @Body() body: any) {
+    const { device_id, point_name, point_category, data_type, unit } = body;
+    await this.dataSource.query(
+      `UPDATE ast_measuring_point SET device_id=?, point_name=?, point_category=?, data_type=?, unit=? WHERE id=?`,
+      [device_id, point_name, point_category, data_type || 'float', unit || '', id]
+    );
+    return { success: true };
+  }
+
   @Delete('point/:id')
   @ApiOperation({ summary: '删除物理测点' })
   @RequirePermissions('sys:asset:manage')
   async deletePoint(@Param('id') id: number) {
     await this.dataSource.query(`DELETE FROM ast_measuring_point WHERE id = ?`, [id]);
+    return { success: true };
+  }
+
+  @Post('point/batch-delete')
+  @ApiOperation({ summary: '批量删除物理测点' })
+  @RequirePermissions('sys:asset:manage')
+  async batchDeletePoints(@Body() body: { ids: number[] }) {
+    if (!body.ids || !body.ids.length) return { success: true };
+    await this.dataSource.query(`DELETE FROM ast_measuring_point WHERE id IN (?)`, [body.ids]);
     return { success: true };
   }
 }

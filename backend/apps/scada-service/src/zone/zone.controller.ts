@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In, IsNull } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard, RequirePermissions } from '@app/common';
 import { DmaZone } from '../../../../libs/entities/src/dma-zone.entity';
@@ -137,10 +137,22 @@ export class ZoneController {
   @ApiOperation({ summary: '删除 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async deleteZone(@Param('id') id: number) {
-    const children = await this.dmaZoneRepo.count({ where: { parent_id: id, is_deleted: null } });
+    const children = await this.dmaZoneRepo.count({ where: { parent_id: id, is_deleted: IsNull() } });
     if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
 
     await this.dmaZoneRepo.update(id, { is_deleted: new Date() });
+    return { success: true };
+  }
+
+  @Post('batch-delete')
+  @ApiOperation({ summary: '批量删除 DMA 分区' })
+  @RequirePermissions('sys:asset:manage')
+  async batchDeleteZones(@Body() body: { ids: number[] }) {
+    if (!body.ids || !body.ids.length) return { success: true };
+    const children = await this.dmaZoneRepo.count({ where: { parent_id: In(body.ids), is_deleted: IsNull() } });
+    if (children > 0) throw new Error('选中分区中存在子分区，禁止删除');
+
+    await this.dataSource.query(`UPDATE dma_zone SET is_deleted = NOW() WHERE id IN (?)`, [body.ids]);
     return { success: true };
   }
 }

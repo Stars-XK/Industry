@@ -13,10 +13,16 @@
         </el-form-item>
         <el-form-item label="层级" prop="level">
           <el-select v-model="zoneForm.level" placeholder="请选择层级">
-            <el-option label="一级" :value="1" />
-            <el-option label="二级" :value="2" />
-            <el-option label="三级" :value="3" />
+            <el-option label="一级分区" :value="1" />
+            <el-option label="二级分区" :value="2" />
+            <el-option label="三级分区" :value="3" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="上级分区" prop="parent_id">
+          <el-input v-model="zoneForm.parent_id" placeholder="上级分区ID（顶级为0）" type="number" />
+        </el-form-item>
+        <el-form-item label="基线流量" prop="mnf_baseline">
+          <el-input v-model="zoneForm.mnf_baseline" placeholder="夜间最小流量基线 (m³/h)" type="number" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -48,6 +54,9 @@
             <el-option label="管网监测点" :value="4" />
           </el-select>
         </el-form-item>
+        <el-form-item label="挂载分区" prop="zone_id">
+          <el-input v-model="siteForm.zone_id" placeholder="分区ID（选填）" type="number" />
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -78,6 +87,16 @@
             <el-option label="水质仪" :value="4" />
           </el-select>
         </el-form-item>
+        <el-form-item label="所属站点" prop="site_id">
+          <el-input v-model="deviceForm.site_id" placeholder="站点ID（选填）" type="number" />
+        </el-form-item>
+        <el-form-item label="设备状态" prop="status">
+          <el-select v-model="deviceForm.status" placeholder="请选择状态">
+            <el-option label="在线" :value="1" />
+            <el-option label="离线" :value="2" />
+            <el-option label="维修中" :value="3" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -94,6 +113,9 @@
       width="500px"
     >
       <el-form ref="pointFormRef" :model="pointForm" :rules="pointRules" label-width="100px">
+        <el-form-item label="所属设备" prop="device_id">
+          <el-input v-model="pointForm.device_id" placeholder="设备ID" type="number" />
+        </el-form-item>
         <el-form-item label="测点编码" prop="point_code">
           <el-input v-model="pointForm.point_code" placeholder="如: METER_IN_01_FLOW" />
         </el-form-item>
@@ -149,7 +171,7 @@ const siteRules = {
 // Device
 const deviceDialogVisible = ref(false)
 const deviceFormRef = ref<any>(null)
-const deviceForm = reactive({ id: null, site_id: null, device_code: '', device_name: '', device_type: 1 })
+const deviceForm = reactive({ id: null, site_id: null as number | null, device_code: '', device_name: '', device_type: 1, status: 1 })
 const deviceRules = {
   device_code: [{ required: true, message: '请输入设备编码', trigger: 'blur' }],
   device_name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }]

@@ -338,10 +338,13 @@ const renderTopology = () => {
         type: 'tree',
         data: [rootNode],
         top: '5%',
-        left: '10%',
+        left: '8%',
         bottom: '5%',
-        right: '20%',
+        right: '18%',
         symbolSize: 10,
+        edgeShape: 'polyline',
+        edgeForkPosition: '63%',
+        initialTreeDepth: 2,
         label: {
           position: 'left',
           verticalAlign: 'middle',
@@ -595,7 +598,7 @@ const getPointColorClass = (type: string) => {
   flex: 1;
   background: #ffffff;
   overflow-y: auto;
-  padding: 24px;
+  padding: 32px 40px;
 }
 
 .empty-state {
@@ -625,8 +628,11 @@ const getPointColorClass = (type: string) => {
 }
 
 .content-wrapper {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .content-header {
@@ -650,10 +656,12 @@ const getPointColorClass = (type: string) => {
 
 .topology-wrapper {
   width: 100%;
-  height: 600px;
+  height: calc(100vh - 300px);
+  min-height: 600px;
   background: var(--el-bg-color);
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--el-border-color-lighter);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 .ledger-tabs {
   margin-top: 16px;

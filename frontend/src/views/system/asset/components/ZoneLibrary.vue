@@ -30,6 +30,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column prop="id" label="分区ID" width="100" />
+      <el-table-column prop="zone_code" label="分区编码" width="120" show-overflow-tooltip />
       <el-table-column prop="zone_name" label="分区名称" />
       <el-table-column prop="level" label="分区层级">
         <template #default="scope">
@@ -82,7 +83,7 @@
       v-model="importVisible"
       title="导入分区数据"
       templateName="DMA分区"
-      :templateColumns="['分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
+      :templateColumns="['分区编码', '分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
       @import-data="handleImportData"
     />
   </div>
@@ -196,6 +197,7 @@ const handleImportData = async (data: any[]) => {
   for (const item of data) {
     try {
       const payload = {
+        zone_code: item['分区编码'] || '',
         zone_name: item['分区名称'],
         level: item['层级(1/2/3)'] || 1,
         parent_id: item['上级分区ID'] || 0,
@@ -222,6 +224,7 @@ const handleExport = () => {
   }
   const headers = {
     id: '分区ID',
+    zone_code: '分区编码',
     zone_name: '分区名称',
     level: '分区层级',
     parent_name: '上级分区',

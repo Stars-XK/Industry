@@ -12,7 +12,12 @@
         <div class="form-section">
           <h4 class="section-title">基本信息 (Basic Info)</h4>
           <el-row :gutter="20">
-            <el-col :span="24">
+            <el-col :span="12">
+              <el-form-item label="分区编码" prop="zone_code">
+                <el-input v-model="zoneForm.zone_code" placeholder="请输入唯一编码" class="sleek-input" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="分区名称" prop="zone_name">
                 <el-input v-model="zoneForm.zone_name" placeholder="请输入分区名称" class="sleek-input" />
               </el-form-item>
@@ -352,8 +357,11 @@ const emit = defineEmits(['submit-zone', 'submit-site', 'submit-device', 'submit
 // Zone
 const zoneDialogVisible = ref(false)
 const zoneFormRef = ref<any>(null)
-const zoneForm = reactive({ id: null, parent_id: 0, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
-const zoneRules = { zone_name: [{ required: true, message: '请输入分区名称', trigger: 'blur' }] }
+const zoneForm = reactive({ id: null, parent_id: 0, zone_code: '', zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
+const zoneRules = { 
+  zone_code: [{ required: true, message: '请输入唯一编码', trigger: 'blur' }],
+  zone_name: [{ required: true, message: '请输入分区名称', trigger: 'blur' }] 
+}
 
 // Site
 const siteDialogVisible = ref(false)
@@ -389,7 +397,7 @@ const openZoneDialog = (parentIdOrRow?: any, data?: any) => {
   if (typeof parentIdOrRow === 'number') { pid = parentIdOrRow; row = data; }
   else { row = parentIdOrRow; }
   
-  Object.assign(zoneForm, { id: null, parent_id: pid, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
+  Object.assign(zoneForm, { id: null, parent_id: pid, zone_code: '', zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
   if (row) {
     Object.assign(zoneForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) zoneForm.properties = JSON.stringify(row.properties, null, 2)

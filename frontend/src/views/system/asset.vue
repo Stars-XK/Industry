@@ -78,6 +78,10 @@
           </div>
 
           <el-tabs v-model="activeTab" class="ledger-tabs">
+            <el-tab-pane label="2D架构拓扑" name="topology">
+              <div class="topology-wrapper" ref="topologyRef"></div>
+            </el-tab-pane>
+
             <el-tab-pane label="下辖物理站点" name="sites">
               <div class="site-list">
                 <el-table :data="siteList" border stripe style="width: 100%; margin-top: 16px">
@@ -173,9 +177,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick, shallowRef } from 'vue'
 import { MapLocation, HomeFilled, Search, Plus, Filter, DataBoard, More } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+import * as echarts from 'echarts/core';
+import { TreeChart } from 'echarts/charts';
+import { TooltipComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+
+echarts.use([TreeChart, TooltipComponent, CanvasRenderer]);
 
 const filterText = ref('')
 const treeRef = ref<any>(null)
@@ -184,7 +194,9 @@ const siteTree = ref<any[]>([])
 const siteList = ref<any[]>([])
 const deviceList = ref<any[]>([])
 const currentSiteId = ref<number | null>(null)
-const activeTab = ref('sites')
+const activeTab = ref('topology')
+const topologyRef = ref<HTMLElement | null>(null)
+const chartInstance = shallowRef<echarts.ECharts | null>(null)
 
 const defaultProps = {
   children: 'children',
@@ -219,6 +231,7 @@ const fetchDevices = async (params: { zoneId?: number, siteId?: number }) => {
     // 映射后端字段到前端需要展示的结构
     deviceList.value = (res?.list || []).map((d: any) => ({
       id: d.id,
+      site_id: d.site_id,
       deviceCode: d.device_code,
       deviceName: d.device_name,
       deviceType: getDeviceTypeName(d.device_type),
@@ -267,12 +280,13 @@ const filterNode = (value: string, data: any) => {
   return data.label.toLowerCase().includes(value.toLowerCase())
 }
 
-const handleNodeClick = (data: any) => {
+const handleNodeClick = async (data: any) => {
   currentSiteName.value = data.label
   currentSiteId.value = data.realId
-  activeTab.value = 'sites'
-  fetchSites(data.realId)
-  fetchDevices({ zoneId: data.realId })
+  activeTab.value = 'topology'
+  await fetchSites(data.realId)
+  await fetchDevices({ zoneId: data.realId })
+  renderTopology()
 }
 
 const viewSiteDevices = (site: any) => {
@@ -280,6 +294,77 @@ const viewSiteDevices = (site: any) => {
   currentSiteId.value = site.id
   activeTab.value = 'devices'
   fetchDevices({ siteId: site.id })
+}
+
+watch(activeTab, async (val) => {
+  if (val === 'topology' && currentSiteName.value) {
+    await nextTick()
+    renderTopology()
+  }
+})
+
+const renderTopology = () => {
+  if (!topologyRef.value) return
+  if (!chartInstance.value) {
+    chartInstance.value = echarts.init(topologyRef.value)
+  }
+
+  // 组装 Tree 数据
+  const rootNode = {
+    name: currentSiteName.value,
+    itemStyle: { color: 'var(--el-color-success)' },
+    children: siteList.value.map(site => {
+      const siteDevices = deviceList.value.filter(d => d.siteId === site.id || d.deviceCode.includes(site.site_code) || true); 
+      // 注意: 这里暂用全挂载演示，如果设备接口返回数据带明确 site_id 则使用 `d.site_id === site.id`
+      const realDevices = deviceList.value.filter(d => d.site_id === site.id);
+      const devicesToMount = realDevices.length > 0 ? realDevices : [];
+      
+      return {
+        name: site.site_name,
+        itemStyle: { color: 'var(--el-color-warning)' },
+        children: devicesToMount.map(dev => ({
+          name: dev.deviceName,
+          value: dev.deviceType,
+          itemStyle: { color: 'var(--el-color-primary)' }
+        }))
+      }
+    })
+  }
+
+  const option = {
+    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    series: [
+      {
+        type: 'tree',
+        data: [rootNode],
+        top: '5%',
+        left: '10%',
+        bottom: '5%',
+        right: '20%',
+        symbolSize: 10,
+        label: {
+          position: 'left',
+          verticalAlign: 'middle',
+          align: 'right',
+          fontSize: 13,
+          color: '#11181c'
+        },
+        leaves: {
+          label: {
+            position: 'right',
+            verticalAlign: 'middle',
+            align: 'left'
+          }
+        },
+        emphasis: { focus: 'descendant' },
+        expandAndCollapse: true,
+        animationDuration: 550,
+        animationDurationUpdate: 750
+      }
+    ]
+  }
+
+  chartInstance.value.setOption(option)
 }
 
 const handleCommand = (command: string, data: any) => {
@@ -563,6 +648,13 @@ const getPointColorClass = (type: string) => {
   margin: 0;
 }
 
+.topology-wrapper {
+  width: 100%;
+  height: 600px;
+  background: var(--el-bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--el-border-color-lighter);
+}
 .ledger-tabs {
   margin-top: 16px;
   flex: 1;

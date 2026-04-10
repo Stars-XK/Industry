@@ -1,7 +1,7 @@
 <template>
   <div class="device-list">
-    <div class="device-list-actions">
-      <el-button type="primary" icon="Plus" @click="handleAddDevice">添加挂载设备</el-button>
+    <div class="table-toolbar" style="margin-bottom: 16px; display: flex; justify-content: flex-end;">
+      <el-button type="primary" icon="Connection" @click="$emit('add-device')">从台账库中挂载设备</el-button>
     </div>
     <div v-for="device in deviceList" :key="device.id" class="device-item">
       <div class="device-header">
@@ -15,7 +15,7 @@
           <span class="install-date">安装日期: {{ device.installDate }}</span>
           <el-button link class="text-action" @click="handleEditDevice(device)">编辑信息</el-button>
           <el-button link class="text-action">换表接续</el-button>
-          <el-button link class="text-action danger" @click="handleDeleteDevice(device)">删除设备</el-button>
+          <el-button link class="text-action danger" @click="$emit('remove-device', device)">解除挂载</el-button>
         </div>
       </div>
       
@@ -23,7 +23,7 @@
       <div class="points-grid" v-if="device.points && device.points.length > 0">
         <div class="points-header">
           <h4>输出测点 (Measuring Points)</h4>
-          <el-button link class="text-action small" icon="Plus" @click="handleAddPoint(device)">添加测点</el-button>
+          <el-button link class="text-action small" icon="Connection" @click="$emit('add-point', device)">绑定已有测点</el-button>
         </div>
         <div class="points-table-wrapper">
           <table class="sleek-table">
@@ -58,7 +58,7 @@
       </div>
       <div class="empty-points" v-else>
         <p>该设备暂未配置任何物理输出测点。</p>
-        <el-button link type="primary" icon="Plus" @click="handleAddPoint(device)">添加测点</el-button>
+        <el-button link type="primary" icon="Connection" @click="$emit('add-point', device)">绑定测点</el-button>
       </div>
     </div>
   </div>
@@ -71,21 +71,17 @@ defineProps<{
   deviceList: any[]
 }>()
 
-const emit = defineEmits(['add-device', 'edit-device', 'delete-device', 'add-point', 'delete-point'])
+const emit = defineEmits(['add-device', 'edit-device', 'remove-device', 'add-point', 'edit-point', 'remove-point'])
 
-const handleAddDevice = () => emit('add-device')
-const handleEditDevice = (device: any) => emit('edit-device', device)
-const handleDeleteDevice = (device: any) => emit('delete-device', device)
-const handleAddPoint = (device: any) => emit('add-point', device)
-const handleDeletePoint = (device: any, point: any) => emit('delete-point', device, point)
 
 const getPointColorClass = (type: string) => {
-  switch (type) {
-    case '瞬时流量': return 'blue'
-    case '累计流量': return 'green'
-    case '压力': return 'orange'
-    default: return 'gray'
+  const map: any = {
+    'Boolean': 'blue',
+    'Float': 'green',
+    'Integer': 'orange',
+    'String': 'purple'
   }
+  return map[type] || 'gray'
 }
 </script>
 

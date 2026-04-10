@@ -1,7 +1,7 @@
 <template>
   <div class="site-list">
     <div class="table-toolbar" style="margin-bottom: 16px; display: flex; justify-content: flex-end;">
-      <el-button type="primary" icon="Plus" @click="$emit('add-site')">注册物理站点</el-button>
+      <el-button type="primary" icon="Connection" @click="$emit('add-site')">从台账库中关联站点</el-button>
     </div>
     <el-table :data="siteList" border stripe style="width: 100%;">
       <el-table-column prop="site_code" label="站点编码" width="180" />
@@ -13,8 +13,8 @@
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="{ row }">
-          <el-button link class="text-action" @click="viewSiteDevices(row)">查看设备台账</el-button>
-          <el-button link class="text-action danger" @click="deleteSite(row)">删除</el-button>
+          <el-button link class="text-action" @click="emit('view-devices', row)">查看挂载设备</el-button>
+          <el-button link class="text-action danger" @click="emit('delete-site', row)">解除关联</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -28,20 +28,13 @@ defineProps<{
 
 const emit = defineEmits(['view-devices', 'delete-site', 'add-site'])
 
-const getSiteTypeName = (type: unknown) => {
+const getSiteTypeName = (type: any) => {
   if (typeof type === 'string' && type.trim()) return type
   const n = Number(type)
   const map: Record<number, string> = { 1: '水厂', 2: '加压泵站', 3: '二供泵房', 4: '管网监测点' }
   return map[n] || '物理站点'
 }
 
-const viewSiteDevices = (row: any) => {
-  emit('view-devices', row)
-}
-
-const deleteSite = (row: any) => {
-  emit('delete-site', row)
-}
 </script>
 
 <style scoped>

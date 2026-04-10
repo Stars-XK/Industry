@@ -14,8 +14,12 @@
       </header>
 
       <div class="ledger-workspace">
-        <!-- Left Sidebar: Structural Hierarchy -->
-        <ZoneTree 
+        <el-tabs v-model="mainTab" class="main-tabs" type="card">
+          <el-tab-pane label="资产层级与挂载拓扑" name="hierarchy">
+            <!-- 原始的左右分栏布局 -->
+            <div class="hierarchy-layout">
+              <!-- Left Sidebar: Structural Hierarchy -->
+              <ZoneTree 
           ref="zoneTreeRef" 
           @node-click="handleNodeClick" 
           @command="handleTreeCommand" 
@@ -74,6 +78,21 @@
           </div>
         </main>
       </div>
+          </el-tab-pane>
+
+          <el-tab-pane label="物理站点台账库" name="sites">
+            <SiteLibrary />
+          </el-tab-pane>
+
+          <el-tab-pane label="设备资产台账库" name="devices">
+            <DeviceLibrary />
+          </el-tab-pane>
+
+          <el-tab-pane label="测点数据字典库" name="points">
+            <PointLibrary />
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
     
     <!-- Dialogs -->
@@ -99,12 +118,16 @@ import TopologyChart from './components/TopologyChart.vue'
 import SiteTable from './components/SiteTable.vue'
 import DeviceList from './components/DeviceList.vue'
 import AssetDialogs from './components/AssetDialogs.vue'
+import SiteLibrary from './components/SiteLibrary.vue'
+import DeviceLibrary from './components/DeviceLibrary.vue'
+import PointLibrary from './components/PointLibrary.vue'
 
 const currentZoneName = ref('')
 const currentZoneId = ref<number | null>(null)
 const currentSiteId = ref<number | null>(null) // To track which site's devices we are viewing
 const siteList = ref<any[]>([])
 const deviceList = ref<any[]>([])
+const mainTab = ref('hierarchy')
 const activeTab = ref('topology')
 
 const zoneTreeRef = ref<any>(null)
@@ -391,6 +414,44 @@ const onSubmitPoint = async (formData: any) => {
 
 /* Workspace Layout */
 .ledger-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.main-tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.main-tabs :deep(.el-tabs__header) {
+  margin: 0;
+  background: #fafafa;
+  border-bottom: 1px solid var(--el-border-color-light);
+}
+.main-tabs :deep(.el-tabs__nav-wrap) {
+  padding-left: 20px;
+}
+.main-tabs :deep(.el-tabs__content) {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.main-tabs :deep(.el-tab-pane) {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.hierarchy-layout {
   display: flex;
   flex: 1;
   overflow: hidden;

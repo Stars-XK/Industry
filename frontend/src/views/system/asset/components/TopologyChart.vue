@@ -19,12 +19,19 @@ const props = defineProps<{
 
 const topologyRef = ref<HTMLElement | null>(null)
 const chartInstance = shallowRef<echarts.ECharts | null>(null)
+const resizeObserver = shallowRef<ResizeObserver | null>(null)
 
 const getSiteTypeName = (type: unknown) => {
   if (typeof type === 'string' && type.trim()) return type
   const n = Number(type)
   const map: Record<number, string> = { 1: '水厂', 2: '加压泵站', 3: '二供泵房', 4: '管网监测点' }
   return map[n] || '物理站点'
+}
+
+const scheduleResize = () => {
+  requestAnimationFrame(() => {
+    chartInstance.value?.resize()
+  })
 }
 
 const renderTopology = () => {
@@ -195,6 +202,7 @@ const renderTopology = () => {
   }
 
   chartInstance.value.setOption(option)
+  scheduleResize()
 }
 
 watch(() => [props.zoneName, props.siteList, props.deviceList], () => {
@@ -204,10 +212,19 @@ watch(() => [props.zoneName, props.siteList, props.deviceList], () => {
 onMounted(() => {
   renderTopology()
   window.addEventListener('resize', handleResize)
+  if (topologyRef.value) {
+    resizeObserver.value = new ResizeObserver((entries) => {
+      const rect = entries[0]?.contentRect
+      if (!rect) return
+      if (rect.width > 0 && rect.height > 0) scheduleResize()
+    })
+    resizeObserver.value.observe(topologyRef.value)
+  }
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  resizeObserver.value?.disconnect()
   if (chartInstance.value) {
     chartInstance.value.dispose()
   }
@@ -220,7 +237,7 @@ const handleResize = () => {
 }
 
 // 暴露方法以便父组件在 tab 切换时调用
-defineExpose({ renderTopology })
+defineExpose({ renderTopology, resize: scheduleResize })
 </script>
 
 <style scoped>

@@ -198,6 +198,9 @@ watch(activeTab, async (val) => {
     await nextTick()
     if (topologyChartRef.value) {
       topologyChartRef.value.renderTopology()
+      requestAnimationFrame(() => {
+        topologyChartRef.value?.resize?.()
+      })
     }
   }
 })

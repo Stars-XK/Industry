@@ -15,7 +15,7 @@
           <span class="install-date">安装日期: {{ device.installDate }}</span>
           <el-button link class="text-action" @click="handleEditDevice(device)">编辑信息</el-button>
           <el-button link class="text-action">换表接续</el-button>
-          <el-button link class="text-action danger" @click="$emit('remove-device', device)">解除挂载</el-button>
+          <el-button link class="text-action danger" @click="handleDeleteDevice(device)">解除挂载</el-button>
         </div>
       </div>
       
@@ -65,14 +65,11 @@
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
-
 defineProps<{
   deviceList: any[]
 }>()
 
-const emit = defineEmits(['add-device', 'edit-device', 'remove-device', 'add-point', 'edit-point', 'remove-point'])
-
+const emit = defineEmits(['add-device', 'edit-device', 'delete-device', 'add-point', 'delete-point'])
 
 const getPointColorClass = (type: string) => {
   const map: any = {
@@ -82,6 +79,18 @@ const getPointColorClass = (type: string) => {
     'String': 'purple'
   }
   return map[type] || 'gray'
+}
+
+const handleEditDevice = (device: any) => {
+  emit('edit-device', device)
+}
+
+const handleDeleteDevice = (device: any) => {
+  emit('delete-device', device)
+}
+
+const handleDeletePoint = (device: any, point: any) => {
+  emit('delete-point', device, point)
 }
 </script>
 

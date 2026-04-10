@@ -24,12 +24,6 @@ export class IotTagMapping {
   @Column({ type: 'float', default: 0.0, comment: '死区过滤阈值' })
   deadband: number;
 
-  @Column({ length: 50, default: 'float', comment: '数据类型' })
-  data_type: string;
-
-  @Column({ length: 50, default: '', comment: '单位 (如 °C, MPa)' })
-  unit: string;
-
   @Column({ type: 'float', default: 1.0, comment: '缩放因子' })
   scaling_factor: number;
 

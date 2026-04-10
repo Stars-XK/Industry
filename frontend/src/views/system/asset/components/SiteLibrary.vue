@@ -17,7 +17,7 @@
       />
       <el-button @click="fetchSites" style="margin-left: 12px">搜索</el-button>
     </div>
-    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="75vh">
+    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="60vh">
       <el-table-column prop="site_code" label="站点编码" width="180" />
       <el-table-column prop="site_name" label="站点名称" />
       <el-table-column prop="site_type" label="站点类型">

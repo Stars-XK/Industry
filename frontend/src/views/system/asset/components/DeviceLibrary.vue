@@ -17,7 +17,7 @@
       />
       <el-button @click="fetchDevices" style="margin-left: 12px">搜索</el-button>
     </div>
-    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px">
+    <el-table :data="tableData" v-loading="loading" border stripe style="width: 100%; margin-top: 16px" height="calc(100vh - 390px)">
       <el-table-column prop="device_code" label="设备编码" width="180" />
       <el-table-column prop="device_name" label="设备名称" />
       <el-table-column prop="device_type" label="设备类型">

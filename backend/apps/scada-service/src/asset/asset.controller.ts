@@ -24,21 +24,21 @@ export class AssetController {
   @ApiOperation({ summary: '分页获取分区下的物理站点列表' })
   async getSites(@Query() query: any) {
     const { zoneId, page = 1, size = 20, keyword = '' } = query;
-    let sql = `SELECT * FROM ast_site WHERE 1=1`;
-    let countSql = `SELECT COUNT(*) as total FROM ast_site WHERE 1=1`;
+    let sql = `SELECT s.*, z.zone_name FROM ast_site s LEFT JOIN dma_zone z ON s.zone_id = z.id WHERE 1=1`;
+    let countSql = `SELECT COUNT(*) as total FROM ast_site s WHERE 1=1`;
     const params: any[] = [];
     const countParams: any[] = [];
 
     if (zoneId) {
-      sql += ` AND zone_id = ?`;
-      countSql += ` AND zone_id = ?`;
+      sql += ` AND s.zone_id = ?`;
+      countSql += ` AND s.zone_id = ?`;
       params.push(zoneId);
       countParams.push(zoneId);
     }
 
     if (keyword) {
-      sql += ` AND (site_name LIKE ? OR site_code LIKE ?)`;
-      countSql += ` AND (site_name LIKE ? OR site_code LIKE ?)`;
+      sql += ` AND (s.site_name LIKE ? OR s.site_code LIKE ?)`;
+      countSql += ` AND (s.site_name LIKE ? OR s.site_code LIKE ?)`;
       params.push(`%${keyword}%`, `%${keyword}%`);
       countParams.push(`%${keyword}%`, `%${keyword}%`);
     }
@@ -59,8 +59,8 @@ export class AssetController {
   @ApiOperation({ summary: '分页获取分区或站点下的设备列表' })
   async getDevices(@Query() query: any) {
     const { siteId, zoneId, page = 1, size = 20, keyword = '' } = query;
-    
-    let sql = `SELECT d.* FROM ast_device d `;
+
+    let sql = `SELECT d.*, s.site_name FROM ast_device d LEFT JOIN ast_site s ON d.site_id = s.id `;
     let countSql = `SELECT COUNT(*) as total FROM ast_device d `;
     const params: any[] = [];
     const countParams: any[] = [];
@@ -102,6 +102,47 @@ export class AssetController {
         [dev.id]
       );
     }
+
+    return {
+      list,
+      total: Number(countRes[0].total)
+    };
+  }
+
+  @Get('points')
+  @ApiOperation({ summary: '分页获取测点字典列表' })
+  async getPoints(@Query() query: any) {
+    const { deviceId, page = 1, size = 20, keyword = '' } = query;
+
+    let sql = `
+      SELECT p.*, d.device_name, d.device_code 
+      FROM ast_measuring_point p
+      LEFT JOIN ast_device d ON p.device_id = d.id
+      WHERE 1=1
+    `;
+    let countSql = `SELECT COUNT(*) as total FROM ast_measuring_point p LEFT JOIN ast_device d ON p.device_id = d.id WHERE 1=1`;
+    const params: any[] = [];
+    const countParams: any[] = [];
+
+    if (deviceId) {
+      sql += ` AND p.device_id = ?`;
+      countSql += ` AND p.device_id = ?`;
+      params.push(deviceId);
+      countParams.push(deviceId);
+    }
+
+    if (keyword) {
+      sql += ` AND (p.point_name LIKE ? OR p.point_code LIKE ?)`;
+      countSql += ` AND (p.point_name LIKE ? OR p.point_code LIKE ?)`;
+      params.push(`%${keyword}%`, `%${keyword}%`);
+      countParams.push(`%${keyword}%`, `%${keyword}%`);
+    }
+
+    sql += ` ORDER BY p.id DESC LIMIT ? OFFSET ?`;
+    params.push(Number(size), (Number(page) - 1) * Number(size));
+
+    const list = await this.dataSource.query(sql, params);
+    const countRes = await this.dataSource.query(countSql, countParams);
 
     return {
       list,

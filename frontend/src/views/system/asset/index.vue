@@ -354,7 +354,7 @@ const onSubmitPoint = async (formData: any) => {
 .ledger-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 88vh;
   background-color: #ffffff;
   border: 1px solid #eaeaea;
   border-radius: 12px;

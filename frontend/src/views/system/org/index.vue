@@ -60,115 +60,29 @@
       </el-table>
     </div>
     <!-- 新增/编辑弹窗 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px"  :show-close="false">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px"  label-position="left">
-        <el-row :gutter="24">
-          <el-col :span="24">
-            <el-form-item label="上级部门" prop="parent_id">
-              <el-tree-select
-                v-model="form.parent_id"
-                :data="deptOptions"
-                :props="{ value: 'id', label: 'dept_name', children: 'children' }"
-                check-strictly
-                placeholder="请选择上级部门"
-                style="width: 100%"
-                class="glass-tree-select"
-                popper-class="glass-dropdown"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="部门名称" prop="dept_name">
-              <el-input v-model="form.dept_name" placeholder="请输入部门名称"  />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="显示排序" prop="sort_order">
-              <el-input-number v-model="form.sort_order" :min="0" style="width: 100%" controls-position="right" class="-number" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="负责人" prop="leader">
-              <el-input v-model="form.leader" placeholder="请输入负责人"  />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系电话"  />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱"  />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="部门状态" prop="status">
-              <el-radio-group v-model="form.status" >
-                <el-radio 
-                  v-for="dict in sys_normal_disable" 
-                  :key="dict.dict_value" 
-                  :value="parseInt(dict.dict_value)"
-                >{{ dict.dict_label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注"  />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogVisible = false" >取消</el-button>
-          <el-button  @click="submitForm">确认保存</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <OrgDialog ref="orgDialogRef" @success="getList" />
     <!-- Import Dialog -->
     <ExcelImport
       v-model="showImport"
       title="导入部门数据"
       templateName="部门档案"
       :templateColumns="['上级部门ID', '部门编码', '部门名称', '负责人', '联系电话', '邮箱', '备注']"
-      @success="getList"
+      @import-data="handleImportData"
     />
   </div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ExcelImport from '@/components/ExcelImport/index.vue'
+import OrgDialog from './components/OrgDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-import { useDict } from '@/hooks/useDict'
-const { sys_normal_disable } = useDict('sys_normal_disable')
+
 const loading = ref(false)
 const showImport = ref(false)
 const tableData = ref([])
 const deptOptions = ref<any[]>([])
-const dialogVisible = ref(false)
-const dialogTitle = ref('新增部门')
-const formRef = ref()
-const form = ref({
-  id: undefined,
-  parent_id: 0,
-  dept_name: '',
-  sort_order: 0,
-  leader: '',
-  phone: '',
-  email: '',
-  status: 1,
-  remark: ''
-})
-const rules = {
-  dept_name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
-}
+const orgDialogRef = ref()
 const getList = async () => {
   loading.value = true
   try {
@@ -179,40 +93,11 @@ const getList = async () => {
     loading.value = false
   }
 }
-const resetForm = () => {
-  form.value = {
-    id: undefined,
-    parent_id: 0,
-    dept_name: '',
-    sort_order: 0,
-    leader: '',
-    phone: '',
-    email: '',
-    status: 1,
-    remark: ''
-  }
-}
 const handleAdd = (parentId: number) => {
-  resetForm()
-  form.value.parent_id = parentId
-  dialogTitle.value = '新增部门'
-  dialogVisible.value = true
+  orgDialogRef.value?.open(deptOptions.value, null, parentId)
 }
 const handleEdit = (row: any) => {
-  resetForm()
-  form.value = {
-    id: row.id,
-    parent_id: row.parent_id,
-    dept_name: row.dept_name,
-    sort_order: row.sort_order,
-    leader: row.leader,
-    phone: row.phone,
-    email: row.email,
-    status: row.status,
-    remark: row.remark
-  }
-  dialogTitle.value = '编辑部门'
-  dialogVisible.value = true
+  orgDialogRef.value?.open(deptOptions.value, row)
 }
 const handleDelete = (row: any) => {
   if (row.children && row.children.length > 0) {
@@ -227,22 +112,36 @@ const handleDelete = (row: any) => {
     getList()
   }).catch(() => {})
 }
-const submitForm = async () => {
-  if (!formRef.value) return
-  await formRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-        if (form.value.id) {
-          await request.put(`/api/v1/system/dept/${form.value.id}`, form.value)
-          ElMessage.success('更新成功')
-        } else {
-          await request.post('/api/v1/system/dept', form.value)
-          ElMessage.success('新增成功')
-        }
-        dialogVisible.value = false
-        getList()
+
+const handleImportData = async (data: any[]) => {
+  if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
+  
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        parent_id: item['上级部门ID'] || 0,
+        dept_name: item['部门名称'],
+        leader: item['负责人'],
+        phone: item['联系电话'],
+        email: item['邮箱'],
+        remark: item['备注'],
+        status: 1,
+        sort_order: 0
       }
-  })
+      await request.post('/api/v1/system/dept', payload)
+      successCount++
+    } catch (e) {
+      failCount++
+    }
+  }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  getList()
 }
+
 onMounted(() => {
   getList()
 })

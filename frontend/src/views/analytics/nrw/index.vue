@@ -80,37 +80,34 @@
         </div>
       </el-col>
       <el-col :xs="24" :lg="12" :xl="12">
-        <div class="box-card" v-loading="sankeyLoading" style="min-height: 500px; margin-bottom: 24px;" >
-          <div class="panel-header">
-            <div class="panel-title">水量平衡图 (IWA) <span>Sankey Diagram</span></div>
-            <el-tag type="info" effect="dark" class="dark-tag">{{ currentZoneName || '未选择' }}</el-tag>
-          </div>
-          <div ref="sankeyChartRef" class="sankey-chart"></div>
-        </div>
+        <SankeyChart 
+          :loading="sankeyLoading"
+          :currentZoneName="currentZoneName"
+          :nodes="sankeyNodes"
+          :links="sankeyLinks"
+          @drill-down="handleDrillDown"
+        />
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="box-card" v-loading="trendLoading"  style="height: 380px;">
-          <div class="panel-header">
-            <div class="panel-title">历史趋势及同环比分析 <span>Historical Trend</span></div>
-          </div>
-          <div ref="trendChartRef" class="trend-chart"></div>
-        </div>
+        <TrendChart 
+          :loading="trendLoading"
+          :months="trendMonths"
+          :ratios="trendRatios"
+        />
       </el-col>
     </el-row>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
-import * as echarts from 'echarts/core'
-import { SankeyChart, LineChart, BarChart } from 'echarts/charts'
-import { TooltipComponent, TitleComponent, GridComponent, LegendComponent } from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
 import { Search, Download } from '@element-plus/icons-vue'
-echarts.use([SankeyChart, LineChart, BarChart, TooltipComponent, TitleComponent, GridComponent, LegendComponent, CanvasRenderer])
+import SankeyChart from './components/SankeyChart.vue'
+import TrendChart from './components/TrendChart.vue'
+
 const tableData = ref([])
 const loading = ref(false)
 const sankeyLoading = ref(false)
@@ -120,10 +117,12 @@ const dateRange = ref<[Date, Date]>([new Date(), new Date()])
 const monthRange = ref<[Date, Date]>([new Date(), new Date()])
 const topoVersion = ref('latest')
 const currentZoneName = ref('')
-const sankeyChartRef = ref<HTMLElement | null>(null)
-const trendChartRef = ref<HTMLElement | null>(null)
-let sankeyInstance: echarts.ECharts | null = null
-let trendInstance: echarts.ECharts | null = null
+
+const sankeyNodes = ref<any[]>([])
+const sankeyLinks = ref<any[]>([])
+
+const trendMonths = ref<string[]>([])
+const trendRatios = ref<number[]>([])
 const customColors = [
   { color: '#10b981', percentage: 10 },
   { color: '#f59e0b', percentage: 15 },
@@ -177,7 +176,7 @@ const handleRowClick = async (row: any) => {
     const baseSupply = Number(row.supply_m3) || (100000 + Math.floor(Math.random() * 50000))
     const baseSale = Number(row.sale_m3) || (baseSupply * 0.8)
     const nrw = baseSupply - baseSale
-    const nodes = [
+    sankeyNodes.value = [
       { name: '总供水量' },
       { name: '总售水量' },
       { name: '未计费水量' },
@@ -185,104 +184,33 @@ const handleRowClick = async (row: any) => {
       { name: '真实漏损(物理漏水)' },
       { name: '产销差水量' }
     ]
-    const links = [
+    sankeyLinks.value = [
       { source: '总供水量', target: '总售水量', value: baseSale },
       { source: '总供水量', target: '产销差水量', value: nrw },
       { source: '产销差水量', target: '未计费水量', value: nrw * 0.25 },
       { source: '产销差水量', target: '表观漏损(误差/偷水)', value: nrw * 0.25 },
       { source: '产销差水量', target: '真实漏损(物理漏水)', value: nrw * 0.5 }
     ]
-    renderSankey(nodes, links)
     
     // Mock 同环比折线图数据
-    const months = ['1月', '2月', '3月', '4月', '5月', '6月']
-    const ratios = Array.from({ length: 6 }, () => 10 + Math.floor(Math.random() * 8))
-    renderTrend(months, ratios)
+    trendMonths.value = ['1月', '2月', '3月', '4月', '5月', '6月']
+    trendRatios.value = Array.from({ length: 6 }, () => 10 + Math.floor(Math.random() * 8))
   } catch (e) { /* fallback */ } finally {
     sankeyLoading.value = false
     trendLoading.value = false
   }
 }
-const renderSankey = (nodes: any[], links: any[]) => {
-  if (!sankeyInstance && sankeyChartRef.value) {
-    sankeyInstance = echarts.init(sankeyChartRef.value)
-  }
-  if (!sankeyInstance) return
-  const option = {
-    tooltip: { trigger: 'item', triggerOn: 'mousemove', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
-    series: [
-      {
-        type: 'sankey',
-        data: nodes,
-        links: links,
-        emphasis: { focus: 'adjacency' },
-        lineStyle: { color: 'gradient', curveness: 0.5 },
-        label: {
-          position: 'right',
-          formatter: '{b} \n ({c} m³)',
-          color: '#303133',
-          fontFamily: 'SF Pro Display'
-        },
-        itemStyle: {
-          borderWidth: 1,
-          borderColor: '#c0c4cc'
-        }
-      }
-    ]
-  }
-  sankeyInstance.setOption(option)
-  // 下钻功能
-  sankeyInstance.on('click', (params: any) => {
-    if (params.dataType === 'node' && params.data.name.includes('分区')) {
-      // @ts-ignore
-      ElMessage.info(`正在下钻到: ${params.data.name}`);
-      // 模拟下钻数据刷新
-      currentZoneName.value = params.data.name;
-      renderSankey([], []);
-    }
-  });
+
+const handleDrillDown = (zoneName: string) => {
+  ElMessage.info(`正在下钻到: ${zoneName}`)
+  currentZoneName.value = zoneName
+  sankeyNodes.value = []
+  sankeyLinks.value = []
+  // Trigger refresh logic here if needed
 }
-const renderTrend = (months: string[], ratios: number[]) => {
-  if (!trendInstance && trendChartRef.value) {
-    trendInstance = echarts.init(trendChartRef.value)
-  }
-  if (!trendInstance) return
-  const option = {
-    tooltip: { trigger: 'axis', formatter: '{b} <br/> 产销差率: {c}%', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e4e7ed', textStyle: { color: '#303133' } },
-    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-    xAxis: { type: 'category', data: months, boundaryGap: false, axisLabel: { color: '#606266' }, axisLine: { lineStyle: { color: '#c0c4cc' } } },
-    yAxis: { type: 'value', name: 'NRW (%)', nameTextStyle: { color: '#606266' }, axisLabel: { formatter: '{value} %', color: '#606266' }, splitLine: { lineStyle: { color: '#e4e7ed', type: 'dashed' } } },
-    series: [
-      {
-        name: '产销差率',
-        type: 'line',
-        data: ratios,
-        smooth: true,
-        itemStyle: { color: '#f59e0b' },
-        lineStyle: { width: 3, shadowColor: 'rgba(230, 162, 60, 0.5)', shadowBlur: 10 },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(230, 162, 60, 0.5)' },
-            { offset: 1, color: 'transparent' }
-          ])
-        }
-      }
-    ]
-  }
-  trendInstance.setOption(option)
-}
-const handleResize = () => {
-  if (sankeyInstance) sankeyInstance.resize()
-  if (trendInstance) trendInstance.resize()
-}
+
 onMounted(() => {
   fetchData()
-  window.addEventListener('resize', handleResize)
-})
-onBeforeUnmount(() => {
-  if (sankeyInstance) sankeyInstance.dispose()
-  if (trendInstance) trendInstance.dispose()
-  window.removeEventListener('resize', handleResize)
 })
 </script>
 <style scoped>

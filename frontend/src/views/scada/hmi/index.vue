@@ -48,49 +48,16 @@
             <div class="header-subtitle">Process Flow Monitoring</div>
           </div>
         </div>
-        <div class="hmi-canvas" v-loading="loadingStation">
-
-          <!-- 模拟组态背景图 -->
-          <div class="tank-container">
-            <div class="tank">
-              <div class="water-level" :style="{ height: tankLevel + '%' }"></div>
-              <span class="label">清水池液位: {{ tankLevel.toFixed(1) }} %</span>
-            </div>
-          </div>
-          <div class="pipe-horizontal">
-            <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
-          </div>
-          <!-- 泵组件 -->
-          <div class="pump-station">
-            <div class="pump" :class="{ running: pumpStatus === 1 }">
-              <el-icon :size="40" :class="{ 'is-spinning': pumpStatus === 1 }"><Setting /></el-icon>
-              <div class="pump-label">2# 变频主泵</div>
-            </div>
-            <div class="data-panel">
-              <div class="data-row">状态: <el-tag :type="pumpStatus === 1 ? 'success' : 'danger'" size="small" class="industrial-tag">{{ pumpStatus === 1 ? '运行中' : '已停机' }}</el-tag></div>
-              <div class="data-row">频率: <span class="val">{{ pumpFreq }}</span> Hz</div>
-              <div class="data-row">功率: <span class="val">{{ pumpPower }}</span> kW</div>
-            </div>
-            <div class="control-panel">
-              <el-button 
-                :type="pumpStatus === 1 ? 'danger' : 'primary'" 
-                @click="handleControl(pumpStatus === 1 ? 0 : 1)"
-                :icon="SwitchButton"
-                :disabled="!isConnected"
-              >
-                {{ pumpStatus === 1 ? '远程停机' : '远程开机' }}
-              </el-button>
-              <el-button @click="handleSetFreq" :icon="Operation" :disabled="!isConnected || pumpStatus === 0">调节频率</el-button>
-            </div>
-          </div>
-          <div class="pipe-horizontal">
-            <div class="flow-animation" :style="{ animationPlayState: pumpStatus === 1 ? 'running' : 'paused' }"></div>
-          </div>
-          <div class="valve">
-            <el-icon :size="30" color="var(--el-color-warning)"><Filter /></el-icon>
-            <div class="valve-label">出水总阀</div>
-          </div>
-        </div>
+        <HmiCanvas 
+          :loading="loadingStation"
+          :isConnected="isConnected"
+          :tankLevel="tankLevel"
+          :pumpStatus="pumpStatus"
+          :pumpFreq="pumpFreq"
+          :pumpPower="pumpPower"
+          @control="handleControl"
+          @set-freq="handleSetFreq"
+        />
       </div>
     </div>
   </div>
@@ -101,6 +68,8 @@ import { Setting, SwitchButton, Operation, Loading, Filter, CircleClose, DataBoa
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { io, Socket } from 'socket.io-client'
+import HmiCanvas from './components/HmiCanvas.vue'
+
 // 绑定变量
 const activeStation = ref('2')
 const stationName = ref('2# 变频主泵组')

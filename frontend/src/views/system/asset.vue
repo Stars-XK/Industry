@@ -315,14 +315,14 @@ const renderTopology = () => {
     symbol: 'circle',
     symbolSize: 18,
     itemStyle: { 
-      color: 'var(--el-color-success)',
-      borderColor: 'var(--el-color-success-light-5)',
+      color: '#67c23a',
+      borderColor: '#e1f3d8',
       borderWidth: 4
     },
     label: {
       fontSize: 15,
       fontWeight: 'bold',
-      color: 'var(--el-color-success)'
+      color: '#67c23a'
     },
     children: siteList.value.map(site => {
       const siteDevices = deviceList.value.filter(d => d.siteId === site.id || d.deviceCode.includes(site.site_code) || true); 
@@ -335,14 +335,14 @@ const renderTopology = () => {
         symbol: 'rect',
         symbolSize: [16, 16],
         itemStyle: { 
-          color: 'var(--el-color-warning)',
-          borderColor: 'var(--el-color-warning-light-5)',
+          color: '#e6a23c',
+          borderColor: '#faecd8',
           borderWidth: 3
         },
         label: {
           fontSize: 14,
           fontWeight: 600,
-          color: 'var(--el-color-warning-dark-2)'
+          color: '#b88230'
         },
         children: devicesToMount.map(dev => ({
           name: dev.deviceName,
@@ -350,13 +350,13 @@ const renderTopology = () => {
           symbol: 'diamond',
           symbolSize: 14,
           itemStyle: { 
-            color: 'var(--el-color-primary)',
-            borderColor: 'var(--el-color-primary-light-5)',
+            color: '#409eff',
+            borderColor: '#d9ecff',
             borderWidth: 2
           },
           label: {
             fontSize: 13,
-            color: 'var(--el-color-primary-dark-2)'
+            color: '#337ecc'
           }
         }))
       }
@@ -640,38 +640,12 @@ const getPointColorClass = (type: string) => {
   padding: 32px 40px;
 }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #889096;
-}
-.empty-icon {
-  font-size: 32px;
-  margin-bottom: 16px;
-  opacity: 0.5;
-}
-.empty-state h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #11181c;
-}
-.empty-state p {
-  font-size: 14px;
-  max-width: 400px;
-  text-align: center;
-  line-height: 1.5;
-}
-
 .content-wrapper {
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: calc(100vh - 120px);
 }
 
 .content-header {
@@ -695,12 +669,13 @@ const getPointColorClass = (type: string) => {
 
 .topology-wrapper {
   width: 100%;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 280px);
   min-height: 600px;
   background: var(--el-bg-color);
   border-radius: 12px;
   border: 1px solid var(--el-border-color-lighter);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+  margin-bottom: 24px;
 }
 .ledger-tabs {
   margin-top: 16px;

@@ -32,7 +32,7 @@
       border 
       stripe 
       style="width: 100%; margin-top: 16px" 
-      height="60vh"
+      height="calc(100% - 110px)"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -192,13 +192,17 @@ onMounted(() => {
 
 <style scoped>
 .library-container {
+  display: flex;
+  flex-direction: column;
   padding: 24px;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .toolbar {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 .pagination-container {
   margin-top: 16px;

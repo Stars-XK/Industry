@@ -312,6 +312,7 @@ const renderTopology = () => {
   // 组装 Tree 数据
   const rootNode = {
     name: currentZoneName.value,
+    nodeType: 'zone',
     symbol: 'circle',
     symbolSize: 18,
     itemStyle: { 
@@ -332,6 +333,8 @@ const renderTopology = () => {
       
       return {
         name: site.site_name,
+        nodeType: 'site',
+        rawData: site,
         symbol: 'rect',
         symbolSize: [16, 16],
         itemStyle: { 
@@ -347,6 +350,8 @@ const renderTopology = () => {
         children: devicesToMount.map(dev => ({
           name: dev.deviceName,
           value: dev.deviceType,
+          nodeType: 'device',
+          rawData: dev,
           symbol: 'diamond',
           symbolSize: 14,
           itemStyle: { 
@@ -357,14 +362,75 @@ const renderTopology = () => {
           label: {
             fontSize: 13,
             color: '#337ecc'
-          }
+          },
+          children: (dev.points || []).map((point: any) => ({
+            name: point.pointName,
+            value: point.pointType,
+            nodeType: 'point',
+            rawData: point,
+            symbol: 'circle',
+            symbolSize: 10,
+            itemStyle: {
+              color: '#f56c6c',
+              borderColor: '#fde2e2',
+              borderWidth: 2
+            },
+            label: {
+              fontSize: 12,
+              color: '#f56c6c'
+            }
+          }))
         }))
       }
     })
   }
 
   const option = {
-    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    tooltip: { 
+      trigger: 'item', 
+      triggerOn: 'mousemove',
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      borderColor: '#eaeaea',
+      borderWidth: 1,
+      padding: [12, 16],
+      textStyle: { color: '#11181c', fontSize: 13 },
+      extraCssText: 'box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-radius: 8px;',
+      formatter: (params: any) => {
+        const data = params.data;
+        if (data.nodeType === 'zone') {
+          return `
+            <div style="font-weight: 600; margin-bottom: 4px; color: #67c23a; font-size: 14px;">${data.name}</div>
+            <div style="color: #687076; font-size: 12px;">层级：DMA 分区</div>
+          `;
+        }
+        if (data.nodeType === 'site') {
+          return `
+            <div style="font-weight: 600; margin-bottom: 4px; color: #e6a23c; font-size: 14px;">${data.name}</div>
+            <div style="color: #687076; font-size: 12px; margin-bottom: 4px;">编码：<span style="font-family: monospace;">${data.rawData.site_code}</span></div>
+            <div style="color: #687076; font-size: 12px;">类型：${getSiteTypeName(data.rawData.site_type)}</div>
+          `;
+        }
+        if (data.nodeType === 'device') {
+          const dev = data.rawData;
+          return `
+            <div style="font-weight: 600; margin-bottom: 4px; color: #409eff; font-size: 14px;">${dev.deviceName}</div>
+            <div style="color: #687076; font-size: 12px; margin-bottom: 4px;">编码：<span style="font-family: monospace;">${dev.deviceCode}</span></div>
+            <div style="color: #687076; font-size: 12px; margin-bottom: 4px;">类型：${dev.deviceType}</div>
+            <div style="color: #687076; font-size: 12px;">状态：<span style="color: ${dev.status === '在线' ? '#67c23a' : '#f56c6c'}">${dev.status}</span></div>
+          `;
+        }
+        if (data.nodeType === 'point') {
+          const point = data.rawData;
+          return `
+            <div style="font-weight: 600; margin-bottom: 4px; color: #f56c6c; font-size: 14px;">${point.pointName}</div>
+            <div style="color: #687076; font-size: 12px; margin-bottom: 4px;">测点编码：<span style="font-family: monospace;">${point.pointCode}</span></div>
+            <div style="color: #687076; font-size: 12px; margin-bottom: 4px;">数据类型：${point.pointType}</div>
+            <div style="color: #687076; font-size: 12px;">物理单位：${point.unit || '-'}</div>
+          `;
+        }
+        return data.name;
+      }
+    },
     series: [
       {
         type: 'tree',

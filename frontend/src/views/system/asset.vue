@@ -20,7 +20,7 @@
           <h2>组织与站点架构</h2>
           <el-input 
             v-model="filterText" 
-            placeholder="搜索站点或分区..." 
+            placeholder="搜索分区..." 
             clearable 
             class="sleek-input"
             prefix-icon="Search"
@@ -29,7 +29,7 @@
         <div class="tree-container custom-scrollbar">
           <el-tree
             ref="treeRef"
-            :data="siteTree"
+            :data="zoneTree"
             :props="defaultProps"
             :filter-node-method="filterNode"
             node-key="id"
@@ -66,10 +66,10 @@
 
       <!-- Right Main Content: Device & Measuring Points -->
       <main class="ledger-content">
-        <div v-if="currentSiteName" class="content-wrapper fade-in">
+        <div v-if="currentZoneName" class="content-wrapper fade-in">
           <div class="content-header">
             <div>
-              <h2 class="content-title">{{ currentSiteName }}</h2>
+              <h2 class="content-title">{{ currentZoneName }}</h2>
               <p class="content-meta">挂载到该分区的物理站点及设备测点台账</p>
             </div>
             <div class="content-filters">
@@ -189,11 +189,11 @@ echarts.use([TreeChart, TooltipComponent, CanvasRenderer]);
 
 const filterText = ref('')
 const treeRef = ref<any>(null)
-const currentSiteName = ref('')
-const siteTree = ref<any[]>([])
+const currentZoneName = ref('')
+const zoneTree = ref<any[]>([])
 const siteList = ref<any[]>([])
 const deviceList = ref<any[]>([])
-const currentSiteId = ref<number | null>(null)
+const currentZoneId = ref<number | null>(null)
 const activeTab = ref('topology')
 const topologyRef = ref<HTMLElement | null>(null)
 const chartInstance = shallowRef<echarts.ECharts | null>(null)
@@ -206,9 +206,9 @@ const defaultProps = {
 const fetchTreeData = async () => {
   try {
     const res = await request.get('/api/v1/system/zone/tree')
-    siteTree.value = res || []
+    zoneTree.value = res || []
   } catch (error) {
-    console.error('Failed to fetch asset tree:', error)
+    console.error('Failed to fetch zone tree:', error)
   }
 }
 
@@ -281,8 +281,8 @@ const filterNode = (value: string, data: any) => {
 }
 
 const handleNodeClick = async (data: any) => {
-  currentSiteName.value = data.label
-  currentSiteId.value = data.realId
+  currentZoneName.value = data.label
+  currentZoneId.value = data.realId
   activeTab.value = 'topology'
   await fetchSites(data.realId)
   await fetchDevices({ zoneId: data.realId })
@@ -290,14 +290,14 @@ const handleNodeClick = async (data: any) => {
 }
 
 const viewSiteDevices = (site: any) => {
-  currentSiteName.value = site.site_name
-  currentSiteId.value = site.id
+  currentZoneName.value = site.site_name
+  currentZoneId.value = site.id
   activeTab.value = 'devices'
   fetchDevices({ siteId: site.id })
 }
 
 watch(activeTab, async (val) => {
-  if (val === 'topology' && currentSiteName.value) {
+  if (val === 'topology' && currentZoneName.value) {
     await nextTick()
     renderTopology()
   }
@@ -311,7 +311,7 @@ const renderTopology = () => {
 
   // 组装 Tree 数据
   const rootNode = {
-    name: currentSiteName.value,
+    name: currentZoneName.value,
     itemStyle: { color: 'var(--el-color-success)' },
     children: siteList.value.map(site => {
       const siteDevices = deviceList.value.filter(d => d.siteId === site.id || d.deviceCode.includes(site.site_code) || true); 

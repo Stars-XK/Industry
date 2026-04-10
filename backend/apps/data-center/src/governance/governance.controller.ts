@@ -117,13 +117,9 @@ export class GovernanceController {
   @ApiOperation({ summary: '删除设备资产' })
   @RequirePermissions('sys:asset')
   async deleteAsset(@Param('id') id: string) {
-    const inUse = await this.dataSource.query(`SELECT id FROM iot_tag_mapping WHERE device_id = ?`, [id]);
+    const inUse = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id = ?`, [id]);
     if (inUse.length > 0) {
-      throw new Error('该设备已被边缘采集标签绑定，禁止删除');
-    }
-    const dmaUse = await this.dataSource.query(`SELECT id FROM dma_device_rel WHERE device_id = ?`, [id]);
-    if (dmaUse.length > 0) {
-      throw new Error('该设备已被挂载到 DMA 分区拓扑树，禁止删除');
+      throw new Error('该设备已被测点绑定，禁止删除');
     }
     await this.dataSource.query(`DELETE FROM ast_device WHERE id = ?`, [id]);
     return { success: true };
@@ -178,9 +174,9 @@ export class GovernanceController {
   @RequirePermissions('sys:asset')
   async getTags() {
     const query = `
-      SELECT t.*, a.device_name, a.device_code, g.gateway_sn 
+      SELECT t.*, p.point_name, p.point_code, g.gateway_sn 
       FROM iot_tag_mapping t
-      LEFT JOIN ast_device a ON t.device_id = a.id
+      LEFT JOIN ast_measuring_point p ON t.point_id = p.id
       LEFT JOIN iot_gateway g ON t.gateway_id = g.id
       ORDER BY t.id DESC LIMIT 500
     `;
@@ -191,10 +187,10 @@ export class GovernanceController {
   @ApiOperation({ summary: '新增测点映射' })
   @RequirePermissions('sys:asset')
   async createTag(@Body() body: any) {
-    const { device_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+    const { point_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
     await this.dataSource.query(
-      `INSERT INTO iot_tag_mapping (device_id, gateway_id, plc_address, ts_tag_name, deadband) VALUES (?, ?, ?, ?, ?)`,
-      [device_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0]
+      `INSERT INTO iot_tag_mapping (point_id, gateway_id, plc_address, ts_tag_name, deadband) VALUES (?, ?, ?, ?, ?)`,
+      [point_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0]
     );
     return { success: true };
   }
@@ -203,10 +199,10 @@ export class GovernanceController {
   @ApiOperation({ summary: '修改测点映射' })
   @RequirePermissions('sys:asset')
   async updateTag(@Param('id') id: string, @Body() body: any) {
-    const { device_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+    const { point_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
     await this.dataSource.query(
-      `UPDATE iot_tag_mapping SET device_id = ?, gateway_id = ?, plc_address = ?, ts_tag_name = ?, deadband = ? WHERE id = ?`,
-      [device_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0, id]
+      `UPDATE iot_tag_mapping SET point_id = ?, gateway_id = ?, plc_address = ?, ts_tag_name = ?, deadband = ? WHERE id = ?`,
+      [point_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0, id]
     );
     return { success: true };
   }

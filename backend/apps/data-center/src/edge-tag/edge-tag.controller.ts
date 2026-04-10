@@ -58,14 +58,14 @@ export class EdgeTagController {
     @Query('page') page = 1,
     @Query('size') size = 10,
     @Query('keyword') keyword = '',
-    @Query('device_id') device_id?: number
+    @Query('point_id') point_id?: number
   ) {
     const where: any = {};
     if (keyword) {
       where.tag_name = Like(`%${keyword}%`);
     }
-    if (device_id) {
-      where.device_id = device_id;
+    if (point_id) {
+      where.point_id = point_id;
     }
 
     const [list, total] = await this.tagMappingRepo.findAndCount({

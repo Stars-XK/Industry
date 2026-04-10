@@ -1,13 +1,13 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 @Entity('iot_tag_mapping')
-@Unique(['device_id', 'tag_name'])
+@Unique(['point_id', 'tag_name'])
 export class IotTagMapping {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ comment: '关联的资产设备ID' })
-  device_id: number;
+  @Column({ comment: '关联物理测点 ID (ast_measuring_point)' })
+  point_id: number;
 
   @Column({ nullable: true, comment: '关联的边缘网关ID' })
   gateway_id: number;

@@ -24,7 +24,7 @@
 | **角色与权限分配** | ✅ 角色管理页面 (数据权限范围配置、分配菜单树) | ✅ `auth-service` 提供角色 CRUD 及菜单授权接口 | ✅ `sys_role_menu` 关联表设计支持 | ✅ |
 | **菜单配置管理** | ✅ 菜单管理页面 (图标、路由、权限标识配置) | ✅ `auth-service` 提供菜单资源 CRUD 接口 | ✅ `sys_menu` 表结构支持 | ✅ |
 | **数据字典管理** | ✅ 字典类型与字典数据页面 (枚举值动态配置) | ✅ `auth-service` 提供字典的 CRUD 接口 | ✅ 新增 `sys_dict_type` 与 `sys_dict_data` 结构 | ✅ |
-| **物理站点与测点管理** | ✅ **开发分区、站点、设备、测点四级台账 UI (支持树级挂载、批量操作与 GIS/JSON 扩展属性)** | ✅ 提供全部资产实体的完整 CRUD 接口 | ✅ 新增 `ast_site`, `ast_measuring_point` 表，并扩充 GIS 空间与 JSON 属性字段 | ✅ |
+| **物理站点与测点管理** | ✅ **开发分区、站点、设备、测点四级台账 UI (支持树级挂载、批量操作与 GIS/JSON 扩展属性，已完成真实 API 对接及 Excel 导入导出)** | ✅ 提供全部资产实体的完整 CRUD 接口 | ✅ 新增 `ast_site`, `ast_measuring_point` 表，并扩充 GIS 空间与 JSON 属性字段 | ✅ |
 
 ---
 

@@ -21,6 +21,7 @@ export class TopologyController {
   @ApiOperation({ summary: '获取 DMA 拓扑树(带报警状态)' })
   async getTopologyTree() {
     const zones = await this.dmaZoneRepo.find({
+      select: ['id', 'parent_id', 'zone_name', 'level', 'mnf_baseline'],
       where: { is_deleted: null },
       order: { id: 'ASC' }
     });
@@ -45,7 +46,7 @@ export class TopologyController {
       console.error('Failed to query real alarms', e);
     }
 
-    return this.buildTree(zones, 0, alarmZoneIds);
+    return this.buildTree(zones, alarmZoneIds);
   }
 
   @Post('zone')
@@ -166,17 +167,30 @@ export class TopologyController {
     }
   }
 
-  private buildTree(zones: DmaZone[], parentId: number, alarmZoneIds: number[]): any[] {
-    return zones
-      .filter((zone) => Number(zone.parent_id) === Number(parentId))
-      .map((zone) => ({
+  private buildTree(zones: DmaZone[], alarmZoneIds: number[]): any[] {
+    const tree = [];
+    const zoneMap = new Map();
+
+    zones.forEach((zone) => {
+      zoneMap.set(zone.id, {
         id: zone.id,
         label: zone.zone_name,
         level: zone.level,
         status: alarmZoneIds.includes(zone.id) ? 'alarm' : 'normal',
         mnf_baseline: zone.mnf_baseline,
-        boundary_gis: zone.boundary_gis,
-        children: this.buildTree(zones, zone.id, alarmZoneIds),
-      }));
+        children: []
+      });
+    });
+
+    zones.forEach((zone) => {
+      const parent = Number(zone.parent_id);
+      if (parent && zoneMap.has(parent)) {
+        zoneMap.get(parent).children.push(zoneMap.get(zone.id));
+      } else {
+        tree.push(zoneMap.get(zone.id));
+      }
+    });
+
+    return tree;
   }
 }

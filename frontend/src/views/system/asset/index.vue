@@ -221,12 +221,7 @@ const handleTreeCommand = (command: string, data: any) => {
   } else if (command === 'addSite') {
     assetDialogsRef.value?.openSiteDialog(data.realId)
   } else if (command === 'edit') {
-    // Edit zone, API logic omitted for brevity, passing basic struct
-    assetDialogsRef.value?.openZoneDialog(data.parentId || 0, {
-      id: data.realId,
-      zone_name: data.label,
-      level: data.level
-    })
+    assetDialogsRef.value?.openZoneDialog(data.parent_id || 0, data)
   } else if (command === 'delete') {
     ElMessageBox.confirm('确定要删除该分区节点吗?', '警告', { type: 'warning' })
       .then(async () => {

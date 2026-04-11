@@ -28,10 +28,11 @@ export class ZoneController {
       whereCondition.created_by = userId;
     }
 
-    // 1. 获取带有权限过滤的 DMA 分区
-    const zones = await this.dmaZoneRepo.find({ 
+    // 1. 获取带有权限过滤的 DMA 分区，只查询必要的字段以提高性能
+    const zones = await this.dmaZoneRepo.find({
+      select: ['id', 'parent_id', 'zone_name', 'zone_code', 'level'],
       where: whereCondition,
-      order: { id: 'ASC' }
+      order: { id: 'ASC' },
     });
 
     const tree = [];
@@ -82,10 +83,10 @@ export class ZoneController {
     }
 
     if (keyword) {
-      sql += ` AND (z.zone_name LIKE ? OR z.zone_code LIKE ?)`;
-      countSql += ` AND (z.zone_name LIKE ? OR z.zone_code LIKE ?)`;
-      params.push(`%${keyword}%`, `%${keyword}%`);
-      countParams.push(`%${keyword}%`, `%${keyword}%`);
+      sql += ` AND z.zone_name LIKE ?`;
+      countSql += ` AND z.zone_name LIKE ?`;
+      params.push(`%${keyword}%`);
+      countParams.push(`%${keyword}%`);
     }
 
     sql += ` ORDER BY z.id DESC LIMIT ? OFFSET ?`;
@@ -100,45 +101,19 @@ export class ZoneController {
     };
   }
 
-  @Post('batch')
-  @ApiOperation({ summary: '批量新增 DMA 分区' })
-  @RequirePermissions('sys:asset:manage')
-  async batchCreateZones(@Body() body: any[], @Request() req: any) {
-    if (!body || !body.length) return { successCount: 0, errors: [] };
-    let successCount = 0;
-    const errors = [];
-    const userId = req.user?.userId || 1;
-    
-    for (const item of body) {
-      try {
-        const newZone = this.dmaZoneRepo.create({
-          zone_code: item.zone_code || null,
-          parent_id: item.parent_id || 0,
-          zone_name: item.zone_name || '未命名',
-          level: item.level || 1,
-          mnf_baseline: item.mnf_baseline || 0,
-          center_lng: item.center_lng || null,
-          center_lat: item.center_lat || null,
-          crs: item.crs || 'CGCS2000',
-          created_by: userId
-        });
-        await this.dmaZoneRepo.save(newZone);
-        successCount++;
-      } catch (e) {
-        if (errors.length < 5) errors.push(`[${item.zone_code || '未知'}]: ${e.message}`);
-      }
-    }
-    return { successCount, errors };
+  @Get(':id')
+  @ApiOperation({ summary: '获取单个DMA分区详情' })
+  async getZone(@Param('id') id: number) {
+    return this.dmaZoneRepo.findOne({ where: { id } });
   }
 
   @Post()
   @ApiOperation({ summary: '新增 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async createZone(@Body() body: any, @Request() req: any) {
-    const { parent_id, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     const newZone = this.dmaZoneRepo.create({
       parent_id: parent_id || 0,
-      zone_code: zone_code || null,
       zone_name,
       level: level || 1,
       boundary_gis,
@@ -157,10 +132,9 @@ export class ZoneController {
   @ApiOperation({ summary: '修改 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async updateZone(@Param('id') id: number, @Body() body: any, @Request() req: any) {
-    const { parent_id, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     await this.dmaZoneRepo.update(id, {
       parent_id,
-      zone_code,
       zone_name,
       level,
       boundary_gis,

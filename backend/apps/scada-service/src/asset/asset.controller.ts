@@ -154,22 +154,23 @@ export class AssetController {
   @ApiOperation({ summary: '批量导入物理站点' })
   @RequirePermissions('sys:asset:manage')
   async batchCreateSites(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0 };
+    if (!body || !body.length) return { successCount: 0, errors: [] };
     let successCount = 0;
+    const errors = [];
     
     for (const item of body) {
       try {
         const { site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties } = item;
         await this.dataSource.query(
           `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [site_code, site_name, site_type, zone_id || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
+          [site_code || null, site_name || null, site_type || 1, zone_id || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
         );
         successCount++;
       } catch (e) {
-        // Skip on error
+        if (errors.length < 5) errors.push(`[${item.site_code || '未知'}]: ${e.message}`);
       }
     }
-    return { successCount };
+    return { successCount, errors };
   }
 
   @Post('site')
@@ -223,8 +224,9 @@ export class AssetController {
   @ApiOperation({ summary: '批量导入设备' })
   @RequirePermissions('sys:asset:manage')
   async batchCreateDevices(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0 };
+    if (!body || !body.length) return { successCount: 0, errors: [] };
     let successCount = 0;
+    const errors = [];
     
     for (const item of body) {
       try {
@@ -232,14 +234,26 @@ export class AssetController {
         await this.dataSource.query(
           `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [device_code, device_name, device_type, site_id || null, status || 1, manufacturer || null, model || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
+          [
+            device_code || null, 
+            device_name || null, 
+            device_type || 1, 
+            site_id || null, 
+            status || 1, 
+            manufacturer || null, 
+            model || null, 
+            lng || null, 
+            lat || null, 
+            crs || 'CGCS2000', 
+            properties ? JSON.stringify(properties) : null
+          ]
         );
         successCount++;
       } catch (e) {
-        // Skip on error
+        if (errors.length < 5) errors.push(`[${item.device_code || '未知'}]: ${e.message}`);
       }
     }
-    return { successCount };
+    return { successCount, errors };
   }
 
   @Post('device')
@@ -295,8 +309,9 @@ export class AssetController {
   @ApiOperation({ summary: '批量导入物理测点' })
   @RequirePermissions('sys:asset:manage')
   async batchCreatePoints(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0 };
+    if (!body || !body.length) return { successCount: 0, errors: [] };
     let successCount = 0;
+    const errors = [];
     
     for (const item of body) {
       try {
@@ -304,14 +319,24 @@ export class AssetController {
         await this.dataSource.query(
           `INSERT INTO ast_measuring_point (device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [device_id, point_code, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null]
+          [
+            device_id || null, 
+            point_code || null, 
+            point_name || null, 
+            point_category || 1, 
+            data_type || 'float', 
+            unit || '', 
+            range_min || null, 
+            range_max || null, 
+            properties ? JSON.stringify(properties) : null
+          ]
         );
         successCount++;
       } catch (e) {
-        // Skip on error
+        if (errors.length < 5) errors.push(`[${item.point_code || '未知'}]: ${e.message}`);
       }
     }
-    return { successCount };
+    return { successCount, errors };
   }
 
   @Post('point')

@@ -104,8 +104,9 @@ export class ZoneController {
   @ApiOperation({ summary: '批量新增 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async batchCreateZones(@Body() body: any[], @Request() req: any) {
-    if (!body || !body.length) return { successCount: 0 };
+    if (!body || !body.length) return { successCount: 0, errors: [] };
     let successCount = 0;
+    const errors = [];
     const userId = req.user?.userId || 1;
     
     for (const item of body) {
@@ -113,7 +114,7 @@ export class ZoneController {
         const newZone = this.dmaZoneRepo.create({
           zone_code: item.zone_code || null,
           parent_id: item.parent_id || 0,
-          zone_name: item.zone_name,
+          zone_name: item.zone_name || '未命名',
           level: item.level || 1,
           mnf_baseline: item.mnf_baseline || 0,
           center_lng: item.center_lng || null,
@@ -124,10 +125,10 @@ export class ZoneController {
         await this.dmaZoneRepo.save(newZone);
         successCount++;
       } catch (e) {
-        // Skip on error
+        if (errors.length < 5) errors.push(`[${item.zone_code || '未知'}]: ${e.message}`);
       }
     }
-    return { successCount };
+    return { successCount, errors };
   }
 
   @Post()

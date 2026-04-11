@@ -240,12 +240,16 @@ const handleImportData = async (data: any[]) => {
 
     // 分批发送，每批 100 条，避免后端处理超时
     let totalSuccess = 0
+    let allErrors: string[] = []
     const BATCH_SIZE = 100
     for (let i = 0; i < payload.length; i += BATCH_SIZE) {
       const batch = payload.slice(i, i + BATCH_SIZE)
       const res = await request.post('/api/v1/system/zone/batch', batch)
       if (res && typeof res.successCount === 'number') {
         totalSuccess += res.successCount
+        if (res.errors && res.errors.length) {
+          allErrors = allErrors.concat(res.errors)
+        }
       }
       currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
       importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
@@ -255,7 +259,8 @@ const handleImportData = async (data: any[]) => {
     await new Promise(resolve => setTimeout(resolve, 500))
     
     if (totalSuccess < payload.length) {
-      ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能是数据重复或格式错误）`)
+      const errorMsg = allErrors.length > 0 ? `<br>部分失败原因: ${allErrors.slice(0, 3).join('; ')}` : '（可能存在数据重复或格式错误）'
+      ElMessage.warning({ message: `导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条。${errorMsg}`, dangerouslyUseHTMLString: true, duration: 5000 })
     } else {
       ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
     }

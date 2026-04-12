@@ -16,9 +16,9 @@ export class AlarmController {
   @RequirePermissions('workflow:alarm')
   async getEvents() {
     const query = `
-      SELECT e.*, d.device_code, d.device_name, s.sop_name 
+      SELECT e.*, d.device_name, d.device_code as mapped_device_code
       FROM alm_event e
-      LEFT JOIN ast_device d ON e.device_id = d.id
+      LEFT JOIN ast_device d ON e.device_code = d.device_code
       LEFT JOIN alm_sop s ON e.sop_id = s.id
       ORDER BY e.id DESC LIMIT 500
     `;
@@ -59,7 +59,7 @@ export class AlarmController {
     const query = `
       SELECT r.*, d.device_name, s.sop_name
       FROM alm_rule r
-      LEFT JOIN ast_device d ON r.device_id = d.id
+      LEFT JOIN ast_device d ON r.device_code = d.device_code
       LEFT JOIN alm_sop s ON r.sop_id = s.id
       ORDER BY r.id DESC
     `;
@@ -70,10 +70,10 @@ export class AlarmController {
   @ApiOperation({ summary: '新增报警规则' })
   @RequirePermissions('workflow:alarm')
   async createRule(@Body() body: any) {
-    const { rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status } = body;
+    const { rule_name, rule_type, device_code, zone_id, tag_name, condition_type, threshold, alarm_level, sop_id, is_enabled } = body;
     await this.dataSource.query(
-      `INSERT INTO alm_rule (rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [rule_name, device_id || null, tag_name, condition_type, threshold, alarm_level, sop_id || null, status ?? 1]
+      `INSERT INTO alm_rule (rule_name, rule_type, device_code, zone_id, tag_name, condition_type, threshold, alarm_level, sop_id, is_enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [rule_name, rule_type || 1, device_code || null, zone_id || null, tag_name, condition_type, threshold, alarm_level || 3, sop_id || null, is_enabled ?? 1]
     );
     return { success: true };
   }
@@ -82,10 +82,10 @@ export class AlarmController {
   @ApiOperation({ summary: '修改报警规则' })
   @RequirePermissions('workflow:alarm')
   async updateRule(@Param('id') id: string, @Body() body: any) {
-    const { rule_name, device_id, tag_name, condition_type, threshold, alarm_level, sop_id, status } = body;
+    const { rule_name, rule_type, device_code, zone_id, tag_name, condition_type, threshold, alarm_level, sop_id, is_enabled } = body;
     await this.dataSource.query(
-      `UPDATE alm_rule SET rule_name=?, device_id=?, tag_name=?, condition_type=?, threshold=?, alarm_level=?, sop_id=?, status=? WHERE id=?`,
-      [rule_name, device_id || null, tag_name, condition_type, threshold, alarm_level, sop_id || null, status, id]
+      `UPDATE alm_rule SET rule_name=?, rule_type=?, device_code=?, zone_id=?, tag_name=?, condition_type=?, threshold=?, alarm_level=?, sop_id=?, is_enabled=? WHERE id=?`,
+      [rule_name, rule_type || 1, device_code || null, zone_id || null, tag_name, condition_type, threshold, alarm_level || 3, sop_id || null, is_enabled ?? 1, id]
     );
     return { success: true };
   }

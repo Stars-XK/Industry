@@ -26,7 +26,10 @@ export class AlarmTaskService {
 
       for (const rule of rules) {
         // 从 TDengine 时序数据库提取近 5 分钟内该规则对应的最新数据
-        let tdQuery = `SELECT LAST_ROW(raw_value) as val, ts FROM device_raw WHERE ts >= NOW - 5m AND device_id = '${rule.device_id}'`;
+        let tdQuery = `SELECT LAST_ROW(raw_value) as val, ts FROM device_raw WHERE ts >= NOW - 5m AND device_code = '${rule.device_code}'`;
+        if (rule.tag_name) {
+          tdQuery += ` AND standard_name = '${rule.tag_name}'`;
+        }
         
         try {
           const res = await this.tdengine.query(tdQuery);
@@ -51,18 +54,18 @@ export class AlarmTaskService {
           }
 
           if (isTriggered) {
-            // 检查该设备该指标是否已经存在未恢复的同级别报警，避免报警风暴重复插入
-            const existing = await this.dataSource.query(
-              `SELECT id FROM alm_event WHERE device_id = ? AND alarm_type = ? AND status = 0`,
-              [rule.device_id, rule.tag_name.toUpperCase() + '_' + rule.condition_type]
-            );
-
-            if (existing.length === 0) {
-              const desc = `[自动判定] 设备 ${rule.device_id} 指标 ${rule.tag_name} 值 ${val} 触碰阈值 ${rule.condition_type} ${rule.threshold}`;
-              await this.dataSource.query(
-                `INSERT INTO alm_event (device_id, alarm_type, alarm_level, alarm_value, alarm_desc, status, sop_id) VALUES (?, ?, ?, ?, ?, 0, ?)`,
-                [rule.device_id, rule.tag_name.toUpperCase() + '_' + rule.condition_type, rule.alarm_level, val, desc, rule.sop_id]
+              // 判断是否已经存在未处理的同类报警 (去重/防抖)
+              const existing = await this.dataSource.query(
+                `SELECT id FROM alm_event WHERE device_code = ? AND alarm_type = ? AND status = 0`,
+                [rule.device_code, rule.tag_name.toUpperCase() + '_' + rule.condition_type]
               );
+              
+              if (existing.length === 0) {
+                const desc = `[自动判定] 设备 ${rule.device_code} 指标 ${rule.tag_name} 值 ${val} 触碰阈值 ${rule.condition_type} ${rule.threshold}`;
+                await this.dataSource.query(
+                  `INSERT INTO alm_event (device_code, alarm_type, alarm_level, alarm_value, alarm_desc, status, sop_id) VALUES (?, ?, ?, ?, ?, 0, ?)`,
+                  [rule.device_code, rule.tag_name.toUpperCase() + '_' + rule.condition_type, rule.alarm_level, val, desc, rule.sop_id]
+                );
               this.logger.warn(`触发新报警: ${desc}`);
             }
           }

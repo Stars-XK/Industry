@@ -24,19 +24,33 @@ export class GovernanceTaskService {
       for (const rule of rules) {
         // 2. 模拟构造 TDengine 的插值 SQL 语句
         // 真实工业场景下，TDengine 支持强大的插值查询，例如：
-        // SELECT INTERP(value) FROM device_raw WHERE device_id = ? AND standard_name = ? EVERY(5m) FILL(linear)
-        const fillMethod = this.mapToTDengineFill(rule.method);
-        const tdSql = `
-          -- [TDengine 作业] 将清洗后的数据写入聚合子表
-          INSERT INTO device_5m_clean (ts, val) 
-          SELECT _wstart, INTERP(value) 
-          FROM device_raw 
-          WHERE device_id = '${rule.device_id}' AND standard_name = '${rule.tag_name}' 
-          PARTITION BY device_id EVERY(5m) FILL(${fillMethod});
-        `;
-        
-        this.logger.log(`> 正在下发清洗指令到 TDengine: 设备[${rule.device_id}] 测点[${rule.tag_name}] 填充算法[${fillMethod}]`);
-        // await this.tdengineClient.query(tdSql); // 实际项目中调用 TDengine 驱动执行
+        let tdQuery = '';
+        if (rule.method === 'zero') {
+          tdQuery = `
+          INSERT INTO ${rule.device_code}_${rule.tag_name}_clean
+          SELECT * FROM (
+            SELECT ts, _wstart as window_start, _wend as window_end, LAST_ROW(raw_value) as val
+            FROM device_raw
+            WHERE device_code = '${rule.device_code}' AND standard_name = '${rule.tag_name}'
+            PARTITION BY device_code EVERY(5m) FILL(value, 0)
+          );
+          `;
+        } else {
+          // linear, pchip, previous
+          const fillMethod = rule.method === 'previous' ? 'prev' : rule.method;
+          tdQuery = `
+          INSERT INTO ${rule.device_code}_${rule.tag_name}_clean
+          SELECT * FROM (
+            SELECT ts, _wstart as window_start, _wend as window_end, LAST_ROW(raw_value) as val
+            FROM device_raw
+            WHERE device_code = '${rule.device_code}' AND standard_name = '${rule.tag_name}'
+            PARTITION BY device_code EVERY(5m) FILL(${fillMethod})
+          );
+          `;
+        }
+
+        this.logger.log(`> 正在下发清洗指令到 TDengine: 设备[${rule.device_code}] 测点[${rule.tag_name}] 填充算法[${rule.method}]`);
+        // await this.tdengineClient.query(tdQuery); // 实际项目中调用 TDengine 驱动执行
       }
       this.logger.log('--- [CRON END] TDengine 底层数据清洗指令下发完成 ---');
     } catch (e) {

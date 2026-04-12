@@ -27,7 +27,7 @@ export class BillingController {
       SELECT a.*, t.tariff_name, t.price_per_m3, d.device_name as meter_device_name
       FROM biz_key_account a 
       LEFT JOIN biz_tariff t ON a.tariff_id = t.id 
-      LEFT JOIN ast_device d ON a.meter_device_id = d.id
+      LEFT JOIN ast_device d ON a.meter_device_code = d.device_code
       ORDER BY a.id
     `;
     return await this.dataSource.query(query);
@@ -74,10 +74,10 @@ export class BillingController {
   @ApiOperation({ summary: '新增大用户档案' })
   @RequirePermissions('analytics:account')
   async createAccount(@Body() body: any) {
-    const { account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_id } = body;
+    const { account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_code } = body;
     await this.dataSource.query(
-      `INSERT INTO biz_key_account (account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_id]
+      `INSERT INTO biz_key_account (account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [account_no, account_name, contact, phone, address, industry_type, tariff_id, meter_device_code]
     );
     return { success: true };
   }
@@ -85,11 +85,11 @@ export class BillingController {
   @Put('accounts/:id')
   @ApiOperation({ summary: '修改大用户档案' })
   @RequirePermissions('analytics:account')
-  async updateAccount(@Param('id') id: string, @Body() body: any) {
-    const { account_name, contact, phone, address, industry_type, tariff_id, meter_device_id, status } = body;
+  async updateAccount(@Param('id') id: number, @Body() body: any) {
+    const { account_name, contact, phone, address, industry_type, tariff_id, meter_device_code, status } = body;
     await this.dataSource.query(
-      `UPDATE biz_key_account SET account_name = ?, contact = ?, phone = ?, address = ?, industry_type = ?, tariff_id = ?, meter_device_id = ?, status = ? WHERE id = ?`,
-      [account_name, contact, phone, address, industry_type, tariff_id, meter_device_id, status, id]
+      `UPDATE biz_key_account SET account_name = ?, contact = ?, phone = ?, address = ?, industry_type = ?, tariff_id = ?, meter_device_code = ?, status = ? WHERE id = ?`,
+      [account_name, contact, phone, address, industry_type, tariff_id, meter_device_code, status, id]
     );
     return { success: true };
   }
@@ -130,10 +130,10 @@ export class BillingController {
   @Post('records/meter-reading')
   @ApiOperation({ summary: '录入大户水表当期抄表底度' })
   @RequirePermissions('analytics:billing')
-  async addMeterReading(@Body() body: { account_id: number, device_id: number, period: string, value: number }) {
+  async addMeterReading(@Body() body: { account_id: number, device_code: string, period: string, value: number }) {
     await this.dataSource.query(
-      `INSERT INTO biz_meter_reading (account_id, device_id, reading_period, reading_value) VALUES (?, ?, ?, ?)`,
-      [body.account_id, body.device_id, body.period, body.value]
+      `INSERT INTO biz_meter_reading (account_id, device_code, reading_period, reading_value) VALUES (?, ?, ?, ?)`,
+      [body.account_id, body.device_code, body.period, body.value]
     );
     return { success: true };
   }
@@ -158,10 +158,10 @@ export class BillingController {
   async generateBilling(@Body() body: { period: string }) {
     // 工业级真实计费逻辑：当期底数 - 上期底数 = 用水量 -> 乘以费率 -> 出账单
     const accounts = await this.dataSource.query(`
-      SELECT a.id, a.meter_device_id, t.price_per_m3 
-      FROM biz_key_account a 
-      JOIN biz_tariff t ON a.tariff_id = t.id 
-      WHERE a.status = 1 AND a.meter_device_id IS NOT NULL
+      SELECT a.id, a.meter_device_code, t.price_per_m3
+      FROM biz_key_account a
+      JOIN biz_tariff t ON a.tariff_id = t.id
+      WHERE a.status = 1 AND a.meter_device_code IS NOT NULL
     `);
     
     let generated = 0;
@@ -183,14 +183,14 @@ export class BillingController {
       
       // 查询当期抄表
       const currReading = await this.dataSource.query(
-        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
-        [acc.id, body.period]
+        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND device_code = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
+        [acc.id, acc.meter_device_code, body.period]
       );
       
       // 查询上期抄表
       const prevReading = await this.dataSource.query(
-        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
-        [acc.id, prevPeriod]
+        `SELECT reading_value FROM biz_meter_reading WHERE account_id = ? AND device_code = ? AND reading_period = ? ORDER BY id DESC LIMIT 1`,
+        [acc.id, acc.meter_device_code, prevPeriod]
       );
 
       if (currReading.length === 0 || prevReading.length === 0) {

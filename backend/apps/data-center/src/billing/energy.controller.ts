@@ -18,7 +18,7 @@ export class EnergyController {
     const query = `
       SELECT e.*, d.device_name, d.device_code
       FROM biz_energy_record e
-      JOIN ast_device d ON e.device_id = d.id
+      JOIN ast_device d ON e.device_code = d.device_code
       ORDER BY e.record_date DESC LIMIT 500
     `;
     return await this.dataSource.query(query);
@@ -28,14 +28,14 @@ export class EnergyController {
   @ApiOperation({ summary: '手工补录能效数据' })
   @RequirePermissions('analytics:energy')
   async createRecord(@Body() body: any) {
-    const { device_id, record_date, power_kwh, water_pumped_m3 } = body;
+    const { device_code, record_date, power_kwh, water_pumped_m3 } = body;
     // 公式: 吨水百米能耗 = (耗电量 / 水量) * (100 / 扬程参考常数)
     // 简化: (power_kwh / water_pumped_m3) * 10
     const eff = water_pumped_m3 > 0 ? (power_kwh / water_pumped_m3) * 10 : 0;
 
     await this.dataSource.query(
-      `INSERT INTO biz_energy_record (device_id, record_date, power_kwh, water_pumped_m3, energy_efficiency) VALUES (?, ?, ?, ?, ?)`,
-      [device_id, record_date, power_kwh, water_pumped_m3, eff]
+      `INSERT INTO biz_energy_record (device_code, record_date, power_kwh, water_pumped_m3, energy_efficiency) VALUES (?, ?, ?, ?, ?)`,
+      [device_code, record_date, power_kwh, water_pumped_m3, eff]
     );
     return { success: true };
   }

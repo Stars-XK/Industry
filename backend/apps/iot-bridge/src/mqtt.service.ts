@@ -36,7 +36,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   private async loadTagMappings() {
     const tags = await this.tagMappingRepo.find({ where: { is_active: 1 } });
     for (const tag of tags) {
-      await this.redisService.set(`iot:tag_map:${tag.point_id}_${tag.tag_name}`, JSON.stringify(tag));
+      await this.redisService.set(`iot:tag_map:${tag.device_code}_${tag.ts_tag_name}`, JSON.stringify(tag));
     }
     this.logger.log(`已加载 ${tags.length} 条有效测点映射规则到 Redis`);
   }

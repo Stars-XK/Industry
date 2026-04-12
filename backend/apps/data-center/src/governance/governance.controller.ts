@@ -18,7 +18,7 @@ export class GovernanceController {
     const query = `
       SELECT r.*, d.device_name 
       FROM biz_interpolate_rule r
-      LEFT JOIN ast_device d ON r.device_id = d.id
+      LEFT JOIN ast_device d ON r.device_code = d.device_code
       ORDER BY r.id DESC
     `;
     return await this.dataSource.query(query);
@@ -28,10 +28,10 @@ export class GovernanceController {
   @ApiOperation({ summary: '新增清洗与插值规则' })
   @RequirePermissions('gov:interpolate')
   async createInterpolateRule(@Body() body: any) {
-    const { device_id, tag_name, method, max_gap_minutes } = body;
+    const { device_code, tag_name, method, max_gap_minutes } = body;
     await this.dataSource.query(
-      `INSERT INTO biz_interpolate_rule (device_id, tag_name, method, max_gap_minutes) VALUES (?, ?, ?, ?)`,
-      [device_id, tag_name, method, max_gap_minutes]
+      `INSERT INTO biz_interpolate_rule (device_code, tag_name, method, max_gap_minutes) VALUES (?, ?, ?, ?)`,
+      [device_code, tag_name, method, max_gap_minutes]
     );
     return { success: true };
   }
@@ -39,11 +39,11 @@ export class GovernanceController {
   @Put('interpolate/rules/:id')
   @ApiOperation({ summary: '修改清洗与插值规则' })
   @RequirePermissions('gov:interpolate')
-  async updateInterpolateRule(@Param('id') id: string, @Body() body: any) {
-    const { device_id, tag_name, method, max_gap_minutes, status } = body;
+  async updateInterpolateRule(@Param('id') id: number, @Body() body: any) {
+    const { device_code, tag_name, method, max_gap_minutes, status } = body;
     await this.dataSource.query(
-      `UPDATE biz_interpolate_rule SET device_id = ?, tag_name = ?, method = ?, max_gap_minutes = ?, status = ? WHERE id = ?`,
-      [device_id, tag_name, method, max_gap_minutes, status, id]
+      `UPDATE biz_interpolate_rule SET device_code = ?, tag_name = ?, method = ?, max_gap_minutes = ?, status = ? WHERE id = ?`,
+      [device_code, tag_name, method, max_gap_minutes, status, id]
     );
     return { success: true };
   }
@@ -59,24 +59,24 @@ export class GovernanceController {
   @Post('interpolate/recalculate')
   @ApiOperation({ summary: '执行历史数据重算(清洗与插值)' })
   @RequirePermissions('gov:interpolate')
-  async executeRecalculate(@Body() body: { deviceId: number, tag: string, method: string, startTime: string, endTime: string }) {
+  async executeRecalculate(@Body() body: { deviceCode: string, tag: string, method: string, startTime: string, endTime: string }) {
     // 工业级真实闭环：提交重算任务后，将规则置为"计算中"锁定状态，防止并发修改
     await this.dataSource.query(
-      `UPDATE biz_interpolate_rule SET status = 2 WHERE device_id = ? AND tag_name = ?`,
-      [body.deviceId, body.tag]
+      `UPDATE biz_interpolate_rule SET status = 2 WHERE device_code = ? AND tag_name = ?`,
+      [body.deviceCode, body.tag]
     );
 
     // 模拟工业级的高危历史重算任务流转，并在 3 秒后释放锁定状态
     setTimeout(async () => {
       await this.dataSource.query(
-        `UPDATE biz_interpolate_rule SET status = 1 WHERE device_id = ? AND tag_name = ? AND status = 2`,
-        [body.deviceId, body.tag]
+        `UPDATE biz_interpolate_rule SET status = 1 WHERE device_code = ? AND tag_name = ? AND status = 2`,
+        [body.deviceCode, body.tag]
       );
     }, 3000);
 
     return {
       success: true,
-      message: `已提交异步重算任务，期间规则将锁定防篡改。设备ID: ${body.deviceId}, 测点: ${body.tag}, 算法: ${body.method}, 时间段: ${body.startTime} 至 ${body.endTime}`,
+      message: `已提交异步重算任务，期间规则将锁定防篡改。设备编码: ${body.deviceCode}, 测点: ${body.tag}, 算法: ${body.method}, 时间段: ${body.startTime} 至 ${body.endTime}`,
       taskId: 'JOB-' + Date.now()
     };
   }
@@ -117,9 +117,13 @@ export class GovernanceController {
   @ApiOperation({ summary: '删除设备资产' })
   @RequirePermissions('sys:asset')
   async deleteAsset(@Param('id') id: string) {
-    const inUse = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id = ?`, [id]);
-    if (inUse.length > 0) {
-      throw new Error('该设备已被测点绑定，禁止删除');
+    const inUse = await this.dataSource.query(`SELECT id FROM iot_tag_mapping WHERE device_code = ?`, [id]);
+    if (inUse.length > 0) throw new Error('设备在边缘网关映射中正在使用，请先解绑');
+
+    // 检查是否有数据挂载
+    const dmaUse = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_code = ?`, [id]);
+    if (dmaUse.length > 0) {
+      throw new Error('该设备已被挂载到 DMA 分区拓扑树，禁止删除');
     }
     await this.dataSource.query(`DELETE FROM ast_device WHERE id = ?`, [id]);
     return { success: true };
@@ -174,9 +178,9 @@ export class GovernanceController {
   @RequirePermissions('sys:asset')
   async getTags() {
     const query = `
-      SELECT t.*, p.point_name, p.point_code, g.gateway_sn 
+      SELECT t.*, a.device_name, a.device_code, g.gateway_sn 
       FROM iot_tag_mapping t
-      LEFT JOIN ast_measuring_point p ON t.point_id = p.id
+      LEFT JOIN ast_device a ON t.device_code = a.device_code
       LEFT JOIN iot_gateway g ON t.gateway_id = g.id
       ORDER BY t.id DESC LIMIT 500
     `;
@@ -186,11 +190,11 @@ export class GovernanceController {
   @Post('tags')
   @ApiOperation({ summary: '新增测点映射' })
   @RequirePermissions('sys:asset')
-  async createTag(@Body() body: any) {
-    const { point_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+  async createTagMapping(@Body() body: any) {
+    const { device_code, gateway_id, plc_address, ts_tag_name, deadband } = body;
     await this.dataSource.query(
-      `INSERT INTO iot_tag_mapping (point_id, gateway_id, plc_address, ts_tag_name, deadband) VALUES (?, ?, ?, ?, ?)`,
-      [point_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0]
+      `INSERT INTO iot_tag_mapping (device_code, gateway_id, plc_address, ts_tag_name, deadband) VALUES (?, ?, ?, ?, ?)`,
+      [device_code, gateway_id || null, plc_address, ts_tag_name, deadband || 0]
     );
     return { success: true };
   }
@@ -198,11 +202,11 @@ export class GovernanceController {
   @Put('tags/:id')
   @ApiOperation({ summary: '修改测点映射' })
   @RequirePermissions('sys:asset')
-  async updateTag(@Param('id') id: string, @Body() body: any) {
-    const { point_id, gateway_id, plc_address, ts_tag_name, deadband } = body;
+  async updateTagMapping(@Param('id') id: number, @Body() body: any) {
+    const { device_code, gateway_id, plc_address, ts_tag_name, deadband } = body;
     await this.dataSource.query(
-      `UPDATE iot_tag_mapping SET point_id = ?, gateway_id = ?, plc_address = ?, ts_tag_name = ?, deadband = ? WHERE id = ?`,
-      [point_id, gateway_id || null, plc_address, ts_tag_name, deadband || 0, id]
+      `UPDATE iot_tag_mapping SET device_code = ?, gateway_id = ?, plc_address = ?, ts_tag_name = ?, deadband = ? WHERE id = ?`,
+      [device_code, gateway_id || null, plc_address, ts_tag_name, deadband || 0, id]
     );
     return { success: true };
   }

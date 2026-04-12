@@ -122,64 +122,65 @@ INSERT IGNORE INTO `iot_tag_mapping` (`id`, `point_id`, `gateway_id`, `tag_name`
 (13, 14, 2, 'ENV.CO', '40036', 'co', 0.1, 1.0, 1, '鲤城地下泵站一氧化碳浓度'),
 (14, 15, 2, 'ENV.PM25', '40038', 'pm25', 1.0, 1.0, 1, '鲤城地下泵站PM2.5');
 -- 3. DMA分区测试数据 (以泉州市进行设计分区)
-INSERT IGNORE INTO dma_zone (id, parent_id, zone_name, level, created_by) VALUES
-(101, 0, '泉州市供水总管网', 1, 1),
-(102, 101, '丰泽区', 2, 1),
-(103, 101, '黄浦区', 2, 1),
-(104, 101, '鲤城区', 2, 1),
-(105, 101, '长宁区', 2, 1),
-(106, 101, '静安区', 2, 1),
-(107, 101, '普陀区', 2, 1),
-(108, 101, '虹口区', 2, 1),
-(109, 101, '杨浦区', 2, 1),
-(110, 101, '闵行区', 2, 1),
-(111, 101, '宝山区', 2, 1),
-(112, 101, '嘉定区', 2, 1),
-(113, 101, '金山区', 2, 1),
-(114, 101, '松江区', 2, 1),
-(115, 101, '青浦区', 2, 1),
-(116, 101, '奉贤区', 2, 1),
-(117, 101, '崇明区', 2, 1),
+INSERT IGNORE INTO dma_zone (id, zone_code, parent_code, zone_name, level, created_by) VALUES
+(101, 'Z-101', NULL, '泉州市供水总管网', 1, 1),
+(102, 'Z-102', 'Z-101', '丰泽区', 2, 1),
+(103, 'Z-103', 'Z-101', '黄浦区', 2, 1),
+(104, 'Z-104', 'Z-101', '鲤城区', 2, 1),
+(105, 'Z-105', 'Z-101', '长宁区', 2, 1),
+(106, 'Z-106', 'Z-101', '静安区', 2, 1),
+(107, 'Z-107', 'Z-101', '普陀区', 2, 1),
+(108, 'Z-108', 'Z-101', '虹口区', 2, 1),
+(109, 'Z-109', 'Z-101', '杨浦区', 2, 1),
+(110, 'Z-110', 'Z-101', '闵行区', 2, 1),
+(111, 'Z-111', 'Z-101', '宝山区', 2, 1),
+(112, 'Z-112', 'Z-101', '嘉定区', 2, 1),
+(113, 'Z-113', 'Z-101', '金山区', 2, 1),
+(114, 'Z-114', 'Z-101', '松江区', 2, 1),
+(115, 'Z-115', 'Z-101', '青浦区', 2, 1),
+(116, 'Z-116', 'Z-101', '奉贤区', 2, 1),
+(117, 'Z-117', 'Z-101', '崇明区', 2, 1),
 -- 增加一些三级 DMA 分区作为底层挂载节点
-(201, 102, '东海科技园区DMA', 3, 1),
-(202, 102, '泉港新片区DMA', 3, 1),
-(203, 102, '浦西金融区DMA', 3, 1),
-(204, 104, '洛江开发区DMA', 3, 1),
-(205, 110, '紫竹高新区DMA', 3, 1),
-(206, 112, '嘉定汽车城DMA', 3, 1);
+(201, 'Z-201', 'Z-102', '东海科技园区DMA', 3, 1),
+(202, 'Z-202', 'Z-102', '泉港新片区DMA', 3, 1),
+(203, 'Z-203', 'Z-102', '浦西金融区DMA', 3, 1),
+(204, 'Z-204', 'Z-104', '洛江开发区DMA', 3, 1),
+(205, 'Z-205', 'Z-110', '紫竹高新区DMA', 3, 1),
+(206, 'Z-206', 'Z-112', '嘉定汽车城DMA', 3, 1);
 
 -- 3.1 物理站点测试数据
-INSERT IGNORE INTO ast_site (id, site_code, site_name, site_type, zone_id, dept_id) VALUES
-(1, 'SITE_DH_01', '东海园区进水泵站', 2, 201, 2),
-(2, 'SITE_FZ_02', '丰泽2号加压泵站', 2, 102, 2),
-(3, 'SITE_XH_01', '西湖水质监测点', 4, 202, 3),
-(4, 'SITE_LC_01', '鲤城地下泵房', 3, 204, 4);
+INSERT IGNORE INTO ast_site (id, site_code, site_name, site_type, zone_code, dept_id) VALUES
+(1, 'SITE_DH_01', '东海园区进水泵站', 2, 'Z-201', 2),
+(2, 'SITE_FZ_02', '丰泽2号加压泵站', 2, 'Z-102', 2),
+(3, 'SITE_XH_01', '西湖水质监测点', 4, 'Z-202', 3),
+(4, 'SITE_LC_01', '鲤城地下泵房', 3, 'Z-204', 4);
 
 -- 4. 设备资产测试数据 (匹配泉州市DMA)
-INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, site_id) VALUES 
-(1, 'METER_IN_01', '东海园区总进水管表', 1, 1),
-(2, 'PUMP_01', '丰泽2号泵站主泵', 3, 2),
-(203, 'PRESS_01', '东海末端管网压力计', 2, 1),
+INSERT IGNORE INTO ast_device (id, device_code, device_name, device_type, site_code) VALUES
+(1, 'METER_IN_01', '东海园区总进水管表', 1, 'SITE_DH_01'),
+(2, 'PUMP_01', '丰泽2号泵站主泵', 3, 'SITE_FZ_02'),
+(203, 'PRESS_01', '东海末端管网压力计', 2, 'SITE_DH_01'),
 (3, 'WQ_01', '西湖水质监测仪', 4, 3),
 (4, 'ENV_01', '鲤城地下泵站环境传感器', 5, 4);
 
 -- 4.1 物理测点测试数据 (为设备赋予业务测点属性)
-INSERT IGNORE INTO ast_measuring_point (id, device_id, point_code, point_name, point_category, data_type, unit) VALUES 
-(1, 1, 'METER_IN_01_TEMP', '进水温度', 4, 'float', '°C'),
-(2, 1, 'METER_IN_01_PRESS', '进水压力', 2, 'float', 'MPa'),
-(3, 1, 'METER_IN_01_FLOW', '进水瞬时流量', 1, 'float', 'm³/h'),
-(4, 1, 'METER_IN_01_TOTAL', '进水累计流量', 1, 'float', 'm³'),
-(5, 2, 'PUMP_01_STATUS', '主泵运行状态', 4, 'int', ''),
-(6, 2, 'PUMP_01_FREQ', '主泵运行频率', 4, 'float', 'Hz'),
-(7, 2, 'PUMP_01_POWER', '主泵运行功率', 5, 'float', 'kW'),
-(8, 3, 'WQ_01_TURB', '水质浊度', 3, 'float', 'NTU'),
-(9, 3, 'WQ_01_CHL', '余氯', 3, 'float', 'mg/L'),
-(10, 3, 'WQ_01_PH', 'pH值', 3, 'float', ''),
-(11, 4, 'ENV_01_TEMP', '环境温度', 4, 'float', '°C'),
-(12, 4, 'ENV_01_HUM', '环境湿度', 4, 'float', '%'),
-(13, 4, 'ENV_01_H2S', '硫化氢浓度', 4, 'float', 'ppm'),
-(14, 4, 'ENV_01_CO', '一氧化碳浓度', 4, 'float', 'ppm'),
-(15, 4, 'ENV_01_PM25', 'PM2.5', 4, 'float', 'ug/m³');
+INSERT IGNORE INTO ast_measuring_point (id, device_code, point_code, point_name, point_category, data_type, unit) VALUES
+(1, 'METER_IN_01', 'METER_IN_01_TEMP', '进水温度', 4, 'float', '°C'),
+(2, 'METER_IN_01', 'METER_IN_01_PRESS', '进水压力', 2, 'float', 'MPa'),
+(3, 'METER_IN_01', 'METER_IN_01_FLOW', '进水瞬时流量', 1, 'float', 'm³/h'),
+(4, 'METER_IN_01', 'METER_IN_01_TOTAL', '进水累计流量', 1, 'float', 'm³'),
+(5, 'PUMP_01', 'PUMP_01_STATUS', '主泵运行状态', 4, 'int', ''),
+(6, 'PUMP_01', 'PUMP_01_FREQ', '主泵运行频率', 4, 'float', 'Hz'),
+(7, 'PUMP_01', 'PUMP_01_POWER', '主泵运行功率', 5, 'float', 'kW'),
+(8, 'WQ_01', 'WQ_01_TURB', '水质浊度', 3, 'float', 'NTU'),
+(9, 'WQ_01', 'WQ_01_CHL', '余氯', 3, 'float', 'mg/L'),
+(10, 'WQ_01', 'WQ_01_PH', 'pH值', 3, 'float', ''),
+(11, 'ENV_01', 'ENV_01_TEMP', '环境温度', 4, 'float', '°C'),
+(12, 'ENV_01', 'ENV_01_HUM', '环境湿度', 4, 'float', '%'),
+(13, 'ENV_01', 'ENV_01_H2S', '硫化氢浓度', 4, 'float', 'ppm'),
+(14, 'ENV_01', 'ENV_01_CO', '一氧化碳浓度', 4, 'float', 'ppm'),
+(15, 'ENV_01', 'ENV_01_PM25', 'PM2.5', 4, 'float', 'ug/m³'),
+(16, 'PRESS_01', 'PRESS_01_VAL', '末端管网压力', 2, 'float', 'MPa');
 
 
 -- 6. 数据字典测试数据

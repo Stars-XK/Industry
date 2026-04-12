@@ -30,7 +30,6 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column prop="id" label="分区ID" width="100" />
-      <el-table-column prop="zone_code" label="分区编码" width="120" show-overflow-tooltip />
       <el-table-column prop="zone_name" label="分区名称" />
       <el-table-column prop="level" label="分区层级">
         <template #default="scope">
@@ -41,8 +40,9 @@
         </template>
       </el-table-column>
       <el-table-column prop="parent_name" label="上级分区" width="180">
-        <template #default="scope">
-          {{ scope.row.parent_name || '无 (顶层)' }}
+        <template #default="{ row }">
+          <span v-if="row.parent_code">{{ row.parent_name || row.parent_code }}</span>
+          <span v-else class="text-gray-400">无(顶层)</span>
         </template>
       </el-table-column>
       <el-table-column prop="mnf_baseline" label="基线流量 (m³/h)" width="150" />
@@ -83,26 +83,9 @@
       v-model="importVisible"
       title="导入分区数据"
       templateName="DMA分区"
-      :templateColumns="['分区编码', '分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
+      :templateColumns="['分区编码', '分区名称', '层级(1/2/3)', '上级分区编码', '基线流量', '中心经度', '中心纬度', '坐标系']"
       @import-data="handleImportData"
     />
-
-    <!-- 进度条弹窗 -->
-    <el-dialog
-      v-model="progressVisible"
-      title="正在导入数据"
-      width="400px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
-    >
-      <div style="text-align: center; padding: 20px 0;">
-        <el-progress type="dashboard" :percentage="importProgress" :color="progressColor" />
-        <div style="margin-top: 15px; color: #666;">
-          正在处理: {{ currentImportCount }} / {{ totalImportCount }}
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -125,18 +108,6 @@ const queryParams = ref({
   size: 20,
   keyword: ''
 })
-
-// Progress Bar Variables
-const progressVisible = ref(false)
-const importProgress = ref(0)
-const currentImportCount = ref(0)
-const totalImportCount = ref(0)
-
-const progressColor = (percentage: number) => {
-  if (percentage < 30) return '#909399'
-  if (percentage < 70) return '#e6a23c'
-  return '#67c23a'
-}
 
 const fetchZones = async () => {
   loading.value = true
@@ -219,58 +190,31 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
-
-  loading.value = true
-  progressVisible.value = true
-  totalImportCount.value = data.length
-  currentImportCount.value = 0
-  importProgress.value = 0
+  let successCount = 0
+  let failCount = 0
   
-  try {
-    const payload = data.map(item => ({
-      zone_code: item['分区编码'] || '',
-      zone_name: item['分区名称'],
-      level: item['层级(1/2/3)'] || 1,
-      parent_id: item['上级分区ID'] || 0,
-      mnf_baseline: item['基线流量'] || 0,
-      center_lng: item['中心经度'],
-      center_lat: item['中心纬度'],
-      crs: item['坐标系'] || 'CGCS2000'
-    }))
-
-    // 分批发送，每批 100 条，避免后端处理超时
-    let totalSuccess = 0
-    let allErrors: string[] = []
-    const BATCH_SIZE = 100
-    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
-      const batch = payload.slice(i, i + BATCH_SIZE)
-      const res = await request.post('/api/v1/system/zone/batch', batch)
-      if (res && typeof res.successCount === 'number') {
-        totalSuccess += res.successCount
-        if (res.errors && res.errors.length) {
-          allErrors = allErrors.concat(res.errors)
-        }
+  loading.value = true
+  for (const item of data) {
+    try {
+      const payload = {
+        zone_code: item['分区编码'] || '',
+        zone_name: item['分区名称'],
+        level: item['层级(1/2/3)'] || 1,
+        parent_code: item['上级分区编码'] || null,
+        mnf_baseline: item['基线流量'] || 0,
+        center_lng: item['中心经度'],
+        center_lat: item['中心纬度'],
+        crs: item['坐标系'] || 'CGCS2000'
       }
-      currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
-      importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
+      await request.post('/api/v1/system/zone', payload)
+      successCount++
+    } catch (e) {
+      failCount++
     }
-    
-    // 短暂延迟让用户看到 100% 进度条
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    if (totalSuccess < payload.length) {
-      const errorMsg = allErrors.length > 0 ? `<br>部分失败原因: ${allErrors.slice(0, 3).join('; ')}` : '（可能存在数据重复或格式错误）'
-      ElMessage.warning({ message: `导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条。${errorMsg}`, dangerouslyUseHTMLString: true, duration: 5000 })
-    } else {
-      ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
-    }
-  } catch (error: any) {
-    ElMessage.error(error.message || '导入失败，请检查数据格式')
-  } finally {
-    loading.value = false
-    progressVisible.value = false
-    fetchZones()
   }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchZones()
 }
 
 const handleExport = () => {
@@ -280,7 +224,6 @@ const handleExport = () => {
   }
   const headers = {
     id: '分区ID',
-    zone_code: '分区编码',
     zone_name: '分区名称',
     level: '分区层级',
     parent_name: '上级分区',

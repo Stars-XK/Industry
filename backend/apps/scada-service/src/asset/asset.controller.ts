@@ -23,17 +23,17 @@ export class AssetController {
   @Get('sites')
   @ApiOperation({ summary: '分页获取分区下的物理站点列表' })
   async getSites(@Query() query: any) {
-    const { zoneId, page = 1, size = 20, keyword = '' } = query;
-    let sql = `SELECT s.*, z.zone_name FROM ast_site s LEFT JOIN dma_zone z ON s.zone_id = z.id WHERE 1=1`;
+    const { zoneCode, page = 1, size = 20, keyword = '' } = query;
+    let sql = `SELECT s.*, z.zone_name FROM ast_site s LEFT JOIN dma_zone z ON s.zone_code = z.zone_code WHERE 1=1`;
     let countSql = `SELECT COUNT(*) as total FROM ast_site s WHERE 1=1`;
     const params: any[] = [];
     const countParams: any[] = [];
 
-    if (zoneId) {
-      sql += ` AND s.zone_id = ?`;
-      countSql += ` AND s.zone_id = ?`;
-      params.push(zoneId);
-      countParams.push(zoneId);
+    if (zoneCode) {
+      sql += ` AND s.zone_code = ?`;
+      countSql += ` AND s.zone_code = ?`;
+      params.push(zoneCode);
+      countParams.push(zoneCode);
     }
 
     if (keyword) {
@@ -58,28 +58,28 @@ export class AssetController {
   @Get('devices')
   @ApiOperation({ summary: '分页获取分区或站点下的设备列表' })
   async getDevices(@Query() query: any) {
-    const { siteId, zoneId, page = 1, size = 20, keyword = '' } = query;
+    const { siteCode, zoneCode, page = 1, size = 20, keyword = '' } = query;
 
-    let sql = `SELECT d.*, s.site_name FROM ast_device d LEFT JOIN ast_site s ON d.site_id = s.id `;
-    let countSql = `SELECT COUNT(*) as total FROM ast_device d LEFT JOIN ast_site s ON d.site_id = s.id `;
+    let sql = `SELECT d.*, s.site_name FROM ast_device d LEFT JOIN ast_site s ON d.site_code = s.site_code `;
+    let countSql = `SELECT COUNT(*) as total FROM ast_device d LEFT JOIN ast_site s ON d.site_code = s.site_code `;
     const params: any[] = [];
     const countParams: any[] = [];
 
     sql += ` WHERE d.status != 0`;
     countSql += ` WHERE d.status != 0`;
 
-    if (zoneId) {
-      sql += ` AND s.zone_id = ?`;
-      countSql += ` AND s.zone_id = ?`;
-      params.push(zoneId);
-      countParams.push(zoneId);
+    if (zoneCode) {
+      sql += ` AND s.zone_code = ?`;
+      countSql += ` AND s.zone_code = ?`;
+      params.push(zoneCode);
+      countParams.push(zoneCode);
     }
 
-    if (siteId) {
-      sql += ` AND d.site_id = ?`;
-      countSql += ` AND d.site_id = ?`;
-      params.push(siteId);
-      countParams.push(siteId);
+    if (siteCode) {
+      sql += ` AND d.site_code = ?`;
+      countSql += ` AND d.site_code = ?`;
+      params.push(siteCode);
+      countParams.push(siteCode);
     }
     
     if (keyword) {
@@ -112,23 +112,23 @@ export class AssetController {
   @Get('points')
   @ApiOperation({ summary: '分页获取测点字典列表' })
   async getPoints(@Query() query: any) {
-    const { deviceId, page = 1, size = 20, keyword = '' } = query;
+    const { deviceCode, page = 1, size = 20, keyword = '' } = query;
 
     let sql = `
-      SELECT p.*, d.device_name, d.device_code 
+      SELECT p.*, d.device_name, d.device_code as mapped_device_code
       FROM ast_measuring_point p
-      LEFT JOIN ast_device d ON p.device_id = d.id
+      LEFT JOIN ast_device d ON p.device_code = d.device_code
       WHERE 1=1
     `;
-    let countSql = `SELECT COUNT(*) as total FROM ast_measuring_point p LEFT JOIN ast_device d ON p.device_id = d.id WHERE 1=1`;
+    let countSql = `SELECT COUNT(*) as total FROM ast_measuring_point p LEFT JOIN ast_device d ON p.device_code = d.device_code WHERE 1=1`;
     const params: any[] = [];
     const countParams: any[] = [];
 
-    if (deviceId) {
-      sql += ` AND p.device_id = ?`;
-      countSql += ` AND p.device_id = ?`;
-      params.push(deviceId);
-      countParams.push(deviceId);
+    if (deviceCode) {
+      sql += ` AND p.device_code = ?`;
+      countSql += ` AND p.device_code = ?`;
+      params.push(deviceCode);
+      countParams.push(deviceCode);
     }
 
     if (keyword) {
@@ -150,37 +150,14 @@ export class AssetController {
     };
   }
 
-  @Post('site/batch')
-  @ApiOperation({ summary: '批量导入物理站点' })
-  @RequirePermissions('sys:asset:manage')
-  async batchCreateSites(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0, errors: [] };
-    let successCount = 0;
-    const errors = [];
-    
-    for (const item of body) {
-      try {
-        const { site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties } = item;
-        await this.dataSource.query(
-          `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [site_code || null, site_name || null, site_type || 1, zone_id || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
-        );
-        successCount++;
-      } catch (e) {
-        if (errors.length < 5) errors.push(`[${item.site_code || '未知'}]: ${e.message}`);
-      }
-    }
-    return { successCount, errors };
-  }
-
   @Post('site')
   @ApiOperation({ summary: '创建物理站点' })
   @RequirePermissions('sys:asset:manage')
   async createSite(@Body() body: any) {
-    const { site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties } = body;
+    const { site_code, site_name, site_type, zone_code, address, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_site (site_code, site_name, site_type, zone_id, address, lng, lat, crs, properties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [site_code, site_name, site_type, zone_id || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
+      `INSERT INTO ast_site (site_code, site_name, site_type, zone_code, address, lng, lat, crs, properties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [site_code, site_name, site_type, zone_code || null, address || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -189,10 +166,10 @@ export class AssetController {
   @ApiOperation({ summary: '更新物理站点' })
   @RequirePermissions('sys:asset:manage')
   async updateSite(@Param('id') id: number, @Body() body: any) {
-    const { site_name, site_type, zone_id, address, lng, lat, crs, properties } = body;
+    const { site_name, site_type, zone_code, address, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_site SET site_name=?, site_type=?, zone_id=?, address=?, lng=?, lat=?, crs=?, properties=? WHERE id=?`,
-      [site_name, site_type, zone_id || null, address || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
+      `UPDATE ast_site SET site_name=?, site_type=?, zone_code=?, address=?, lng=?, lat=?, crs=?, properties=? WHERE id=?`,
+      [site_name, site_type, zone_code || null, address || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }
@@ -201,8 +178,12 @@ export class AssetController {
   @ApiOperation({ summary: '删除物理站点' })
   @RequirePermissions('sys:asset:manage')
   async deleteSite(@Param('id') id: number) {
-    const devices = await this.dataSource.query(`SELECT id FROM ast_device WHERE site_id = ?`, [id]);
-    if (devices.length > 0) throw new Error('该站点下存在设备，无法删除');
+    const site = await this.dataSource.query(`SELECT site_code FROM ast_site WHERE id = ?`, [id]);
+    if (!site || site.length === 0) throw new Error('站点不存在');
+    if (site[0].site_code) {
+      const devices = await this.dataSource.query(`SELECT id FROM ast_device WHERE site_code = ?`, [site[0].site_code]);
+      if (devices.length > 0) throw new Error('该站点下存在设备，无法删除');
+    }
     await this.dataSource.query(`DELETE FROM ast_site WHERE id = ?`, [id]);
     return { success: true };
   }
@@ -212,59 +193,27 @@ export class AssetController {
   @RequirePermissions('sys:asset:manage')
   async batchDeleteSites(@Body() body: { ids: number[] }) {
     if (!body.ids || !body.ids.length) return { success: true };
-    // 检查是否有挂载设备
-    const devices = await this.dataSource.query(`SELECT id FROM ast_device WHERE site_id IN (?)`, [body.ids]);
-    if (devices.length > 0) throw new Error('部分站点下存在设备，无法删除');
+    const sites = await this.dataSource.query(`SELECT site_code FROM ast_site WHERE id IN (?)`, [body.ids]);
+    const codes = sites.map((s: any) => s.site_code).filter((c: any) => !!c);
+    
+    if (codes.length > 0) {
+      const devices = await this.dataSource.query(`SELECT id FROM ast_device WHERE site_code IN (?)`, [codes]);
+      if (devices.length > 0) throw new Error('部分站点下存在设备，无法删除');
+    }
     await this.dataSource.query(`DELETE FROM ast_site WHERE id IN (?)`, [body.ids]);
     return { success: true };
   }
 
   // --- Device CRUD ---
-  @Post('device/batch')
-  @ApiOperation({ summary: '批量导入设备' })
-  @RequirePermissions('sys:asset:manage')
-  async batchCreateDevices(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0, errors: [] };
-    let successCount = 0;
-    const errors = [];
-    
-    for (const item of body) {
-      try {
-        const { device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties } = item;
-        await this.dataSource.query(
-          `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            device_code || null, 
-            device_name || null, 
-            device_type || 1, 
-            site_id || null, 
-            status || 1, 
-            manufacturer || null, 
-            model || null, 
-            lng || null, 
-            lat || null, 
-            crs || 'CGCS2000', 
-            properties ? JSON.stringify(properties) : null
-          ]
-        );
-        successCount++;
-      } catch (e) {
-        if (errors.length < 5) errors.push(`[${item.device_code || '未知'}]: ${e.message}`);
-      }
-    }
-    return { successCount, errors };
-  }
-
   @Post('device')
   @ApiOperation({ summary: '创建设备' })
   @RequirePermissions('sys:asset:manage')
   async createDevice(@Body() body: any) {
-    const { device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties } = body;
+    const { device_code, device_name, device_type, site_code, status, manufacturer, model, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_device (device_code, device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties) 
+      `INSERT INTO ast_device (device_code, device_name, device_type, site_code, status, manufacturer, model, lng, lat, crs, properties)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [device_code, device_name, device_type, site_id || null, status || 1, manufacturer || null, model || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
+      [device_code, device_name, device_type, site_code || null, status || 1, manufacturer || null, model || null, lng || null, lat || null, crs || 'CGCS2000', properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -273,12 +222,12 @@ export class AssetController {
   @ApiOperation({ summary: '更新设备' })
   @RequirePermissions('sys:asset:manage')
   async updateDevice(@Param('id') id: number, @Body() body: any) {
-    const { device_name, device_type, site_id, status, manufacturer, model, lng, lat, crs, properties } = body;
+    const { device_name, device_type, site_code, status, manufacturer, model, lng, lat, crs, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_device 
-       SET device_name=?, device_type=?, site_id=?, status=?, manufacturer=?, model=?, lng=?, lat=?, crs=?, properties=? 
+      `UPDATE ast_device
+       SET device_name=?, device_type=?, site_code=?, status=?, manufacturer=?, model=?, lng=?, lat=?, crs=?, properties=?
        WHERE id=?`,
-      [device_name, device_type, site_id || null, status, manufacturer || null, model || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
+      [device_name, device_type, site_code || null, status, manufacturer || null, model || null, lng || null, lat || null, crs, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }
@@ -287,8 +236,12 @@ export class AssetController {
   @ApiOperation({ summary: '删除设备' })
   @RequirePermissions('sys:asset:manage')
   async deleteDevice(@Param('id') id: number) {
-    const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id = ?`, [id]);
-    if (points.length > 0) throw new Error('该设备下存在测点，无法删除');
+    const device = await this.dataSource.query(`SELECT device_code FROM ast_device WHERE id = ?`, [id]);
+    if (!device || device.length === 0) throw new Error('设备不存在');
+    if (device[0].device_code) {
+      const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_code = ?`, [device[0].device_code]);
+      if (points.length > 0) throw new Error('该设备下存在测点，无法删除');
+    }
     await this.dataSource.query(`DELETE FROM ast_device WHERE id = ?`, [id]);
     return { success: true };
   }
@@ -298,56 +251,27 @@ export class AssetController {
   @RequirePermissions('sys:asset:manage')
   async batchDeleteDevices(@Body() body: { ids: number[] }) {
     if (!body.ids || !body.ids.length) return { success: true };
-    const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_id IN (?)`, [body.ids]);
-    if (points.length > 0) throw new Error('部分设备下存在测点，无法删除');
+    const devices = await this.dataSource.query(`SELECT device_code FROM ast_device WHERE id IN (?)`, [body.ids]);
+    const codes = devices.map((d: any) => d.device_code).filter((c: any) => !!c);
+    
+    if (codes.length > 0) {
+      const points = await this.dataSource.query(`SELECT id FROM ast_measuring_point WHERE device_code IN (?)`, [codes]);
+      if (points.length > 0) throw new Error('部分设备下存在测点，无法删除');
+    }
     await this.dataSource.query(`DELETE FROM ast_device WHERE id IN (?)`, [body.ids]);
     return { success: true };
   }
 
   // --- Point CRUD ---
-  @Post('point/batch')
-  @ApiOperation({ summary: '批量导入物理测点' })
-  @RequirePermissions('sys:asset:manage')
-  async batchCreatePoints(@Body() body: any[]) {
-    if (!body || !body.length) return { successCount: 0, errors: [] };
-    let successCount = 0;
-    const errors = [];
-    
-    for (const item of body) {
-      try {
-        const { device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties } = item;
-        await this.dataSource.query(
-          `INSERT INTO ast_measuring_point (device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            device_id || null, 
-            point_code || null, 
-            point_name || null, 
-            point_category || 1, 
-            data_type || 'float', 
-            unit || '', 
-            range_min || null, 
-            range_max || null, 
-            properties ? JSON.stringify(properties) : null
-          ]
-        );
-        successCount++;
-      } catch (e) {
-        if (errors.length < 5) errors.push(`[${item.point_code || '未知'}]: ${e.message}`);
-      }
-    }
-    return { successCount, errors };
-  }
-
   @Post('point')
   @ApiOperation({ summary: '创建物理测点' })
   @RequirePermissions('sys:asset:manage')
   async createPoint(@Body() body: any) {
-    const { device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
+    const { device_code, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
     await this.dataSource.query(
-      `INSERT INTO ast_measuring_point (device_id, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties) 
+      `INSERT INTO ast_measuring_point (device_code, point_code, point_name, point_category, data_type, unit, range_min, range_max, properties)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [device_id, point_code, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null]
+      [device_code || null, point_code, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null]
     );
     return { success: true };
   }
@@ -356,12 +280,12 @@ export class AssetController {
   @ApiOperation({ summary: '修改物理测点' })
   @RequirePermissions('sys:asset:manage')
   async updatePoint(@Param('id') id: number, @Body() body: any) {
-    const { device_id, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
+    const { device_code, point_name, point_category, data_type, unit, range_min, range_max, properties } = body;
     await this.dataSource.query(
-      `UPDATE ast_measuring_point 
-       SET device_id=?, point_name=?, point_category=?, data_type=?, unit=?, range_min=?, range_max=?, properties=? 
+      `UPDATE ast_measuring_point
+       SET device_code=?, point_name=?, point_category=?, data_type=?, unit=?, range_min=?, range_max=?, properties=?
        WHERE id=?`,
-      [device_id, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null, id]
+      [device_code || null, point_name, point_category, data_type || 'float', unit || '', range_min || null, range_max || null, properties ? JSON.stringify(properties) : null, id]
     );
     return { success: true };
   }

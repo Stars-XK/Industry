@@ -46,9 +46,9 @@
           <span v-else>{{ scope.row.device_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="site_name" label="所属物理站点" width="200">
-        <template #default="scope">
-          {{ scope.row.site_name || '未挂载' }}
+      <el-table-column prop="site_name" label="所属站点" width="180">
+        <template #default="{ row }">
+          {{ row.site_name || row.site_code || '未挂载' }}
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
@@ -92,33 +92,15 @@
     </div>
 
     <!-- 弹窗统一引用 -->
-    <AssetDialogs ref="assetDialogsRef" @submit-device="fetchDevices" />
+    <AssetDialogs ref="assetDialogsRef" @submit-device="handleFormSubmit" />
 
-    <!-- 导入组件 -->
     <ExcelImport
       v-model="importVisible"
       title="导入设备数据"
-      templateName="设备台账"
-      :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点ID', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
+      templateName="设备资产"
+      :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点编码', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
       @import-data="handleImportData"
     />
-
-    <!-- 进度条弹窗 -->
-    <el-dialog
-      v-model="progressVisible"
-      title="正在导入数据"
-      width="400px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
-    >
-      <div style="text-align: center; padding: 20px 0;">
-        <el-progress type="dashboard" :percentage="importProgress" :color="progressColor" />
-        <div style="margin-top: 15px; color: #666;">
-          正在处理: {{ currentImportCount }} / {{ totalImportCount }}
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -142,18 +124,6 @@ const queryParams = ref({
   keyword: '',
   device_type: ''
 })
-
-// Progress Bar Variables
-const progressVisible = ref(false)
-const importProgress = ref(0)
-const currentImportCount = ref(0)
-const totalImportCount = ref(0)
-
-const progressColor = (percentage: number) => {
-  if (percentage < 30) return '#909399'
-  if (percentage < 70) return '#e6a23c'
-  return '#67c23a'
-}
 
 const fetchDevices = async () => {
   loading.value = true
@@ -236,53 +206,33 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
   
   loading.value = true
-  progressVisible.value = true
-  totalImportCount.value = data.length
-  currentImportCount.value = 0
-  importProgress.value = 0
-  
-  try {
-    const payload = data.map(item => ({
-      device_code: item['设备编码'],
-      device_name: item['设备名称'],
-      device_type: item['设备类型(1/2/3/4)'] || 1,
-      site_id: item['所属站点ID'] || null,
-      status: item['状态(1/2/3)'] || 1,
-      manufacturer: item['生产厂家'],
-      model: item['规格型号'],
-      lng: item['经度'],
-      lat: item['纬度'],
-      crs: item['坐标系'] || 'CGCS2000'
-    }))
-    
-    let totalSuccess = 0
-    const BATCH_SIZE = 100
-    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
-      const batch = payload.slice(i, i + BATCH_SIZE)
-      const res = await request.post('/api/v1/system/asset/device/batch', batch)
-      if (res && typeof res.successCount === 'number') {
-        totalSuccess += res.successCount
+  for (const item of data) {
+    try {
+      const payload = {
+        device_code: item['设备编码'],
+        device_name: item['设备名称'],
+        device_type: item['设备类型(1/2/3/4)'] || 1,
+        site_code: item['所属站点编码'] || null,
+        status: item['状态(1/2/3)'] || 1,
+        manufacturer: item['生产厂家'],
+        model: item['规格型号'],
+        lng: item['经度'],
+        lat: item['纬度'],
+        crs: item['坐标系'] || 'CGCS2000'
       }
-      currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
-      importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
+      await request.post('/api/v1/system/asset/device', payload)
+      successCount++
+    } catch (e) {
+      failCount++
     }
-    
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    if (totalSuccess < payload.length) {
-      ElMessage.warning(`导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条（可能存在唯一编码重复）`)
-    } else {
-      ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
-    }
-  } catch (error: any) {
-    ElMessage.error(error.message || '导入失败，请检查数据格式')
-  } finally {
-    loading.value = false
-    progressVisible.value = false
-    fetchDevices()
   }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchDevices()
 }
 
 const handleExport = () => {

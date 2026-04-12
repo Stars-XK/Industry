@@ -145,8 +145,8 @@ CREATE TABLE IF NOT EXISTS sys_backup_log (
 -- 5. DMA 分区表
 CREATE TABLE IF NOT EXISTS dma_zone (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    parent_id BIGINT NOT NULL DEFAULT 0,
-    zone_code VARCHAR(50) NULL COMMENT '分区唯一编码',
+    zone_code VARCHAR(50) UNIQUE NOT NULL COMMENT '分区唯一编码',
+    parent_code VARCHAR(50) DEFAULT NULL COMMENT '父分区编码',
     zone_name VARCHAR(100) NOT NULL,
     level SMALLINT NOT NULL DEFAULT 1,
     boundary_gis JSON COMMENT '分区多边形边界(GeoJSON格式)',
@@ -166,19 +166,19 @@ CREATE TABLE IF NOT EXISTS dma_zone (
 CREATE TABLE IF NOT EXISTS ast_site (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     site_code VARCHAR(50) UNIQUE NOT NULL,
-    site_name VARCHAR(100) NOT NULL COMMENT '站点名称',
-    site_type SMALLINT NOT NULL COMMENT '1-水厂, 2-加压泵站, 3-二供泵房, 4-管网监测点',
-    zone_id BIGINT COMMENT '所属DMA分区ID',
-    dept_id BIGINT COMMENT '所属归管部门ID',
-    address VARCHAR(200) COMMENT '物理地址',
+    site_name VARCHAR(100) NOT NULL,
+    site_type SMALLINT NOT NULL COMMENT '字典: 1-水厂, 2-泵站, 3-管网, 4-调蓄池',
+    zone_code VARCHAR(50) COMMENT '挂载分区编码',
+    dept_id BIGINT COMMENT '管辖部门',
+    address VARCHAR(200),
     lng DECIMAL(10, 6) COMMENT '经度',
     lat DECIMAL(10, 6) COMMENT '纬度',
     crs VARCHAR(20) DEFAULT 'CGCS2000' COMMENT '坐标系',
-    properties JSON COMMENT '扩展属性(供水规模/标高等)',
+    properties JSON COMMENT '站点特定属性',
     status SMALLINT DEFAULT 1 COMMENT '1-正常, 0-停用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (zone_id) REFERENCES dma_zone(id) ON DELETE SET NULL,
+    FOREIGN KEY (zone_code) REFERENCES dma_zone(zone_code) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (dept_id) REFERENCES sys_dept(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理站点台账表';
 
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS ast_device (
     device_code VARCHAR(50) UNIQUE NOT NULL,
     device_name VARCHAR(200) NOT NULL,
     device_type SMALLINT NOT NULL COMMENT '字典: 1-水表, 2-阀门, 3-泵, 4-压力计',
-    site_id BIGINT COMMENT '所属站点ID',
+    site_code VARCHAR(50) COMMENT '所属站点编码',
     install_date DATE,
     lng DECIMAL(10, 6) COMMENT '设备经度',
     lat DECIMAL(10, 6) COMMENT '设备纬度',
@@ -199,27 +199,25 @@ CREATE TABLE IF NOT EXISTS ast_device (
     status SMALLINT DEFAULT 1 COMMENT '状态: 1-在线, 2-离线, 3-维修中',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (site_id) REFERENCES ast_site(id) ON DELETE SET NULL
+    FOREIGN KEY (site_code) REFERENCES ast_site(site_code) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 7.1 物理测点表 (`ast_measuring_point`)
 CREATE TABLE IF NOT EXISTS ast_measuring_point (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_id BIGINT NOT NULL COMMENT '所属设备ID',
-    point_code VARCHAR(50) NOT NULL COMMENT '测点编码',
-    point_name VARCHAR(100) NOT NULL COMMENT '测点名称 (如: 瞬时流量, 累计流量)',
-    point_category SMALLINT NOT NULL COMMENT '1-流量, 2-压力, 3-水质, 4-状态值, 5-电量',
+    device_code VARCHAR(50) COMMENT '归属设备编码',
+    point_code VARCHAR(50) UNIQUE NOT NULL COMMENT '测点全局唯一编码',
+    point_name VARCHAR(100) NOT NULL COMMENT '测点名称 (如: 进水压力)',
+    point_category SMALLINT NOT NULL COMMENT '字典: 1-压力, 2-流量, 3-水质, 4-泵控, 5-电参',
     data_type VARCHAR(50) DEFAULT 'float' COMMENT '数据类型',
-    unit VARCHAR(50) DEFAULT '' COMMENT '物理单位',
-    range_min DECIMAL(10, 2) COMMENT '量程下限',
-    range_max DECIMAL(10, 2) COMMENT '量程上限',
-    properties JSON COMMENT '扩展属性(报警阈值/采集频率等)',
-    status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
+    unit VARCHAR(50) COMMENT '物理单位 (如 °C, MPa)',
+    range_min DECIMAL(10,4) COMMENT '量程下限',
+    range_max DECIMAL(10,4) COMMENT '量程上限',
+    properties JSON COMMENT '其它扩展配置',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
-    UNIQUE KEY `uk_device_point` (device_id, point_code)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理设备输出测点表';
+    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 

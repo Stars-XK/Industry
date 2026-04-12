@@ -30,7 +30,7 @@ export class ZoneController {
 
     // 1. 获取带有权限过滤的 DMA 分区，只查询必要的字段以提高性能
     const zones = await this.dmaZoneRepo.find({
-      select: ['id', 'parent_id', 'zone_name', 'zone_code', 'level'],
+      select: ['id', 'parent_code', 'zone_name', 'zone_code', 'level'],
       where: whereCondition,
       order: { id: 'ASC' },
     });
@@ -40,24 +40,26 @@ export class ZoneController {
 
     // 2. 转换为树节点格式
     zones.forEach((z: any) => {
-      const node = { 
-        id: `zone_${z.id}`, 
-        realId: z.id, 
-        label: z.zone_name, 
-        level: 'zone', 
-        children: [] 
+      const node = {
+        id: `zone_${z.zone_code || z.id}`,
+        realId: z.id,
+        zoneCode: z.zone_code,
+        parentCode: z.parent_code,
+        label: z.zone_name,
+        level: 'zone',
+        children: []
       };
-      zoneMap.set(z.id, node);
+      zoneMap.set(z.zone_code, node);
     });
 
     // 3. 组装分区层级
     zones.forEach((z: any) => {
-      const parentId = Number(z.parent_id);
-      if (parentId && zoneMap.has(parentId)) {
-        zoneMap.get(parentId).children.push(zoneMap.get(z.id));
+      const parentCode = z.parent_code;
+      if (parentCode && zoneMap.has(parentCode)) {
+        zoneMap.get(parentCode).children.push(zoneMap.get(z.zone_code));
       } else {
-        // 没有 parent_id 或找不到 parent_id 的作为顶层分区
-        tree.push(zoneMap.get(z.id));
+        // 没有 parent_code 或找不到 parent_code 的作为顶层分区
+        tree.push(zoneMap.get(z.zone_code));
       }
     });
 
@@ -70,7 +72,7 @@ export class ZoneController {
     const { page = 1, size = 20, keyword = '' } = query;
     const userId = req.user?.userId;
 
-    let sql = `SELECT z.*, p.zone_name as parent_name FROM dma_zone z LEFT JOIN dma_zone p ON z.parent_id = p.id WHERE z.is_deleted IS NULL`;
+    let sql = `SELECT z.*, p.zone_name as parent_name FROM dma_zone z LEFT JOIN dma_zone p ON z.parent_code = p.zone_code WHERE z.is_deleted IS NULL`;
     let countSql = `SELECT COUNT(*) as total FROM dma_zone z WHERE z.is_deleted IS NULL`;
     const params: any[] = [];
     const countParams: any[] = [];
@@ -101,28 +103,23 @@ export class ZoneController {
     };
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: '获取单个DMA分区详情' })
-  async getZone(@Param('id') id: number) {
-    return this.dmaZoneRepo.findOne({ where: { id } });
-  }
-
   @Post()
   @ApiOperation({ summary: '新增 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async createZone(@Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_code, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     const newZone = this.dmaZoneRepo.create({
-      parent_id: parent_id || 0,
-      zone_name,
+      parent_code: parent_code || null,
+      zone_code: zone_code || null,
+      zone_name: zone_name || '未命名',
       level: level || 1,
       boundary_gis,
       mnf_baseline: mnf_baseline || 0,
       center_lng,
       center_lat,
-      crs: crs || 'CGCS2000',
+      crs,
       properties,
-      created_by: req.user?.userId || 1
+      created_by: req.user.userId
     });
     await this.dmaZoneRepo.save(newZone);
     return { success: true };
@@ -132,9 +129,10 @@ export class ZoneController {
   @ApiOperation({ summary: '修改 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async updateZone(@Param('id') id: number, @Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
+    const { parent_code, zone_code, zone_name, level, boundary_gis, mnf_baseline, center_lng, center_lat, crs, properties } = body;
     await this.dmaZoneRepo.update(id, {
-      parent_id,
+      parent_code,
+      zone_code,
       zone_name,
       level,
       boundary_gis,
@@ -143,7 +141,7 @@ export class ZoneController {
       center_lat,
       crs,
       properties,
-      updated_by: req.user?.userId || 1
+      updated_by: req.user.userId
     });
     return { success: true };
   }
@@ -152,11 +150,16 @@ export class ZoneController {
   @ApiOperation({ summary: '删除 DMA 分区' })
   @RequirePermissions('sys:asset:manage')
   async deleteZone(@Param('id') id: number) {
-    const children = await this.dmaZoneRepo.count({ where: { parent_id: id, is_deleted: IsNull() } });
-    if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
-    
-    const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_id = ?`, [id]);
-    if (sites.length > 0) throw new Error('该分区下已挂载物理站点，禁止删除');
+    const zone = await this.dmaZoneRepo.findOne({ where: { id } });
+    if (!zone) throw new Error('分区不存在');
+
+    if (zone.zone_code) {
+      const children = await this.dmaZoneRepo.count({ where: { parent_code: zone.zone_code, is_deleted: IsNull() } });
+      if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
+
+      const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_code = ?`, [zone.zone_code]);
+      if (sites.length > 0) throw new Error('该分区下已挂载物理站点，禁止删除');
+    }
 
     await this.dmaZoneRepo.update(id, { is_deleted: new Date() });
     return { success: true };
@@ -167,11 +170,16 @@ export class ZoneController {
   @RequirePermissions('sys:asset:manage')
   async batchDeleteZones(@Body() body: { ids: number[] }) {
     if (!body.ids || !body.ids.length) return { success: true };
-    const children = await this.dmaZoneRepo.count({ where: { parent_id: In(body.ids), is_deleted: IsNull() } });
-    if (children > 0) throw new Error('选中分区中存在子分区，禁止删除');
+    const zones = await this.dmaZoneRepo.find({ where: { id: In(body.ids) } });
+    const codes = zones.map(z => z.zone_code).filter(c => !!c);
 
-    const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_id IN (?)`, [body.ids]);
-    if (sites.length > 0) throw new Error('选中分区中部分已挂载物理站点，禁止删除');
+    if (codes.length > 0) {
+      const children = await this.dmaZoneRepo.count({ where: { parent_code: In(codes), is_deleted: IsNull() } });
+      if (children > 0) throw new Error('选中分区中存在子分区，禁止删除');
+
+      const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_code IN (?)`, [codes]);
+      if (sites.length > 0) throw new Error('选中分区中部分已挂载物理站点，禁止删除');
+    }
 
     await this.dataSource.query(`UPDATE dma_zone SET is_deleted = NOW() WHERE id IN (?)`, [body.ids]);
     return { success: true };

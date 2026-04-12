@@ -51,9 +51,9 @@
       </el-table-column>
       <el-table-column prop="data_type" label="数据类型" width="120" />
       <el-table-column prop="unit" label="物理单位" width="100" />
-      <el-table-column prop="device_name" label="关联设备">
-        <template #default="scope">
-          {{ scope.row.device_name ? `${scope.row.device_name} (${scope.row.device_code})` : '未关联' }}
+      <el-table-column prop="device_name" label="归属设备" width="180">
+        <template #default="{ row }">
+          {{ row.device_name || row.device_code || '未绑定' }}
         </template>
       </el-table-column>
       <el-table-column label="量程与扩展属性" min-width="250">
@@ -85,33 +85,15 @@
     </div>
 
     <!-- 弹窗统一引用 -->
-    <AssetDialogs ref="assetDialogsRef" @submit-point="fetchPoints" />
+    <AssetDialogs ref="assetDialogsRef" @submit-point="handleFormSubmit" />
 
-    <!-- 导入组件 -->
     <ExcelImport
       v-model="importVisible"
-      title="导入物理测点"
-      templateName="物理测点"
-      :templateColumns="['测点编码', '测点名称', '测点类型(1/2/3/4/5)', '关联设备ID', '数据类型', '物理单位', '量程下限', '量程上限']"
+      title="导入测点数据"
+      templateName="测点字典"
+      :templateColumns="['测点编码', '测点名称', '测点类型(1/2/3/4/5)', '关联设备编码', '数据类型', '物理单位', '量程下限', '量程上限']"
       @import-data="handleImportData"
     />
-
-    <!-- 进度条弹窗 -->
-    <el-dialog
-      v-model="progressVisible"
-      title="正在导入数据"
-      width="400px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
-    >
-      <div style="text-align: center; padding: 20px 0;">
-        <el-progress type="dashboard" :percentage="importProgress" :color="progressColor" />
-        <div style="margin-top: 15px; color: #666;">
-          正在处理: {{ currentImportCount }} / {{ totalImportCount }}
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -135,18 +117,6 @@ const queryParams = ref({
   keyword: '',
   point_category: ''
 })
-
-// Progress Bar Variables
-const progressVisible = ref(false)
-const importProgress = ref(0)
-const currentImportCount = ref(0)
-const totalImportCount = ref(0)
-
-const progressColor = (percentage: number) => {
-  if (percentage < 30) return '#909399'
-  if (percentage < 70) return '#e6a23c'
-  return '#67c23a'
-}
 
 const fetchPoints = async () => {
   loading.value = true
@@ -229,56 +199,31 @@ const handleImport = () => {
 
 const handleImportData = async (data: any[]) => {
   if (!data || data.length === 0) return
+  let successCount = 0
+  let failCount = 0
   
   loading.value = true
-  progressVisible.value = true
-  totalImportCount.value = data.length
-  currentImportCount.value = 0
-  importProgress.value = 0
-  
-  try {
-    const payload = data.map(item => ({
-      point_code: item['测点编码'],
-      point_name: item['测点名称'],
-      point_category: item['测点类型(1/2/3/4/5)'] || 1,
-      device_id: item['关联设备ID'] || null,
-      data_type: item['数据类型'] || 'float',
-      unit: item['物理单位'] || '',
-      range_min: item['量程下限'] || null,
-      range_max: item['量程上限'] || null
-    }))
-    
-    let totalSuccess = 0
-    let allErrors: string[] = []
-    const BATCH_SIZE = 100
-    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
-      const batch = payload.slice(i, i + BATCH_SIZE)
-      const res = await request.post('/api/v1/system/asset/point/batch', batch)
-      if (res && typeof res.successCount === 'number') {
-        totalSuccess += res.successCount
-        if (res.errors && res.errors.length) {
-          allErrors = allErrors.concat(res.errors)
-        }
+  for (const item of data) {
+    try {
+      const payload = {
+        point_code: item['测点编码'],
+        point_name: item['测点名称'],
+        point_category: item['测点类型(1/2/3/4/5)'] || 1,
+        device_code: item['关联设备编码'] || null,
+        data_type: item['数据类型'] || 'float',
+        unit: item['物理单位'] || '',
+        range_min: item['量程下限'] || null,
+        range_max: item['量程上限'] || null
       }
-      currentImportCount.value = Math.min(i + BATCH_SIZE, payload.length)
-      importProgress.value = Math.floor((currentImportCount.value / totalImportCount.value) * 100)
+      await request.post('/api/v1/system/asset/point', payload)
+      successCount++
+    } catch (e) {
+      failCount++
     }
-    
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    if (totalSuccess < payload.length) {
-      const errorMsg = allErrors.length > 0 ? `<br>部分失败原因: ${allErrors.slice(0, 3).join('; ')}` : '（可能存在数据重复或格式错误）'
-      ElMessage.warning({ message: `导入完成：成功 ${totalSuccess} 条，失败 ${payload.length - totalSuccess} 条。${errorMsg}`, dangerouslyUseHTMLString: true, duration: 5000 })
-    } else {
-      ElMessage.success(`导入成功: 共导入 ${totalSuccess} 条数据`)
-    }
-  } catch (error: any) {
-    ElMessage.error(error.message || '导入失败，请检查数据格式')
-  } finally {
-    loading.value = false
-    progressVisible.value = false
-    fetchPoints()
   }
+  loading.value = false
+  ElMessage.success(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`)
+  fetchPoints()
 }
 
 const handleExport = () => {

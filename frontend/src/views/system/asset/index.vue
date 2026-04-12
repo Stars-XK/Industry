@@ -116,8 +116,8 @@ import PointLibrary from './components/PointLibrary.vue'
 import ZoneLibrary from './components/ZoneLibrary.vue'
 
 const currentZoneName = ref('')
-const currentZoneId = ref<number | null>(null)
-const currentSiteId = ref<number | null>(null) // To track which site's devices we are viewing
+const currentZoneCode = ref<string | null>(null)
+const currentSiteCode = ref<string | null>(null) // To track which site's devices we are viewing
 const siteList = ref<any[]>([])
 const deviceList = ref<any[]>([])
 const mainTab = ref('hierarchy')
@@ -137,10 +137,10 @@ const getPointCategoryName = (category: number) => {
   return map[category] || '其他'
 }
 
-const fetchSites = async (zoneId: number) => {
+const fetchSites = async (zoneCode: string) => {
   try {
     const res = await request.get(`/api/v1/system/asset/sites`, {
-      params: { zoneId, page: 1, size: 50 }
+      params: { zoneCode, page: 1, size: 50 }
     })
     siteList.value = res?.list || []
   } catch (error) {
@@ -148,7 +148,7 @@ const fetchSites = async (zoneId: number) => {
   }
 }
 
-const fetchDevices = async (params: { zoneId?: number, siteId?: number }) => {
+const fetchDevices = async (params: { zoneCode?: string, siteCode?: string }) => {
   try {
     const res = await request.get(`/api/v1/system/asset/devices`, {
       params: { ...params, page: 1, size: 50 }
@@ -178,19 +178,30 @@ const fetchDevices = async (params: { zoneId?: number, siteId?: number }) => {
 // Event Handlers
 const handleNodeClick = async (data: any) => {
   currentZoneName.value = data.label
-  currentZoneId.value = data.realId
-  currentSiteId.value = null
+  currentZoneCode.value = data.zoneCode
+  currentSiteCode.value = null
   activeTab.value = 'topology'
-  await fetchSites(data.realId)
-  await fetchDevices({ zoneId: data.realId })
+  await fetchSites(data.zoneCode)
+  await fetchDevices({ zoneCode: data.zoneCode })
+
+  // update query params for child tables
+  const refList = [siteLibRef, deviceLibRef, pointLibRef]
+  refList.forEach(r => {
+    if (r.value?.queryParams) {
+      r.value.queryParams.zoneCode = data.zoneCode
+      if (r.value.fetchSites) r.value.fetchSites()
+      if (r.value.fetchDevices) r.value.fetchDevices()
+      if (r.value.fetchPoints) r.value.fetchPoints()
+    }
+  })
 }
 
 const viewSiteDevices = (site: any) => {
   currentZoneName.value = site.site_name
-  currentZoneId.value = site.zone_id || currentZoneId.value
-  currentSiteId.value = site.id
+  currentZoneCode.value = site.zone_code || currentZoneCode.value
+  currentSiteCode.value = site.site_code
   activeTab.value = 'devices'
-  fetchDevices({ siteId: site.id })
+  fetchDevices({ siteCode: site.site_code })
 }
 
 watch(activeTab, async (val) => {
@@ -217,11 +228,17 @@ const handleRegisterAsset = () => {
 
 const handleTreeCommand = (command: string, data: any) => {
   if (command === 'addZone') {
-    assetDialogsRef.value?.openZoneDialog(data.realId)
+    assetDialogsRef.value?.openZoneDialog(data.zoneCode)
   } else if (command === 'addSite') {
-    assetDialogsRef.value?.openSiteDialog(data.realId)
+    assetDialogsRef.value?.openSiteDialog(data.zoneCode)
   } else if (command === 'edit') {
-    assetDialogsRef.value?.openZoneDialog(data.parent_id || 0, data)
+    // Edit zone, API logic omitted for brevity, passing basic struct
+    assetDialogsRef.value?.openZoneDialog(data.parentCode || null, {
+      id: data.realId,
+      zone_code: data.zoneCode,
+      zone_name: data.label,
+      level: data.level
+    })
   } else if (command === 'delete') {
     ElMessageBox.confirm('确定要删除该分区节点吗?', '警告', { type: 'warning' })
       .then(async () => {

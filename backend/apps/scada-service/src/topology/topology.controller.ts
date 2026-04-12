@@ -21,7 +21,7 @@ export class TopologyController {
   @ApiOperation({ summary: '获取 DMA 拓扑树(带报警状态)' })
   async getTopologyTree() {
     const zones = await this.dmaZoneRepo.find({
-      select: ['id', 'parent_id', 'zone_name', 'level', 'mnf_baseline'],
+      select: ['id', 'parent_code', 'zone_code', 'zone_name', 'level', 'mnf_baseline'],
       where: { is_deleted: null },
       order: { id: 'ASC' }
     });
@@ -29,18 +29,21 @@ export class TopologyController {
     let alarmZoneIds: number[] = [];
     try {
       const now = Date.now() - 300000;
+      // 关联 ast_site 和 ast_device 查出设备所在分区
       const query = `
-        SELECT DISTINCT d.zone_id
+        SELECT DISTINCT s.zone_code
         FROM device_raw r
-        JOIN dma_device_rel d ON r.device_id = d.device_id
+        JOIN ast_device d ON r.device_code = d.device_code
+        JOIN ast_site s ON d.site_code = s.site_code
         WHERE r.timestamp >= ? AND (
           (r.standard_name = 'pressure' AND r.value < 0.3) OR
           (r.standard_name = 'h2s' AND r.value >= 10.0)
-        )
+        ) AND s.zone_code IS NOT NULL
       `;
       const res = await this.dataSource.query(query, [now]);
       if (res && res.length > 0) {
-        alarmZoneIds = res.map((row: any) => row.zone_id);
+        const alarmCodes = res.map((row: any) => row.zone_code);
+        alarmZoneIds = zones.filter(z => alarmCodes.includes(z.zone_code)).map(z => z.id);
       }
     } catch (e) {
       console.error('Failed to query real alarms', e);
@@ -53,9 +56,10 @@ export class TopologyController {
   @ApiOperation({ summary: '新增 DMA 分区' })
   @RequirePermissions('scada:dma:manage')
   async createZone(@Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline } = body;
+    const { parent_code, zone_code, zone_name, level, boundary_gis, mnf_baseline } = body;
     const newZone = this.dmaZoneRepo.create({
-      parent_id: parent_id || 0,
+      parent_code: parent_code || null,
+      zone_code: zone_code || null,
       zone_name,
       level: level || 1,
       boundary_gis,
@@ -70,9 +74,10 @@ export class TopologyController {
   @ApiOperation({ summary: '修改 DMA 分区' })
   @RequirePermissions('scada:dma:manage')
   async updateZone(@Param('id') id: number, @Body() body: any, @Request() req: any) {
-    const { parent_id, zone_name, level, boundary_gis, mnf_baseline } = body;
+    const { parent_code, zone_code, zone_name, level, boundary_gis, mnf_baseline } = body;
     await this.dmaZoneRepo.update(id, {
-      parent_id,
+      parent_code,
+      zone_code,
       zone_name,
       level,
       boundary_gis,
@@ -86,14 +91,16 @@ export class TopologyController {
   @ApiOperation({ summary: '删除 DMA 分区' })
   @RequirePermissions('scada:dma:manage')
   async deleteZone(@Param('id') id: number) {
-    // 检查是否有子节点
-    const children = await this.dmaZoneRepo.count({ where: { parent_id: id, is_deleted: null } });
-    if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
-
-    // 检查是否有关联设备
-    const rels = await this.dataSource.query(`SELECT id FROM dma_device_rel WHERE zone_id = ?`, [id]);
-    if (rels.length > 0) throw new Error('该分区已挂载设备资产，请先解绑设备后再删除');
-
+    const zone = await this.dmaZoneRepo.findOne({ where: { id } });
+    if (!zone) throw new Error('分区不存在');
+    if (zone.zone_code) {
+      const children = await this.dmaZoneRepo.count({ where: { parent_code: zone.zone_code, is_deleted: null } });
+      if (children > 0) throw new Error('该分区下存在子分区，禁止删除');
+      
+      const sites = await this.dataSource.query(`SELECT id FROM ast_site WHERE zone_code = ?`, [zone.zone_code]);
+      if (sites.length > 0) throw new Error('该分区已挂载物理站点，请先解绑后再删除');
+    }
+    
     await this.dmaZoneRepo.update(id, { is_deleted: new Date() });
     return { success: true };
   }
@@ -172,8 +179,9 @@ export class TopologyController {
     const zoneMap = new Map();
 
     zones.forEach((zone) => {
-      zoneMap.set(zone.id, {
+      zoneMap.set(zone.zone_code, {
         id: zone.id,
+        zoneCode: zone.zone_code,
         label: zone.zone_name,
         level: zone.level,
         status: alarmZoneIds.includes(zone.id) ? 'alarm' : 'normal',
@@ -183,11 +191,11 @@ export class TopologyController {
     });
 
     zones.forEach((zone) => {
-      const parent = Number(zone.parent_id);
-      if (parent && zoneMap.has(parent)) {
-        zoneMap.get(parent).children.push(zoneMap.get(zone.id));
+      const parentCode = zone.parent_code;
+      if (parentCode && zoneMap.has(parentCode)) {
+        zoneMap.get(parentCode).children.push(zoneMap.get(zone.zone_code));
       } else {
-        tree.push(zoneMap.get(zone.id));
+        tree.push(zoneMap.get(zone.zone_code));
       }
     });
 

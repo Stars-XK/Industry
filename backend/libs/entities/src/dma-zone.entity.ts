@@ -5,13 +5,13 @@ export class DmaZone {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bigint', default: 0, comment: '父级分区 ID' })
-  parent_id: number;
-
-  @Column({ nullable: true, length: 50, comment: '分区唯一编码' })
+  @Column({ length: 50, unique: true })
   zone_code: string;
 
-  @Column({ length: 100, comment: '分区名称' })
+  @Column({ length: 50, nullable: true })
+  parent_code: string;
+
+  @Column({ length: 100 })
   zone_name: string;
 
   @Column({ type: 'smallint', default: 1 })

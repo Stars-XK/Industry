@@ -27,8 +27,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="上级分区" prop="parent_code">
-                <el-input v-model="zoneForm.parent_code" placeholder="上级分区编码（顶层留空）" class="sleek-input" />
+              <el-form-item label="上级分区" prop="parent_id">
+                <el-input v-model="zoneForm.parent_id" placeholder="上级分区ID（顶级为0）" type="number" class="sleek-input" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -124,8 +124,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="挂载分区编码" prop="zone_code">
-                <el-input v-model="siteForm.zone_code" placeholder="选填" class="sleek-input" />
+              <el-form-item label="挂载分区 ID" prop="zone_id">
+                <el-input v-model="siteForm.zone_id" placeholder="选填" type="number" class="sleek-input" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -207,8 +207,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属站点编码" prop="site_code">
-                <el-input v-model="deviceForm.site_code" placeholder="选填" class="sleek-input" />
+              <el-form-item label="所属站点 ID" prop="site_id">
+                <el-input v-model="deviceForm.site_id" placeholder="选填" type="number" class="sleek-input" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -285,8 +285,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属设备编码" prop="device_code">
-                <el-input v-model="pointForm.device_code" placeholder="设备编码" class="sleek-input" />
+              <el-form-item label="所属设备 ID" prop="device_id">
+                <el-input v-model="pointForm.device_id" placeholder="设备ID" type="number" class="sleek-input" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -352,16 +352,13 @@ const emit = defineEmits(['submit-zone', 'submit-site', 'submit-device', 'submit
 // Zone
 const zoneDialogVisible = ref(false)
 const zoneFormRef = ref<any>(null)
-const zoneForm = reactive({ id: null, parent_code: null as string | null, zone_code: '', zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
-const zoneRules = { 
-  zone_code: [{ required: true, message: '请输入分区编码', trigger: 'blur' }],
-  zone_name: [{ required: true, message: '请输入分区名称', trigger: 'blur' }] 
-}
+const zoneForm = reactive({ id: null, parent_id: 0, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
+const zoneRules = { zone_name: [{ required: true, message: '请输入分区名称', trigger: 'blur' }] }
 
 // Site
 const siteDialogVisible = ref(false)
 const siteFormRef = ref<any>(null)
-const siteForm = reactive({ id: null, zone_code: null as string | null, site_code: '', site_name: '', site_type: 1, address: '', lng: null, lat: null, crs: 'CGCS2000', properties: '' })
+const siteForm = reactive({ id: null, zone_id: null as number | null, site_code: '', site_name: '', site_type: 1, address: '', lng: null, lat: null, crs: 'CGCS2000', properties: '' })
 const siteRules = {
   site_code: [{ required: true, message: '请输入站点编码', trigger: 'blur' }],
   site_name: [{ required: true, message: '请输入站点名称', trigger: 'blur' }]
@@ -370,7 +367,7 @@ const siteRules = {
 // Device
 const deviceDialogVisible = ref(false)
 const deviceFormRef = ref<any>(null)
-const deviceForm = reactive({ id: null, site_code: null as string | null, device_code: '', device_name: '', device_type: 1, status: 1, manufacturer: '', model: '', lng: null, lat: null, properties: '' })
+const deviceForm = reactive({ id: null, site_id: null as number | null, device_code: '', device_name: '', device_type: 1, status: 1, manufacturer: '', model: '', lng: null, lat: null, properties: '' })
 const deviceRules = {
   device_code: [{ required: true, message: '请输入设备编码', trigger: 'blur' }],
   device_name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }]
@@ -379,20 +376,20 @@ const deviceRules = {
 // Point
 const pointDialogVisible = ref(false)
 const pointFormRef = ref<any>(null)
-const pointForm = reactive({ id: null, device_code: null as string | null, point_code: '', point_name: '', point_category: 1, data_type: 'float', unit: '', range_min: null, range_max: null, properties: '' })
+const pointForm = reactive({ id: null, device_id: null as number | null, point_code: '', point_name: '', point_category: 1, data_type: 'float', unit: '', range_min: null, range_max: null, properties: '' })
 const pointRules = {
   point_code: [{ required: true, message: '请输入测点编码', trigger: 'blur' }],
   point_name: [{ required: true, message: '请输入测点名称', trigger: 'blur' }]
 }
 
 // Methods to open dialogs
-const openZoneDialog = (parentCodeOrRow?: any, data?: any) => {
+const openZoneDialog = (parentIdOrRow?: any, data?: any) => {
   let row = data;
-  let pcode = null;
-  if (typeof parentCodeOrRow === 'string') { pcode = parentCodeOrRow; row = data; }
-  else { row = parentCodeOrRow; }
+  let pid = 0;
+  if (typeof parentIdOrRow === 'number') { pid = parentIdOrRow; row = data; }
+  else { row = parentIdOrRow; }
   
-  Object.assign(zoneForm, { id: null, parent_code: pcode, zone_code: '', zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
+  Object.assign(zoneForm, { id: null, parent_id: pid, zone_name: '', level: 1, mnf_baseline: 0, center_lng: null, center_lat: null, crs: 'CGCS2000', properties: '', boundary_gis: '' })
   if (row) {
     Object.assign(zoneForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) zoneForm.properties = JSON.stringify(row.properties, null, 2)
@@ -401,13 +398,13 @@ const openZoneDialog = (parentCodeOrRow?: any, data?: any) => {
   zoneDialogVisible.value = true
 }
 
-const openSiteDialog = (zoneCodeOrRow?: any, data?: any) => {
+const openSiteDialog = (zoneIdOrRow?: any, data?: any) => {
   let row = data;
-  let zcode = null;
-  if (typeof zoneCodeOrRow === 'string') { zcode = zoneCodeOrRow; row = data; }
-  else { row = zoneCodeOrRow; }
+  let zid = null;
+  if (typeof zoneIdOrRow === 'number') { zid = zoneIdOrRow; row = data; }
+  else { row = zoneIdOrRow; }
 
-  Object.assign(siteForm, { id: null, zone_code: zcode, site_code: '', site_name: '', site_type: 1, address: '', lng: null, lat: null, crs: 'CGCS2000', properties: '' })
+  Object.assign(siteForm, { id: null, zone_id: zid, site_code: '', site_name: '', site_type: 1, address: '', lng: null, lat: null, crs: 'CGCS2000', properties: '' })
   if (row) {
     Object.assign(siteForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) siteForm.properties = JSON.stringify(row.properties, null, 2)
@@ -415,13 +412,13 @@ const openSiteDialog = (zoneCodeOrRow?: any, data?: any) => {
   siteDialogVisible.value = true
 }
 
-const openDeviceDialog = (siteCodeOrRow?: any, data?: any) => {
+const openDeviceDialog = (siteIdOrRow?: any, data?: any) => {
   let row = data;
-  let scode = null;
-  if (typeof siteCodeOrRow === 'string') { scode = siteCodeOrRow; row = data; }
-  else { row = siteCodeOrRow; }
+  let sid = null;
+  if (typeof siteIdOrRow === 'number') { sid = siteIdOrRow; row = data; }
+  else { row = siteIdOrRow; }
 
-  Object.assign(deviceForm, { id: null, site_code: scode, device_code: '', device_name: '', device_type: 1, status: 1, manufacturer: '', model: '', lng: null, lat: null, properties: '' })
+  Object.assign(deviceForm, { id: null, site_id: sid, device_code: '', device_name: '', device_type: 1, status: 1, manufacturer: '', model: '', lng: null, lat: null, properties: '' })
   if (row) {
     Object.assign(deviceForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) deviceForm.properties = JSON.stringify(row.properties, null, 2)
@@ -429,13 +426,13 @@ const openDeviceDialog = (siteCodeOrRow?: any, data?: any) => {
   deviceDialogVisible.value = true
 }
 
-const openPointDialog = (deviceCodeOrRow?: any, data?: any) => {
+const openPointDialog = (deviceIdOrRow?: any, data?: any) => {
   let row = data;
-  let dcode = null;
-  if (typeof deviceCodeOrRow === 'string') { dcode = deviceCodeOrRow; row = data; }
-  else { row = deviceCodeOrRow; }
+  let did = null;
+  if (typeof deviceIdOrRow === 'number') { did = deviceIdOrRow; row = data; }
+  else { row = deviceIdOrRow; }
 
-  Object.assign(pointForm, { id: null, device_code: dcode, point_code: '', point_name: '', point_category: 1, data_type: 'float', unit: '', range_min: null, range_max: null, properties: '' })
+  Object.assign(pointForm, { id: null, device_id: did, point_code: '', point_name: '', point_category: 1, data_type: 'float', unit: '', range_min: null, range_max: null, properties: '' })
   if (row) {
     Object.assign(pointForm, row)
     if (typeof row.properties === 'object' && row.properties !== null) pointForm.properties = JSON.stringify(row.properties, null, 2)

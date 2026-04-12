@@ -46,9 +46,9 @@
           <span v-else>{{ scope.row.device_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="site_name" label="所属站点" width="180">
-        <template #default="{ row }">
-          {{ row.site_name || row.site_code || '未挂载' }}
+      <el-table-column prop="site_name" label="所属物理站点" width="200">
+        <template #default="scope">
+          {{ scope.row.site_name || '未挂载' }}
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
@@ -98,7 +98,7 @@
       v-model="importVisible"
       title="导入设备数据"
       templateName="设备资产"
-      :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点编码', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
+      :templateColumns="['设备编码', '设备名称', '设备类型(1/2/3/4)', '所属站点ID', '状态(1/2/3)', '生产厂家', '规格型号', '经度', '纬度', '坐标系']"
       @import-data="handleImportData"
     />
   </div>
@@ -216,7 +216,7 @@ const handleImportData = async (data: any[]) => {
         device_code: item['设备编码'],
         device_name: item['设备名称'],
         device_type: item['设备类型(1/2/3/4)'] || 1,
-        site_code: item['所属站点编码'] || null,
+        site_id: item['所属站点ID'] || null,
         status: item['状态(1/2/3)'] || 1,
         manufacturer: item['生产厂家'],
         model: item['规格型号'],

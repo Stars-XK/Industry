@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS ast_device (
 -- 7.1 物理测点表 (`ast_measuring_point`)
 CREATE TABLE IF NOT EXISTS ast_measuring_point (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) NOT NULL COMMENT '所属设备编码',
+    device_id BIGINT NOT NULL COMMENT '所属设备ID',
     point_code VARCHAR(50) NOT NULL COMMENT '测点编码',
     point_name VARCHAR(100) NOT NULL COMMENT '测点名称 (如: 瞬时流量, 累计流量)',
     point_category SMALLINT NOT NULL COMMENT '1-流量, 2-压力, 3-水质, 4-状态值, 5-电量',
@@ -216,8 +216,8 @@ CREATE TABLE IF NOT EXISTS ast_measuring_point (
     status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE KEY `uk_device_point` (device_code, point_code)
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    UNIQUE KEY `uk_device_point` (device_id, point_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='物理设备输出测点表';
 
 
@@ -301,7 +301,7 @@ CREATE TABLE IF NOT EXISTS biz_tariff (
 CREATE TABLE IF NOT EXISTS biz_meter_reading (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     account_id BIGINT NOT NULL,
-    device_code VARCHAR(50) NOT NULL,
+    device_id BIGINT NOT NULL,
     reading_period VARCHAR(20) NOT NULL COMMENT '归属账期 YYYY-MM',
     reading_value DECIMAL(14, 2) NOT NULL COMMENT '当期抄表底数(m3)',
     status SMALLINT DEFAULT 1 COMMENT '1-有效, 0-无效(清洗后)',
@@ -324,14 +324,14 @@ CREATE TABLE IF NOT EXISTS wf_duty_schedule (
 -- ====================== 综合能效分析 ======================
 CREATE TABLE IF NOT EXISTS biz_energy_record (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) NOT NULL COMMENT '耗能设备编码',
+    device_id BIGINT NOT NULL COMMENT '耗能设备(如泵)',
     record_date DATE NOT NULL COMMENT '能耗记录日期',
     power_kwh DOUBLE NOT NULL COMMENT '日耗电量 (kWh)',
     water_pumped_m3 DOUBLE COMMENT '日泵水量 (m3)',
     energy_efficiency DOUBLE COMMENT '吨水百米能耗指标 (kWh/m3.100m)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE KEY `uk_energy_date_device` (record_date, device_code)
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    UNIQUE KEY `uk_energy_date_device` (record_date, device_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='综合能效与成本核算表';
 
 -- ====================== 数据中台与工业配方 ======================
@@ -364,8 +364,8 @@ CREATE TABLE IF NOT EXISTS alm_sop (
 CREATE TABLE IF NOT EXISTS alm_rule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     rule_name VARCHAR(100) NOT NULL COMMENT '规则名称(如：一厂区压力极低报警)',
-    device_code VARCHAR(50) COMMENT '指定设备编码(可选，为空则全局)',
-    zone_code VARCHAR(50) COMMENT '如果是分区级报警则填入分区编码',
+    device_id BIGINT COMMENT '指定设备(可选，为空则全局)',
+    zone_id BIGINT COMMENT '指定分区(可选)',
     tag_name VARCHAR(50) NOT NULL COMMENT '监测指标(如 PRESSURE)',
     condition_type VARCHAR(10) NOT NULL COMMENT '条件: >, <, >=, <=, ==',
     threshold DOUBLE NOT NULL COMMENT '报警阈值',
@@ -373,15 +373,15 @@ CREATE TABLE IF NOT EXISTS alm_rule (
     sop_id BIGINT COMMENT '触发关联的 SOP 预案',
     status SMALLINT DEFAULT 1 COMMENT '1-启用, 0-停用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (zone_code) REFERENCES dma_zone(zone_code) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
+    FOREIGN KEY (zone_id) REFERENCES dma_zone(id) ON DELETE CASCADE,
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警规则判定表';
 
 -- 24. 报警事件表
 CREATE TABLE IF NOT EXISTS alm_event (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) NOT NULL COMMENT '报警关联设备编码',
+    device_id BIGINT NOT NULL COMMENT '报警关联设备',
     alarm_type VARCHAR(50) NOT NULL COMMENT '报警类型 (如 PRESSURE_LOW)',
     alarm_level VARCHAR(10) NOT NULL COMMENT '报警级别: H/HH/L/LL',
     alarm_value DOUBLE NOT NULL COMMENT '触发时数值',
@@ -392,7 +392,7 @@ CREATE TABLE IF NOT EXISTS alm_event (
     recover_time TIMESTAMP NULL COMMENT '恢复时间',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE,
     FOREIGN KEY (sop_id) REFERENCES alm_sop(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='报警事件收敛表';
 
@@ -402,7 +402,7 @@ CREATE TABLE IF NOT EXISTS wf_work_order (
     order_sn VARCHAR(50) NOT NULL UNIQUE COMMENT '工单编号',
     order_type SMALLINT NOT NULL COMMENT '1-巡检, 2-抢修, 3-听漏, 4-保养',
     alarm_id BIGINT COMMENT '关联报警事件',
-    device_code VARCHAR(50) COMMENT '关联设备编码',
+    device_id BIGINT COMMENT '关联设备',
     title VARCHAR(100) NOT NULL COMMENT '工单标题',
     description TEXT COMMENT '工单描述',
     priority SMALLINT DEFAULT 2 COMMENT '1-低, 2-中, 3-高, 4-紧急',
@@ -414,7 +414,7 @@ CREATE TABLE IF NOT EXISTS wf_work_order (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (alarm_id) REFERENCES alm_event(id) ON DELETE SET NULL,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE SET NULL,
     FOREIGN KEY (creator_id) REFERENCES sys_user(id),
     FOREIGN KEY (handler_id) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运维工单主表';
@@ -429,12 +429,11 @@ CREATE TABLE IF NOT EXISTS biz_key_account (
     address VARCHAR(200),
     industry_type VARCHAR(50),
     tariff_id BIGINT,
-    meter_device_code VARCHAR(50) COMMENT '关联的水表资产编码',
+    meter_device_id BIGINT COMMENT '关联的水表资产ID',
     status SMALLINT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (tariff_id) REFERENCES biz_tariff(id),
-    FOREIGN KEY (meter_device_code) REFERENCES ast_device(device_code) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (tariff_id) REFERENCES biz_tariff(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 12. 营收账单表
@@ -481,14 +480,14 @@ CREATE TABLE IF NOT EXISTS biz_nrw_report (
 -- 15. 数据清洗与插值规则表
 CREATE TABLE IF NOT EXISTS biz_interpolate_rule (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    device_code VARCHAR(50) NOT NULL,
+    device_id BIGINT NOT NULL,
     tag_name VARCHAR(100) NOT NULL,
     method VARCHAR(50) NOT NULL COMMENT '插值算法：linear, pchip, zero, previous',
     max_gap_minutes INT NOT NULL DEFAULT 60 COMMENT '允许插值的最大断点间隙',
     status SMALLINT DEFAULT 1 COMMENT '1-启用 0-停用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (device_code) REFERENCES ast_device(device_code) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (device_id) REFERENCES ast_device(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

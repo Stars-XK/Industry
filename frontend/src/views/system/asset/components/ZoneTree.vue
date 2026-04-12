@@ -90,18 +90,8 @@ const handleNodeClick = (data: any) => {
   emit('node-click', data)
 }
 
-const handleCommand = async (command: string, data: any) => {
-  if (command === 'edit') {
-    try {
-      const res = await request.get(`/api/v1/system/zone/${data.realId || data.id}`)
-      emit('command', command, res || { ...data, id: data.realId || data.id })
-    } catch (error) {
-      console.error('Failed to fetch zone details:', error)
-      emit('command', command, { ...data, id: data.realId || data.id })
-    }
-  } else {
-    emit('command', command, data)
-  }
+const handleCommand = (command: string, data: any) => {
+  emit('command', command, data)
 }
 
 // 暴露刷新方法给父组件

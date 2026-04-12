@@ -51,9 +51,9 @@
       </el-table-column>
       <el-table-column prop="data_type" label="数据类型" width="120" />
       <el-table-column prop="unit" label="物理单位" width="100" />
-      <el-table-column prop="device_name" label="归属设备" width="180">
-        <template #default="{ row }">
-          {{ row.device_name || row.device_code || '未绑定' }}
+      <el-table-column prop="device_name" label="关联设备">
+        <template #default="scope">
+          {{ scope.row.device_name ? `${scope.row.device_name} (${scope.row.device_code})` : '未关联' }}
         </template>
       </el-table-column>
       <el-table-column label="量程与扩展属性" min-width="250">
@@ -91,7 +91,7 @@
       v-model="importVisible"
       title="导入测点数据"
       templateName="测点字典"
-      :templateColumns="['测点编码', '测点名称', '测点类型(1/2/3/4/5)', '关联设备编码', '数据类型', '物理单位', '量程下限', '量程上限']"
+      :templateColumns="['测点编码', '测点名称', '测点类型(1/2/3/4/5)', '关联设备ID', '数据类型', '物理单位', '量程下限', '量程上限']"
       @import-data="handleImportData"
     />
   </div>
@@ -209,7 +209,7 @@ const handleImportData = async (data: any[]) => {
         point_code: item['测点编码'],
         point_name: item['测点名称'],
         point_category: item['测点类型(1/2/3/4/5)'] || 1,
-        device_code: item['关联设备编码'] || null,
+        device_id: item['关联设备ID'] || null,
         data_type: item['数据类型'] || 'float',
         unit: item['物理单位'] || '',
         range_min: item['量程下限'] || null,

@@ -5,11 +5,8 @@ export class DmaZone {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50, unique: true })
-  zone_code: string;
-
-  @Column({ length: 50, nullable: true })
-  parent_code: string;
+  @Column({ type: 'bigint', default: 0 })
+  parent_id: number;
 
   @Column({ length: 100 })
   zone_name: string;

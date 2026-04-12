@@ -40,9 +40,9 @@
           <span v-else>{{ scope.row.site_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="zone_name" label="所属分区" width="180">
-        <template #default="{ row }">
-          {{ row.zone_name || row.zone_code || '未挂载' }}
+      <el-table-column prop="zone_name" label="当前挂载分区" width="200">
+        <template #default="scope">
+          {{ scope.row.zone_name || '未挂载' }}
         </template>
       </el-table-column>
       <el-table-column label="地理与扩展属性" min-width="250">
@@ -81,7 +81,7 @@
       v-model="importVisible"
       title="导入站点数据"
       templateName="物理站点"
-      :templateColumns="['站点编码', '站点名称', '站点类型(1/2/3/4)', '挂载分区编码', '详细地址', '经度', '纬度', '坐标系']"
+      :templateColumns="['站点编码', '站点名称', '站点类型(1/2/3/4)', '挂载分区ID', '详细地址', '经度', '纬度', '坐标系']"
       @import-data="handleImportData"
     />
   </div>
@@ -199,7 +199,7 @@ const handleImportData = async (data: any[]) => {
         site_code: item['站点编码'],
         site_name: item['站点名称'],
         site_type: item['站点类型(1/2/3/4)'] || 1,
-        zone_code: item['挂载分区编码'] || null,
+        zone_id: item['挂载分区ID'] || null,
         address: item['详细地址'],
         lng: item['经度'],
         lat: item['纬度'],

@@ -40,9 +40,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="parent_name" label="上级分区" width="180">
-        <template #default="{ row }">
-          <span v-if="row.parent_code">{{ row.parent_name || row.parent_code }}</span>
-          <span v-else class="text-gray-400">无(顶层)</span>
+        <template #default="scope">
+          {{ scope.row.parent_name || '无 (顶层)' }}
         </template>
       </el-table-column>
       <el-table-column prop="mnf_baseline" label="基线流量 (m³/h)" width="150" />
@@ -83,7 +82,7 @@
       v-model="importVisible"
       title="导入分区数据"
       templateName="DMA分区"
-      :templateColumns="['分区编码', '分区名称', '层级(1/2/3)', '上级分区编码', '基线流量', '中心经度', '中心纬度', '坐标系']"
+      :templateColumns="['分区名称', '层级(1/2/3)', '上级分区ID', '基线流量', '中心经度', '中心纬度', '坐标系']"
       @import-data="handleImportData"
     />
   </div>
@@ -197,10 +196,9 @@ const handleImportData = async (data: any[]) => {
   for (const item of data) {
     try {
       const payload = {
-        zone_code: item['分区编码'] || '',
         zone_name: item['分区名称'],
         level: item['层级(1/2/3)'] || 1,
-        parent_code: item['上级分区编码'] || null,
+        parent_id: item['上级分区ID'] || 0,
         mnf_baseline: item['基线流量'] || 0,
         center_lng: item['中心经度'],
         center_lat: item['中心纬度'],
